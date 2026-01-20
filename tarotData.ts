@@ -492,7 +492,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Planning for the future of your relationship. Consider your long-term compatibility.",
     career: "Strategic planning leads to expansion. Think big and plan accordingly.",
     advice: "You've achieved some success - now plan the next phase. Don't rest on your laurels.",
-    imageUrl: `${IMG_BASE}/wa02.jpg`
+    imageUrl: `${IMG_BASE}/w2.jpg`
   },
   {
     id: "min_wands_3",
@@ -512,7 +512,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Long-distance love or travel together. Expansion of your romantic horizons.",
     career: "International opportunities. Expansion of business. Leadership roles emerge.",
     advice: "Your efforts are bearing fruit. Keep watching the horizon - more success approaches.",
-    imageUrl: `${IMG_BASE}/wa03.jpg`
+    imageUrl: `${IMG_BASE}/w3.jpg`
   },
   {
     id: "min_wands_4",
@@ -532,7 +532,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Engagement, wedding, or celebration of love. Domestic happiness.",
     career: "Team success, work celebrations, achieving milestones together.",
     advice: "Celebrate your achievements with those who helped you get there. Joy is meant to be shared.",
-    imageUrl: `${IMG_BASE}/wa04.jpg`
+    imageUrl: `${IMG_BASE}/w4.jpg`
   },
   {
     id: "min_wands_5",
@@ -552,7 +552,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Arguments and disagreements in love. Healthy debate or unhealthy conflict.",
     career: "Workplace competition. Defend your ideas but stay open to others.",
     advice: "Some conflict is necessary for growth. Engage constructively and don't back down from healthy competition.",
-    imageUrl: `${IMG_BASE}/wa05.jpg`
+    imageUrl: `${IMG_BASE}/w5.jpg`
   },
   {
     id: "min_wands_6",
@@ -572,7 +572,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Success in love brings confidence. Others admire your relationship.",
     career: "Public recognition, promotion, or award. Enjoy your moment of triumph.",
     advice: "Accept recognition gracefully. You've earned this victory - let yourself be celebrated.",
-    imageUrl: `${IMG_BASE}/wa06.jpg`
+    imageUrl: `${IMG_BASE}/w6.jpg`
   },
   {
     id: "min_wands_7",
@@ -592,7 +592,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Defend your relationship from outside interference. Stand firm in your values.",
     career: "Defend your position at work. Competition is fierce but you can prevail.",
     advice: "Don't back down from challenges. You have the high ground - use it to your advantage.",
-    imageUrl: `${IMG_BASE}/wa07.jpg`
+    imageUrl: `${IMG_BASE}/w7.jpg`
   },
   {
     id: "min_wands_8",
@@ -612,7 +612,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Rapid developments in love. Messages, travel together, or fast-paced romance.",
     career: "Fast progress on projects. News arrives quickly. Act decisively.",
     advice: "The time for waiting is over - things are moving rapidly. Be ready to act and adapt.",
-    imageUrl: `${IMG_BASE}/wa08.jpg`
+    imageUrl: `${IMG_BASE}/w8.jpg`
   },
   {
     id: "min_wands_9",
@@ -632,7 +632,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Past hurts make you defensive. Protect yourself but don't close off entirely.",
     career: "Near the finish line - don't give up now. Rest but remain vigilant.",
     advice: "You've been through a lot, but the end is near. Gather your remaining strength for one final push.",
-    imageUrl: `${IMG_BASE}/wa09.jpg`
+    imageUrl: `${IMG_BASE}/w9.jpg`
   },
   {
     id: "min_wands_10",
@@ -652,7 +652,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Relationship feels like work. Distribute responsibilities more fairly.",
     career: "Overworked and overburdened. Delegate or prioritize before burning out.",
     advice: "You don't have to carry everything alone. Delegate, prioritize, or set some burdens down.",
-    imageUrl: `${IMG_BASE}/wa10.jpg`
+    imageUrl: `${IMG_BASE}/w10.jpg`
   },
   {
     id: "min_wands_11",
@@ -672,7 +672,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "New exciting romance or playful energy in love. Be open to adventure.",
     career: "New project or creative idea. Enthusiasm and curiosity drive exploration.",
     advice: "Follow your curiosity with enthusiasm. This is a time for exploration and discovery.",
-    imageUrl: `${IMG_BASE}/wapa.jpg`
+    imageUrl: `${IMG_BASE}/wp.jpg`
   },
   {
     id: "min_wands_12",
@@ -692,7 +692,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Passionate but possibly short-lived romance. Excitement and adventure in love.",
     career: "Bold action leads to progress. Take risks but have some plan.",
     advice: "Channel your passion into purposeful action. Be bold but don't let impulsiveness lead you astray.",
-    imageUrl: `${IMG_BASE}/wakn.jpg`
+    imageUrl: `${IMG_BASE}/wn.jpg`
   },
   {
     id: "min_wands_13",
@@ -712,7 +712,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Confident, passionate love. Either you embody this energy or seek someone who does.",
     career: "Leadership through charisma and vision. Inspire others with your passion.",
     advice: "Own your power and warmth. Your confidence and enthusiasm are contagious - use them wisely.",
-    imageUrl: `${IMG_BASE}/waqu.jpg`
+    imageUrl: `${IMG_BASE}/wq.jpg`
   },
   {
     id: "min_wands_14",
@@ -732,7 +732,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Passionate, generous partner. Natural leader in relationships.",
     career: "Entrepreneurial success. Lead with vision and inspire your team.",
     advice: "Lead with vision and integrity. Your fire inspires others - make sure it lights the way, not burns bridges.",
-    imageUrl: `${IMG_BASE}/waki.jpg`
+    imageUrl: `${IMG_BASE}/wk.jpg`
   },
 
   // ========== MINOR ARCANA - CUPS ==========
@@ -754,7 +754,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "New love enters your life or existing love deepens. Open your heart.",
     career: "Creative inspiration. Work that fulfills emotionally. New emotional beginnings.",
     advice: "Your heart is open and ready to receive. Accept the gift of emotional abundance being offered.",
-    imageUrl: `${IMG_BASE}/cua.jpg`
+    imageUrl: `${IMG_BASE}/ca.jpg`
   },
   {
     id: "min_cups_2",
@@ -774,7 +774,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Deep romantic connection. Soul mate energy. Partnership and mutual respect.",
     career: "Beneficial business partnerships. Collaboration leads to success.",
     advice: "Honor the connections in your life. True partnership is built on mutual respect and exchange.",
-    imageUrl: `${IMG_BASE}/cu02.jpg`
+    imageUrl: `${IMG_BASE}/c2.jpg`
   },
   {
     id: "min_cups_3",
@@ -794,7 +794,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Joyful social connections. Celebrating love with community. Group activities.",
     career: "Team success worth celebrating. Creative collaboration thrives.",
     advice: "Celebrate your blessings with those who matter. Joy multiplies when shared.",
-    imageUrl: `${IMG_BASE}/cu03.jpg`
+    imageUrl: `${IMG_BASE}/c3.jpg`
   },
   {
     id: "min_cups_4",
@@ -814,7 +814,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Emotional withdrawal or taking love for granted. Look at what's being offered.",
     career: "Boredom or apathy at work. New opportunity may be missed if you don't look up.",
     advice: "Look around you - opportunities are being offered that you may be ignoring. Come out of your contemplation.",
-    imageUrl: `${IMG_BASE}/cu04.jpg`
+    imageUrl: `${IMG_BASE}/c4.jpg`
   },
   {
     id: "min_cups_5",
@@ -834,7 +834,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Grieving a relationship or loss. Don't let sorrow blind you to remaining possibilities.",
     career: "Setback or disappointment at work. Process the loss but don't dwell too long.",
     advice: "Grieve what needs grieving, but remember - two cups still stand. Turn around and see what remains.",
-    imageUrl: `${IMG_BASE}/cu05.jpg`
+    imageUrl: `${IMG_BASE}/c5.jpg`
   },
   {
     id: "min_cups_6",
@@ -854,7 +854,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Reconnection with past love or childhood sweetheart. Sweet, innocent love.",
     career: "Past connections bring opportunity. Nostalgia for simpler work times.",
     advice: "Honor your past and let it inform your present, but don't get lost in it. Sweet memories are gifts, not destinations.",
-    imageUrl: `${IMG_BASE}/cu06.jpg`
+    imageUrl: `${IMG_BASE}/c6.jpg`
   },
   {
     id: "min_cups_7",
@@ -874,7 +874,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Fantasy vs reality in love. Are you seeing your partner clearly?",
     career: "Many options but careful evaluation needed. Don't chase illusions.",
     advice: "Dreams and fantasies have their place, but discernment is needed now. Which cups contain real treasures?",
-    imageUrl: `${IMG_BASE}/cu07.jpg`
+    imageUrl: `${IMG_BASE}/c7.jpg`
   },
   {
     id: "min_cups_8",
@@ -894,7 +894,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Walking away from a relationship that lacks depth. Seeking more meaningful connection.",
     career: "Leaving a job that no longer fulfills. Searching for more meaningful work.",
     advice: "Sometimes we must leave behind what looks good on paper to find what feeds the soul. Trust your instinct to move on.",
-    imageUrl: `${IMG_BASE}/cu08.jpg`
+    imageUrl: `${IMG_BASE}/c8.jpg`
   },
   {
     id: "min_cups_9",
@@ -914,7 +914,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Emotional fulfillment in love. Wishes for romance coming true.",
     career: "Career satisfaction and accomplishment. Enjoying the fruits of your labor.",
     advice: "Your wishes are manifesting. Enjoy this time of fulfillment and be grateful for your blessings.",
-    imageUrl: `${IMG_BASE}/cu09.jpg`
+    imageUrl: `${IMG_BASE}/c9.jpg`
   },
   {
     id: "min_cups_10",
@@ -934,7 +934,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Lasting love and domestic happiness. Family harmony and deep fulfillment.",
     career: "Work-life balance achieved. Career supports rather than hinders family happiness.",
     advice: "This is what fulfillment looks like. Cherish and protect the harmony you've created.",
-    imageUrl: `${IMG_BASE}/cu10.jpg`
+    imageUrl: `${IMG_BASE}/c10.jpg`
   },
   {
     id: "min_cups_11",
@@ -954,7 +954,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Sweet, innocent romance beginning. Messages of love. Youthful emotional expression.",
     career: "Creative opportunity arises. Trust your intuition in projects.",
     advice: "Stay open to messages from your intuition. Approach emotions with curiosity rather than fear.",
-    imageUrl: `${IMG_BASE}/cupa.jpg`
+    imageUrl: `${IMG_BASE}/cp.jpg`
   },
   {
     id: "min_cups_12",
@@ -974,7 +974,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Romantic proposals or declarations. Someone charming enters your life.",
     career: "Creative projects advance. Follow your passion with grace.",
     advice: "Follow your heart with grace and intention. Let romance and beauty guide your path.",
-    imageUrl: `${IMG_BASE}/cukn.jpg`
+    imageUrl: `${IMG_BASE}/cn.jpg`
   },
   {
     id: "min_cups_13",
@@ -994,7 +994,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Deep emotional intelligence in relationships. Nurturing, compassionate love.",
     career: "Trust intuition in work decisions. Create emotionally supportive environments.",
     advice: "Trust your deep emotional wisdom. Nurture others from a place of fullness, not depletion.",
-    imageUrl: `${IMG_BASE}/cuqu.jpg`
+    imageUrl: `${IMG_BASE}/cq.jpg`
   },
   {
     id: "min_cups_14",
@@ -1014,7 +1014,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Mature, emotionally intelligent partnership. A partner who handles emotions with grace.",
     career: "Lead with emotional intelligence. Diplomacy and compassion bring success.",
     advice: "Master your emotions without suppressing them. True strength is feeling deeply while remaining balanced.",
-    imageUrl: `${IMG_BASE}/cuki.jpg`
+    imageUrl: `${IMG_BASE}/ck.jpg`
   },
 
   // ========== MINOR ARCANA - SWORDS ==========
@@ -1036,7 +1036,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Clarity about relationships. Truth must be spoken. Cut through confusion.",
     career: "Mental breakthrough at work. New idea cuts through obstacles.",
     advice: "The truth will set you free - wield it wisely. Mental clarity is available if you're willing to see clearly.",
-    imageUrl: `${IMG_BASE}/swa.jpg`
+    imageUrl: `${IMG_BASE}/sa.jpg`
   },
   {
     id: "min_swords_2",
@@ -1056,7 +1056,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Avoiding difficult conversations in love. Stalemate in relationship decisions.",
     career: "At a crossroads - decision needed. Stop avoiding the choice.",
     advice: "Remove the blindfold. You have the information you need - the time for avoidance is over.",
-    imageUrl: `${IMG_BASE}/sw02.jpg`
+    imageUrl: `${IMG_BASE}/s2.jpg`
   },
   {
     id: "min_swords_3",
@@ -1076,7 +1076,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Heartbreak, betrayal, or painful separation. Allow yourself to grieve.",
     career: "Painful work situation - rejection, criticism, or loss. Process the hurt.",
     advice: "Feel this pain fully rather than avoiding it. Healing begins with acknowledgment.",
-    imageUrl: `${IMG_BASE}/sw03.jpg`
+    imageUrl: `${IMG_BASE}/s3.jpg`
   },
   {
     id: "min_swords_4",
@@ -1096,7 +1096,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Take a break from relationship stress. Heal before engaging again.",
     career: "Rest and recover from work stress. Don't push - recuperation is productive.",
     advice: "Rest is not weakness - it's wisdom. Retreat, recover, and emerge renewed.",
-    imageUrl: `${IMG_BASE}/sw04.jpg`
+    imageUrl: `${IMG_BASE}/s4.jpg`
   },
   {
     id: "min_swords_5",
@@ -1116,7 +1116,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Arguments where no one wins. Pride damages relationships.",
     career: "Workplace conflict - choose battles wisely. Some fights aren't worth winning.",
     advice: "Ask yourself: is winning this battle worth losing the war? Sometimes walking away is the real victory.",
-    imageUrl: `${IMG_BASE}/sw05.jpg`
+    imageUrl: `${IMG_BASE}/s5.jpg`
   },
   {
     id: "min_swords_6",
@@ -1136,7 +1136,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Moving on from difficult relationship dynamics. Traveling toward better times.",
     career: "Career transition. Leaving difficulties behind for better opportunities.",
     advice: "You can't stay where you are. Though you carry wounds, you're moving toward peace.",
-    imageUrl: `${IMG_BASE}/sw06.jpg`
+    imageUrl: `${IMG_BASE}/s6.jpg`
   },
   {
     id: "min_swords_7",
@@ -1156,7 +1156,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Deception or secrets in relationships. Trust may be broken.",
     career: "Strategic maneuvering at work. Someone may not be honest.",
     advice: "Be careful of deception - from others or yourself. Sometimes cunning is needed, but consider the cost.",
-    imageUrl: `${IMG_BASE}/sw07.jpg`
+    imageUrl: `${IMG_BASE}/s7.jpg`
   },
   {
     id: "min_swords_8",
@@ -1176,7 +1176,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Feeling trapped in relationship but the prison is mental. You have more power than you think.",
     career: "Feeling stuck at work but options exist. Remove your blindfold.",
     advice: "The barriers that bind you are largely of your own making. You can walk away any time you choose to see clearly.",
-    imageUrl: `${IMG_BASE}/sw08.jpg`
+    imageUrl: `${IMG_BASE}/s8.jpg`
   },
   {
     id: "min_swords_9",
@@ -1196,7 +1196,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Anxiety about relationships keeping you up at night. Talk about your fears.",
     career: "Work worries dominating thoughts. Anxiety may be worse than reality.",
     advice: "Your fears feel overwhelming, but the night always ends. Reach out for support - you don't have to face this alone.",
-    imageUrl: `${IMG_BASE}/sw09.jpg`
+    imageUrl: `${IMG_BASE}/s9.jpg`
   },
   {
     id: "min_swords_10",
@@ -1216,7 +1216,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Painful ending of relationship. Complete heartbreak. But from this, renewal becomes possible.",
     career: "Career situation hits rock bottom. Total defeat. But this allows rebuilding.",
     advice: "This is the end - accept it. But notice the dawn in the sky. From this low point, the only way is up.",
-    imageUrl: `${IMG_BASE}/sw10.jpg`
+    imageUrl: `${IMG_BASE}/s10.jpg`
   },
   {
     id: "min_swords_11",
@@ -1236,7 +1236,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Curious about love but perhaps nervous or analytical. Open communication.",
     career: "New ideas and mental energy at work. Research and learning phase.",
     advice: "Your curiosity and mental energy are gifts. Channel them into focused learning rather than scattered thinking.",
-    imageUrl: `${IMG_BASE}/swpa.jpg`
+    imageUrl: `${IMG_BASE}/sp.jpg`
   },
   {
     id: "min_swords_12",
@@ -1256,7 +1256,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Fast-moving romance or aggressive pursuit. Passion but possibly lacking depth.",
     career: "Aggressive action at work. Charging forward with plans. Be careful of collateral damage.",
     advice: "Your drive is powerful - use it wisely. Speed can be an asset, but don't lose sight of your target.",
-    imageUrl: `${IMG_BASE}/swkn.jpg`
+    imageUrl: `${IMG_BASE}/sn.jpg`
   },
   {
     id: "min_swords_13",
@@ -1276,7 +1276,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Direct communication in relationships. Setting clear boundaries. Independent love.",
     career: "Clear thinking cuts through work problems. Direct, honest leadership.",
     advice: "Speak your truth directly but with compassion. Your clarity is a gift - use it to heal, not harm.",
-    imageUrl: `${IMG_BASE}/swqu.jpg`
+    imageUrl: `${IMG_BASE}/sq.jpg`
   },
   {
     id: "min_swords_14",
@@ -1296,7 +1296,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Intellectual connection valued highly. Fair but perhaps emotionally detached.",
     career: "Leadership through expertise and clear thinking. Authority figure.",
     advice: "Lead with wisdom and fairness. Your mental clarity is a responsibility - use it to serve truth, not just yourself.",
-    imageUrl: `${IMG_BASE}/swki.jpg`
+    imageUrl: `${IMG_BASE}/sk.jpg`
   },
 
   // ========== MINOR ARCANA - PENTACLES ==========
@@ -1318,7 +1318,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Stable, grounded new relationship. Building something real together.",
     career: "New job, business opportunity, or financial gain. Plant seeds for future success.",
     advice: "An opportunity for material success presents itself. Seize it and nurture it with practical action.",
-    imageUrl: `${IMG_BASE}/pea.jpg`
+    imageUrl: `${IMG_BASE}/pa.jpg`
   },
   {
     id: "min_pentacles_2",
@@ -1338,7 +1338,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Balancing love with other life demands. Flexibility needed in relationships.",
     career: "Managing multiple work projects. Stay adaptable and keep priorities clear.",
     advice: "Life requires constant adjustment. Stay flexible, prioritize wisely, and enjoy the dance.",
-    imageUrl: `${IMG_BASE}/pe02.jpg`
+    imageUrl: `${IMG_BASE}/p2.jpg`
   },
   {
     id: "min_pentacles_3",
@@ -1358,7 +1358,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Building something together in a relationship. Working as a team.",
     career: "Successful collaboration at work. Learning and applying skills. Recognition for expertise.",
     advice: "Great works are built through collaboration. Share your skills, learn from others, and build together.",
-    imageUrl: `${IMG_BASE}/pe03.jpg`
+    imageUrl: `${IMG_BASE}/p3.jpg`
   },
   {
     id: "min_pentacles_4",
@@ -1378,7 +1378,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Possessiveness or emotional guardedness. Fear of losing love.",
     career: "Financial security but perhaps at cost of growth. Holding on too tightly.",
     advice: "Security is important, but not at the cost of life itself. Know when to hold tight and when to let flow.",
-    imageUrl: `${IMG_BASE}/pe04.jpg`
+    imageUrl: `${IMG_BASE}/p4.jpg`
   },
   {
     id: "min_pentacles_5",
@@ -1398,7 +1398,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Feeling left out in the cold in love. Isolation but support may be available.",
     career: "Financial difficulties or job loss. Hard times, but resources exist.",
     advice: "Times are hard, but don't let pride or despair blind you to available help. Look up - the light is closer than you think.",
-    imageUrl: `${IMG_BASE}/pe05.jpg`
+    imageUrl: `${IMG_BASE}/p5.jpg`
   },
   {
     id: "min_pentacles_6",
@@ -1418,7 +1418,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Balance of give and take in relationships. Generosity strengthens bonds.",
     career: "Receiving help or giving assistance at work. Fair transactions.",
     advice: "Generosity creates flow. Give when you can, receive with grace, and maintain balance in your exchanges.",
-    imageUrl: `${IMG_BASE}/pe06.jpg`
+    imageUrl: `${IMG_BASE}/p6.jpg`
   },
   {
     id: "min_pentacles_7",
@@ -1438,7 +1438,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Evaluating whether relationship is growing in desired direction. Patience required.",
     career: "Assessing career progress and investments. Long-term view needed.",
     advice: "Step back and assess your progress. Growth takes time - are you investing in the right things?",
-    imageUrl: `${IMG_BASE}/pe07.jpg`
+    imageUrl: `${IMG_BASE}/p7.jpg`
   },
   {
     id: "min_pentacles_8",
@@ -1458,7 +1458,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Working on relationship skills. Dedicated effort to improve love life.",
     career: "Skill development and dedication pay off. Focus on your craft.",
     advice: "Mastery comes through dedicated practice. Keep working on your skills - excellence is built one repetition at a time.",
-    imageUrl: `${IMG_BASE}/pe08.jpg`
+    imageUrl: `${IMG_BASE}/p8.jpg`
   },
   {
     id: "min_pentacles_9",
@@ -1478,7 +1478,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Independence in love. Self-sufficient but open to partnership. Luxury and comfort.",
     career: "Financial success through your own efforts. Enjoying career achievements.",
     advice: "You've worked hard and earned this abundance. Enjoy it - but remember the discipline that got you here.",
-    imageUrl: `${IMG_BASE}/pe09.jpg`
+    imageUrl: `${IMG_BASE}/p9.jpg`
   },
   {
     id: "min_pentacles_10",
@@ -1498,7 +1498,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Family legacy, long-term stable relationship, building something lasting.",
     career: "Long-term financial security. Business success that creates lasting wealth.",
     advice: "Think beyond yourself - what legacy will you leave? Build something that lasts beyond your own lifetime.",
-    imageUrl: `${IMG_BASE}/pe10.jpg`
+    imageUrl: `${IMG_BASE}/p10.jpg`
   },
   {
     id: "min_pentacles_11",
@@ -1518,7 +1518,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "New relationship with long-term potential. Building something real.",
     career: "New job opportunity or educational pursuit. Ambitious beginning.",
     advice: "Study your opportunities carefully. This is the seed stage - focus and dedication will help it grow.",
-    imageUrl: `${IMG_BASE}/pepa.jpg`
+    imageUrl: `${IMG_BASE}/pp.jpg`
   },
   {
     id: "min_pentacles_12",
@@ -1538,7 +1538,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Steady, dependable partnership. Maybe lacking excitement but very reliable.",
     career: "Methodical progress at work. Reliability valued. Slow but sure advancement.",
     advice: "Consistency and reliability may not be glamorous, but they build lasting success. Keep showing up.",
-    imageUrl: `${IMG_BASE}/pekn.jpg`
+    imageUrl: `${IMG_BASE}/pn.jpg`
   },
   {
     id: "min_pentacles_13",
@@ -1558,7 +1558,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Nurturing, practical love. Creating a comfortable home together.",
     career: "Financial success while maintaining work-life balance. Practical prosperity.",
     advice: "True abundance includes both material comfort and time to enjoy it. Nurture yourself and others.",
-    imageUrl: `${IMG_BASE}/pequ.jpg`
+    imageUrl: `${IMG_BASE}/pq.jpg`
   },
   {
     id: "min_pentacles_14",
@@ -1578,7 +1578,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Stable, prosperous partnership. Provider energy. Material comfort in love.",
     career: "Height of career success. Business mastery. Leadership through proven results.",
     advice: "You've achieved material mastery. Use your resources wisely and generously - wealth is a tool, not an end.",
-    imageUrl: `${IMG_BASE}/peki.jpg`
+    imageUrl: `${IMG_BASE}/pk.jpg`
   }
 ];
 
