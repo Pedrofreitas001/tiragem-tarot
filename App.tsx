@@ -3,6 +3,17 @@ import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParam
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore, HistoryItem } from './types';
 import { getGeminiInterpretation } from './services/geminiService';
+import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
+
+// Extended CardLore with API description
+interface ExtendedCardLore extends CardLore {
+  apiDescription?: string;
+  apiMeaningUp?: string;
+  apiMeaningRev?: string;
+}
+
+// Preload API cards on app start
+preloadCards();
 
 // --- Helper Functions ---
 const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -103,7 +114,9 @@ const CardDetails = () => {
     const { cardId } = useParams();
     const navigate = useNavigate();
     const [card, setCard] = useState<TarotCard | null>(null);
-    const [lore, setLore] = useState<CardLore | null>(null);
+    const [lore, setLore] = useState<ExtendedCardLore | null>(null);
+    const [apiCard, setApiCard] = useState<ApiTarotCard | null>(null);
+    const [isLoadingApi, setIsLoadingApi] = useState(true);
 
     useEffect(() => {
         const deck = generateDeck();
@@ -113,6 +126,22 @@ const CardDetails = () => {
             setCard(foundCard);
             const staticData = getStaticLore(foundCard);
             setLore(staticData);
+
+            // Fetch API data for enhanced description
+            setIsLoadingApi(true);
+            fetchCardByName(foundCard.name).then(apiData => {
+                if (apiData) {
+                    setApiCard(apiData);
+                    // Merge API data with local lore
+                    setLore(prev => prev ? {
+                        ...prev,
+                        apiDescription: apiData.desc,
+                        apiMeaningUp: apiData.meaning_up,
+                        apiMeaningRev: apiData.meaning_rev
+                    } : prev);
+                }
+                setIsLoadingApi(false);
+            }).catch(() => setIsLoadingApi(false));
         } else {
             navigate('/explore');
         }
@@ -201,8 +230,25 @@ const CardDetails = () => {
                                             <span className="material-symbols-outlined text-lg">rotate_right</span>
                                             Reversed
                                         </h4>
-                                        <p className="text-gray-400 text-sm">{lore.reversed}</p>
+                                        <p className="text-gray-400 text-sm">{lore.apiMeaningRev || lore.reversed}</p>
                                     </div>
+
+                                    {/* API Description - Historical Symbolism */}
+                                    {lore.apiDescription ? (
+                                        <div className="p-6 bg-gradient-to-br from-primary/5 to-transparent border border-primary/10 rounded-2xl">
+                                            <h4 className="text-primary font-bold text-sm mb-3 uppercase tracking-wide flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-lg">menu_book</span>
+                                                Historical Symbolism (A.E. Waite)
+                                            </h4>
+                                            <p className="text-gray-300 text-sm leading-relaxed italic">{lore.apiDescription}</p>
+                                        </div>
+                                    ) : isLoadingApi ? (
+                                        <div className="p-6 bg-surface-dark/50 border border-white/5 rounded-2xl animate-pulse">
+                                            <div className="h-4 bg-white/10 rounded w-1/3 mb-3"></div>
+                                            <div className="h-3 bg-white/10 rounded w-full mb-2"></div>
+                                            <div className="h-3 bg-white/10 rounded w-5/6"></div>
+                                        </div>
+                                    ) : null}
                                 </div>
                             </>
                         ) : (
