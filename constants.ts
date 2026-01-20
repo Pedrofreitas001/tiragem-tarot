@@ -1,4 +1,5 @@
 import { ArcanaType, CardLore, Spread, Suit, TarotCard } from './types';
+import { TAROT_CARDS, TarotCardData } from './tarotData';
 
 // --- Deck Generation Logic ---
 const MAJOR_ARCANA_NAMES = [
@@ -118,49 +119,30 @@ export const SPREADS: Spread[] = [
 ];
 
 // --- Static Lore Database ---
+// Now using the complete TAROT_CARDS database from tarotData.ts
 
-const BASE_LORE: Record<string, Partial<CardLore>> = {
-    // Major Arcana Examples
-    "The Fool": {
-        keywords: ["Início", "Inocência", "Espontaneidade", "Espírito Livre"],
-        generalMeaning: "O Louco representa novos começos, ter fé no futuro, ser inexperiente, não saber o que esperar, ter sorte de principiante, improvisação e acreditar no universo.",
-        love: "Um romance despreocupado e impulsivo. Pode indicar um novo amor que chega de repente.",
-        career: "Novas oportunidades de trabalho, talvez algo não convencional. Hora de arriscar.",
-        advice: "Dê o salto de fé. Não tenha medo do desconhecido.",
-        reversed: "Imprudência, correr riscos desnecessários, ingenuidade excessiva."
-    },
-    "The Magician": {
-        keywords: ["Manifestação", "Poder", "Habilidade", "Ação"],
-        generalMeaning: "O Mago é a carta da manifestação. Ele tem todas as ferramentas (os quatro naipes) à sua disposição para fazer as coisas acontecerem.",
-        love: "Tomar a iniciativa no amor. Usar seu charme e habilidade para atrair o que deseja.",
-        career: "Use suas habilidades e força de vontade para realizar suas tarefas. Grande potencial de sucesso.",
-        advice: "Você tem os recursos necessários. Aja agora.",
-        reversed: "Manipulação, planejamento ruim, talentos latentes não usados."
-    },
-    // Add more specific Major Arcana definitions here...
+// Helper function to find card data from the complete database
+const findCardData = (card: TarotCard): TarotCardData | undefined => {
+    return TAROT_CARDS.find(c => c.id === card.id || c.name === card.name);
 };
 
-// Helper to generate deterministic lore for cards not explicitly defined above
+// Helper to generate deterministic lore for cards using complete database
 export const getStaticLore = (card: TarotCard): CardLore => {
-    // 1. Check if specific lore exists
-    if (BASE_LORE[card.name]) {
+    // 1. Look up card in the complete TAROT_CARDS database
+    const cardData = findCardData(card);
+
+    if (cardData) {
         return {
-            keywords: BASE_LORE[card.name].keywords || [],
-            generalMeaning: BASE_LORE[card.name].generalMeaning || "",
-            love: BASE_LORE[card.name].love || "",
-            career: BASE_LORE[card.name].career || "",
-            advice: BASE_LORE[card.name].advice || "",
-            reversed: BASE_LORE[card.name].reversed || ""
+            keywords: cardData.keywords_pt.length > 0 ? cardData.keywords_pt : cardData.keywords,
+            generalMeaning: cardData.meaning_up_pt || cardData.meaning_up,
+            love: cardData.love,
+            career: cardData.career,
+            advice: cardData.advice,
+            reversed: cardData.meaning_rev_pt || cardData.meaning_rev
         };
     }
 
-    // 2. Generate based on Suit and Number (Fallback Logic)
-    let keywords: string[] = [];
-    let meaning = "";
-    let love = "";
-    let career = "";
-    
-    // Element / Suit meanings
+    // 2. Fallback for any cards not in database (should not happen with complete database)
     const suitMeanings = {
         [Suit.WANDS]: { element: "Fogo", area: "paixão, inspiração e força de vontade" },
         [Suit.CUPS]: { element: "Água", area: "emoções, relacionamentos e intuição" },
@@ -168,66 +150,14 @@ export const getStaticLore = (card: TarotCard): CardLore => {
         [Suit.PENTACLES]: { element: "Terra", area: "dinheiro, trabalho e mundo material" },
         [Suit.NONE]: { element: "Espírito", area: "jornada da alma" }
     };
-    
+
     const sInfo = suitMeanings[card.suit] || suitMeanings[Suit.NONE];
 
-    // Numerology meanings
-    if (card.arcana === ArcanaType.MINOR) {
-        if (card.name.includes("Ace")) {
-            keywords = ["Novo Início", "Potencial", "Puro " + sInfo.element];
-            meaning = `O Ás de ${card.suit} representa a semente do potencial no reino de ${sInfo.area}. É um presente do universo oferecendo uma nova oportunidade.`;
-            love = "Um novo começo emocional ou paixão renovada.";
-            career = "Uma nova oportunidade de trabalho ou investimento financeiro.";
-        } else if (card.name.includes("Two")) {
-            keywords = ["Equilíbrio", "Parceria", "Dualidade"];
-            meaning = `O Dois lida com o equilíbrio e a escolha no domínio de ${sInfo.area}. Pode indicar a necessidade de conciliar dois aspectos da vida.`;
-            love = "Parceria, atração mútua ou uma decisão entre dois caminhos amorosos.";
-            career = "Equilibrar finanças ou decidir entre duas opções de carreira.";
-        } else if (card.name.includes("Three")) {
-            keywords = ["Crescimento", "Colaboração", "Expansão"];
-            meaning = `O Três indica o primeiro estágio de conclusão e trabalho em equipe em ${sInfo.area}.`;
-            love = "Celebração com amigos ou expansão da família.";
-            career = "Trabalho em equipe, colaboração e planejamento inicial dando frutos.";
-        } else if (card.name.includes("Page")) {
-            keywords = ["Mensageiro", "Curiosidade", "Novo Estágio"];
-            meaning = `O Valete traz uma mensagem sobre ${sInfo.area}. Representa uma energia jovem e exploradora.`;
-            love = "Uma mensagem de amor ou uma pessoa jovem e idealista.";
-            career = "Notícias sobre trabalho, aprendizado de novas habilidades.";
-        } else if (card.name.includes("Knight")) {
-            keywords = ["Ação", "Movimento", "Impulso"];
-            meaning = `O Cavaleiro é a ação em movimento. Ele persegue os objetivos de ${sInfo.area} com intensidade (às vezes rápido demais).`;
-            love = "Um pretendente apaixonado, mas talvez inconstante ou focado na conquista.";
-            career = "Mudança rápida, viagens a trabalho, muita ambição.";
-        } else if (card.name.includes("Queen")) {
-            keywords = ["Nutrição", "Maturidade", "Interno"];
-            meaning = `A Rainha domina o reino de ${sInfo.area} com maturidade emocional e compreensão interna.`;
-            love = "Uma figura feminina amorosa, segura e compassiva.";
-            career = "Gerenciar recursos com sabedoria, criatividade no trabalho.";
-        } else if (card.name.includes("King")) {
-            keywords = ["Autoridade", "Controle", "Externo"];
-            meaning = `O Rei é a autoridade máxima em ${sInfo.area}. Ele comanda com experiência e controle externo.`;
-            love = "Um parceiro estável, protetor e provedor.";
-            career = "Liderança, empresário de sucesso, mentor experiente.";
-        } else {
-             // Fallback for 4-10
-            keywords = ["Evolução", "Ciclo", "Lição"];
-            meaning = `Esta carta representa um estágio de desenvolvimento nas questões de ${sInfo.area}. É um momento de lidar com as realidades do elemento ${sInfo.element}.`;
-            love = `Uma situação em evolução que requer atenção às emoções e ${sInfo.area}.`;
-            career = `Desenvolvimentos na carreira relacionados a ${sInfo.area}.`;
-        }
-    } else {
-        // Fallback for undefined Major Arcana
-        keywords = ["Arquétipo", "Jornada", "Lição Maior"];
-        meaning = "Uma carta de grande importância cármica e espiritual. Representa uma lição fundamental que a alma deve aprender.";
-        love = "Um evento significativo e transformador no amor.";
-        career = "Mudanças de destino na vida profissional.";
-    }
-
     return {
-        keywords,
-        generalMeaning: meaning,
-        love,
-        career,
+        keywords: ["Evolução", "Ciclo", "Lição"],
+        generalMeaning: `Esta carta representa um estágio de desenvolvimento nas questões de ${sInfo.area}. É um momento de lidar com as realidades do elemento ${sInfo.element}.`,
+        love: `Uma situação em evolução que requer atenção às emoções.`,
+        career: `Desenvolvimentos na carreira relacionados a ${sInfo.area}.`,
         advice: `Reflita sobre como a energia de ${sInfo.area} está se manifestando em sua vida agora.`,
         reversed: "A energia está bloqueada ou sendo expressa de forma negativa. Cuidado com excessos ou negligência."
     };

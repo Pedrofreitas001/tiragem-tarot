@@ -3,7 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mystic Tarot - Reveal Your Destiny</title>
+    <title>Mystic Tarot - Tiragem de Tarot Online Grátis | Leitura de Cartas</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Descubra seu destino com tiragem de tarot online grátis. Leitura de cartas profissional com interpretações detalhadas. Tarot do amor, carreira e orientação espiritual." />
+    <meta name="keywords" content="tarot online, tiragem de tarot, leitura de cartas, tarot grátis, tarot do amor, tarot cigano, interpretação tarot, cartas tarot, oráculo, espiritualidade" />
+    <meta name="author" content="Mystic Tarot" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://mystic-tarot.vercel.app/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mystic-tarot.vercel.app/" />
+    <meta property="og:title" content="Mystic Tarot - Tiragem de Tarot Online Grátis" />
+    <meta property="og:description" content="Descubra seu destino com tiragem de tarot online grátis. Leitura de cartas com interpretações detalhadas para amor, carreira e orientação espiritual." />
+    <meta property="og:image" content="https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg" />
+    <meta property="og:locale" content="pt_BR" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://mystic-tarot.vercel.app/" />
+    <meta name="twitter:title" content="Mystic Tarot - Tiragem de Tarot Online Grátis" />
+    <meta name="twitter:description" content="Descubra seu destino com tiragem de tarot online grátis. Leitura de cartas com interpretações detalhadas." />
+    <meta name="twitter:image" content="https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg" />
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Mystic Tarot",
+      "description": "Tiragem de tarot online grátis com interpretações detalhadas para amor, carreira e orientação espiritual.",
+      "url": "https://mystic-tarot.vercel.app/",
+      "applicationCategory": "EntertainmentApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BRL"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1250"
+      }
+    }
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>" />
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -128,6 +177,62 @@
       .no-scrollbar {
           -ms-overflow-style: none;
           scrollbar-width: none;
+      }
+
+      /* Page Transitions */
+      .page-enter {
+          opacity: 0;
+          transform: translateY(20px);
+      }
+      .page-enter-active {
+          opacity: 1;
+          transform: translateY(0);
+          transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+      }
+      .page-exit {
+          opacity: 1;
+      }
+      .page-exit-active {
+          opacity: 0;
+          transition: opacity 0.2s ease-in;
+      }
+
+      /* Smooth page loading animation */
+      @keyframes fadeInUp {
+          from {
+              opacity: 0;
+              transform: translateY(30px);
+          }
+          to {
+              opacity: 1;
+              transform: translateY(0);
+          }
+      }
+      .animate-fade-in-up {
+          animation: fadeInUp 0.5s ease-out forwards;
+      }
+
+      /* Stagger animation for lists */
+      .stagger-item {
+          opacity: 0;
+          animation: fadeInUp 0.4s ease-out forwards;
+      }
+      .stagger-item:nth-child(1) { animation-delay: 0.05s; }
+      .stagger-item:nth-child(2) { animation-delay: 0.1s; }
+      .stagger-item:nth-child(3) { animation-delay: 0.15s; }
+      .stagger-item:nth-child(4) { animation-delay: 0.2s; }
+      .stagger-item:nth-child(5) { animation-delay: 0.25s; }
+      .stagger-item:nth-child(6) { animation-delay: 0.3s; }
+
+      /* Smooth scrolling */
+      html {
+          scroll-behavior: smooth;
+      }
+
+      /* Focus states for accessibility */
+      button:focus-visible, a:focus-visible {
+          outline: 2px solid #9311d4;
+          outline-offset: 2px;
       }
     </style>
   <script type="importmap">

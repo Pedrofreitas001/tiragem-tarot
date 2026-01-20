@@ -372,7 +372,7 @@ const Home = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-dark">
+    <div className="relative flex min-h-screen w-full flex-col bg-background-dark animate-fade-in-up">
       <Header />
 
       {/* Hero Section */}
@@ -429,11 +429,12 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 pb-10">
-            {SPREADS.map((spread) => (
+            {SPREADS.map((spread, index) => (
               <div
                 key={spread.id}
                 onClick={() => handleSelectSpread(spread)}
-                className="group flex flex-1 gap-5 rounded-xl border border-border-dark bg-card-dark p-6 flex-col hover:border-primary/50 transition-all hover:shadow-[0_0_15px_rgba(147,17,212,0.15)] cursor-pointer"
+                className="stagger-item group flex flex-1 gap-5 rounded-xl border border-border-dark bg-card-dark p-6 flex-col hover:border-primary/50 transition-all hover:shadow-[0_0_15px_rgba(147,17,212,0.15)] cursor-pointer"
+                style={{ animationDelay: `${0.1 + index * 0.1}s` }}
               >
                 <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                   <span className="material-symbols-outlined text-[28px]">
@@ -520,7 +521,7 @@ const Session = () => {
   if (!spread) return null;
 
   return (
-    <div className="flex flex-col h-screen bg-background-dark overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-background-dark overflow-x-hidden">
       <Header />
 
       {/* Top Controls */}
@@ -603,7 +604,7 @@ const Session = () => {
       )}
 
       {/* Main Area: Deck Display */}
-      <main className="flex-1 relative flex items-center justify-center w-full bg-[#0f0b13] p-4">
+      <main className="flex-1 relative flex items-center justify-center w-full bg-[#0f0b13] py-8 px-4 min-h-[300px] md:min-h-[400px]">
         {isShuffling ? (
           <div className="flex flex-col items-center justify-center gap-6">
             <div className="relative">
@@ -613,7 +614,7 @@ const Session = () => {
             <p className="text-white font-display text-2xl animate-pulse tracking-wide">Shuffling...</p>
           </div>
         ) : (
-          <div className="relative w-full max-w-[95%] h-48 md:h-64 flex items-center justify-center perspective-1000">
+          <div className="relative w-full max-w-[95%] h-56 md:h-72 flex items-center justify-center perspective-1000 overflow-visible">
             {deck.map((card, index) => {
               const isSelected = selectedCards.some(c => c.card.id === card.id);
               const totalCards = deck.length;
@@ -624,21 +625,21 @@ const Session = () => {
                   key={card.id}
                   onClick={() => !isSelected && handleCardClick(card)}
                   className={`
-                    absolute top-0
-                    w-16 md:w-24 aspect-[2/3.4]
+                    absolute top-4
+                    w-14 sm:w-16 md:w-20 lg:w-24 aspect-[2/3.4]
                     rounded-lg border border-white/20
                     bg-gradient-to-br from-surface-dark to-black
                     shadow-xl cursor-pointer
                     transition-all duration-300 ease-out origin-bottom
                     ${isSelected
-                      ? 'opacity-0 -translate-y-32 scale-50 pointer-events-none'
-                      : 'hover:z-50 hover:-translate-y-8 hover:scale-110 hover:border-primary card-selected'
+                      ? 'opacity-0 -translate-y-20 scale-50 pointer-events-none'
+                      : 'hover:z-[100] hover:-translate-y-6 hover:scale-105 hover:border-primary hover:shadow-[0_0_20px_rgba(147,17,212,0.4)]'
                     }
                   `}
                   style={{
                     left: `${leftPos}%`,
-                    zIndex: index,
-                    transform: isSelected ? undefined : `rotate(${(index - totalCards/2) * 0.4}deg)`,
+                    zIndex: isSelected ? -1 : index,
+                    transform: isSelected ? undefined : `rotate(${(index - totalCards/2) * 0.3}deg)`,
                   }}
                 >
                   <div className="absolute inset-0 rounded-lg overflow-hidden bg-surface-dark">
@@ -713,7 +714,7 @@ const Result = () => {
     const activeLore = activeCard ? getStaticLore(activeCard) : null;
 
     return (
-        <div className="flex flex-col min-h-screen bg-background-dark text-white font-display overflow-x-hidden">
+        <div className="flex flex-col min-h-screen bg-background-dark text-white font-display overflow-x-hidden animate-fade-in-up">
             <Header />
 
             <div className="flex flex-1 overflow-hidden relative">
