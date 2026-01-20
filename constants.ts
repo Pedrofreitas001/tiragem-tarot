@@ -11,15 +11,16 @@ const MAJOR_ARCANA_NAMES = [
 ];
 
 const MINOR_RANKS = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"];
-// Codes used by sacred-texts for file naming
-const MINOR_RANK_CODES = ["a", "2", "3", "4", "5", "6", "7", "8", "9", "10", "p", "n", "q", "k"];
+// Codes used by sacred-texts for file naming (format: {suit}{rank}.jpg)
+// Example: waac.jpg (Ace of Wands), wa02.jpg (Two of Wands), wapa.jpg (Page of Wands)
+const MINOR_RANK_CODES = ["ac", "02", "03", "04", "05", "06", "07", "08", "09", "10", "pa", "kn", "qu", "ki"];
 
 const getSuitPrefix = (suit: Suit): string => {
   switch (suit) {
-    case Suit.WANDS: return 'w';
-    case Suit.CUPS: return 'c';
-    case Suit.SWORDS: return 's';
-    case Suit.PENTACLES: return 'p';
+    case Suit.WANDS: return 'wa';
+    case Suit.CUPS: return 'cu';
+    case Suit.SWORDS: return 'sw';
+    case Suit.PENTACLES: return 'pe';
     default: return '';
   }
 };
