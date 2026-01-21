@@ -6,7 +6,7 @@ import { getGeminiInterpretation } from './services/geminiService';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
 import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
 import { CartProvider, useCart } from './contexts/CartContext';
-import { PRODUCTS, getProductBySlug, getFeaturedProducts } from './data/products';
+import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 
 // Extended CardLore with API description
@@ -264,7 +264,6 @@ const Footer = () => {
 const Home = () => {
   const navigate = useNavigate();
   const { t, isPortuguese } = useLanguage();
-  const featuredProducts = getFeaturedProducts().slice(0, 4);
 
   const handleSelectSpread = (spread: Spread) => {
     navigate('/session', { state: { spread } });
@@ -290,29 +289,37 @@ const Home = () => {
       <Header />
       <CartDrawer />
 
-      {/* Hero Section - Mystical & Modern */}
+      {/* Hero Section - Mystical & Static */}
       <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-        {/* Animated Background */}
+        {/* Static Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-background-dark to-background-dark" />
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-600/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-600/20 rounded-full blur-[100px]" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-white/5 rounded-full" />
 
-          {/* Stars */}
-          {[...Array(50)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                opacity: Math.random() * 0.7 + 0.3,
-              }}
-            />
-          ))}
+          {/* Static Stars */}
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-60" style={{ top: '10%', left: '15%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-40" style={{ top: '20%', left: '80%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-70" style={{ top: '15%', left: '45%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '30%', left: '25%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-80" style={{ top: '25%', left: '70%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-45" style={{ top: '40%', left: '10%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-65" style={{ top: '35%', left: '90%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-55" style={{ top: '50%', left: '5%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-75" style={{ top: '45%', left: '95%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-35" style={{ top: '60%', left: '20%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-85" style={{ top: '55%', left: '75%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '70%', left: '35%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-60" style={{ top: '65%', left: '85%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-70" style={{ top: '80%', left: '50%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-40" style={{ top: '75%', left: '15%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-55" style={{ top: '85%', left: '65%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-65" style={{ top: '12%', left: '55%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-45" style={{ top: '22%', left: '40%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-75" style={{ top: '38%', left: '60%' }} />
+          <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '48%', left: '30%' }} />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
@@ -349,24 +356,6 @@ const Home = () => {
             >
               {t.home.exploreCards}
             </button>
-          </div>
-
-          {/* Floating Cards Preview */}
-          <div className="hidden md:flex justify-center mt-16 gap-4">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="w-24 h-36 rounded-xl bg-gradient-to-br from-surface-dark to-black border border-white/10 shadow-2xl transform hover:-translate-y-2 transition-transform"
-                style={{
-                  transform: `rotate(${(i - 1) * 8}deg)`,
-                  marginTop: i === 1 ? '0' : '20px',
-                }}
-              >
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary/50 text-3xl">style</span>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -441,35 +430,21 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-20 px-6 bg-surface-dark/50">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-white mb-2">{t.home.featuredProducts}</h2>
-              <p className="text-gray-400">{t.home.featuredProductsSubtitle}</p>
-            </div>
+      {/* Shop CTA */}
+      <section className="py-16 px-6">
+        <div className="max-w-[800px] mx-auto text-center">
+          <div className="bg-gradient-to-br from-surface-dark to-card-dark rounded-2xl p-8 md:p-12 border border-border-dark">
+            <span className="material-symbols-outlined text-5xl text-primary mb-4">storefront</span>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{t.home.featuredProducts}</h2>
+            <p className="text-gray-400 mb-6">{t.home.featuredProductsSubtitle}</p>
             <button
               onClick={() => navigate('/shop')}
-              className="hidden sm:flex items-center gap-2 text-primary font-bold text-sm hover:gap-3 transition-all"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary-hover rounded-xl text-white font-bold transition-all"
             >
-              {t.home.viewAll}
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
+              {t.nav.shop}
+              <span className="material-symbols-outlined">arrow_forward</span>
             </button>
           </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {featuredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-
-          <button
-            onClick={() => navigate('/shop')}
-            className="sm:hidden w-full mt-6 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-primary font-bold transition-colors"
-          >
-            {t.home.viewAll}
-          </button>
         </div>
       </section>
 
@@ -1181,37 +1156,11 @@ const History = () => {
     }
   });
 
-  const mockHistory = [
-    {
-      id: 1,
-      date: isPortuguese ? 'Hoje, 9:00' : 'Today, 9:00 AM',
-      spreadName: isPortuguese ? 'Tiragem Diária' : 'Daily Draw',
-      typeBadge: isPortuguese ? 'DIÁRIA' : 'DAILY',
-      typeColor: 'text-primary bg-primary/10',
-      previewCards: ['https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg'],
-      notes: isPortuguese ? 'Novos começos, inocência, espontaneidade...' : 'New beginnings, innocence, spontaneity...'
-    },
-    {
-      id: 2,
-      date: isPortuguese ? 'Ontem' : 'Yesterday',
-      spreadName: isPortuguese ? 'Sim/Não' : 'Yes/No Question',
-      typeBadge: isPortuguese ? 'SIM/NÃO' : 'YES/NO',
-      typeColor: 'text-blue-400 bg-blue-500/10',
-      previewCards: ['https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg'],
-      notes: isPortuguese ? 'Ilusão, medo, ansiedade. Confie na sua intuição...' : 'Illusion, fear, anxiety. Trust your intuition...'
-    },
-    {
-      id: 3,
-      date: '24 Out',
-      spreadName: isPortuguese ? 'Tiragem do Amor' : 'Love Spread',
-      typeBadge: isPortuguese ? 'AMOR' : 'LOVE',
-      typeColor: 'text-pink-400 bg-pink-500/10',
-      previewCards: ['https://www.sacred-texts.com/tarot/pkt/img/cuac.jpg'],
-      notes: isPortuguese ? 'Novos sentimentos, espiritualidade, intuição...' : 'New feelings, spirituality, intuition...'
-    }
-  ];
-
-  const allReadings = [...savedReadings, ...mockHistory];
+  const deleteReading = (id: number) => {
+    const updated = savedReadings.filter(r => r.id !== id);
+    setSavedReadings(updated);
+    localStorage.setItem('tarot-history', JSON.stringify(updated));
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background-dark text-white">
@@ -1229,25 +1178,45 @@ const History = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {allReadings.map((item) => (
-              <div key={item.id} className="bg-card-dark rounded-xl overflow-hidden border border-border-dark group cursor-pointer hover:border-primary/30 transition-all">
-                <div
-                  className="h-32 w-full bg-cover bg-center relative"
-                  style={{backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url("${item.previewCards[0]}")`}}
-                >
-                  <div className={`absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm ${item.typeColor}`}>
-                    {item.typeBadge}
+          {savedReadings.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <span className="material-symbols-outlined text-6xl text-gray-600 mb-4">history</span>
+              <h3 className="text-xl font-bold text-white mb-2">{t.history.noHistory}</h3>
+              <p className="text-gray-400 mb-6">{t.history.startFirst}</p>
+              <button
+                onClick={() => navigate('/')}
+                className="px-6 py-3 bg-primary hover:bg-primary-hover rounded-xl text-white font-bold transition-colors"
+              >
+                {t.home.startReading}
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {savedReadings.map((item) => (
+                <div key={item.id} className="bg-card-dark rounded-xl overflow-hidden border border-border-dark group hover:border-primary/30 transition-all">
+                  <div
+                    className="h-32 w-full bg-cover bg-center relative"
+                    style={{backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url("${item.previewCards?.[0] || 'https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg'}")`}}
+                  >
+                    <div className={`absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm ${item.typeColor}`}>
+                      {item.typeBadge}
+                    </div>
+                    <button
+                      onClick={() => deleteReading(item.id)}
+                      className="absolute top-2 left-2 p-1.5 rounded bg-red-500/20 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/40"
+                    >
+                      <span className="material-symbols-outlined text-sm">delete</span>
+                    </button>
+                  </div>
+                  <div className="p-4">
+                    <div className="text-xs text-gray-500 mb-1">{item.date}</div>
+                    <h3 className="text-white font-bold text-lg mb-1">{item.spreadName}</h3>
+                    <p className="text-gray-400 text-xs line-clamp-2">{item.notes}</p>
                   </div>
                 </div>
-                <div className="p-4">
-                  <div className="text-xs text-gray-500 mb-1">{item.date}</div>
-                  <h3 className="text-white font-bold text-lg mb-1 group-hover:text-primary transition-colors">{item.spreadName}</h3>
-                  <p className="text-gray-400 text-xs line-clamp-2">{item.notes}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
       <Footer />
@@ -1538,6 +1507,34 @@ const Result = () => {
       const result = await getGeminiInterpretation(session);
       setAnalysis(result);
       setIsLoading(false);
+
+      // Save to history
+      try {
+        const historyItem = {
+          id: Date.now(),
+          date: new Date().toLocaleString(isPortuguese ? 'pt-BR' : 'en-US', {
+            day: '2-digit',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+          }),
+          spreadName: state.spread.name,
+          typeBadge: state.spread.cardCount === 3 ? (isPortuguese ? 'RÁPIDA' : 'QUICK') :
+                     state.spread.cardCount === 10 ? (isPortuguese ? 'COMPLETA' : 'FULL') :
+                     (isPortuguese ? 'AMOR' : 'LOVE'),
+          typeColor: state.spread.cardCount === 3 ? 'text-primary bg-primary/10' :
+                     state.spread.cardCount === 10 ? 'text-blue-400 bg-blue-500/10' :
+                     'text-pink-400 bg-pink-500/10',
+          previewCards: state.cards.slice(0, 3).map((c: TarotCard) => c.imageUrl),
+          notes: result?.synthesis?.slice(0, 100) + '...' || ''
+        };
+
+        const existing = JSON.parse(localStorage.getItem('tarot-history') || '[]');
+        const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
+        localStorage.setItem('tarot-history', JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to save to history:', e);
+      }
     };
 
     fetchInterpretation();
