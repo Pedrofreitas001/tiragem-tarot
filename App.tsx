@@ -1520,12 +1520,12 @@ const Numerology = () => {
     return (
       <div className="bg-card-dark rounded-xl border border-border-dark hover:border-primary/30 p-5 transition-all group">
         <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-              <span className="text-2xl font-black text-primary">{num.value}</span>
+          <div className="flex items-center gap-4">
+            <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${num.masterNumber ? 'bg-gradient-to-br from-yellow-500/30 to-orange-500/30 border border-yellow-500/50' : 'bg-primary/20'}`}>
+              <span className="text-3xl font-black text-white">{num.value}</span>
             </div>
             <div>
-              <h3 className="text-white font-bold">{title}</h3>
+              <h3 className="text-white font-bold text-lg">{title}</h3>
               <p className="text-gray-500 text-xs">{description}</p>
             </div>
           </div>
@@ -1533,8 +1533,8 @@ const Numerology = () => {
         </div>
 
         <div className="mt-4">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-primary font-bold text-sm">{meaning}</span>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-primary font-bold">{meaning}</span>
             {num.masterNumber && (
               <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-[10px] font-bold rounded-full uppercase">
                 {t.numerology.masterNumber}
@@ -1543,7 +1543,7 @@ const Numerology = () => {
           </div>
           <div className="flex flex-wrap gap-1.5">
             {keywords.slice(0, 4).map((kw, i) => (
-              <span key={i} className="px-2 py-1 bg-surface-dark rounded text-gray-400 text-xs">
+              <span key={i} className="px-2 py-1 bg-surface-dark rounded text-white/80 text-xs">
                 {kw}
               </span>
             ))}
@@ -1573,10 +1573,12 @@ const Numerology = () => {
 
             {/* Universal Day Card */}
             <div className="max-w-md mx-auto mb-10">
-              <div className="bg-gradient-to-br from-primary/20 to-surface-dark rounded-xl border border-primary/30 p-6 text-center">
-                <p className="text-gray-400 text-sm mb-2">{t.numerology.results.universalDay}</p>
-                <div className="text-5xl font-black text-primary mb-2">{universalDay}</div>
-                <p className="text-gray-400 text-sm">{t.numerology.results.todayEnergy}</p>
+              <div className="bg-gradient-to-br from-primary/20 to-surface-dark rounded-xl border border-primary/30 p-8 text-center">
+                <p className="text-gray-400 text-sm mb-3">{t.numerology.results.universalDay}</p>
+                <div className="w-24 h-24 rounded-full bg-primary/30 border-2 border-primary mx-auto flex items-center justify-center mb-3">
+                  <span className="text-5xl font-black text-white">{universalDay}</span>
+                </div>
+                <p className="text-gray-300 text-sm">{t.numerology.results.todayEnergy}</p>
               </div>
             </div>
 

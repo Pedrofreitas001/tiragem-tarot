@@ -95,35 +95,26 @@ export const getSunSign = (birthDate: Date): ZodiacInfo => {
   const month = birthDate.getMonth() + 1;
   const day = birthDate.getDate();
 
-  const signDates = [
-    { sign: 0, start: [3, 21], end: [4, 19] },   // Aries
-    { sign: 1, start: [4, 20], end: [5, 20] },   // Taurus
-    { sign: 2, start: [5, 21], end: [6, 20] },   // Gemini
-    { sign: 3, start: [6, 21], end: [7, 22] },   // Cancer
-    { sign: 4, start: [7, 23], end: [8, 22] },   // Leo
-    { sign: 5, start: [8, 23], end: [9, 22] },   // Virgo
-    { sign: 6, start: [9, 23], end: [10, 22] },  // Libra
-    { sign: 7, start: [10, 23], end: [11, 21] }, // Scorpio
-    { sign: 8, start: [11, 22], end: [12, 21] }, // Sagittarius
-    { sign: 9, start: [12, 22], end: [1, 19] },  // Capricorn
-    { sign: 10, start: [1, 20], end: [2, 18] },  // Aquarius
-    { sign: 11, start: [2, 19], end: [3, 20] }   // Pisces
-  ];
-
-  for (const { sign, start, end } of signDates) {
-    if (sign === 9) { // Capricorn spans year end
-      if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) {
-        return ZODIAC_SIGNS[sign];
-      }
-    } else if (
-      (month === start[0] && day >= start[1]) ||
-      (month === end[0] && day <= end[1])
-    ) {
-      return ZODIAC_SIGNS[sign];
-    }
+  // Handle invalid dates
+  if (isNaN(month) || isNaN(day)) {
+    return ZODIAC_SIGNS[0]; // Default to Aries
   }
 
-  return ZODIAC_SIGNS[0];
+  // Simple and reliable date-based lookup
+  if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return ZODIAC_SIGNS[0];  // Aries
+  if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return ZODIAC_SIGNS[1];  // Taurus
+  if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return ZODIAC_SIGNS[2];  // Gemini
+  if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return ZODIAC_SIGNS[3];  // Cancer
+  if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return ZODIAC_SIGNS[4];  // Leo
+  if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return ZODIAC_SIGNS[5];  // Virgo
+  if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return ZODIAC_SIGNS[6]; // Libra
+  if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return ZODIAC_SIGNS[7]; // Scorpio
+  if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return ZODIAC_SIGNS[8]; // Sagittarius
+  if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return ZODIAC_SIGNS[9];  // Capricorn
+  if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return ZODIAC_SIGNS[10];  // Aquarius
+  if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return ZODIAC_SIGNS[11];  // Pisces
+
+  return ZODIAC_SIGNS[0]; // Default to Aries
 };
 
 // Estimate moon sign (simplified - would need ephemeris for accuracy)
@@ -162,27 +153,33 @@ const calculatePlanetPositions = (birthDate: Date): Planet[] => {
   const sunSign = getSunSign(birthDate);
   const sunSignIndex = ZODIAC_SIGNS.findIndex(z => z.sign === sunSign.sign);
 
-  // Simplified planetary positions based on birth date
+  // Ensure valid index
+  const safeIndex = sunSignIndex >= 0 ? sunSignIndex : 0;
+  const dayOfYear = Math.floor((birthDate.getTime() - new Date(birthDate.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+  const year = birthDate.getFullYear();
+
+  // Simplified planetary positions based on birth date (deterministic, no random)
   // In reality, this would require ephemeris data
   const planetOffsets: Record<string, number> = {
     Sun: 0,
-    Moon: Math.floor(Math.random() * 12), // Already calculated separately
-    Mercury: Math.floor(Math.random() * 3) - 1, // Usually within 1 sign of Sun
-    Venus: Math.floor(Math.random() * 3) - 1,   // Usually within 2 signs of Sun
-    Mars: Math.floor(Math.random() * 12),
-    Jupiter: Math.floor(birthDate.getFullYear() / 12) % 12, // ~1 year per sign
-    Saturn: Math.floor(birthDate.getFullYear() / 2.5) % 12, // ~2.5 years per sign
-    Uranus: Math.floor(birthDate.getFullYear() / 7) % 12,   // ~7 years per sign
-    Neptune: Math.floor(birthDate.getFullYear() / 14) % 12, // ~14 years per sign
-    Pluto: Math.floor(birthDate.getFullYear() / 20) % 12    // ~20 years per sign
+    Moon: Math.floor((dayOfYear * 12) / 365) % 12, // Approximate moon position
+    Mercury: ((dayOfYear % 88) * 12 / 88) | 0, // Mercury orbit ~88 days
+    Venus: ((dayOfYear % 225) * 12 / 225) | 0, // Venus orbit ~225 days
+    Mars: ((dayOfYear % 687) * 12 / 687) | 0, // Mars orbit ~687 days
+    Jupiter: Math.floor(year / 12) % 12, // ~12 years per cycle
+    Saturn: Math.floor(year / 2.5) % 12, // ~29 years per cycle
+    Uranus: Math.floor(year / 7) % 12,   // ~84 years per cycle
+    Neptune: Math.floor(year / 14) % 12, // ~165 years per cycle
+    Pluto: Math.floor(year / 20) % 12    // ~248 years per cycle
   };
 
   Object.entries(PLANET_DATA).forEach(([key, data], index) => {
-    const signIndex = (sunSignIndex + (planetOffsets[key] || 0) + 12) % 12;
+    const signIndex = (safeIndex + (planetOffsets[key] || 0) + 12) % 12;
+    const finalSign = ZODIAC_SIGNS[signIndex] || ZODIAC_SIGNS[0];
     planets.push({
       name: data.name,
       name_pt: data.name_pt,
-      sign: ZODIAC_SIGNS[signIndex],
+      sign: finalSign,
       house: (index % 12) + 1,
       description: data.desc,
       description_pt: data.desc_pt,
