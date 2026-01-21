@@ -273,14 +273,14 @@ const Home = () => {
   const spreadIcons: Record<string, string> = {
     'three_card': 'token',
     'celtic_cross': 'grid_view',
-    'love_relationship': 'favorite',
+    'love_check': 'favorite',
   };
 
   const getSpreadTranslation = (spreadId: string) => {
     switch (spreadId) {
       case 'three_card': return t.spreads.threeCard;
       case 'celtic_cross': return t.spreads.celticCross;
-      case 'love_relationship': return t.spreads.loveRelationship;
+      case 'love_check': return t.spreads.loveRelationship;
       default: return { name: '', description: '', difficulty: '' };
     }
   };
@@ -385,7 +385,7 @@ const Home = () => {
               const spreadImages: Record<string, string> = {
                 'three_card': 'https://images.unsplash.com/photo-1635497611324-129442752063?w=800&q=80',
                 'celtic_cross': 'https://images.unsplash.com/photo-1633167606207-d840b5070fc2?w=800&q=80',
-                'love_relationship': 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&q=80',
+                'love_check': 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&q=80',
               };
               return (
                 <div
