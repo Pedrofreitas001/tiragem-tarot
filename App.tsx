@@ -1728,7 +1728,6 @@ const Result = () => {
 
   const [analysis, setAnalysis] = useState<ReadingAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeCardIndex, setActiveCardIndex] = useState(1);
 
   useEffect(() => {
     if (!state?.spread || !state?.cards) {
@@ -1792,129 +1791,188 @@ const Result = () => {
   if (!state?.spread) return null;
 
   const { spread, cards } = state;
-  const activeCard = cards[activeCardIndex];
-  const activeInterpretation = analysis?.cards?.[activeCardIndex];
-  const activeLore = activeCard ? getStaticLore(activeCard) : null;
+
+  const getArcanaType = (card: TarotCard): string => {
+    return card.arcana === ArcanaType.MAJOR
+      ? (isPortuguese ? 'Arcano Maior' : 'Major Arcana')
+      : (isPortuguese ? 'Arcano Menor' : 'Minor Arcana');
+  };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-dark text-white overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-background-dark text-white">
       <Header />
       <CartDrawer />
 
-      <div className="flex flex-1 overflow-hidden relative">
-        <main className="flex-1 flex flex-col relative z-10 overflow-y-auto">
-          <div className="flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
-            <div className="flex flex-wrap justify-between items-end gap-4 mb-6">
-              <div>
-                <h1 className="text-white text-3xl md:text-4xl font-black">{t.result.title}</h1>
-                <p className="text-gray-400">{spread.name}</p>
-              </div>
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
+        {/* Page Heading & Actions */}
+        <div className="flex flex-col md:flex-row flex-wrap justify-between gap-6 mb-10 items-start md:items-end">
+          <div className="flex flex-col gap-2 max-w-2xl">
+            <div className="flex items-center gap-2 text-primary text-sm font-bold uppercase tracking-wider mb-1">
+              <span className="material-symbols-outlined text-sm">calendar_month</span>
+              <span>{new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
             </div>
+            <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight text-white">{t.result.title}</h1>
+            <p className="text-gray-400 text-lg font-normal leading-relaxed mt-1">
+              {spread.name} {state.question && `— ${isPortuguese ? 'Foco' : 'Focus'}: ${state.question}`}
+            </p>
           </div>
-
-          <div className="flex-1 px-4 md:px-12 py-4 flex flex-col justify-center items-center min-h-[400px]">
-            <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-12 perspective-1000">
-              {cards.map((card: TarotCard, idx: number) => {
-                const isActive = idx === activeCardIndex;
-                const position = spread.positions[idx];
-
-                return (
-                  <div
-                    key={card.id}
-                    onClick={() => setActiveCardIndex(idx)}
-                    className={`flex flex-col items-center gap-4 group cursor-pointer ${isActive ? '-mt-0 sm:-mt-8' : ''}`}
-                  >
-                    <div className={`relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-2xl transition-all ${
-                      isActive ? 'shadow-[0_0_30px_rgba(147,17,212,0.25)] border-2 border-primary/50 ring-4 ring-primary/10' : 'border border-white/10'
-                    }`}>
-                      <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500" style={{backgroundImage: `url("${card.imageUrl}")`}}></div>
-                      <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent ${isActive ? 'opacity-80' : 'opacity-60'}`}></div>
-                      <div className={`absolute ${isActive ? 'bottom-6' : 'bottom-4'} left-0 right-0 text-center`}>
-                        <span className="uppercase tracking-widest text-xs font-bold text-primary mb-1 block">{position?.name}</span>
-                        <h3 className={`text-white font-bold ${isActive ? 'text-2xl' : 'text-xl'}`}>{card.name}</h3>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="flex-none p-6 md:p-8 flex justify-center w-full bg-gradient-to-t from-background-dark to-transparent">
+          <div className="flex gap-3 w-full md:w-auto">
+            <button
+              onClick={() => navigate('/history')}
+              className="flex-1 md:flex-none h-11 px-6 rounded-lg border border-white/10 bg-surface-dark hover:bg-white/5 text-white text-sm font-bold transition-colors flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined text-[18px]">history</span>
+              <span>{isPortuguese ? 'Histórico' : 'History'}</span>
+            </button>
             <button
               onClick={() => navigate('/')}
-              className="flex items-center justify-center gap-2 h-12 px-8 rounded-lg bg-primary hover:bg-primary-hover text-white font-bold transition-all"
+              className="flex-1 md:flex-none h-11 px-6 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-bold shadow-[0_0_20px_rgba(147,17,212,0.3)] transition-all flex items-center justify-center gap-2"
             >
-              <span className="material-symbols-outlined">cached</span>
-              {t.result.newReading}
+              <span className="material-symbols-outlined text-[18px]">cached</span>
+              <span>{t.result.newReading}</span>
             </button>
           </div>
-        </main>
-
-        <aside className="hidden lg:flex w-[400px] flex-col border-l border-border-dark bg-surface-dark overflow-y-auto">
-          <div className="p-8 flex flex-col gap-8">
-            <div>
-              <div className="flex items-center gap-2 text-primary mb-2">
-                <span className="material-symbols-outlined">auto_awesome</span>
-                <span className="text-xs font-bold uppercase tracking-widest">{t.result.interpretation}</span>
-              </div>
-              <h2 className="text-3xl font-black text-white mb-2">{activeCard?.name}</h2>
-              {activeLore && (
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {activeLore.keywords.slice(0, 3).map((kw, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold border border-primary/30">{kw}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-4 text-gray-300 leading-relaxed text-lg">
-              {isLoading ? (
-                <div className="space-y-3 animate-pulse">
-                  <div className="h-4 bg-white/10 rounded w-full"></div>
-                  <div className="h-4 bg-white/10 rounded w-5/6"></div>
-                  <p className="text-primary text-xs mt-2">{t.result.loading}</p>
-                </div>
-              ) : (
-                <>
-                  <p>{activeInterpretation?.interpretation || activeLore?.generalMeaning}</p>
-                  <div className="p-4 bg-surface-highlight rounded-lg border border-border-dark mt-4">
-                    <p className="text-sm italic text-white/80">"{activeLore?.advice}"</p>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {!isLoading && analysis && (
-              <div className="pt-6 border-t border-border-dark">
-                <h4 className="text-sm font-bold text-white uppercase tracking-widest mb-4">{t.result.synthesis}</h4>
-                <p className="text-gray-400 text-sm leading-relaxed">{analysis.synthesis}</p>
-                <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/20">
-                  <p className="text-primary text-sm font-medium">{analysis.advice}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </aside>
-      </div>
-
-      <div className="lg:hidden bg-surface-dark border-t border-border-dark p-6">
-        <div className="flex items-center gap-2 text-primary mb-3">
-          <span className="material-symbols-outlined">auto_awesome</span>
-          <span className="text-xs font-bold uppercase tracking-widest">{t.result.interpretation}</span>
         </div>
-        <h2 className="text-2xl font-black text-white mb-3">{activeCard?.name}</h2>
-        {isLoading ? (
-          <div className="space-y-2 animate-pulse">
-            <div className="h-3 bg-white/10 rounded w-full"></div>
-            <div className="h-3 bg-white/10 rounded w-5/6"></div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          {/* Left Column: Synthesis & Cards Grid */}
+          <div className="lg:col-span-5 flex flex-col gap-8 order-2 lg:order-1">
+            {/* Synthesis Card */}
+            <div className="bg-gradient-to-br from-primary/20 to-surface-dark border border-primary/30 rounded-xl p-6 md:p-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <span className="material-symbols-outlined text-[120px] text-primary">auto_awesome</span>
+              </div>
+              <div className="relative z-10">
+                <h2 className="text-white text-2xl font-bold mb-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary">psychology</span>
+                  {t.result.synthesis}
+                </h2>
+                {isLoading ? (
+                  <div className="space-y-3 animate-pulse">
+                    <div className="h-4 bg-white/10 rounded w-full"></div>
+                    <div className="h-4 bg-white/10 rounded w-5/6"></div>
+                    <div className="h-4 bg-white/10 rounded w-4/5"></div>
+                    <p className="text-primary text-xs mt-4">{t.result.loading}</p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-gray-200 leading-relaxed text-base mb-4">
+                      {analysis?.synthesis}
+                    </p>
+                    {analysis?.advice && (
+                      <div className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/20">
+                        <p className="text-primary text-sm font-medium flex items-start gap-2">
+                          <span className="material-symbols-outlined text-lg mt-0.5">tips_and_updates</span>
+                          {analysis.advice}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Visual Cards Grid */}
+            <div className="bg-surface-dark rounded-xl p-6 border border-white/5">
+              <h3 className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-4">
+                {isPortuguese ? 'Mesa de Cartas' : 'Card Spread'}
+              </h3>
+              <div className={`grid gap-3 ${cards.length <= 3 ? 'grid-cols-3' : cards.length <= 5 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                {cards.map((card: TarotCard, idx: number) => {
+                  const position = spread.positions[idx];
+                  return (
+                    <div key={card.id} className="relative group cursor-pointer overflow-hidden rounded-lg border border-white/10 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-primary/20 aspect-[2/3]">
+                      <div
+                        className="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-105"
+                        style={{ backgroundImage: `url("${card.imageUrl}")` }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2 md:p-3">
+                        <span className="text-[10px] text-primary font-bold uppercase truncate">{idx + 1}. {position?.name}</span>
+                        <span className="text-white font-bold text-xs md:text-sm truncate">{card.name}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        ) : (
-          <p className="text-gray-300 text-sm leading-relaxed">
-            {activeInterpretation?.interpretation || activeLore?.generalMeaning}
-          </p>
-        )}
-      </div>
+
+          {/* Right Column: Detailed Interpretation */}
+          <div className="lg:col-span-7 flex flex-col gap-6 order-1 lg:order-2">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
+              <h2 className="text-white text-2xl font-bold">{t.result.interpretation}</h2>
+            </div>
+
+            {/* Card Detail Items */}
+            {cards.map((card: TarotCard, idx: number) => {
+              const position = spread.positions[idx];
+              const cardInterpretation = analysis?.cards?.[idx];
+              const cardLore = getStaticLore(card);
+
+              return (
+                <article
+                  key={card.id}
+                  className="flex flex-col sm:flex-row gap-5 p-5 rounded-xl bg-surface-dark border border-white/5 hover:border-primary/30 transition-all shadow-sm hover:shadow-lg hover:shadow-black/20 group"
+                >
+                  {/* Card Image */}
+                  <div className="w-full sm:w-28 aspect-[2/3] shrink-0 rounded-lg overflow-hidden relative shadow-md">
+                    <div
+                      className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+                      style={{ backgroundImage: `url("${card.imageUrl}")` }}
+                    />
+                    <div className="absolute top-2 left-2 size-6 flex items-center justify-center rounded-full bg-black/60 text-white text-xs font-bold border border-white/10">
+                      {idx + 1}
+                    </div>
+                  </div>
+
+                  {/* Card Info */}
+                  <div className="flex flex-col flex-1 gap-3">
+                    <div className="flex justify-between items-start flex-wrap gap-2">
+                      <div>
+                        <span className="text-primary text-xs font-bold uppercase tracking-wider mb-1 block">
+                          {isPortuguese ? 'Posição' : 'Position'}: {position?.name}
+                        </span>
+                        <h3 className="text-white text-xl font-bold">{card.name}</h3>
+                      </div>
+                      <span className="px-2 py-1 rounded bg-white/5 text-gray-400 text-xs font-medium">
+                        {getArcanaType(card)}
+                      </span>
+                    </div>
+
+                    {/* Interpretation */}
+                    {isLoading ? (
+                      <div className="space-y-2 animate-pulse">
+                        <div className="h-3 bg-white/10 rounded w-full"></div>
+                        <div className="h-3 bg-white/10 rounded w-5/6"></div>
+                        <div className="h-3 bg-white/10 rounded w-4/5"></div>
+                      </div>
+                    ) : (
+                      <p className="text-gray-300 text-sm leading-relaxed">
+                        {cardInterpretation?.interpretation || cardLore?.generalMeaning}
+                      </p>
+                    )}
+
+                    {/* Keywords */}
+                    {cardLore?.keywords && (
+                      <div className="mt-auto pt-3 border-t border-white/5 flex flex-wrap gap-2 text-xs text-gray-400">
+                        <span className="flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[14px]">key</span>
+                          {isPortuguese ? 'Palavras-chave' : 'Keywords'}:
+                        </span>
+                        {cardLore.keywords.slice(0, 3).map((kw, i) => (
+                          <span key={i} className="text-primary">{kw}{i < 2 && cardLore.keywords[i + 1] ? ',' : ''}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };
