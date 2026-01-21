@@ -119,6 +119,11 @@ export const getSunSign = (birthDate: Date): ZodiacInfo => {
 
 // Estimate moon sign (simplified - would need ephemeris for accuracy)
 export const getMoonSign = (birthDate: Date): ZodiacInfo => {
+  // Handle invalid dates
+  if (!birthDate || isNaN(birthDate.getTime())) {
+    return ZODIAC_SIGNS[0];
+  }
+
   // The moon moves through all 12 signs in ~28 days (~2.3 days per sign)
   // This is a simplified calculation
   const dayOfYear = Math.floor((birthDate.getTime() - new Date(birthDate.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
@@ -129,22 +134,31 @@ export const getMoonSign = (birthDate: Date): ZodiacInfo => {
   const offset = ((year - 2000) * 365 + dayOfYear) % moonCycle;
   const signIndex = Math.floor((offset / moonCycle) * 12) % 12;
 
-  return ZODIAC_SIGNS[signIndex];
+  // Ensure valid index
+  const safeIndex = Math.abs(signIndex) % 12;
+  return ZODIAC_SIGNS[safeIndex] || ZODIAC_SIGNS[0];
 };
 
 // Calculate rising sign (ascendant) based on birth time
 export const getRisingSign = (birthDate: Date, birthHour: number): ZodiacInfo => {
+  // Handle invalid dates
+  if (!birthDate || isNaN(birthDate.getTime())) {
+    return ZODIAC_SIGNS[0];
+  }
+
   // The ascendant changes every ~2 hours
   // Simplified calculation: sun sign at birth + offset based on time
-  const sunSignIndex = ZODIAC_SIGNS.findIndex(z => z.sign === getSunSign(birthDate).sign);
+  const sunSign = getSunSign(birthDate);
+  const sunSignIndex = ZODIAC_SIGNS.findIndex(z => z.sign === sunSign.sign);
 
   // Each 2 hours shifts the rising sign by 1
-  const hourOffset = Math.floor(birthHour / 2);
+  const safeHour = isNaN(birthHour) ? 12 : birthHour;
+  const hourOffset = Math.floor(safeHour / 2);
 
   // At sunrise (~6am), rising = sun sign. Adjust from there
-  const risingIndex = (sunSignIndex + hourOffset - 3 + 12) % 12;
+  const risingIndex = ((sunSignIndex >= 0 ? sunSignIndex : 0) + hourOffset - 3 + 12) % 12;
 
-  return ZODIAC_SIGNS[risingIndex];
+  return ZODIAC_SIGNS[risingIndex] || ZODIAC_SIGNS[0];
 };
 
 // Calculate simplified planetary positions

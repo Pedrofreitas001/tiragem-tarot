@@ -1954,10 +1954,25 @@ const BirthChart = () => {
 
     setIsCalculating(true);
     setTimeout(() => {
-      const date = new Date(birthDate + 'T12:00:00');
-      const [hours] = birthTime.split(':').map(Number);
-      const result = calculateBirthChart(date, hours || 12);
-      setChart(result);
+      try {
+        const date = new Date(birthDate + 'T12:00:00');
+        if (isNaN(date.getTime())) {
+          console.error('Invalid date');
+          setIsCalculating(false);
+          return;
+        }
+        const [hours] = birthTime.split(':').map(Number);
+        const result = calculateBirthChart(date, hours || 12);
+
+        // Validate result has required properties
+        if (result && result.sunSign && result.moonSign && result.risingSign) {
+          setChart(result);
+        } else {
+          console.error('Invalid chart result');
+        }
+      } catch (error) {
+        console.error('Error calculating birth chart:', error);
+      }
       setIsCalculating(false);
     }, 1000);
   };
@@ -2093,48 +2108,48 @@ const BirthChart = () => {
               </h2>
               <div className="grid md:grid-cols-3 gap-4">
                 {/* Sun Sign */}
-                <div className={`rounded-xl border p-6 ${getBirthElementColor(chart.sunSign.element)}`}>
+                <div className={`rounded-xl border p-6 ${getBirthElementColor(chart.sunSign?.element || 'fire')}`}>
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-14 h-14 rounded-full bg-black/20 flex items-center justify-center text-3xl">
-                      {chart.sunSign.icon}
+                      {chart.sunSign?.icon || '♈'}
                     </div>
                     <div>
                       <p className="text-sm opacity-70">{t.birthChart.results.sunSign}</p>
-                      <h3 className="text-xl font-black">{isPortuguese ? chart.sunSign.sign_pt : chart.sunSign.sign}</h3>
+                      <h3 className="text-xl font-black">{isPortuguese ? chart.sunSign?.sign_pt : chart.sunSign?.sign}</h3>
                     </div>
                   </div>
                   <p className="text-sm opacity-70 mb-2">{t.birthChart.results.sunDesc}</p>
-                  <p className="text-sm">{getSignInterpretation(chart.sunSign, isPortuguese)}</p>
+                  <p className="text-sm">{chart.sunSign && getSignInterpretation(chart.sunSign, isPortuguese)}</p>
                 </div>
 
                 {/* Moon Sign */}
-                <div className={`rounded-xl border p-6 ${getBirthElementColor(chart.moonSign.element)}`}>
+                <div className={`rounded-xl border p-6 ${getBirthElementColor(chart.moonSign?.element || 'water')}`}>
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-14 h-14 rounded-full bg-black/20 flex items-center justify-center text-3xl">
-                      {chart.moonSign.icon}
+                      {chart.moonSign?.icon || '♋'}
                     </div>
                     <div>
                       <p className="text-sm opacity-70">{t.birthChart.results.moonSign}</p>
-                      <h3 className="text-xl font-black">{isPortuguese ? chart.moonSign.sign_pt : chart.moonSign.sign}</h3>
+                      <h3 className="text-xl font-black">{isPortuguese ? chart.moonSign?.sign_pt : chart.moonSign?.sign}</h3>
                     </div>
                   </div>
                   <p className="text-sm opacity-70 mb-2">{t.birthChart.results.moonDesc}</p>
-                  <p className="text-sm">{getSignInterpretation(chart.moonSign, isPortuguese)}</p>
+                  <p className="text-sm">{chart.moonSign && getSignInterpretation(chart.moonSign, isPortuguese)}</p>
                 </div>
 
                 {/* Rising Sign */}
-                <div className={`rounded-xl border p-6 ${getBirthElementColor(chart.risingSign.element)}`}>
+                <div className={`rounded-xl border p-6 ${getBirthElementColor(chart.risingSign?.element || 'air')}`}>
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-14 h-14 rounded-full bg-black/20 flex items-center justify-center text-3xl">
-                      {chart.risingSign.icon}
+                      {chart.risingSign?.icon || '♎'}
                     </div>
                     <div>
                       <p className="text-sm opacity-70">{t.birthChart.results.risingSign}</p>
-                      <h3 className="text-xl font-black">{isPortuguese ? chart.risingSign.sign_pt : chart.risingSign.sign}</h3>
+                      <h3 className="text-xl font-black">{isPortuguese ? chart.risingSign?.sign_pt : chart.risingSign?.sign}</h3>
                     </div>
                   </div>
                   <p className="text-sm opacity-70 mb-2">{t.birthChart.results.risingDesc}</p>
-                  <p className="text-sm">{getSignInterpretation(chart.risingSign, isPortuguese)}</p>
+                  <p className="text-sm">{chart.risingSign && getSignInterpretation(chart.risingSign, isPortuguese)}</p>
                 </div>
               </div>
             </div>
