@@ -216,6 +216,46 @@ export const en: TranslationKeys = {
     copyright: "All rights reserved",
   },
 
+  // Birth Chart
+  birthChart: {
+    title: "Birth Chart",
+    subtitle: "Discover the position of the stars at the moment of your birth",
+    form: {
+      birthDate: "Birth Date",
+      birthTime: "Birth Time",
+      birthTimeOptional: "(optional, for rising sign)",
+      calculate: "Generate My Chart",
+      calculating: "Calculating...",
+    },
+    results: {
+      title: "Your Birth Chart",
+      bigThree: "The Big Three",
+      sunSign: "Sun Sign",
+      sunDesc: "Your essence, ego and core identity",
+      moonSign: "Moon Sign",
+      moonDesc: "Your emotions, intuition and inner world",
+      risingSign: "Rising Sign",
+      risingDesc: "How you present yourself to the world",
+      planets: "Planetary Positions",
+      houses: "The 12 Houses",
+      elements: "Elemental Distribution",
+      modalities: "Modalities",
+      dominant: "Dominant",
+    },
+    elements: {
+      fire: "Fire",
+      earth: "Earth",
+      air: "Air",
+      water: "Water",
+    },
+    modalities: {
+      cardinal: "Cardinal",
+      fixed: "Fixed",
+      mutable: "Mutable",
+    },
+    newChart: "New Chart",
+  },
+
   // Cosmic Calendar
   cosmic: {
     title: "Cosmic Calendar",

@@ -10,6 +10,7 @@ import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
+import { calculateBirthChart, getSignInterpretation, getElementColor as getBirthElementColor, BirthChart as BirthChartType } from './services/birthChartService';
 
 // Extended CardLore with API description
 interface ExtendedCardLore extends CardLore {
@@ -162,6 +163,9 @@ const Header = () => {
             <button onClick={() => navigate('/cosmic')} className={`text-sm font-medium transition-colors ${isActive('/cosmic') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
               {t.cosmic.title}
             </button>
+            <button onClick={() => navigate('/birth-chart')} className={`text-sm font-medium transition-colors ${isActive('/birth-chart') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+              {t.birthChart.title}
+            </button>
             <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
               {t.nav.shop}
             </button>
@@ -201,6 +205,7 @@ const Header = () => {
             <button onClick={() => { navigate('/explore'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
             <button onClick={() => { navigate('/numerology'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.numerology.title}</button>
             <button onClick={() => { navigate('/cosmic'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.cosmic.title}</button>
+            <button onClick={() => { navigate('/birth-chart'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.birthChart.title}</button>
             <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
           </nav>
@@ -1933,6 +1938,316 @@ const CosmicCalendar = () => {
   );
 };
 
+// Birth Chart Page
+const BirthChart = () => {
+  const { t, isPortuguese } = useLanguage();
+  const [birthDate, setBirthDate] = useState('');
+  const [birthTime, setBirthTime] = useState('12:00');
+  const [chart, setChart] = useState<BirthChartType | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+
+  const handleCalculate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!birthDate) return;
+
+    setIsCalculating(true);
+    setTimeout(() => {
+      const date = new Date(birthDate + 'T12:00:00');
+      const [hours] = birthTime.split(':').map(Number);
+      const result = calculateBirthChart(date, hours || 12);
+      setChart(result);
+      setIsCalculating(false);
+    }, 1000);
+  };
+
+  const resetChart = () => {
+    setChart(null);
+    setBirthDate('');
+    setBirthTime('12:00');
+  };
+
+  const elementLabels = {
+    fire: isPortuguese ? t.birthChart.elements.fire : t.birthChart.elements.fire,
+    earth: isPortuguese ? t.birthChart.elements.earth : t.birthChart.elements.earth,
+    air: isPortuguese ? t.birthChart.elements.air : t.birthChart.elements.air,
+    water: isPortuguese ? t.birthChart.elements.water : t.birthChart.elements.water
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background-dark text-white">
+      <Header />
+      <CartDrawer />
+
+      <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-10 py-12">
+        {!chart ? (
+          <>
+            {/* Hero */}
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-bold mb-6">
+                <span className="material-symbols-outlined text-lg">globe</span>
+                {t.birthChart.title}
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black mb-4">{t.birthChart.title}</h1>
+              <p className="text-gray-400 text-lg max-w-xl mx-auto">{t.birthChart.subtitle}</p>
+            </div>
+
+            {/* Zodiac Wheel Visual */}
+            <div className="max-w-xs mx-auto mb-10">
+              <div className="relative aspect-square">
+                <div className="absolute inset-0 rounded-full border-4 border-primary/30 flex items-center justify-center">
+                  <div className="absolute inset-4 rounded-full border-2 border-primary/20"></div>
+                  <div className="absolute inset-8 rounded-full border border-primary/10"></div>
+                  <span className="material-symbols-outlined text-6xl text-primary/50">auto_awesome</span>
+                </div>
+                {['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'].map((icon, i) => {
+                  const angle = (i * 30 - 90) * (Math.PI / 180);
+                  const radius = 45;
+                  return (
+                    <div
+                      key={icon}
+                      className="absolute text-xl text-primary/70"
+                      style={{
+                        left: `${50 + radius * Math.cos(angle)}%`,
+                        top: `${50 + radius * Math.sin(angle)}%`,
+                        transform: 'translate(-50%, -50%)'
+                      }}
+                    >
+                      {icon}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleCalculate} className="max-w-md mx-auto space-y-6">
+              <div>
+                <label className="block text-white font-medium mb-2">{t.birthChart.form.birthDate}</label>
+                <input
+                  type="date"
+                  value={birthDate}
+                  onChange={(e) => setBirthDate(e.target.value)}
+                  className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white focus:border-primary focus:outline-none transition-colors"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-white font-medium mb-2">
+                  {t.birthChart.form.birthTime}
+                  <span className="text-gray-500 font-normal ml-2">{t.birthChart.form.birthTimeOptional}</span>
+                </label>
+                <input
+                  type="time"
+                  value={birthTime}
+                  onChange={(e) => setBirthTime(e.target.value)}
+                  className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white focus:border-primary focus:outline-none transition-colors"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isCalculating || !birthDate}
+                className="w-full py-4 bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white font-bold text-lg shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2"
+              >
+                {isCalculating ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                    {t.birthChart.form.calculating}
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined">globe</span>
+                    {t.birthChart.form.calculate}
+                  </>
+                )}
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            {/* Results Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-black mb-2">{t.birthChart.results.title}</h1>
+                <p className="text-gray-400">
+                  {new Date(birthDate).toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </p>
+              </div>
+              <button
+                onClick={resetChart}
+                className="px-6 py-3 bg-surface-dark hover:bg-white/10 border border-border-dark rounded-xl text-white font-medium transition-colors flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined">refresh</span>
+                {t.birthChart.newChart}
+              </button>
+            </div>
+
+            {/* Big Three */}
+            <div className="mb-10">
+              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">star</span>
+                {t.birthChart.results.bigThree}
+              </h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                {/* Sun Sign */}
+                <div className={`rounded-xl border p-6 ${getBirthElementColor(chart.sunSign.element)}`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-14 h-14 rounded-full bg-black/20 flex items-center justify-center text-3xl">
+                      {chart.sunSign.icon}
+                    </div>
+                    <div>
+                      <p className="text-sm opacity-70">{t.birthChart.results.sunSign}</p>
+                      <h3 className="text-xl font-black">{isPortuguese ? chart.sunSign.sign_pt : chart.sunSign.sign}</h3>
+                    </div>
+                  </div>
+                  <p className="text-sm opacity-70 mb-2">{t.birthChart.results.sunDesc}</p>
+                  <p className="text-sm">{getSignInterpretation(chart.sunSign, isPortuguese)}</p>
+                </div>
+
+                {/* Moon Sign */}
+                <div className={`rounded-xl border p-6 ${getBirthElementColor(chart.moonSign.element)}`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-14 h-14 rounded-full bg-black/20 flex items-center justify-center text-3xl">
+                      {chart.moonSign.icon}
+                    </div>
+                    <div>
+                      <p className="text-sm opacity-70">{t.birthChart.results.moonSign}</p>
+                      <h3 className="text-xl font-black">{isPortuguese ? chart.moonSign.sign_pt : chart.moonSign.sign}</h3>
+                    </div>
+                  </div>
+                  <p className="text-sm opacity-70 mb-2">{t.birthChart.results.moonDesc}</p>
+                  <p className="text-sm">{getSignInterpretation(chart.moonSign, isPortuguese)}</p>
+                </div>
+
+                {/* Rising Sign */}
+                <div className={`rounded-xl border p-6 ${getBirthElementColor(chart.risingSign.element)}`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-14 h-14 rounded-full bg-black/20 flex items-center justify-center text-3xl">
+                      {chart.risingSign.icon}
+                    </div>
+                    <div>
+                      <p className="text-sm opacity-70">{t.birthChart.results.risingSign}</p>
+                      <h3 className="text-xl font-black">{isPortuguese ? chart.risingSign.sign_pt : chart.risingSign.sign}</h3>
+                    </div>
+                  </div>
+                  <p className="text-sm opacity-70 mb-2">{t.birthChart.results.risingDesc}</p>
+                  <p className="text-sm">{getSignInterpretation(chart.risingSign, isPortuguese)}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Elements & Modalities */}
+            <div className="grid md:grid-cols-2 gap-6 mb-10">
+              {/* Elements */}
+              <div className="bg-card-dark rounded-xl border border-border-dark p-6">
+                <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary">category</span>
+                  {t.birthChart.results.elements}
+                </h3>
+                <div className="space-y-3">
+                  {Object.entries(chart.elements).map(([element, count]) => (
+                    <div key={element} className="flex items-center gap-3">
+                      <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${getBirthElementColor(element)}`}>
+                        {element === 'fire' ? '🔥' : element === 'earth' ? '🌍' : element === 'air' ? '💨' : '💧'}
+                      </span>
+                      <span className="text-gray-400 flex-1">{elementLabels[element as keyof typeof elementLabels]}</span>
+                      <div className="flex gap-1">
+                        {Array.from({ length: 10 }).map((_, i) => (
+                          <div key={i} className={`w-2 h-4 rounded-sm ${i < count ? getBirthElementColor(element).split(' ')[0].replace('text-', 'bg-').replace('-400', '-500') : 'bg-surface-dark'}`} />
+                        ))}
+                      </div>
+                      <span className="text-white font-bold w-6 text-right">{count}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-4 text-sm text-gray-400">
+                  {t.birthChart.results.dominant}: <span className="text-primary font-bold">{elementLabels[chart.dominantElement as keyof typeof elementLabels]}</span>
+                </p>
+              </div>
+
+              {/* Modalities */}
+              <div className="bg-card-dark rounded-xl border border-border-dark p-6">
+                <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary">tune</span>
+                  {t.birthChart.results.modalities}
+                </h3>
+                <div className="space-y-3">
+                  {Object.entries(chart.modalities).map(([modality, count]) => (
+                    <div key={modality} className="flex items-center gap-3">
+                      <span className="text-gray-400 flex-1 capitalize">
+                        {modality === 'cardinal' ? t.birthChart.modalities.cardinal :
+                         modality === 'fixed' ? t.birthChart.modalities.fixed :
+                         t.birthChart.modalities.mutable}
+                      </span>
+                      <div className="flex gap-1">
+                        {Array.from({ length: 10 }).map((_, i) => (
+                          <div key={i} className={`w-2 h-4 rounded-sm ${i < count ? 'bg-primary' : 'bg-surface-dark'}`} />
+                        ))}
+                      </div>
+                      <span className="text-white font-bold w-6 text-right">{count}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-4 text-sm text-gray-400">
+                  {t.birthChart.results.dominant}: <span className="text-primary font-bold capitalize">
+                    {chart.dominantModality === 'cardinal' ? t.birthChart.modalities.cardinal :
+                     chart.dominantModality === 'fixed' ? t.birthChart.modalities.fixed :
+                     t.birthChart.modalities.mutable}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            {/* Planets */}
+            <div className="mb-10">
+              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">public</span>
+                {t.birthChart.results.planets}
+              </h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-3">
+                {chart.planets.map((planet) => (
+                  <div key={planet.name} className="bg-card-dark rounded-xl border border-border-dark p-4 hover:border-primary/30 transition-colors">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="material-symbols-outlined text-primary">{planet.icon}</span>
+                      <span className="text-white font-bold text-sm">{isPortuguese ? planet.name_pt : planet.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{planet.sign.icon}</span>
+                      <span className="text-gray-400 text-sm">{isPortuguese ? planet.sign.sign_pt : planet.sign.sign}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Houses */}
+            <div>
+              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">home</span>
+                {t.birthChart.results.houses}
+              </h2>
+              <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {chart.houses.map((house) => (
+                  <div key={house.number} className="bg-surface-dark rounded-lg p-4 border border-border-dark">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-primary font-bold">{isPortuguese ? house.name_pt : house.name}</span>
+                      <span className="text-lg">{house.sign.icon}</span>
+                    </div>
+                    <p className="text-gray-500 text-xs">{isPortuguese ? house.meaning_pt : house.meaning}</p>
+                    <p className="text-gray-400 text-sm mt-1">{isPortuguese ? house.sign.sign_pt : house.sign.sign}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
 // Explore Page
 const Explore = () => {
   const navigate = useNavigate();
@@ -2455,6 +2770,7 @@ const App = () => {
             <Route path="/history" element={<History />} />
             <Route path="/numerology" element={<Numerology />} />
             <Route path="/cosmic" element={<CosmicCalendar />} />
+            <Route path="/birth-chart" element={<BirthChart />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/shop/:slug" element={<ProductDetail />} />
             <Route path="/checkout" element={<Checkout />} />

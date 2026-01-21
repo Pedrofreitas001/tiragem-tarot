@@ -214,6 +214,46 @@ export const pt = {
     copyright: "Todos os direitos reservados",
   },
 
+  // Birth Chart
+  birthChart: {
+    title: "Mapa Astral",
+    subtitle: "Descubra a posição dos astros no momento do seu nascimento",
+    form: {
+      birthDate: "Data de Nascimento",
+      birthTime: "Hora de Nascimento",
+      birthTimeOptional: "(opcional, para ascendente)",
+      calculate: "Gerar Meu Mapa",
+      calculating: "Calculando...",
+    },
+    results: {
+      title: "Seu Mapa Astral",
+      bigThree: "Os Três Grandes",
+      sunSign: "Signo Solar",
+      sunDesc: "Sua essência, ego e identidade central",
+      moonSign: "Signo Lunar",
+      moonDesc: "Suas emoções, intuição e mundo interior",
+      risingSign: "Ascendente",
+      risingDesc: "Como você se apresenta ao mundo",
+      planets: "Posições Planetárias",
+      houses: "As 12 Casas",
+      elements: "Distribuição Elemental",
+      modalities: "Modalidades",
+      dominant: "Dominante",
+    },
+    elements: {
+      fire: "Fogo",
+      earth: "Terra",
+      air: "Ar",
+      water: "Água",
+    },
+    modalities: {
+      cardinal: "Cardinal",
+      fixed: "Fixo",
+      mutable: "Mutável",
+    },
+    newChart: "Novo Mapa",
+  },
+
   // Cosmic Calendar
   cosmic: {
     title: "Calendário Cósmico",
