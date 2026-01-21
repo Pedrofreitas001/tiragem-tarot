@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
-import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore, HistoryItem } from './types';
+import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
 import { getGeminiInterpretation } from './services/geminiService';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
+import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
+import { CartProvider, useCart } from './contexts/CartContext';
+import { PRODUCTS, getProductBySlug, getFeaturedProducts } from './data/products';
+import { Product, ProductVariant, ProductCategory } from './types/product';
 
 // Extended CardLore with API description
 interface ExtendedCardLore extends CardLore {
@@ -17,55 +21,180 @@ preloadCards();
 
 // --- Helper Functions ---
 const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=Tarot";
-    e.currentTarget.onerror = null;
+  e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=Tarot";
+  e.currentTarget.onerror = null;
+};
+
+const formatPrice = (price: number, currency: string) => {
+  if (currency === 'R$') {
+    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+  }
+  return `$${(price / 5).toFixed(2)}`;
 };
 
 // --- Components ---
+
+// Cart Drawer
+const CartDrawer = () => {
+  const { t, isPortuguese } = useLanguage();
+  const { items, isOpen, toggleCart, removeItem, updateQuantity, getSubtotal, getItemKey } = useCart();
+  const navigate = useNavigate();
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={() => toggleCart(false)} />
+      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-card-dark border-l border-border-dark z-50 flex flex-col animate-slide-in-right">
+        <div className="flex items-center justify-between p-6 border-b border-border-dark">
+          <h2 className="text-xl font-bold text-white">{t.cart.title}</h2>
+          <button onClick={() => toggleCart(false)} className="text-gray-400 hover:text-white">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        {items.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+            <span className="material-symbols-outlined text-6xl text-gray-600 mb-4">shopping_cart</span>
+            <p className="text-gray-400 mb-4">{t.cart.empty}</p>
+            <button
+              onClick={() => { toggleCart(false); navigate('/shop'); }}
+              className="px-6 py-3 bg-primary hover:bg-primary-hover rounded-lg text-white font-bold transition-colors"
+            >
+              {t.cart.continueShopping}
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {items.map(item => {
+                const price = item.variant?.price ?? item.product.price;
+                const name = isPortuguese ? item.product.name : item.product.name_en;
+                const variantName = item.variant ? (isPortuguese ? item.variant.name : item.variant.name_en) : null;
+
+                return (
+                  <div key={getItemKey(item)} className="flex gap-4 bg-surface-dark rounded-lg p-3">
+                    <img
+                      src={item.product.images[0]}
+                      alt={name}
+                      className="w-20 h-20 object-cover rounded-lg"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-white font-medium text-sm truncate">{name}</h3>
+                      {variantName && <p className="text-gray-500 text-xs">{variantName}</p>}
+                      <p className="text-primary font-bold mt-1">{formatPrice(price, t.common.currency)}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <button
+                          onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.variant?.id)}
+                          className="w-6 h-6 rounded bg-white/10 text-white hover:bg-white/20 text-sm"
+                        >-</button>
+                        <span className="text-white text-sm w-6 text-center">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.variant?.id)}
+                          className="w-6 h-6 rounded bg-white/10 text-white hover:bg-white/20 text-sm"
+                        >+</button>
+                        <button
+                          onClick={() => removeItem(item.product.id, item.variant?.id)}
+                          className="ml-auto text-red-400 hover:text-red-300 text-xs"
+                        >
+                          {t.cart.remove}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="border-t border-border-dark p-6 space-y-4">
+              <div className="flex justify-between text-gray-400">
+                <span>{t.cart.subtotal}</span>
+                <span className="text-white font-bold">{formatPrice(getSubtotal(), t.common.currency)}</span>
+              </div>
+              <button
+                onClick={() => { toggleCart(false); navigate('/checkout'); }}
+                className="w-full py-3 bg-primary hover:bg-primary-hover rounded-lg text-white font-bold transition-colors"
+              >
+                {t.cart.checkout}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </>
+  );
+};
 
 // Navigation Header
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
+  const { toggleCart, getItemCount } = useCart();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
+  const itemCount = getItemCount();
 
   return (
-    <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-sm sticky top-0 z-50 border-b border-border-dark">
+    <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
       <div className="flex flex-col w-full max-w-[1200px]">
-        <div className="flex items-center justify-between whitespace-nowrap px-6 py-4 lg:px-10">
-          <div className="flex items-center gap-4 text-white cursor-pointer" onClick={() => navigate('/')}>
-            <div className="size-8 text-primary">
-              <span className="material-symbols-outlined text-[32px]">auto_awesome</span>
+        <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
+          <div className="flex items-center gap-3 text-white cursor-pointer" onClick={() => navigate('/')}>
+            <div className="size-9 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/30">
+              <span className="material-symbols-outlined text-[22px] text-white">auto_awesome</span>
             </div>
-            <h2 className="text-white text-xl font-bold leading-tight tracking-[-0.015em]">Mystic Tarot</h2>
+            <h2 className="text-white text-lg font-bold leading-tight tracking-tight hidden sm:block">Mystic Tarot</h2>
           </div>
-          <div className="flex flex-1 justify-end gap-8">
-            <div className="hidden md:flex items-center gap-9">
-              <button
-                onClick={() => navigate('/')}
-                className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-white' : 'text-gray-300 hover:text-white'}`}
-              >
-                New Reading
-              </button>
-              <button
-                onClick={() => navigate('/history')}
-                className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-300 hover:text-white'}`}
-              >
-                History
-              </button>
-              <button
-                onClick={() => navigate('/explore')}
-                className={`text-sm font-medium transition-colors ${isActive('/explore') ? 'text-white' : 'text-gray-300 hover:text-white'}`}
-              >
-                Card Meanings
-              </button>
-            </div>
-            <button className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary hover:bg-primary/90 transition-colors text-white text-sm font-bold leading-normal tracking-[0.015em]">
-              <span className="truncate">Log In</span>
+
+          <nav className="hidden md:flex items-center gap-8">
+            <button onClick={() => navigate('/')} className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+              {t.nav.newReading}
+            </button>
+            <button onClick={() => navigate('/explore')} className={`text-sm font-medium transition-colors ${isActive('/explore') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+              {t.nav.cardMeanings}
+            </button>
+            <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+              {t.nav.shop}
+            </button>
+            <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+              {t.nav.history}
+            </button>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <LanguageToggle />
+
+            <button
+              onClick={() => toggleCart(true)}
+              className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
+            >
+              <span className="material-symbols-outlined text-gray-300 hover:text-white">shopping_bag</span>
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full text-[10px] font-bold text-white flex items-center justify-center">
+                  {itemCount}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-white/5"
+            >
+              <span className="material-symbols-outlined text-white">{mobileMenuOpen ? 'close' : 'menu'}</span>
             </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
+            <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.newReading}</button>
+            <button onClick={() => { navigate('/explore'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
+            <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
+            <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
+          </nav>
+        )}
       </div>
     </header>
   );
@@ -74,33 +203,55 @@ const Header = () => {
 // Footer Component
 const Footer = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
-    <footer className="flex justify-center w-full bg-background-dark border-t border-border-dark py-10 mt-auto">
+    <footer className="flex justify-center w-full bg-[#0d090f] border-t border-border-dark py-12 mt-auto">
       <div className="flex flex-col w-full max-w-[1200px] px-6 md:px-10">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-white">
-              <span className="material-symbols-outlined text-primary">auto_awesome</span>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+          <div className="md:col-span-1">
+            <div className="flex items-center gap-2 text-white mb-4">
+              <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
+                <span className="material-symbols-outlined text-lg">auto_awesome</span>
+              </div>
               <span className="font-bold text-lg">Mystic Tarot</span>
             </div>
-            <p className="text-gray-500 text-sm max-w-xs">Connecting you with your inner wisdom through the ancient art of Tarot.</p>
+            <p className="text-gray-500 text-sm leading-relaxed">{t.footer.description}</p>
           </div>
-          <div className="flex gap-8 flex-wrap">
-            <div className="flex flex-col gap-3">
-              <h4 className="text-white font-bold text-sm">Explore</h4>
-              <button onClick={() => navigate('/')} className="text-gray-400 text-sm hover:text-white text-left">Readings</button>
-              <button onClick={() => navigate('/explore')} className="text-gray-400 text-sm hover:text-white text-left">Card Library</button>
+
+          <div>
+            <h4 className="text-white font-bold text-sm mb-4">{t.footer.explore}</h4>
+            <div className="flex flex-col gap-2">
+              <button onClick={() => navigate('/')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.readings}</button>
+              <button onClick={() => navigate('/explore')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.cardLibrary}</button>
+              <button onClick={() => navigate('/history')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.history}</button>
             </div>
-            <div className="flex flex-col gap-3">
-              <h4 className="text-white font-bold text-sm">Support</h4>
-              <span className="text-gray-400 text-sm">Help Center</span>
-              <span className="text-gray-400 text-sm">Privacy Policy</span>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold text-sm mb-4">{t.footer.shop}</h4>
+            <div className="flex flex-col gap-2">
+              <button onClick={() => navigate('/shop')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.products}</button>
+              <button onClick={() => navigate('/shop')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.cart}</button>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold text-sm mb-4">{t.footer.support}</h4>
+            <div className="flex flex-col gap-2">
+              <span className="text-gray-400 text-sm">{t.footer.help}</span>
+              <span className="text-gray-400 text-sm">{t.footer.contact}</span>
+              <span className="text-gray-400 text-sm">{t.footer.privacy}</span>
             </div>
           </div>
         </div>
-        <div className="border-t border-border-dark mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-600 text-xs">© 2025 Mystic Tarot. All rights reserved.</p>
+
+        <div className="border-t border-border-dark pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-gray-600 text-xs">© 2025 Mystic Tarot. {t.footer.copyright}</p>
+          <div className="flex items-center gap-4">
+            <span className="text-gray-600 text-xs">Secure payments via</span>
+            <span className="text-green-500 font-bold text-sm">Mercado Pago</span>
+          </div>
         </div>
       </div>
     </footer>
@@ -109,406 +260,1061 @@ const Footer = () => {
 
 // --- Pages ---
 
-// Card Details Page
-const CardDetails = () => {
-    const { cardId } = useParams();
-    const navigate = useNavigate();
-    const [card, setCard] = useState<TarotCard | null>(null);
-    const [lore, setLore] = useState<ExtendedCardLore | null>(null);
-    const [apiCard, setApiCard] = useState<ApiTarotCard | null>(null);
-    const [isLoadingApi, setIsLoadingApi] = useState(true);
-
-    useEffect(() => {
-        const deck = generateDeck();
-        const foundCard = deck.find(c => c.id === cardId);
-
-        if (foundCard) {
-            setCard(foundCard);
-            const staticData = getStaticLore(foundCard);
-            setLore(staticData);
-
-            // Fetch API data for enhanced description
-            setIsLoadingApi(true);
-            fetchCardByName(foundCard.name).then(apiData => {
-                if (apiData) {
-                    setApiCard(apiData);
-                    // Merge API data with local lore
-                    setLore(prev => prev ? {
-                        ...prev,
-                        apiDescription: apiData.desc,
-                        apiMeaningUp: apiData.meaning_up,
-                        apiMeaningRev: apiData.meaning_rev
-                    } : prev);
-                }
-                setIsLoadingApi(false);
-            }).catch(() => setIsLoadingApi(false));
-        } else {
-            navigate('/explore');
-        }
-    }, [cardId, navigate]);
-
-    if (!card) return null;
-
-    return (
-        <div className="flex flex-col min-h-screen bg-background-dark text-white">
-            <Header />
-            <main className="flex-1 w-full max-w-6xl mx-auto px-6 py-12">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                    <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <span onClick={() => navigate('/explore')} className="cursor-pointer hover:text-primary">Guide</span>
-                        <span>/</span>
-                        <span className="text-white font-bold">{card.name}</span>
-                    </div>
-                    <button onClick={() => navigate('/explore')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-dark hover:bg-white/5 transition-colors text-sm font-medium">
-                        <span className="material-symbols-outlined text-base">arrow_back</span> Back
-                    </button>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    <div className="lg:col-span-4 flex flex-col items-center sticky top-24 self-start">
-                        <div className="relative w-full max-w-[350px] aspect-[2/3.4] rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
-                            <img src={card.imageUrl} alt={card.name} onError={handleImageError} className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
-                        </div>
-                    </div>
-
-                    <div className="lg:col-span-8 space-y-8">
-                        <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
-                                    {card.arcana} {card.suit !== Suit.NONE && `• ${card.suit}`}
-                                </span>
-                            </div>
-                            <h1 className="text-4xl md:text-5xl font-black leading-tight text-white mb-2">{card.name}</h1>
-                        </div>
-
-                        {lore ? (
-                            <>
-                                <div className="flex flex-wrap gap-2">
-                                    {lore.keywords.map((kw, i) => (
-                                        <div key={i} className="px-4 py-2 rounded-lg bg-surface-dark border border-white/5 text-sm font-medium text-gray-300 hover:border-primary/30 transition-colors">
-                                            {kw}
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="space-y-6">
-                                    <div className="prose prose-invert max-w-none">
-                                        <h3 className="text-xl font-bold flex items-center gap-2 text-white mb-3">
-                                            <span className="material-symbols-outlined text-primary">auto_awesome</span>
-                                            General Meaning
-                                        </h3>
-                                        <p className="text-gray-300 leading-relaxed text-lg bg-surface-dark/50 p-6 rounded-2xl border border-white/5">{lore.generalMeaning}</p>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="bg-surface-dark p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
-                                            <div className="size-10 rounded-full bg-pink-500/10 text-pink-400 flex items-center justify-center mb-4">
-                                                <span className="material-symbols-outlined">favorite</span>
-                                            </div>
-                                            <h4 className="text-lg font-bold text-white mb-2">Love</h4>
-                                            <p className="text-gray-400 text-sm leading-relaxed">{lore.love}</p>
-                                        </div>
-                                        <div className="bg-surface-dark p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
-                                            <div className="size-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4">
-                                                <span className="material-symbols-outlined">work</span>
-                                            </div>
-                                            <h4 className="text-lg font-bold text-white mb-2">Career</h4>
-                                            <p className="text-gray-400 text-sm leading-relaxed">{lore.career}</p>
-                                        </div>
-                                        <div className="bg-surface-dark p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-colors md:col-span-2">
-                                            <div className="size-10 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-4">
-                                                <span className="material-symbols-outlined">lightbulb</span>
-                                            </div>
-                                            <h4 className="text-lg font-bold text-white mb-2">Advice</h4>
-                                            <p className="text-gray-400 text-sm leading-relaxed">{lore.advice}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-5 bg-red-500/5 border border-red-500/10 rounded-2xl">
-                                        <h4 className="text-red-400 font-bold text-sm mb-2 uppercase tracking-wide flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-lg">rotate_right</span>
-                                            Reversed
-                                        </h4>
-                                        <p className="text-gray-400 text-sm">{lore.apiMeaningRev || lore.reversed}</p>
-                                    </div>
-
-                                    {/* API Description - Historical Symbolism */}
-                                    {lore.apiDescription ? (
-                                        <div className="p-6 bg-gradient-to-br from-primary/5 to-transparent border border-primary/10 rounded-2xl">
-                                            <h4 className="text-primary font-bold text-sm mb-3 uppercase tracking-wide flex items-center gap-2">
-                                                <span className="material-symbols-outlined text-lg">menu_book</span>
-                                                Historical Symbolism (A.E. Waite)
-                                            </h4>
-                                            <p className="text-gray-300 text-sm leading-relaxed italic">{lore.apiDescription}</p>
-                                        </div>
-                                    ) : isLoadingApi ? (
-                                        <div className="p-6 bg-surface-dark/50 border border-white/5 rounded-2xl animate-pulse">
-                                            <div className="h-4 bg-white/10 rounded w-1/3 mb-3"></div>
-                                            <div className="h-3 bg-white/10 rounded w-full mb-2"></div>
-                                            <div className="h-3 bg-white/10 rounded w-5/6"></div>
-                                        </div>
-                                    ) : null}
-                                </div>
-                            </>
-                        ) : (
-                            <p className="text-gray-400">Loading information...</p>
-                        )}
-                    </div>
-                </div>
-            </main>
-            <Footer />
-        </div>
-    );
-};
-
-// History Page
-const History = () => {
-    const navigate = useNavigate();
-
-    const mockHistory: HistoryItem[] = [
-        {
-            id: 1,
-            date: 'Today, 9:00 AM',
-            spreadName: 'Daily Draw',
-            typeBadge: 'DAILY',
-            typeColor: 'text-primary bg-primary/10',
-            previewCards: ['https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg'],
-            notes: "New beginnings, innocence, spontaneity. A free spirit ready to explore..."
-        },
-        {
-            id: 2,
-            date: 'Yesterday',
-            spreadName: 'Yes/No Question',
-            typeBadge: 'YES/NO',
-            typeColor: 'text-blue-400 bg-blue-500/10',
-            previewCards: ['https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg'],
-            notes: "Illusion, fear, anxiety. Trust your intuition over your fears."
-        },
-        {
-            id: 3,
-            date: 'Oct 24',
-            spreadName: 'Love Spread',
-            typeBadge: 'LOVE',
-            typeColor: 'text-pink-400 bg-pink-500/10',
-            previewCards: ['https://www.sacred-texts.com/tarot/pkt/img/ca.jpg'],
-            notes: "New feelings, spirituality, intuition. Love is flowing into your life."
-        }
-    ];
-
-    return (
-        <div className="flex flex-col min-h-screen bg-background-dark text-white">
-            <Header />
-            <main className="flex-1 justify-center w-full bg-[#130e15] py-12 border-t border-border-dark">
-                <div className="w-full max-w-[1200px] mx-auto px-4 md:px-10">
-                    <div className="flex items-center justify-between px-4 pb-6">
-                        <div className="flex flex-col gap-1">
-                            <h2 className="text-white text-2xl font-bold leading-tight tracking-[-0.015em]">Your Journey</h2>
-                            <p className="text-gray-400 text-sm">Review your most recent spiritual insights.</p>
-                        </div>
-                        <button onClick={() => navigate('/')} className="text-primary hover:text-purple-400 text-sm font-bold flex items-center gap-1">
-                            New Reading <span className="material-symbols-outlined text-[18px]">add</span>
-                        </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4">
-                        {mockHistory.map((item) => (
-                            <div key={item.id} className="bg-card-dark rounded-lg overflow-hidden border border-border-dark group cursor-pointer hover:border-primary/30 transition-all">
-                                <div
-                                    className="h-32 w-full bg-cover bg-center relative"
-                                    style={{backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url("${item.previewCards[0]}")`}}
-                                >
-                                    <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded text-[10px] text-white font-bold uppercase tracking-wide backdrop-blur-sm">
-                                        {item.typeBadge}
-                                    </div>
-                                </div>
-                                <div className="p-4">
-                                    <div className="text-xs text-gray-500 mb-1">{item.date}</div>
-                                    <h3 className="text-white font-bold text-lg mb-1 group-hover:text-primary transition-colors">{item.spreadName}</h3>
-                                    <p className="text-gray-400 text-xs line-clamp-2">{item.notes}</p>
-                                </div>
-                            </div>
-                        ))}
-
-                        <div className="bg-card-dark/50 rounded-lg border border-dashed border-border-dark flex flex-col items-center justify-center p-6 text-center h-full min-h-[200px]">
-                            <div className="size-10 rounded-full bg-background-dark flex items-center justify-center text-gray-500 mb-3">
-                                <span className="material-symbols-outlined">lock</span>
-                            </div>
-                            <p className="text-white font-medium text-sm mb-1">Log in to save history</p>
-                            <p className="text-gray-500 text-xs mb-3">Track your cards over time.</p>
-                            <button className="text-primary text-xs font-bold uppercase tracking-wider hover:underline">
-                                Sign In
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </main>
-            <Footer />
-        </div>
-    );
-};
-
-// Explore Page
-const Explore = () => {
-    const navigate = useNavigate();
-    const [deck] = useState<TarotCard[]>(generateDeck());
-    const [filter, setFilter] = useState<'ALL' | 'MAJOR' | Suit>('ALL');
-
-    const filteredDeck = deck.filter(card => {
-        if (filter === 'ALL') return true;
-        if (filter === 'MAJOR') return card.arcana === ArcanaType.MAJOR;
-        return card.suit === filter;
-    });
-
-    return (
-        <div className="flex flex-col min-h-screen bg-background-dark">
-            <Header />
-            <main className="flex-1 w-full max-w-[1200px] mx-auto px-6 py-12">
-                <div className="mb-10">
-                    <button onClick={() => navigate('/')} className="text-gray-400 hover:text-white flex items-center gap-2 text-sm mb-4 transition-colors">
-                        <span className="material-symbols-outlined text-base">arrow_back</span> Back
-                    </button>
-                    <h1 className="text-4xl font-black text-white mb-2">Card Meanings</h1>
-                    <p className="text-gray-400">Discover the symbolism and meaning of each of the 78 cards.</p>
-                </div>
-
-                <div className="flex flex-wrap gap-2 mb-8">
-                    <button onClick={() => setFilter('ALL')} className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${filter === 'ALL' ? 'bg-primary text-white' : 'bg-surface-dark text-gray-400 hover:text-white'}`}>All</button>
-                    <button onClick={() => setFilter('MAJOR')} className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${filter === 'MAJOR' ? 'bg-primary text-white' : 'bg-surface-dark text-gray-400 hover:text-white'}`}>Major Arcana</button>
-                    {Object.values(Suit).filter(s => s !== Suit.NONE).map(suit => (
-                        <button key={suit} onClick={() => setFilter(suit)} className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${filter === suit ? 'bg-primary text-white' : 'bg-surface-dark text-gray-400 hover:text-white'}`}>
-                            {suit}
-                        </button>
-                    ))}
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                    {filteredDeck.map(card => (
-                        <div
-                            key={card.id}
-                            onClick={() => navigate(`/explore/${card.id}`)}
-                            className="group relative aspect-[2/3.4] rounded-lg overflow-hidden border border-white/5 bg-surface-dark hover:border-primary/50 transition-all hover:-translate-y-2 cursor-pointer shadow-lg hover:shadow-primary/20"
-                        >
-                            <img
-                                src={card.imageUrl}
-                                alt={card.name}
-                                onError={handleImageError}
-                                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-                            <div className="absolute bottom-0 left-0 p-3">
-                                <p className="text-xs text-primary font-bold uppercase mb-0.5">{card.arcana === ArcanaType.MAJOR ? 'Major' : card.suit}</p>
-                                <p className="text-white text-sm font-bold leading-tight">{card.name}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </main>
-            <Footer />
-        </div>
-    )
-}
-
-// Home Page with Hero Section
+// Home Page - Modern Mystical Design
 const Home = () => {
   const navigate = useNavigate();
+  const { t, isPortuguese } = useLanguage();
+  const featuredProducts = getFeaturedProducts().slice(0, 4);
 
   const handleSelectSpread = (spread: Spread) => {
     navigate('/session', { state: { spread } });
   };
 
+  const spreadIcons: Record<string, string> = {
+    'three_card': 'token',
+    'celtic_cross': 'grid_view',
+    'love_relationship': 'favorite',
+  };
+
+  const getSpreadTranslation = (spreadId: string) => {
+    switch (spreadId) {
+      case 'three_card': return t.spreads.threeCard;
+      case 'celtic_cross': return t.spreads.celticCross;
+      case 'love_relationship': return t.spreads.loveRelationship;
+      default: return { name: '', description: '', difficulty: '' };
+    }
+  };
+
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-dark animate-fade-in-up">
+    <div className="relative flex min-h-screen w-full flex-col bg-background-dark">
       <Header />
+      <CartDrawer />
 
-      {/* Hero Section */}
-      <div className="flex flex-1 justify-center w-full">
-        <div className="flex flex-col w-full max-w-[1200px] px-4 md:px-10 py-8">
-          <div className="@container">
-            <div className="@[480px]:p-0">
-              <div
-                className="flex min-h-[560px] flex-col gap-6 bg-cover bg-center bg-no-repeat rounded-xl items-center justify-center p-8 text-center relative overflow-hidden"
-                style={{backgroundImage: `linear-gradient(rgba(22, 17, 24, 0.4), rgba(22, 17, 24, 0.8)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuA2TIRpcbzYJwZ7gJlMqXD_YNfWI-TQGEojTCziKCmE7UGO93qv9KGu3OGWnKKnmRI0e3-1VwE6y1a8HBB4kBHJhEdrau9VXalcfwhTuEblYOuSzPFUz4dqTFqdzYSE7Ljn5J1qBb33G5VgoRHkRp3O3a7l9LpwkRMimZ12CjD6K_UpNIEF7EE8B8QtngE8UY0rDKgouA8Hl6zw9lQP4_v7wIHB2YX8Picvv_kS1ecbCjwrBYT3_MKC0VdwrTZrFhkAn5eCfEyNKshH")`}}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
+      {/* Hero Section - Mystical & Modern */}
+      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-background-dark to-background-dark" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-600/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-white/5 rounded-full" />
 
-                <div className="relative z-10 flex flex-col gap-4 max-w-2xl items-center">
-                  <div className="inline-flex items-center justify-center rounded-full bg-primary/20 border border-primary/30 px-4 py-1.5 backdrop-blur-md mb-2">
-                    <span className="text-xs font-medium text-purple-200 tracking-wide uppercase">Your Path Awaits</span>
-                  </div>
-
-                  <h1 className="text-white text-5xl md:text-6xl font-black leading-tight tracking-[-0.033em] drop-shadow-lg">
-                    Reveal Your Destiny
-                  </h1>
-
-                  <h2 className="text-gray-200 text-lg md:text-xl font-normal leading-relaxed max-w-lg drop-shadow-md">
-                    Unlock the ancient wisdom of the cards. Explore detailed meanings, track your spiritual journey, and find clarity in the chaos.
-                  </h2>
-
-                  <div className="pt-4 flex flex-col sm:flex-row gap-4">
-                    <button
-                      onClick={() => handleSelectSpread(SPREADS[0])}
-                      className="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-primary hover:bg-purple-600 transition-all text-white text-base font-bold shadow-[0_0_20px_rgba(147,17,212,0.4)]"
-                    >
-                      Start Reading
-                    </button>
-                    <button
-                      onClick={() => navigate('/explore')}
-                      className="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/10 transition-all text-white text-base font-bold"
-                    >
-                      Learn More
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Stars */}
+          {[...Array(50)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                opacity: Math.random() * 0.7 + 0.3,
+              }}
+            />
+          ))}
         </div>
-      </div>
 
-      {/* Core Offerings Section */}
-      <div className="flex flex-1 justify-center w-full py-8">
-        <div className="flex flex-col w-full max-w-[1200px] px-4 md:px-10">
-          <div className="flex flex-col gap-2 px-4 pb-6">
-            <h2 className="text-white text-3xl font-bold leading-tight tracking-[-0.015em]">Choose Your Reading</h2>
-            <p className="text-gray-400">Select a spread to begin your consultation with the universe.</p>
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
+            <span className="material-symbols-outlined text-primary text-sm">auto_awesome</span>
+            <span className="text-xs text-gray-300 uppercase tracking-widest">{isPortuguese ? 'Seu Caminho Aguarda' : 'Your Path Awaits'}</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 pb-10">
-            {SPREADS.map((spread, index) => (
+          <h1 className="text-5xl md:text-7xl font-black text-white leading-tight mb-6 tracking-tight">
+            {t.home.heroTitle.split(' ').map((word, i) => (
+              <span key={i} className={i === 1 ? 'text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400' : ''}>
+                {word}{' '}
+              </span>
+            ))}
+          </h1>
+
+          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+            {t.home.heroSubtitle}
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => handleSelectSpread(SPREADS[0])}
+              className="group relative px-8 py-4 bg-primary hover:bg-primary-hover rounded-xl text-white font-bold text-lg transition-all shadow-[0_0_30px_rgba(147,17,212,0.4)] hover:shadow-[0_0_50px_rgba(147,17,212,0.6)]"
+            >
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {t.home.startReading}
+                <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </span>
+            </button>
+            <button
+              onClick={() => navigate('/explore')}
+              className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl text-white font-bold text-lg transition-all backdrop-blur-sm"
+            >
+              {t.home.exploreCards}
+            </button>
+          </div>
+
+          {/* Floating Cards Preview */}
+          <div className="hidden md:flex justify-center mt-16 gap-4">
+            {[0, 1, 2].map((i) => (
               <div
-                key={spread.id}
-                onClick={() => handleSelectSpread(spread)}
-                className="stagger-item group flex flex-1 gap-5 rounded-xl border border-border-dark bg-card-dark p-6 flex-col hover:border-primary/50 transition-all hover:shadow-[0_0_15px_rgba(147,17,212,0.15)] cursor-pointer"
-                style={{ animationDelay: `${0.1 + index * 0.1}s` }}
+                key={i}
+                className="w-24 h-36 rounded-xl bg-gradient-to-br from-surface-dark to-black border border-white/10 shadow-2xl transform hover:-translate-y-2 transition-transform"
+                style={{
+                  transform: `rotate(${(i - 1) * 8}deg)`,
+                  marginTop: i === 1 ? '0' : '20px',
+                }}
               >
-                <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                  <span className="material-symbols-outlined text-[28px]">
-                    {spread.id === 'three_card' ? 'light_mode' : spread.id === 'celtic_cross' ? 'grid_view' : 'favorite'}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <h2 className="text-white text-xl font-bold leading-tight">{spread.name}</h2>
-                  <p className="text-[#b09db9] text-sm leading-relaxed">{spread.description}</p>
-                </div>
-                <div className="mt-auto pt-4 flex items-center text-primary text-sm font-bold uppercase tracking-wider">
-                  Start <span className="material-symbols-outlined text-[16px] ml-1">arrow_forward</span>
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary/50 text-3xl">style</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Spread Selection - Cards Style */}
+      <section className="py-20 px-6">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-black text-white mb-4">{t.home.chooseReading}</h2>
+            <p className="text-gray-400 max-w-xl mx-auto">{t.home.chooseReadingSubtitle}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {SPREADS.map((spread, index) => {
+              const translation = getSpreadTranslation(spread.id);
+              return (
+                <div
+                  key={spread.id}
+                  onClick={() => handleSelectSpread(spread)}
+                  className="group relative bg-gradient-to-br from-card-dark to-surface-dark rounded-2xl p-8 border border-border-dark hover:border-primary/50 cursor-pointer transition-all duration-300 hover:shadow-[0_0_40px_rgba(147,17,212,0.15)] hover:-translate-y-2 overflow-hidden"
+                >
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-primary/20">
+                      <span className="material-symbols-outlined text-primary text-3xl">{spreadIcons[spread.id]}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="px-2 py-1 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">
+                        {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
+                      </span>
+                      <span className="px-2 py-1 rounded-md bg-white/5 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                        {translation.difficulty}
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors">
+                      {translation.name}
+                    </h3>
+                    <p className="text-gray-400 text-sm leading-relaxed mb-6">{translation.description}</p>
+
+                    <div className="flex items-center text-primary font-bold text-sm uppercase tracking-wider">
+                      {t.home.start}
+                      <span className="material-symbols-outlined ml-2 text-lg group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-20 px-6 bg-surface-dark/50">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <h2 className="text-3xl font-bold text-white mb-2">{t.home.featuredProducts}</h2>
+              <p className="text-gray-400">{t.home.featuredProductsSubtitle}</p>
+            </div>
+            <button
+              onClick={() => navigate('/shop')}
+              className="hidden sm:flex items-center gap-2 text-primary font-bold text-sm hover:gap-3 transition-all"
+            >
+              {t.home.viewAll}
+              <span className="material-symbols-outlined text-lg">arrow_forward</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {featuredProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          <button
+            onClick={() => navigate('/shop')}
+            className="sm:hidden w-full mt-6 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-primary font-bold transition-colors"
+          >
+            {t.home.viewAll}
+          </button>
+        </div>
+      </section>
 
       <Footer />
     </div>
   );
 };
 
-// Session Page - Card Selection with Flip Animation
+// Product Card Component
+const ProductCard = ({ product }: { product: Product }) => {
+  const navigate = useNavigate();
+  const { t, isPortuguese } = useLanguage();
+  const { addItem } = useCart();
+
+  const name = isPortuguese ? product.name : product.name_en;
+  const shortDesc = isPortuguese ? product.shortDescription : product.shortDescription_en;
+
+  return (
+    <div className="group bg-card-dark rounded-xl overflow-hidden border border-border-dark hover:border-primary/30 transition-all hover:shadow-[0_0_20px_rgba(147,17,212,0.1)]">
+      <div
+        className="relative aspect-square overflow-hidden cursor-pointer"
+        onClick={() => navigate(`/shop/${product.slug}`)}
+      >
+        <img
+          src={product.images[0]}
+          alt={name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        {product.tags.length > 0 && (
+          <div className="absolute top-3 left-3 flex gap-2">
+            {product.tags.includes('bestseller') && (
+              <span className="px-2 py-1 bg-primary text-white text-[10px] font-bold rounded-md uppercase">{t.shop.bestseller}</span>
+            )}
+            {product.tags.includes('new') && (
+              <span className="px-2 py-1 bg-green-500 text-white text-[10px] font-bold rounded-md uppercase">{t.shop.new}</span>
+            )}
+            {product.tags.includes('sale') && (
+              <span className="px-2 py-1 bg-red-500 text-white text-[10px] font-bold rounded-md uppercase">{t.shop.sale}</span>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="p-4">
+        <h3
+          className="text-white font-bold text-sm mb-1 truncate cursor-pointer hover:text-primary transition-colors"
+          onClick={() => navigate(`/shop/${product.slug}`)}
+        >
+          {name}
+        </h3>
+        <p className="text-gray-500 text-xs mb-3 line-clamp-2">{shortDesc}</p>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-baseline gap-2">
+            <span className="text-primary font-bold">{formatPrice(product.price, t.common.currency)}</span>
+            {product.compareAtPrice && (
+              <span className="text-gray-500 text-xs line-through">{formatPrice(product.compareAtPrice, t.common.currency)}</span>
+            )}
+          </div>
+
+          {!product.variants ? (
+            <button
+              onClick={() => addItem(product)}
+              className="p-2 rounded-lg bg-primary/10 hover:bg-primary text-primary hover:text-white transition-colors"
+            >
+              <span className="material-symbols-outlined text-lg">add_shopping_cart</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate(`/shop/${product.slug}`)}
+              className="text-primary text-xs font-bold hover:underline"
+            >
+              {t.product.selectVariant}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Shop Page
+const Shop = () => {
+  const navigate = useNavigate();
+  const { t, isPortuguese } = useLanguage();
+  const [filter, setFilter] = useState<ProductCategory | 'all'>('all');
+  const [sortBy, setSortBy] = useState<'featured' | 'price_low' | 'price_high'>('featured');
+
+  const categories: Array<{ key: ProductCategory | 'all'; label: string; icon: string }> = [
+    { key: 'all', label: t.shop.categories.all, icon: 'apps' },
+    { key: 'candles', label: t.shop.categories.candles, icon: 'candle' },
+    { key: 'incense', label: t.shop.categories.incense, icon: 'air' },
+    { key: 'aromatherapy', label: t.shop.categories.aromatherapy, icon: 'spa' },
+    { key: 'tarotDecks', label: t.shop.categories.tarotDecks, icon: 'style' },
+    { key: 'crystals', label: t.shop.categories.crystals, icon: 'diamond' },
+    { key: 'kits', label: t.shop.categories.kits, icon: 'inventory_2' },
+  ];
+
+  let filteredProducts = filter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === filter);
+
+  if (sortBy === 'price_low') {
+    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
+  } else if (sortBy === 'price_high') {
+    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
+  } else {
+    filteredProducts = [...filteredProducts].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background-dark">
+      <Header />
+      <CartDrawer />
+
+      <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-6 py-8 md:py-12">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-black text-white mb-2">{t.shop.title}</h1>
+          <p className="text-gray-400">{t.shop.subtitle}</p>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between mb-8">
+          <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+            {categories.map(cat => (
+              <button
+                key={cat.key}
+                onClick={() => setFilter(cat.key)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                  filter === cat.key
+                    ? 'bg-primary text-white'
+                    : 'bg-surface-dark text-gray-400 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <span className="material-symbols-outlined text-lg">{cat.icon}</span>
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            className="px-4 py-2 rounded-lg bg-surface-dark text-gray-300 border border-border-dark text-sm"
+          >
+            <option value="featured">{t.shop.sortOptions.featured}</option>
+            <option value="price_low">{t.shop.sortOptions.priceLow}</option>
+            <option value="price_high">{t.shop.sortOptions.priceHigh}</option>
+          </select>
+        </div>
+
+        {/* Products Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {filteredProducts.map(product => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-20">
+            <span className="material-symbols-outlined text-6xl text-gray-600 mb-4">inventory_2</span>
+            <p className="text-gray-400">{isPortuguese ? 'Nenhum produto encontrado' : 'No products found'}</p>
+          </div>
+        )}
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+// Product Detail Page
+const ProductDetail = () => {
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const { t, isPortuguese } = useLanguage();
+  const { addItem } = useCart();
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [activeImage, setActiveImage] = useState(0);
+
+  const product = slug ? getProductBySlug(slug) : null;
+
+  useEffect(() => {
+    if (product?.variants?.length) {
+      setSelectedVariant(product.variants[0]);
+    }
+  }, [product]);
+
+  if (!product) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background-dark">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-400">{isPortuguese ? 'Produto não encontrado' : 'Product not found'}</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  const name = isPortuguese ? product.name : product.name_en;
+  const description = isPortuguese ? product.description : product.description_en;
+  const details = isPortuguese ? product.details : product.details_en;
+  const howToUse = isPortuguese ? product.howToUse : product.howToUse_en;
+  const variantType = isPortuguese ? product.variantType : product.variantType_en;
+
+  const currentPrice = selectedVariant?.price ?? product.price;
+  const currentStock = selectedVariant?.stock ?? product.stock;
+
+  const handleAddToCart = () => {
+    addItem(product, selectedVariant || undefined, quantity);
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background-dark">
+      <Header />
+      <CartDrawer />
+
+      <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-6 py-8 md:py-12">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
+          <button onClick={() => navigate('/shop')} className="hover:text-primary">{t.shop.title}</button>
+          <span>/</span>
+          <span className="text-white">{name}</span>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+          {/* Images */}
+          <div className="space-y-4">
+            <div className="aspect-square rounded-2xl overflow-hidden bg-surface-dark">
+              <img
+                src={product.images[activeImage]}
+                alt={name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {product.images.length > 1 && (
+              <div className="flex gap-3">
+                {product.images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveImage(i)}
+                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
+                      i === activeImage ? 'border-primary' : 'border-transparent opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Info */}
+          <div className="space-y-6">
+            <div>
+              {product.tags.length > 0 && (
+                <div className="flex gap-2 mb-3">
+                  {product.tags.includes('bestseller') && (
+                    <span className="px-3 py-1 bg-primary/20 text-primary text-xs font-bold rounded-full">{t.shop.bestseller}</span>
+                  )}
+                  {product.tags.includes('new') && (
+                    <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full">{t.shop.new}</span>
+                  )}
+                </div>
+              )}
+              <h1 className="text-3xl md:text-4xl font-black text-white mb-4">{name}</h1>
+
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className={`material-symbols-outlined text-lg ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-600'}`}>star</span>
+                  ))}
+                </div>
+                <span className="text-gray-400 text-sm">({product.reviewCount} {t.shop.reviews})</span>
+              </div>
+
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl font-black text-primary">{formatPrice(currentPrice, t.common.currency)}</span>
+                {product.compareAtPrice && (
+                  <span className="text-xl text-gray-500 line-through">{formatPrice(product.compareAtPrice, t.common.currency)}</span>
+                )}
+              </div>
+            </div>
+
+            <p className="text-gray-300 leading-relaxed">{description}</p>
+
+            {/* Variants */}
+            {product.variants && product.variants.length > 0 && (
+              <div>
+                <label className="text-white font-bold text-sm mb-3 block">{variantType}</label>
+                <div className="flex flex-wrap gap-2">
+                  {product.variants.map(variant => {
+                    const vName = isPortuguese ? variant.name : variant.name_en;
+                    return (
+                      <button
+                        key={variant.id}
+                        onClick={() => setSelectedVariant(variant)}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                          selectedVariant?.id === variant.id
+                            ? 'bg-primary text-white'
+                            : 'bg-surface-dark text-gray-300 hover:bg-white/10 border border-border-dark'
+                        }`}
+                      >
+                        {vName}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Quantity */}
+            <div>
+              <label className="text-white font-bold text-sm mb-3 block">{t.product.quantity}</label>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-10 h-10 rounded-lg bg-surface-dark text-white hover:bg-white/10 transition-colors"
+                >-</button>
+                <span className="w-12 text-center text-white font-bold">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(Math.min(currentStock, quantity + 1))}
+                  className="w-10 h-10 rounded-lg bg-surface-dark text-white hover:bg-white/10 transition-colors"
+                >+</button>
+                <span className="text-gray-500 text-sm ml-4">
+                  {currentStock > 0 ? `${currentStock} ${t.shop.units} ${t.shop.inStock.toLowerCase()}` : t.shop.outOfStock}
+                </span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-4">
+              <button
+                onClick={handleAddToCart}
+                disabled={currentStock === 0}
+                className="flex-1 py-4 bg-primary hover:bg-primary-hover disabled:bg-gray-700 disabled:cursor-not-allowed rounded-xl text-white font-bold transition-colors flex items-center justify-center gap-2"
+              >
+                <span className="material-symbols-outlined">shopping_cart</span>
+                {t.product.addToCart}
+              </button>
+            </div>
+
+            {/* Details */}
+            <div className="border-t border-border-dark pt-6 space-y-4">
+              <h3 className="text-white font-bold">{t.product.details}</h3>
+              <ul className="space-y-2">
+                {details.map((detail, i) => (
+                  <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
+                    <span className="material-symbols-outlined text-primary text-sm mt-0.5">check_circle</span>
+                    {detail}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {howToUse && (
+              <div className="border-t border-border-dark pt-6">
+                <h3 className="text-white font-bold mb-3">{t.product.howToUse}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{howToUse}</p>
+              </div>
+            )}
+
+            {/* Shipping */}
+            <div className="bg-surface-dark rounded-xl p-4 flex items-start gap-3">
+              <span className="material-symbols-outlined text-primary">local_shipping</span>
+              <div>
+                <p className="text-white font-medium text-sm">{t.product.shipping}</p>
+                <p className="text-gray-400 text-xs">{t.product.shippingInfo}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+// Checkout Page
+const Checkout = () => {
+  const navigate = useNavigate();
+  const { t, isPortuguese } = useLanguage();
+  const { items, getSubtotal, clearCart, getItemKey } = useCart();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  if (items.length === 0) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background-dark">
+        <Header />
+        <div className="flex-1 flex flex-col items-center justify-center p-6">
+          <span className="material-symbols-outlined text-6xl text-gray-600 mb-4">shopping_cart</span>
+          <p className="text-gray-400 mb-4">{t.cart.empty}</p>
+          <button
+            onClick={() => navigate('/shop')}
+            className="px-6 py-3 bg-primary hover:bg-primary-hover rounded-lg text-white font-bold"
+          >
+            {t.cart.continueShopping}
+          </button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+
+    // Simulate payment processing
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    clearCart();
+    setIsProcessing(false);
+    alert(isPortuguese ? 'Pedido realizado com sucesso! (Simulação)' : 'Order placed successfully! (Simulation)');
+    navigate('/');
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background-dark">
+      <Header />
+      <CartDrawer />
+
+      <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-6 py-8 md:py-12">
+        <h1 className="text-3xl font-black text-white mb-8">{t.checkout.title}</h1>
+
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Form */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Contact */}
+            <div className="bg-card-dark rounded-xl p-6 border border-border-dark">
+              <h2 className="text-white font-bold mb-4">{t.checkout.contactInfo}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="email" required placeholder={t.checkout.email} className="w-full px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
+                <input type="tel" required placeholder={t.checkout.phone} className="w-full px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
+              </div>
+            </div>
+
+            {/* Address */}
+            <div className="bg-card-dark rounded-xl p-6 border border-border-dark">
+              <h2 className="text-white font-bold mb-4">{t.checkout.shippingAddress}</h2>
+              <div className="space-y-4">
+                <input type="text" required placeholder={t.checkout.fullName} className="w-full px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
+                <div className="grid grid-cols-3 gap-4">
+                  <input type="text" required placeholder={t.checkout.zipCode} className="px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
+                  <input type="text" required placeholder={t.checkout.address} className="col-span-2 px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <input type="text" required placeholder={t.checkout.number} className="px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
+                  <input type="text" placeholder={t.checkout.complement} className="px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
+                  <input type="text" required placeholder={t.checkout.city} className="px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
+                  <input type="text" required placeholder={t.checkout.state} className="px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* Payment */}
+            <div className="bg-card-dark rounded-xl p-6 border border-border-dark">
+              <h2 className="text-white font-bold mb-4">{t.checkout.paymentMethod}</h2>
+              <div className="space-y-3">
+                <label className="flex items-center gap-3 p-4 rounded-lg bg-surface-dark border border-primary cursor-pointer">
+                  <input type="radio" name="payment" value="pix" defaultChecked className="w-4 h-4 text-primary" />
+                  <span className="material-symbols-outlined text-green-400">qr_code_2</span>
+                  <span className="text-white font-medium">{t.checkout.pix}</span>
+                  <span className="ml-auto text-green-400 text-xs font-bold">5% OFF</span>
+                </label>
+                <label className="flex items-center gap-3 p-4 rounded-lg bg-surface-dark border border-border-dark cursor-pointer hover:border-white/20">
+                  <input type="radio" name="payment" value="credit" className="w-4 h-4 text-primary" />
+                  <span className="material-symbols-outlined text-blue-400">credit_card</span>
+                  <span className="text-white font-medium">{t.checkout.creditCard}</span>
+                </label>
+                <label className="flex items-center gap-3 p-4 rounded-lg bg-surface-dark border border-border-dark cursor-pointer hover:border-white/20">
+                  <input type="radio" name="payment" value="boleto" className="w-4 h-4 text-primary" />
+                  <span className="material-symbols-outlined text-yellow-400">receipt</span>
+                  <span className="text-white font-medium">{t.checkout.boleto}</span>
+                </label>
+              </div>
+              <p className="text-gray-500 text-xs mt-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-green-500 text-sm">lock</span>
+                {t.checkout.mercadoPago}
+              </p>
+            </div>
+          </div>
+
+          {/* Order Summary */}
+          <div className="lg:col-span-1">
+            <div className="bg-card-dark rounded-xl p-6 border border-border-dark sticky top-24">
+              <h2 className="text-white font-bold mb-4">{t.checkout.orderSummary}</h2>
+
+              <div className="space-y-4 mb-6">
+                {items.map(item => {
+                  const name = isPortuguese ? item.product.name : item.product.name_en;
+                  const price = item.variant?.price ?? item.product.price;
+                  return (
+                    <div key={getItemKey(item)} className="flex gap-3">
+                      <img src={item.product.images[0]} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-medium truncate">{name}</p>
+                        <p className="text-gray-500 text-xs">Qty: {item.quantity}</p>
+                        <p className="text-primary font-bold text-sm">{formatPrice(price * item.quantity, t.common.currency)}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="border-t border-border-dark pt-4 space-y-3">
+                <div className="flex justify-between text-gray-400 text-sm">
+                  <span>{t.cart.subtotal}</span>
+                  <span>{formatPrice(getSubtotal(), t.common.currency)}</span>
+                </div>
+                <div className="flex justify-between text-gray-400 text-sm">
+                  <span>{t.cart.shipping}</span>
+                  <span>{t.cart.shippingCalculate}</span>
+                </div>
+                <div className="flex justify-between text-white font-bold text-lg pt-2 border-t border-border-dark">
+                  <span>{t.cart.total}</span>
+                  <span className="text-primary">{formatPrice(getSubtotal(), t.common.currency)}</span>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isProcessing}
+                className="w-full mt-6 py-4 bg-primary hover:bg-primary-hover disabled:bg-gray-700 rounded-xl text-white font-bold transition-colors flex items-center justify-center gap-2"
+              >
+                {isProcessing ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                    {t.checkout.processing}
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined">lock</span>
+                    {t.checkout.placeOrder}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+// Card Details Page
+const CardDetails = () => {
+  const { cardId } = useParams();
+  const navigate = useNavigate();
+  const { t, isPortuguese } = useLanguage();
+  const [card, setCard] = useState<TarotCard | null>(null);
+  const [lore, setLore] = useState<ExtendedCardLore | null>(null);
+  const [isLoadingApi, setIsLoadingApi] = useState(true);
+
+  useEffect(() => {
+    const deck = generateDeck();
+    const foundCard = deck.find(c => c.id === cardId);
+
+    if (foundCard) {
+      setCard(foundCard);
+      const staticData = getStaticLore(foundCard);
+      setLore(staticData);
+
+      setIsLoadingApi(true);
+      fetchCardByName(foundCard.name).then(apiData => {
+        if (apiData) {
+          setLore(prev => prev ? {
+            ...prev,
+            apiDescription: apiData.desc,
+            apiMeaningUp: apiData.meaning_up,
+            apiMeaningRev: apiData.meaning_rev
+          } : prev);
+        }
+        setIsLoadingApi(false);
+      }).catch(() => setIsLoadingApi(false));
+    } else {
+      navigate('/explore');
+    }
+  }, [cardId, navigate]);
+
+  if (!card) return null;
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background-dark text-white">
+      <Header />
+      <CartDrawer />
+      <main className="flex-1 w-full max-w-6xl mx-auto px-6 py-12">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div className="flex items-center gap-2 text-sm text-gray-400">
+            <span onClick={() => navigate('/explore')} className="cursor-pointer hover:text-primary">{t.explore.title}</span>
+            <span>/</span>
+            <span className="text-white font-bold">{card.name}</span>
+          </div>
+          <button onClick={() => navigate('/explore')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-dark hover:bg-white/5 transition-colors text-sm font-medium">
+            <span className="material-symbols-outlined text-base">arrow_back</span> {t.cardDetails.back}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-4 flex flex-col items-center sticky top-24 self-start">
+            <div className="relative w-full max-w-[350px] aspect-[2/3.4] rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
+              <img src={card.imageUrl} alt={card.name} onError={handleImageError} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-8 space-y-8">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+                  {card.arcana} {card.suit !== Suit.NONE && `• ${card.suit}`}
+                </span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black leading-tight text-white mb-2">{card.name}</h1>
+            </div>
+
+            {lore && (
+              <>
+                <div className="flex flex-wrap gap-2">
+                  {lore.keywords.map((kw, i) => (
+                    <div key={i} className="px-4 py-2 rounded-lg bg-surface-dark border border-white/5 text-sm font-medium text-gray-300 hover:border-primary/30 transition-colors">
+                      {kw}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-6">
+                  <div className="prose prose-invert max-w-none">
+                    <h3 className="text-xl font-bold flex items-center gap-2 text-white mb-3">
+                      <span className="material-symbols-outlined text-primary">auto_awesome</span>
+                      {t.cardDetails.upright}
+                    </h3>
+                    <p className="text-gray-300 leading-relaxed text-lg bg-surface-dark/50 p-6 rounded-2xl border border-white/5">{lore.generalMeaning}</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-surface-dark p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
+                      <div className="size-10 rounded-full bg-pink-500/10 text-pink-400 flex items-center justify-center mb-4">
+                        <span className="material-symbols-outlined">favorite</span>
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.love}</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">{lore.love}</p>
+                    </div>
+                    <div className="bg-surface-dark p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
+                      <div className="size-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4">
+                        <span className="material-symbols-outlined">work</span>
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.career}</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">{lore.career}</p>
+                    </div>
+                    <div className="bg-surface-dark p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-colors md:col-span-2">
+                      <div className="size-10 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-4">
+                        <span className="material-symbols-outlined">lightbulb</span>
+                      </div>
+                      <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.advice}</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">{lore.advice}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-5 bg-red-500/5 border border-red-500/10 rounded-2xl">
+                    <h4 className="text-red-400 font-bold text-sm mb-2 uppercase tracking-wide flex items-center gap-2">
+                      <span className="material-symbols-outlined text-lg">rotate_right</span>
+                      {t.cardDetails.reversed}
+                    </h4>
+                    <p className="text-gray-400 text-sm">{lore.apiMeaningRev || lore.reversed}</p>
+                  </div>
+
+                  {lore.apiDescription ? (
+                    <div className="p-6 bg-gradient-to-br from-primary/5 to-transparent border border-primary/10 rounded-2xl">
+                      <h4 className="text-primary font-bold text-sm mb-3 uppercase tracking-wide flex items-center gap-2">
+                        <span className="material-symbols-outlined text-lg">menu_book</span>
+                        {t.cardDetails.historicalSymbolism}
+                      </h4>
+                      <p className="text-gray-300 text-sm leading-relaxed italic">{lore.apiDescription}</p>
+                    </div>
+                  ) : isLoadingApi ? (
+                    <div className="p-6 bg-surface-dark/50 border border-white/5 rounded-2xl animate-pulse">
+                      <div className="h-4 bg-white/10 rounded w-1/3 mb-3"></div>
+                      <div className="h-3 bg-white/10 rounded w-full mb-2"></div>
+                      <div className="h-3 bg-white/10 rounded w-5/6"></div>
+                    </div>
+                  ) : null}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+// History Page
+const History = () => {
+  const navigate = useNavigate();
+  const { t, isPortuguese } = useLanguage();
+
+  const [savedReadings, setSavedReadings] = useState<any[]>(() => {
+    try {
+      const saved = localStorage.getItem('tarot-history');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const mockHistory = [
+    {
+      id: 1,
+      date: isPortuguese ? 'Hoje, 9:00' : 'Today, 9:00 AM',
+      spreadName: isPortuguese ? 'Tiragem Diária' : 'Daily Draw',
+      typeBadge: isPortuguese ? 'DIÁRIA' : 'DAILY',
+      typeColor: 'text-primary bg-primary/10',
+      previewCards: ['https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg'],
+      notes: isPortuguese ? 'Novos começos, inocência, espontaneidade...' : 'New beginnings, innocence, spontaneity...'
+    },
+    {
+      id: 2,
+      date: isPortuguese ? 'Ontem' : 'Yesterday',
+      spreadName: isPortuguese ? 'Sim/Não' : 'Yes/No Question',
+      typeBadge: isPortuguese ? 'SIM/NÃO' : 'YES/NO',
+      typeColor: 'text-blue-400 bg-blue-500/10',
+      previewCards: ['https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg'],
+      notes: isPortuguese ? 'Ilusão, medo, ansiedade. Confie na sua intuição...' : 'Illusion, fear, anxiety. Trust your intuition...'
+    },
+    {
+      id: 3,
+      date: '24 Out',
+      spreadName: isPortuguese ? 'Tiragem do Amor' : 'Love Spread',
+      typeBadge: isPortuguese ? 'AMOR' : 'LOVE',
+      typeColor: 'text-pink-400 bg-pink-500/10',
+      previewCards: ['https://www.sacred-texts.com/tarot/pkt/img/cuac.jpg'],
+      notes: isPortuguese ? 'Novos sentimentos, espiritualidade, intuição...' : 'New feelings, spirituality, intuition...'
+    }
+  ];
+
+  const allReadings = [...savedReadings, ...mockHistory];
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background-dark text-white">
+      <Header />
+      <CartDrawer />
+      <main className="flex-1 justify-center w-full py-12">
+        <div className="w-full max-w-[1200px] mx-auto px-4 md:px-10">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-white text-3xl font-bold">{t.history.title}</h2>
+              <p className="text-gray-400 text-sm mt-1">{t.history.subtitle}</p>
+            </div>
+            <button onClick={() => navigate('/')} className="text-primary hover:text-purple-400 text-sm font-bold flex items-center gap-1">
+              {t.nav.newReading} <span className="material-symbols-outlined text-[18px]">add</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {allReadings.map((item) => (
+              <div key={item.id} className="bg-card-dark rounded-xl overflow-hidden border border-border-dark group cursor-pointer hover:border-primary/30 transition-all">
+                <div
+                  className="h-32 w-full bg-cover bg-center relative"
+                  style={{backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url("${item.previewCards[0]}")`}}
+                >
+                  <div className={`absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm ${item.typeColor}`}>
+                    {item.typeBadge}
+                  </div>
+                </div>
+                <div className="p-4">
+                  <div className="text-xs text-gray-500 mb-1">{item.date}</div>
+                  <h3 className="text-white font-bold text-lg mb-1 group-hover:text-primary transition-colors">{item.spreadName}</h3>
+                  <p className="text-gray-400 text-xs line-clamp-2">{item.notes}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+// Explore Page
+const Explore = () => {
+  const navigate = useNavigate();
+  const { t, isPortuguese } = useLanguage();
+  const [deck] = useState<TarotCard[]>(generateDeck());
+  const [filter, setFilter] = useState<'ALL' | 'MAJOR' | Suit>('ALL');
+
+  const filteredDeck = deck.filter(card => {
+    if (filter === 'ALL') return true;
+    if (filter === 'MAJOR') return card.arcana === ArcanaType.MAJOR;
+    return card.suit === filter;
+  });
+
+  const filterLabels: Record<string, string> = {
+    'ALL': t.explore.filters.all,
+    'MAJOR': t.explore.filters.major,
+    'Wands': t.explore.filters.wands,
+    'Cups': t.explore.filters.cups,
+    'Swords': t.explore.filters.swords,
+    'Pentacles': t.explore.filters.pentacles,
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background-dark">
+      <Header />
+      <CartDrawer />
+      <main className="flex-1 w-full max-w-[1200px] mx-auto px-6 py-12">
+        <div className="mb-10">
+          <button onClick={() => navigate('/')} className="text-gray-400 hover:text-white flex items-center gap-2 text-sm mb-4 transition-colors">
+            <span className="material-symbols-outlined text-base">arrow_back</span> {t.cardDetails.back}
+          </button>
+          <h1 className="text-4xl font-black text-white mb-2">{t.explore.title}</h1>
+          <p className="text-gray-400">{t.explore.subtitle}</p>
+        </div>
+
+        <div className="flex flex-wrap gap-2 mb-8">
+          <button onClick={() => setFilter('ALL')} className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${filter === 'ALL' ? 'bg-primary text-white' : 'bg-surface-dark text-gray-400 hover:text-white'}`}>{filterLabels['ALL']}</button>
+          <button onClick={() => setFilter('MAJOR')} className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${filter === 'MAJOR' ? 'bg-primary text-white' : 'bg-surface-dark text-gray-400 hover:text-white'}`}>{filterLabels['MAJOR']}</button>
+          {Object.values(Suit).filter(s => s !== Suit.NONE).map(suit => (
+            <button key={suit} onClick={() => setFilter(suit)} className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${filter === suit ? 'bg-primary text-white' : 'bg-surface-dark text-gray-400 hover:text-white'}`}>
+              {filterLabels[suit]}
+            </button>
+          ))}
+        </div>
+
+        <p className="text-gray-500 text-sm mb-6">{filteredDeck.length} {t.explore.cards}</p>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          {filteredDeck.map(card => (
+            <div
+              key={card.id}
+              onClick={() => navigate(`/explore/${card.id}`)}
+              className="group relative aspect-[2/3.4] rounded-lg overflow-hidden border border-white/5 bg-surface-dark hover:border-primary/50 transition-all hover:-translate-y-2 cursor-pointer shadow-lg hover:shadow-primary/20"
+            >
+              <img
+                src={card.imageUrl}
+                alt={card.name}
+                onError={handleImageError}
+                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+              <div className="absolute bottom-0 left-0 p-3">
+                <p className="text-xs text-primary font-bold uppercase mb-0.5">{card.arcana === ArcanaType.MAJOR ? (isPortuguese ? 'Maior' : 'Major') : card.suit}</p>
+                <p className="text-white text-sm font-bold leading-tight">{card.name}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+// Session Page
 const Session = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, isPortuguese } = useLanguage();
   const spread = (location.state as any)?.spread as Spread;
 
   const [deck, setDeck] = useState<TarotCard[]>([]);
@@ -523,8 +1329,6 @@ const Session = () => {
     }
 
     const newDeck = generateDeck();
-
-    // Fisher-Yates Shuffle
     for (let i = newDeck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
@@ -541,7 +1345,6 @@ const Session = () => {
     const newSelection = [...selectedCards, { card, flipped: false }];
     setSelectedCards(newSelection);
 
-    // Flip animation after a small delay
     setTimeout(() => {
       setSelectedCards(prev =>
         prev.map((item, idx) =>
@@ -550,7 +1353,6 @@ const Session = () => {
       );
     }, 300);
 
-    // Auto navigate if done
     if (newSelection.length === spread.cardCount) {
       setTimeout(() => {
         navigate('/result', {
@@ -569,17 +1371,16 @@ const Session = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background-dark overflow-x-hidden">
       <Header />
+      <CartDrawer />
 
-      {/* Top Controls */}
       <div className="flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
         <div className="flex flex-wrap justify-between items-end gap-4 mb-6 max-w-[1200px] mx-auto">
           <div className="flex flex-col gap-2 max-w-2xl">
-            <h1 className="text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Reading Session</h1>
-            <p className="text-[#b09db9] text-base font-normal leading-relaxed">Focus on your question. The cards will reveal what is hidden.</p>
+            <h1 className="text-white text-3xl md:text-4xl font-black">{t.session.title}</h1>
+            <p className="text-gray-400">{t.session.subtitle}</p>
           </div>
         </div>
 
-        {/* Spread Selector Chips */}
         <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar max-w-[1200px] mx-auto">
           {SPREADS.map((s) => (
             <button
@@ -587,18 +1388,16 @@ const Session = () => {
               onClick={() => navigate('/session', { state: { spread: s } })}
               className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full pl-4 pr-4 border transition-colors ${
                 spread.id === s.id
-                  ? 'bg-primary text-white border-primary shadow-[0_0_10px_rgba(147,17,212,0.2)]'
+                  ? 'bg-primary text-white border-primary'
                   : 'bg-surface-highlight hover:bg-[#3d2b45] border-border-dark text-white/70 hover:text-white'
               }`}
             >
-              {spread.id === s.id && <span className="material-symbols-outlined text-lg">grid_view</span>}
-              <p className="text-sm font-medium leading-normal">{s.name}</p>
+              <p className="text-sm font-medium">{s.name}</p>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Selected Cards Display */}
       {selectedCards.length > 0 && (
         <div className="px-4 md:px-12 py-4 max-w-[1200px] mx-auto w-full">
           <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-3xl mx-auto">
@@ -615,20 +1414,11 @@ const Session = () => {
                   }`}>
                     {selected ? (
                       <div className={`card-flip w-full h-full ${selected.flipped ? 'flipped' : ''}`}>
-                        {/* Card Back */}
                         <div className="card-front absolute inset-0 bg-gradient-to-br from-surface-dark to-black flex items-center justify-center">
-                          <div className="size-12 rounded-full border border-white/10 flex items-center justify-center bg-black/40">
-                            <span className="material-symbols-outlined text-primary text-2xl">style</span>
-                          </div>
+                          <span className="material-symbols-outlined text-primary text-2xl">style</span>
                         </div>
-                        {/* Card Front */}
                         <div className="card-back absolute inset-0">
-                          <img
-                            src={selected.card.imageUrl}
-                            alt={selected.card.name}
-                            onError={handleImageError}
-                            className="w-full h-full object-cover"
-                          />
+                          <img src={selected.card.imageUrl} alt={selected.card.name} onError={handleImageError} className="w-full h-full object-cover" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                           <div className="absolute bottom-3 left-0 right-0 text-center">
                             <h3 className="text-white font-bold text-sm md:text-base">{selected.card.name}</h3>
@@ -649,15 +1439,11 @@ const Session = () => {
         </div>
       )}
 
-      {/* Main Area: Deck Display */}
       <main className="flex-1 relative flex items-center justify-center w-full bg-[#0f0b13] py-8 px-4 min-h-[300px] md:min-h-[400px]">
         {isShuffling ? (
           <div className="flex flex-col items-center justify-center gap-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
-              <span className="material-symbols-outlined text-6xl text-primary animate-spin">cached</span>
-            </div>
-            <p className="text-white font-display text-2xl animate-pulse tracking-wide">Shuffling...</p>
+            <span className="material-symbols-outlined text-6xl text-primary animate-spin">cached</span>
+            <p className="text-white text-2xl animate-pulse">{isPortuguese ? 'Embaralhando...' : 'Shuffling...'}</p>
           </div>
         ) : (
           <div className="relative w-full max-w-[95%] h-56 md:h-72 flex items-center justify-center perspective-1000 overflow-visible">
@@ -670,32 +1456,17 @@ const Session = () => {
                 <div
                   key={card.id}
                   onClick={() => !isSelected && handleCardClick(card)}
-                  className={`
-                    absolute top-4
-                    w-14 sm:w-16 md:w-20 lg:w-24 aspect-[2/3.4]
-                    rounded-lg border border-white/20
-                    bg-gradient-to-br from-surface-dark to-black
-                    shadow-xl cursor-pointer
-                    transition-all duration-300 ease-out origin-bottom
-                    ${isSelected
-                      ? 'opacity-0 -translate-y-20 scale-50 pointer-events-none'
-                      : 'hover:z-[100] hover:-translate-y-6 hover:scale-105 hover:border-primary hover:shadow-[0_0_20px_rgba(147,17,212,0.4)]'
-                    }
-                  `}
+                  className={`absolute top-4 w-14 sm:w-16 md:w-20 lg:w-24 aspect-[2/3.4] rounded-lg border border-white/20 bg-gradient-to-br from-surface-dark to-black shadow-xl cursor-pointer transition-all duration-300 ease-out origin-bottom ${
+                    isSelected ? 'opacity-0 -translate-y-20 scale-50 pointer-events-none' : 'hover:z-[100] hover:-translate-y-6 hover:scale-105 hover:border-primary hover:shadow-[0_0_20px_rgba(147,17,212,0.4)]'
+                  }`}
                   style={{
                     left: `${leftPos}%`,
                     zIndex: isSelected ? -1 : index,
                     transform: isSelected ? undefined : `rotate(${(index - totalCards/2) * 0.3}deg)`,
                   }}
                 >
-                  <div className="absolute inset-0 rounded-lg overflow-hidden bg-surface-dark">
-                    <div className="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="size-6 md:size-10 rounded-full border border-white/10 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                        <span className="material-symbols-outlined text-primary text-xs md:text-lg">style</span>
-                      </div>
-                    </div>
-                    <div className="absolute inset-1 border border-white/5 rounded"></div>
+                  <div className="absolute inset-0 rounded-lg overflow-hidden bg-surface-dark flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary/50 text-xs md:text-lg">style</span>
                   </div>
                 </div>
               );
@@ -705,219 +1476,203 @@ const Session = () => {
       </main>
 
       <div className="bg-surface-dark border-t border-white/5 py-4 text-center">
-        <p className="text-gray-400 text-sm font-medium tracking-wide">
-          {selectedCards.length === 0 ? "The deck is ready. Follow your intuition." :
-           selectedCards.length < spread.cardCount ? `Choose card number ${selectedCards.length + 1}.` :
-           "Processing your reading..."}
+        <p className="text-gray-400 text-sm">
+          {selectedCards.length === 0 ? t.session.focusMessage :
+           selectedCards.length < spread.cardCount ? `${t.session.cardsRemaining}: ${spread.cardCount - selectedCards.length}` :
+           t.common.loading}
         </p>
       </div>
     </div>
   );
 };
 
-// Results Page - Centered Card Layout
+// Results Page
 const Result = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const state = location.state as any;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { t, isPortuguese } = useLanguage();
+  const state = location.state as any;
 
-    const [analysis, setAnalysis] = useState<ReadingAnalysis | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [activeCardIndex, setActiveCardIndex] = useState(1); // Middle card by default
+  const [analysis, setAnalysis] = useState<ReadingAnalysis | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeCardIndex, setActiveCardIndex] = useState(1);
 
-    useEffect(() => {
-        if (!state?.spread || !state?.cards) {
-            navigate('/');
-            return;
-        }
+  useEffect(() => {
+    if (!state?.spread || !state?.cards) {
+      navigate('/');
+      return;
+    }
 
-        const fetchInterpretation = async () => {
-            const reversedIndices = state.cards
-                .map((_: any, idx: number) => Math.random() < 0.2 ? idx : -1)
-                .filter((idx: number) => idx !== -1);
+    const fetchInterpretation = async () => {
+      const reversedIndices = state.cards
+        .map((_: any, idx: number) => Math.random() < 0.2 ? idx : -1)
+        .filter((idx: number) => idx !== -1);
 
-            const session: ReadingSession = {
-                spread: state.spread,
-                cards: state.cards,
-                reversedIndices,
-                question: state.question,
-                date: new Date().toLocaleDateString('pt-BR')
-            };
+      const session: ReadingSession = {
+        spread: state.spread,
+        cards: state.cards,
+        reversedIndices,
+        question: state.question,
+        date: new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US')
+      };
 
-            const result = await getGeminiInterpretation(session);
-            setAnalysis(result);
-            setIsLoading(false);
-        };
+      const result = await getGeminiInterpretation(session);
+      setAnalysis(result);
+      setIsLoading(false);
+    };
 
-        fetchInterpretation();
-    }, [state, navigate]);
+    fetchInterpretation();
+  }, [state, navigate, isPortuguese]);
 
-    if (!state?.spread) return null;
+  if (!state?.spread) return null;
 
-    const { spread, cards } = state;
-    const activeCard = cards[activeCardIndex];
-    const activeInterpretation = analysis?.cards?.[activeCardIndex];
-    const activeLore = activeCard ? getStaticLore(activeCard) : null;
+  const { spread, cards } = state;
+  const activeCard = cards[activeCardIndex];
+  const activeInterpretation = analysis?.cards?.[activeCardIndex];
+  const activeLore = activeCard ? getStaticLore(activeCard) : null;
 
-    return (
-        <div className="flex flex-col min-h-screen bg-background-dark text-white font-display overflow-x-hidden animate-fade-in-up">
-            <Header />
+  return (
+    <div className="flex flex-col min-h-screen bg-background-dark text-white overflow-x-hidden">
+      <Header />
+      <CartDrawer />
 
-            <div className="flex flex-1 overflow-hidden relative">
-                {/* Left Panel: Cards Display */}
-                <main className="flex-1 flex flex-col relative z-10 overflow-y-auto">
-                    {/* Heading */}
-                    <div className="flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
-                        <div className="flex flex-wrap justify-between items-end gap-4 mb-6">
-                            <div className="flex flex-col gap-2 max-w-2xl">
-                                <h1 className="text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Your Reading</h1>
-                                <p className="text-[#b09db9] text-base font-normal leading-relaxed">{spread.name}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* The Cards */}
-                    <div className="flex-1 px-4 md:px-12 py-4 flex flex-col justify-center items-center min-h-[400px]">
-                        <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-12 perspective-1000">
-                            {cards.map((card: TarotCard, idx: number) => {
-                                const isActive = idx === activeCardIndex;
-                                const position = spread.positions[idx];
-
-                                return (
-                                    <div
-                                        key={card.id}
-                                        onClick={() => setActiveCardIndex(idx)}
-                                        className={`flex flex-col items-center gap-4 group cursor-pointer ${isActive ? '-mt-0 sm:-mt-8' : ''}`}
-                                    >
-                                        <div className={`relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-2xl card-glow transition-all ${
-                                            isActive
-                                                ? 'shadow-[0_0_30px_rgba(147,17,212,0.25)] border-2 border-primary/50 ring-4 ring-primary/10'
-                                                : 'border border-white/10'
-                                        }`}>
-                                            <div
-                                                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                                                style={{backgroundImage: `url("${card.imageUrl}")`}}
-                                            ></div>
-                                            <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent ${isActive ? 'opacity-80' : 'opacity-60'}`}></div>
-                                            <div className={`absolute ${isActive ? 'bottom-6' : 'bottom-4'} left-0 right-0 text-center`}>
-                                                <span className="uppercase tracking-widest text-xs font-bold text-primary mb-1 block">{position?.name}</span>
-                                                <h3 className={`text-white font-bold ${isActive ? 'text-2xl' : 'text-xl'}`}>{card.name}</h3>
-                                            </div>
-                                            {isActive && (
-                                                <div className="absolute top-3 right-3 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
-                                                    Focus Card
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex-none p-6 md:p-8 flex justify-center w-full bg-gradient-to-t from-background-dark to-transparent">
-                        <div className="flex flex-wrap gap-4 justify-center w-full max-w-lg">
-                            <button
-                                onClick={() => navigate('/')}
-                                className="flex-1 min-w-[140px] flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-primary hover:bg-primary-hover text-white font-bold tracking-wide shadow-lg shadow-primary/20 transition-all active:scale-95"
-                            >
-                                <span className="material-symbols-outlined text-xl">cached</span>
-                                <span>New Reading</span>
-                            </button>
-                        </div>
-                    </div>
-                </main>
-
-                {/* Right Panel: Sidebar / Interpretation */}
-                <aside className="hidden lg:flex w-[400px] flex-col border-l border-border-dark bg-surface-dark overflow-y-auto">
-                    <div className="p-8 flex flex-col gap-8">
-                        {/* Interpretation Header */}
-                        <div>
-                            <div className="flex items-center gap-2 text-primary mb-2">
-                                <span className="material-symbols-outlined">auto_awesome</span>
-                                <span className="text-xs font-bold uppercase tracking-widest">Interpretation</span>
-                            </div>
-                            <h2 className="text-3xl font-black text-white leading-tight mb-2">{activeCard?.name}</h2>
-                            {activeLore && (
-                                <div className="flex flex-wrap gap-2 mt-3">
-                                    {activeLore.keywords.slice(0, 3).map((kw, i) => (
-                                        <span key={i} className="px-3 py-1 rounded-full bg-primary/20 text-primary-hover text-xs font-bold border border-primary/30">{kw}</span>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Main Text */}
-                        <div className="space-y-4 text-gray-300 leading-relaxed font-light text-lg">
-                            {isLoading ? (
-                                <div className="space-y-3 animate-pulse">
-                                    <div className="h-4 bg-white/10 rounded w-full"></div>
-                                    <div className="h-4 bg-white/10 rounded w-5/6"></div>
-                                    <div className="h-4 bg-white/10 rounded w-4/6"></div>
-                                    <p className="text-primary text-xs mt-2">Analyzing the cards...</p>
-                                </div>
-                            ) : (
-                                <>
-                                    <p>{activeInterpretation?.interpretation || activeLore?.generalMeaning}</p>
-
-                                    <div className="p-4 bg-surface-highlight rounded-lg border border-border-dark mt-4">
-                                        <p className="text-sm italic text-white/80">
-                                            "{activeLore?.advice}"
-                                        </p>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-
-                        {/* Synthesis */}
-                        {!isLoading && analysis && (
-                            <div className="pt-6 border-t border-border-dark">
-                                <h4 className="text-sm font-bold text-white uppercase tracking-widest mb-4">Overall Synthesis</h4>
-                                <p className="text-gray-400 text-sm leading-relaxed">{analysis.synthesis}</p>
-                                <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/20">
-                                    <p className="text-primary text-sm font-medium">{analysis.advice}</p>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </aside>
+      <div className="flex flex-1 overflow-hidden relative">
+        <main className="flex-1 flex flex-col relative z-10 overflow-y-auto">
+          <div className="flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
+            <div className="flex flex-wrap justify-between items-end gap-4 mb-6">
+              <div>
+                <h1 className="text-white text-3xl md:text-4xl font-black">{t.result.title}</h1>
+                <p className="text-gray-400">{spread.name}</p>
+              </div>
             </div>
+          </div>
 
-            {/* Mobile Interpretation (shown below cards on mobile) */}
-            <div className="lg:hidden bg-surface-dark border-t border-border-dark p-6">
-                <div className="flex items-center gap-2 text-primary mb-3">
-                    <span className="material-symbols-outlined">auto_awesome</span>
-                    <span className="text-xs font-bold uppercase tracking-widest">Interpretation</span>
+          <div className="flex-1 px-4 md:px-12 py-4 flex flex-col justify-center items-center min-h-[400px]">
+            <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-12 perspective-1000">
+              {cards.map((card: TarotCard, idx: number) => {
+                const isActive = idx === activeCardIndex;
+                const position = spread.positions[idx];
+
+                return (
+                  <div
+                    key={card.id}
+                    onClick={() => setActiveCardIndex(idx)}
+                    className={`flex flex-col items-center gap-4 group cursor-pointer ${isActive ? '-mt-0 sm:-mt-8' : ''}`}
+                  >
+                    <div className={`relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-2xl transition-all ${
+                      isActive ? 'shadow-[0_0_30px_rgba(147,17,212,0.25)] border-2 border-primary/50 ring-4 ring-primary/10' : 'border border-white/10'
+                    }`}>
+                      <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500" style={{backgroundImage: `url("${card.imageUrl}")`}}></div>
+                      <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent ${isActive ? 'opacity-80' : 'opacity-60'}`}></div>
+                      <div className={`absolute ${isActive ? 'bottom-6' : 'bottom-4'} left-0 right-0 text-center`}>
+                        <span className="uppercase tracking-widest text-xs font-bold text-primary mb-1 block">{position?.name}</span>
+                        <h3 className={`text-white font-bold ${isActive ? 'text-2xl' : 'text-xl'}`}>{card.name}</h3>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex-none p-6 md:p-8 flex justify-center w-full bg-gradient-to-t from-background-dark to-transparent">
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center justify-center gap-2 h-12 px-8 rounded-lg bg-primary hover:bg-primary-hover text-white font-bold transition-all"
+            >
+              <span className="material-symbols-outlined">cached</span>
+              {t.result.newReading}
+            </button>
+          </div>
+        </main>
+
+        <aside className="hidden lg:flex w-[400px] flex-col border-l border-border-dark bg-surface-dark overflow-y-auto">
+          <div className="p-8 flex flex-col gap-8">
+            <div>
+              <div className="flex items-center gap-2 text-primary mb-2">
+                <span className="material-symbols-outlined">auto_awesome</span>
+                <span className="text-xs font-bold uppercase tracking-widest">{t.result.interpretation}</span>
+              </div>
+              <h2 className="text-3xl font-black text-white mb-2">{activeCard?.name}</h2>
+              {activeLore && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {activeLore.keywords.slice(0, 3).map((kw, i) => (
+                    <span key={i} className="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold border border-primary/30">{kw}</span>
+                  ))}
                 </div>
-                <h2 className="text-2xl font-black text-white mb-3">{activeCard?.name}</h2>
-                {isLoading ? (
-                    <div className="space-y-2 animate-pulse">
-                        <div className="h-3 bg-white/10 rounded w-full"></div>
-                        <div className="h-3 bg-white/10 rounded w-5/6"></div>
-                    </div>
-                ) : (
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                        {activeInterpretation?.interpretation || activeLore?.generalMeaning}
-                    </p>
-                )}
+              )}
             </div>
+
+            <div className="space-y-4 text-gray-300 leading-relaxed text-lg">
+              {isLoading ? (
+                <div className="space-y-3 animate-pulse">
+                  <div className="h-4 bg-white/10 rounded w-full"></div>
+                  <div className="h-4 bg-white/10 rounded w-5/6"></div>
+                  <p className="text-primary text-xs mt-2">{t.result.loading}</p>
+                </div>
+              ) : (
+                <>
+                  <p>{activeInterpretation?.interpretation || activeLore?.generalMeaning}</p>
+                  <div className="p-4 bg-surface-highlight rounded-lg border border-border-dark mt-4">
+                    <p className="text-sm italic text-white/80">"{activeLore?.advice}"</p>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {!isLoading && analysis && (
+              <div className="pt-6 border-t border-border-dark">
+                <h4 className="text-sm font-bold text-white uppercase tracking-widest mb-4">{t.result.synthesis}</h4>
+                <p className="text-gray-400 text-sm leading-relaxed">{analysis.synthesis}</p>
+                <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/20">
+                  <p className="text-primary text-sm font-medium">{analysis.advice}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </aside>
+      </div>
+
+      <div className="lg:hidden bg-surface-dark border-t border-border-dark p-6">
+        <div className="flex items-center gap-2 text-primary mb-3">
+          <span className="material-symbols-outlined">auto_awesome</span>
+          <span className="text-xs font-bold uppercase tracking-widest">{t.result.interpretation}</span>
         </div>
-    );
+        <h2 className="text-2xl font-black text-white mb-3">{activeCard?.name}</h2>
+        {isLoading ? (
+          <div className="space-y-2 animate-pulse">
+            <div className="h-3 bg-white/10 rounded w-full"></div>
+            <div className="h-3 bg-white/10 rounded w-5/6"></div>
+          </div>
+        ) : (
+          <p className="text-gray-300 text-sm leading-relaxed">
+            {activeInterpretation?.interpretation || activeLore?.generalMeaning}
+          </p>
+        )}
+      </div>
+    </div>
+  );
 };
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/explore/:cardId" element={<CardDetails />} />
-        <Route path="/session" element={<Session />} />
-        <Route path="/result" element={<Result />} />
-        <Route path="/history" element={<History />} />
-      </Routes>
-    </Router>
+    <LanguageProvider>
+      <CartProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/explore/:cardId" element={<CardDetails />} />
+            <Route path="/session" element={<Session />} />
+            <Route path="/result" element={<Result />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/shop/:slug" element={<ProductDetail />} />
+            <Route path="/checkout" element={<Checkout />} />
+          </Routes>
+        </Router>
+      </CartProvider>
+    </LanguageProvider>
   );
 };
 
