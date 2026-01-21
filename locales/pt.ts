@@ -214,6 +214,67 @@ export const pt = {
     copyright: "Todos os direitos reservados",
   },
 
+  // Cosmic Calendar
+  cosmic: {
+    title: "Calendário Cósmico",
+    subtitle: "Acompanhe as fases da lua, energias planetárias e momentos cósmicos",
+    today: "Hoje",
+    moonPhase: "Fase da Lua",
+    illumination: "Iluminação",
+    planetaryRuler: "Regente do Dia",
+    zodiacSeason: "Temporada de",
+    cosmicEnergy: "Energia Cósmica",
+    bestFor: "Bom Para",
+    avoid: "Evitar",
+    rituals: "Rituais Sugeridos",
+    monthView: "Visão Mensal",
+    weekView: "Visão Semanal",
+    element: "Elemento",
+    qualities: "Qualidades",
+    rulingPlanet: "Planeta Regente",
+  },
+
+  // Numerology
+  numerology: {
+    title: "Numerologia",
+    subtitle: "Descubra os números que regem sua vida e revelam seu destino",
+    form: {
+      fullName: "Nome Completo",
+      fullNamePlaceholder: "Digite seu nome de nascimento completo",
+      birthDate: "Data de Nascimento",
+      calculate: "Calcular Meu Perfil",
+      calculating: "Calculando...",
+    },
+    results: {
+      title: "Seu Perfil Numerológico",
+      coreNumbers: "Números Centrais",
+      personalCycles: "Ciclos Pessoais",
+      todayEnergy: "Energia de Hoje",
+      universalDay: "Dia Universal",
+    },
+    numbers: {
+      lifePath: "Caminho de Vida",
+      lifePathDesc: "Seu propósito de vida e lições a aprender",
+      expression: "Expressão",
+      expressionDesc: "Seus talentos naturais e habilidades",
+      soul: "Impulso da Alma",
+      soulDesc: "Seus desejos mais profundos e motivações internas",
+      personality: "Personalidade",
+      personalityDesc: "Como os outros te percebem",
+      birthday: "Número de Aniversário",
+      birthdayDesc: "Um talento especial que você possui",
+      personalYear: "Ano Pessoal",
+      personalYearDesc: "O tema energético do seu ano atual",
+      personalMonth: "Mês Pessoal",
+      personalMonthDesc: "A energia que influencia este mês",
+      personalDay: "Dia Pessoal",
+      personalDayDesc: "A vibração que guia o dia de hoje",
+    },
+    masterNumber: "Número Mestre",
+    learnMore: "Saiba Mais",
+    newCalculation: "Nova Consulta",
+  },
+
   // Common
   common: {
     loading: "Carregando...",

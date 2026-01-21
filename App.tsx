@@ -8,6 +8,8 @@ import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/Langua
 import { CartProvider, useCart } from './contexts/CartContext';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
+import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
+import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 
 // Extended CardLore with API description
 interface ExtendedCardLore extends CardLore {
@@ -154,6 +156,12 @@ const Header = () => {
             <button onClick={() => navigate('/explore')} className={`text-sm font-medium transition-colors ${isActive('/explore') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
               {t.nav.cardMeanings}
             </button>
+            <button onClick={() => navigate('/numerology')} className={`text-sm font-medium transition-colors ${isActive('/numerology') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+              {t.numerology.title}
+            </button>
+            <button onClick={() => navigate('/cosmic')} className={`text-sm font-medium transition-colors ${isActive('/cosmic') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+              {t.cosmic.title}
+            </button>
             <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
               {t.nav.shop}
             </button>
@@ -191,6 +199,8 @@ const Header = () => {
           <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.newReading}</button>
             <button onClick={() => { navigate('/explore'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
+            <button onClick={() => { navigate('/numerology'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.numerology.title}</button>
+            <button onClick={() => { navigate('/cosmic'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.cosmic.title}</button>
             <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
           </nav>
@@ -1469,6 +1479,460 @@ const History = () => {
   );
 };
 
+// Numerology Page
+const Numerology = () => {
+  const navigate = useNavigate();
+  const { t, isPortuguese } = useLanguage();
+  const [fullName, setFullName] = useState('');
+  const [birthDate, setBirthDate] = useState('');
+  const [profile, setProfile] = useState<NumerologyProfile | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [universalDay] = useState(calculateUniversalDay());
+
+  const handleCalculate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!fullName.trim() || !birthDate) return;
+
+    setIsCalculating(true);
+    setTimeout(() => {
+      const date = new Date(birthDate + 'T12:00:00');
+      const result = calculateNumerologyProfile(fullName, date);
+      setProfile(result);
+      setIsCalculating(false);
+    }, 800);
+  };
+
+  const resetCalculation = () => {
+    setProfile(null);
+    setFullName('');
+    setBirthDate('');
+  };
+
+  const NumberCard = ({ num, title, description, icon }: { num: NumerologyNumber; title: string; description: string; icon: string }) => {
+    const meaning = isPortuguese ? num.meaning.title_pt : num.meaning.title;
+    const keywords = isPortuguese ? num.meaning.keywords_pt : num.meaning.keywords;
+
+    return (
+      <div className="bg-card-dark rounded-xl border border-border-dark hover:border-primary/30 p-5 transition-all group">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+              <span className="text-2xl font-black text-primary">{num.value}</span>
+            </div>
+            <div>
+              <h3 className="text-white font-bold">{title}</h3>
+              <p className="text-gray-500 text-xs">{description}</p>
+            </div>
+          </div>
+          <span className="material-symbols-outlined text-gray-600 group-hover:text-primary transition-colors">{icon}</span>
+        </div>
+
+        <div className="mt-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-primary font-bold text-sm">{meaning}</span>
+            {num.masterNumber && (
+              <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-[10px] font-bold rounded-full uppercase">
+                {t.numerology.masterNumber}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {keywords.slice(0, 4).map((kw, i) => (
+              <span key={i} className="px-2 py-1 bg-surface-dark rounded text-gray-400 text-xs">
+                {kw}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background-dark text-white">
+      <Header />
+      <CartDrawer />
+
+      <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-10 py-12">
+        {!profile ? (
+          <>
+            {/* Hero Section */}
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-bold mb-6">
+                <span className="material-symbols-outlined text-lg">123</span>
+                {t.numerology.title}
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black mb-4">{t.numerology.title}</h1>
+              <p className="text-gray-400 text-lg max-w-xl mx-auto">{t.numerology.subtitle}</p>
+            </div>
+
+            {/* Universal Day Card */}
+            <div className="max-w-md mx-auto mb-10">
+              <div className="bg-gradient-to-br from-primary/20 to-surface-dark rounded-xl border border-primary/30 p-6 text-center">
+                <p className="text-gray-400 text-sm mb-2">{t.numerology.results.universalDay}</p>
+                <div className="text-5xl font-black text-primary mb-2">{universalDay}</div>
+                <p className="text-gray-400 text-sm">{t.numerology.results.todayEnergy}</p>
+              </div>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleCalculate} className="max-w-md mx-auto space-y-6">
+              <div>
+                <label className="block text-white font-medium mb-2">{t.numerology.form.fullName}</label>
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder={t.numerology.form.fullNamePlaceholder}
+                  className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white placeholder:text-gray-500 focus:border-primary focus:outline-none transition-colors"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-white font-medium mb-2">{t.numerology.form.birthDate}</label>
+                <input
+                  type="date"
+                  value={birthDate}
+                  onChange={(e) => setBirthDate(e.target.value)}
+                  className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white focus:border-primary focus:outline-none transition-colors"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isCalculating || !fullName.trim() || !birthDate}
+                className="w-full py-4 bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white font-bold text-lg shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2"
+              >
+                {isCalculating ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                    {t.numerology.form.calculating}
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined">calculate</span>
+                    {t.numerology.form.calculate}
+                  </>
+                )}
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            {/* Results Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-black mb-2">{t.numerology.results.title}</h1>
+                <p className="text-gray-400">{fullName}</p>
+              </div>
+              <button
+                onClick={resetCalculation}
+                className="px-6 py-3 bg-surface-dark hover:bg-white/10 border border-border-dark rounded-xl text-white font-medium transition-colors flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined">refresh</span>
+                {t.numerology.newCalculation}
+              </button>
+            </div>
+
+            {/* Core Numbers */}
+            <div className="mb-10">
+              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">star</span>
+                {t.numerology.results.coreNumbers}
+              </h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <NumberCard num={profile.lifePath} title={t.numerology.numbers.lifePath} description={t.numerology.numbers.lifePathDesc} icon="route" />
+                <NumberCard num={profile.expression} title={t.numerology.numbers.expression} description={t.numerology.numbers.expressionDesc} icon="brush" />
+                <NumberCard num={profile.soul} title={t.numerology.numbers.soul} description={t.numerology.numbers.soulDesc} icon="favorite" />
+                <NumberCard num={profile.personality} title={t.numerology.numbers.personality} description={t.numerology.numbers.personalityDesc} icon="person" />
+                <NumberCard num={profile.birthday} title={t.numerology.numbers.birthday} description={t.numerology.numbers.birthdayDesc} icon="cake" />
+              </div>
+            </div>
+
+            {/* Personal Cycles */}
+            <div>
+              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">autorenew</span>
+                {t.numerology.results.personalCycles}
+              </h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <NumberCard num={profile.personalYear} title={t.numerology.numbers.personalYear} description={t.numerology.numbers.personalYearDesc} icon="calendar_today" />
+                <NumberCard num={profile.personalMonth} title={t.numerology.numbers.personalMonth} description={t.numerology.numbers.personalMonthDesc} icon="date_range" />
+                <NumberCard num={profile.personalDay} title={t.numerology.numbers.personalDay} description={t.numerology.numbers.personalDayDesc} icon="today" />
+              </div>
+            </div>
+          </>
+        )}
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+// Cosmic Calendar Page
+const CosmicCalendar = () => {
+  const { t, isPortuguese } = useLanguage();
+  const [currentDate] = useState(new Date());
+  const [cosmicDay] = useState<CosmicDay>(getCosmicDay(currentDate));
+  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth());
+  const [selectedYear] = useState(currentDate.getFullYear());
+
+  const { moonPhase, zodiacSun, planetaryRuler, cosmicEnergy, bestFor, bestFor_pt, avoid, avoid_pt } = cosmicDay;
+
+  const getDaysInMonth = (year: number, month: number) => {
+    const days: Date[] = [];
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push(new Date(year, month, day));
+    }
+    return days;
+  };
+
+  const monthDays = getDaysInMonth(selectedYear, selectedMonth);
+  const firstDayOfWeek = new Date(selectedYear, selectedMonth, 1).getDay();
+
+  const monthNames = isPortuguese
+    ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+    : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  const weekDays = isPortuguese ? ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background-dark text-white">
+      <Header />
+      <CartDrawer />
+
+      <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-10 py-12">
+        {/* Hero */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-bold mb-6">
+            <span className="material-symbols-outlined text-lg">calendar_month</span>
+            {t.cosmic.title}
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black mb-4">{t.cosmic.title}</h1>
+          <p className="text-gray-400 text-lg max-w-xl mx-auto">{t.cosmic.subtitle}</p>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Left Column - Today's Cosmic Info */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Moon Phase Card */}
+            <div className="bg-gradient-to-br from-indigo-900/50 to-surface-dark rounded-2xl border border-indigo-500/30 p-6 md:p-8">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 flex items-center justify-center relative overflow-hidden">
+                  <span className="material-symbols-outlined text-6xl text-indigo-900">{moonPhase.icon}</span>
+                  <div
+                    className="absolute inset-0 bg-indigo-950"
+                    style={{
+                      clipPath: `inset(0 ${100 - moonPhase.illumination}% 0 0)`,
+                      opacity: 0.8
+                    }}
+                  />
+                </div>
+                <div className="text-center md:text-left flex-1">
+                  <p className="text-indigo-300 text-sm font-medium mb-1">{t.cosmic.moonPhase}</p>
+                  <h2 className="text-3xl font-black text-white mb-2">
+                    {isPortuguese ? moonPhase.name_pt : moonPhase.name}
+                  </h2>
+                  <p className="text-gray-400 mb-3">
+                    {isPortuguese ? moonPhase.description_pt : moonPhase.description}
+                  </p>
+                  <div className="flex items-center gap-4 justify-center md:justify-start">
+                    <span className="px-3 py-1 bg-indigo-500/20 rounded-full text-indigo-300 text-sm">
+                      {t.cosmic.illumination}: {moonPhase.illumination}%
+                    </span>
+                    <span className="px-3 py-1 bg-purple-500/20 rounded-full text-purple-300 text-sm">
+                      {isPortuguese ? moonPhase.energy_pt : moonPhase.energy}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Grid of Day Info */}
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Planetary Ruler */}
+              <div className="bg-card-dark rounded-xl border border-border-dark p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: planetaryRuler.color + '30' }}>
+                    <span className="material-symbols-outlined text-2xl" style={{ color: planetaryRuler.color }}>{planetaryRuler.icon}</span>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs">{t.cosmic.planetaryRuler}</p>
+                    <h3 className="text-white font-bold text-lg">
+                      {isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}
+                    </h3>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {(isPortuguese ? planetaryRuler.qualities_pt : planetaryRuler.qualities).map((q, i) => (
+                    <span key={i} className="px-2 py-1 bg-surface-dark rounded text-gray-400 text-xs">{q}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Zodiac Season */}
+              <div className="bg-card-dark rounded-xl border border-border-dark p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${getElementColor(zodiacSun.element)}`}>
+                    {zodiacSun.icon}
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs">{t.cosmic.zodiacSeason}</p>
+                    <h3 className="text-white font-bold text-lg">
+                      {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}
+                    </h3>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className={`px-2 py-1 rounded text-xs ${getElementColor(zodiacSun.element)}`}>
+                    {isPortuguese ? zodiacSun.element_pt : zodiacSun.element}
+                  </span>
+                  {(isPortuguese ? zodiacSun.qualities_pt : zodiacSun.qualities).slice(0, 2).map((q, i) => (
+                    <span key={i} className="px-2 py-1 bg-surface-dark rounded text-gray-400 text-xs">{q}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Best For */}
+              <div className="bg-card-dark rounded-xl border border-border-dark p-5">
+                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-green-400">check_circle</span>
+                  {t.cosmic.bestFor}
+                </h3>
+                <ul className="space-y-2">
+                  {(isPortuguese ? bestFor_pt : bestFor).slice(0, 4).map((item, i) => (
+                    <li key={i} className="text-gray-400 text-sm flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Avoid */}
+              <div className="bg-card-dark rounded-xl border border-border-dark p-5">
+                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-red-400">do_not_disturb</span>
+                  {t.cosmic.avoid}
+                </h3>
+                {(isPortuguese ? avoid_pt : avoid).length > 0 ? (
+                  <ul className="space-y-2">
+                    {(isPortuguese ? avoid_pt : avoid).map((item, i) => (
+                      <li key={i} className="text-gray-400 text-sm flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500 text-sm italic">
+                    {isPortuguese ? 'Dia favorável para a maioria das atividades' : 'Favorable day for most activities'}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Rituals */}
+            <div className="bg-card-dark rounded-xl border border-border-dark p-6">
+              <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">self_improvement</span>
+                {t.cosmic.rituals}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {(isPortuguese ? moonPhase.rituals_pt : moonPhase.rituals).map((ritual, i) => (
+                  <span key={i} className="px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg text-primary text-sm">
+                    {ritual}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Calendar & Energy */}
+          <div className="space-y-6">
+            {/* Cosmic Energy */}
+            <div className="bg-gradient-to-br from-primary/20 to-surface-dark rounded-xl border border-primary/30 p-6 text-center">
+              <p className="text-gray-400 text-sm mb-2">{t.cosmic.cosmicEnergy}</p>
+              <div className="text-6xl font-black text-primary mb-2">{cosmicEnergy}</div>
+              <div className="flex justify-center gap-1">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-2 h-6 rounded-full ${i < cosmicEnergy ? 'bg-primary' : 'bg-surface-dark'}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Mini Calendar */}
+            <div className="bg-card-dark rounded-xl border border-border-dark p-4">
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  onClick={() => setSelectedMonth(m => m === 0 ? 11 : m - 1)}
+                  className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  <span className="material-symbols-outlined text-gray-400">chevron_left</span>
+                </button>
+                <h3 className="text-white font-bold">{monthNames[selectedMonth]} {selectedYear}</h3>
+                <button
+                  onClick={() => setSelectedMonth(m => m === 11 ? 0 : m + 1)}
+                  className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  <span className="material-symbols-outlined text-gray-400">chevron_right</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-7 gap-1 mb-2">
+                {weekDays.map(day => (
+                  <div key={day} className="text-center text-gray-500 text-xs py-1">{day}</div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-7 gap-1">
+                {Array.from({ length: firstDayOfWeek }).map((_, i) => (
+                  <div key={`empty-${i}`} className="aspect-square" />
+                ))}
+                {monthDays.map((day) => {
+                  const dayMoon = getMoonPhase(day);
+                  const isToday = day.toDateString() === currentDate.toDateString();
+
+                  return (
+                    <div
+                      key={day.getDate()}
+                      className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-colors cursor-pointer hover:bg-white/5 ${
+                        isToday ? 'bg-primary text-white ring-2 ring-primary ring-offset-2 ring-offset-card-dark' : 'text-gray-400'
+                      }`}
+                    >
+                      <span className="font-medium">{day.getDate()}</span>
+                      <span className="material-symbols-outlined text-[10px] opacity-50">{dayMoon.icon}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Today Box */}
+            <div className="bg-surface-dark rounded-xl border border-border-dark p-4 text-center">
+              <p className="text-gray-500 text-sm mb-1">{t.cosmic.today}</p>
+              <p className="text-white font-bold text-lg">
+                {currentDate.toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long'
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
 // Explore Page
 const Explore = () => {
   const navigate = useNavigate();
@@ -1989,6 +2453,8 @@ const App = () => {
             <Route path="/session" element={<Session />} />
             <Route path="/result" element={<Result />} />
             <Route path="/history" element={<History />} />
+            <Route path="/numerology" element={<Numerology />} />
+            <Route path="/cosmic" element={<CosmicCalendar />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/shop/:slug" element={<ProductDetail />} />
             <Route path="/checkout" element={<Checkout />} />

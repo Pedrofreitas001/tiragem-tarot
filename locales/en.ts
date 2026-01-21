@@ -216,6 +216,67 @@ export const en: TranslationKeys = {
     copyright: "All rights reserved",
   },
 
+  // Cosmic Calendar
+  cosmic: {
+    title: "Cosmic Calendar",
+    subtitle: "Track moon phases, planetary energies and cosmic moments",
+    today: "Today",
+    moonPhase: "Moon Phase",
+    illumination: "Illumination",
+    planetaryRuler: "Day Ruler",
+    zodiacSeason: "Season of",
+    cosmicEnergy: "Cosmic Energy",
+    bestFor: "Best For",
+    avoid: "Avoid",
+    rituals: "Suggested Rituals",
+    monthView: "Month View",
+    weekView: "Week View",
+    element: "Element",
+    qualities: "Qualities",
+    rulingPlanet: "Ruling Planet",
+  },
+
+  // Numerology
+  numerology: {
+    title: "Numerology",
+    subtitle: "Discover the numbers that rule your life and reveal your destiny",
+    form: {
+      fullName: "Full Name",
+      fullNamePlaceholder: "Enter your full birth name",
+      birthDate: "Birth Date",
+      calculate: "Calculate My Profile",
+      calculating: "Calculating...",
+    },
+    results: {
+      title: "Your Numerology Profile",
+      coreNumbers: "Core Numbers",
+      personalCycles: "Personal Cycles",
+      todayEnergy: "Today's Energy",
+      universalDay: "Universal Day",
+    },
+    numbers: {
+      lifePath: "Life Path",
+      lifePathDesc: "Your life purpose and lessons to learn",
+      expression: "Expression",
+      expressionDesc: "Your natural talents and abilities",
+      soul: "Soul Urge",
+      soulDesc: "Your deepest desires and inner motivations",
+      personality: "Personality",
+      personalityDesc: "How others perceive you",
+      birthday: "Birthday Number",
+      birthdayDesc: "A special talent you possess",
+      personalYear: "Personal Year",
+      personalYearDesc: "The energetic theme of your current year",
+      personalMonth: "Personal Month",
+      personalMonthDesc: "The energy influencing this month",
+      personalDay: "Personal Day",
+      personalDayDesc: "The vibration guiding today",
+    },
+    masterNumber: "Master Number",
+    learnMore: "Learn More",
+    newCalculation: "New Calculation",
+  },
+
   // Common
   common: {
     loading: "Loading...",
