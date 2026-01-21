@@ -371,48 +371,67 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Spread Selection - Cards Style */}
-      <section className="py-20 px-6">
+      {/* Spread Selection - Premium Cards Style */}
+      <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-[1200px] mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-4">{t.home.chooseReading}</h2>
-            <p className="text-gray-400 max-w-xl mx-auto">{t.home.chooseReadingSubtitle}</p>
+          <div className="text-center md:text-left mb-10 md:mb-14 px-2">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{t.home.chooseReading}</h2>
+            <p className="text-gray-400 text-lg max-w-xl">{t.home.chooseReadingSubtitle}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {SPREADS.map((spread, index) => {
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 px-2">
+            {SPREADS.map((spread) => {
               const translation = getSpreadTranslation(spread.id);
+              const spreadImages: Record<string, string> = {
+                'three_card': 'https://images.unsplash.com/photo-1635497611324-129442752063?w=800&q=80',
+                'celtic_cross': 'https://images.unsplash.com/photo-1633167606207-d840b5070fc2?w=800&q=80',
+                'love_relationship': 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&q=80',
+              };
               return (
                 <div
                   key={spread.id}
                   onClick={() => handleSelectSpread(spread)}
-                  className="group relative bg-gradient-to-br from-card-dark to-surface-dark rounded-2xl p-8 border border-border-dark hover:border-primary/50 cursor-pointer transition-all duration-300 hover:shadow-[0_0_40px_rgba(147,17,212,0.15)] hover:-translate-y-2 overflow-hidden"
+                  className="group relative flex flex-col h-[420px] md:h-[480px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-2 border border-border-dark hover:border-primary/50"
                 >
-                  {/* Glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  {/* Background Image with Zoom */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                    style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }}
+                  />
 
-                  <div className="relative z-10">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-primary/20">
-                      <span className="material-symbols-outlined text-primary text-3xl">{spreadIcons[spread.id]}</span>
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/50 to-transparent group-hover:via-background-dark/30 transition-colors duration-500" />
+
+                  {/* Content */}
+                  <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col h-full justify-between">
+                    {/* Icon */}
+                    <div className="w-14 h-14 rounded-2xl bg-primary/20 backdrop-blur-xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 border border-primary/30">
+                      <span className="material-symbols-outlined text-[32px]">{spreadIcons[spread.id]}</span>
                     </div>
 
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="px-2 py-1 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">
-                        {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
-                      </span>
-                      <span className="px-2 py-1 rounded-md bg-white/5 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
-                        {translation.difficulty}
-                      </span>
-                    </div>
+                    {/* Text Content */}
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-1 rounded-md bg-primary/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10">
+                          {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
+                        </span>
+                        <span className="px-2.5 py-1 rounded-md bg-white/10 backdrop-blur-md text-white/80 text-[10px] font-bold uppercase tracking-widest">
+                          {translation.difficulty}
+                        </span>
+                      </div>
 
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors">
-                      {translation.name}
-                    </h3>
-                    <p className="text-gray-400 text-sm leading-relaxed mb-6">{translation.description}</p>
+                      <h3 className="text-white text-2xl md:text-3xl font-bold tracking-tight">
+                        {translation.name}
+                      </h3>
 
-                    <div className="flex items-center text-primary font-bold text-sm uppercase tracking-wider">
-                      {t.home.start}
-                      <span className="material-symbols-outlined ml-2 text-lg group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                      <p className="text-gray-300 text-sm md:text-base leading-relaxed opacity-90">
+                        {translation.description}
+                      </p>
+
+                      <div className="mt-3 flex items-center text-primary group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
+                        {t.home.start}
+                        <span className="material-symbols-outlined text-[18px] ml-2 transform group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                      </div>
                     </div>
                   </div>
                 </div>

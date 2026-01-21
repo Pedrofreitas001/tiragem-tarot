@@ -15,8 +15,8 @@ export const PRODUCTS: Product[] = [
     tags: ['bestseller'],
     price: 49.90,
     images: [
-      'https://images.unsplash.com/photo-1602607135316-8c6c8e5fc7c1?w=600',
-      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600',
+      'https://images.unsplash.com/photo-1602607135316-8c6c8e5fc7c1?w=600&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1603905179660-9f3cd9b9c8f5?w=600&h=600&fit=crop',
     ],
     variants: [
       { id: 'candle-1-p', name: 'Pequena (80g)', name_en: 'Small (80g)', price: 49.90, sku: 'VRL-P', stock: 25 },
@@ -60,7 +60,7 @@ export const PRODUCTS: Product[] = [
     tags: ['new'],
     price: 89.90,
     images: [
-      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600',
+      'https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=600&h=600&fit=crop',
     ],
     stock: 30,
     rating: 4.8,
@@ -93,7 +93,7 @@ export const PRODUCTS: Product[] = [
     tags: [],
     price: 59.90,
     images: [
-      'https://images.unsplash.com/photo-1594125311687-3b1b3eefa9f2?w=600',
+      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&h=600&fit=crop',
     ],
     stock: 40,
     rating: 4.7,
@@ -128,7 +128,7 @@ export const PRODUCTS: Product[] = [
     tags: ['bestseller'],
     price: 24.90,
     images: [
-      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600',
+      'https://images.unsplash.com/photo-1595341595379-cf1cb694ea5d?w=600&h=600&fit=crop',
     ],
     variants: [
       { id: 'incense-1-20', name: 'Caixa 20 varetas', name_en: 'Box 20 sticks', price: 24.90, sku: 'ISP-20', stock: 100 },
@@ -170,7 +170,7 @@ export const PRODUCTS: Product[] = [
     tags: [],
     price: 59.90,
     images: [
-      'https://images.unsplash.com/photo-1540189271-fe8c79e3e43d?w=600',
+      'https://images.unsplash.com/photo-1600298882525-44eff4a1a654?w=600&h=600&fit=crop',
     ],
     stock: 45,
     rating: 4.6,
@@ -201,7 +201,7 @@ export const PRODUCTS: Product[] = [
     tags: ['bestseller'],
     price: 34.90,
     images: [
-      'https://images.unsplash.com/photo-1600298882525-44eff4a1a654?w=600',
+      'https://images.unsplash.com/photo-1599751449318-bde191e1d58b?w=600&h=600&fit=crop',
     ],
     variants: [
       { id: 'palo-3', name: '3 bastões', name_en: '3 sticks', price: 34.90, sku: 'PS-3', stock: 80 },
@@ -243,7 +243,7 @@ export const PRODUCTS: Product[] = [
     tags: [],
     price: 39.90,
     images: [
-      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600',
+      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&h=600&fit=crop',
     ],
     variants: [
       { id: 'aroma-1-10', name: '10ml', name_en: '10ml', price: 39.90, sku: 'OEL-10', stock: 60 },
@@ -286,7 +286,7 @@ export const PRODUCTS: Product[] = [
     tags: ['new', 'bestseller'],
     price: 149.90,
     images: [
-      'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600',
+      'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&h=600&fit=crop',
     ],
     stock: 20,
     rating: 5.0,
@@ -319,7 +319,7 @@ export const PRODUCTS: Product[] = [
     tags: [],
     price: 79.90,
     images: [
-      'https://images.unsplash.com/photo-1602607135316-8c6c8e5fc7c1?w=600',
+      'https://images.unsplash.com/photo-1616627561839-074385245ff6?w=600&h=600&fit=crop',
     ],
     stock: 15,
     rating: 4.7,
@@ -354,7 +354,7 @@ export const PRODUCTS: Product[] = [
     tags: ['bestseller'],
     price: 129.90,
     images: [
-      'https://images.unsplash.com/photo-1633167606207-d840b5070fc2?w=600',
+      'https://images.unsplash.com/photo-1633167606207-d840b5070fc2?w=600&h=600&fit=crop',
     ],
     stock: 35,
     rating: 4.9,
@@ -389,7 +389,7 @@ export const PRODUCTS: Product[] = [
     tags: ['new'],
     price: 159.90,
     images: [
-      'https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=600',
+      'https://images.unsplash.com/photo-1635497611324-129442752063?w=600&h=600&fit=crop',
     ],
     stock: 25,
     rating: 4.8,
@@ -424,7 +424,7 @@ export const PRODUCTS: Product[] = [
     tags: [],
     price: 99.90,
     images: [
-      'https://images.unsplash.com/photo-1633167606207-d840b5070fc2?w=600',
+      'https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=600&h=600&fit=crop',
     ],
     stock: 40,
     rating: 4.7,
@@ -459,7 +459,7 @@ export const PRODUCTS: Product[] = [
     tags: ['bestseller'],
     price: 89.90,
     images: [
-      'https://images.unsplash.com/photo-1606236475383-95d0a49dbf09?w=600',
+      'https://images.unsplash.com/photo-1615486511484-92e172cc4fe0?w=600&h=600&fit=crop',
     ],
     variants: [
       { id: 'crystal-1-p', name: 'Pequena (200-400g)', name_en: 'Small (200-400g)', price: 89.90, sku: 'AMD-P', stock: 20 },
@@ -501,7 +501,7 @@ export const PRODUCTS: Product[] = [
     tags: ['new'],
     price: 119.90,
     images: [
-      'https://images.unsplash.com/photo-1615486511484-92e172cc4fe0?w=600',
+      'https://images.unsplash.com/photo-1606236475383-95d0a49dbf09?w=600&h=600&fit=crop',
     ],
     stock: 22,
     rating: 4.8,
@@ -534,7 +534,7 @@ export const PRODUCTS: Product[] = [
     tags: [],
     price: 49.90,
     images: [
-      'https://images.unsplash.com/photo-1529170173067-04f1e636d1b7?w=600',
+      'https://images.unsplash.com/photo-1551122102-63d4a9e8b3a7?w=600&h=600&fit=crop',
     ],
     stock: 50,
     rating: 4.6,
@@ -570,7 +570,7 @@ export const PRODUCTS: Product[] = [
     price: 249.90,
     compareAtPrice: 329.90,
     images: [
-      'https://images.unsplash.com/photo-1600298882525-44eff4a1a654?w=600',
+      'https://images.unsplash.com/photo-1600298882525-44eff4a1a654?w=600&h=600&fit=crop',
     ],
     stock: 15,
     rating: 5.0,
@@ -607,7 +607,7 @@ export const PRODUCTS: Product[] = [
     tags: [],
     price: 129.90,
     images: [
-      'https://images.unsplash.com/photo-1594125311687-3b1b3eefa9f2?w=600',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=600&fit=crop',
     ],
     stock: 25,
     rating: 4.8,
@@ -642,7 +642,7 @@ export const PRODUCTS: Product[] = [
     tags: ['new'],
     price: 199.90,
     images: [
-      'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600',
+      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&h=600&fit=crop',
     ],
     stock: 18,
     rating: 4.7,
@@ -671,7 +671,7 @@ export const getProductBySlug = (slug: string): Product | undefined => {
   return PRODUCTS.find(p => p.slug === slug);
 };
 
-export const getProductsByCategory = (category: ProductCategory): Product[] => {
+export const getProductsByCategory = (category: string): Product[] => {
   return PRODUCTS.filter(p => p.category === category);
 };
 
@@ -679,6 +679,6 @@ export const getFeaturedProducts = (): Product[] => {
   return PRODUCTS.filter(p => p.featured);
 };
 
-export const getProductsByTag = (tag: ProductTag): Product[] => {
-  return PRODUCTS.filter(p => p.tags.includes(tag));
+export const getProductsByTag = (tag: string): Product[] => {
+  return PRODUCTS.filter(p => p.tags.includes(tag as any));
 };
