@@ -1142,10 +1142,170 @@ const CardDetails = () => {
   );
 };
 
+// Reading Detail Modal
+const ReadingModal = ({
+  reading,
+  onClose,
+  onUpdate,
+  isPortuguese
+}: {
+  reading: any;
+  onClose: () => void;
+  onUpdate: (updated: any) => void;
+  isPortuguese: boolean;
+}) => {
+  const [comment, setComment] = useState(reading.comment || '');
+  const [rating, setRating] = useState(reading.rating || 0);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = () => {
+    setIsSaving(true);
+    const updated = { ...reading, comment, rating };
+    onUpdate(updated);
+    setTimeout(() => {
+      setIsSaving(false);
+      onClose();
+    }, 500);
+  };
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50" onClick={onClose} />
+      <div className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-2xl md:max-h-[90vh] bg-card-dark border border-border-dark rounded-2xl z-50 flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-border-dark">
+          <div>
+            <div className={`inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide mb-2 ${reading.typeColor}`}>
+              {reading.typeBadge}
+            </div>
+            <h2 className="text-xl font-bold text-white">{reading.spreadName}</h2>
+            <p className="text-gray-500 text-sm">{reading.date}</p>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Cards Grid */}
+          <div>
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">
+              {isPortuguese ? 'Cartas da Leitura' : 'Reading Cards'}
+            </h3>
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+              {reading.previewCards?.map((cardUrl: string, idx: number) => (
+                <div key={idx} className="flex flex-col">
+                  <div className="aspect-[2/3] rounded-lg overflow-hidden border border-white/10 shadow-lg bg-surface-dark">
+                    <img
+                      src={cardUrl}
+                      alt={`Card ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=Tarot";
+                      }}
+                    />
+                  </div>
+                  <p className="text-center text-[10px] text-primary font-bold uppercase mt-2 truncate">
+                    {reading.positions?.[idx] || `${isPortuguese ? 'Posição' : 'Position'} ${idx + 1}`}
+                  </p>
+                  <p className="text-center text-xs text-white font-medium truncate">
+                    {reading.cardNames?.[idx] || `${isPortuguese ? 'Carta' : 'Card'} ${idx + 1}`}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Synthesis */}
+          {reading.notes && (
+            <div>
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
+                {isPortuguese ? 'Síntese da Leitura' : 'Reading Synthesis'}
+              </h3>
+              <p className="text-gray-300 text-sm leading-relaxed bg-surface-dark p-4 rounded-xl">
+                {reading.notes}
+              </p>
+            </div>
+          )}
+
+          {/* Rating */}
+          <div>
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
+              {isPortuguese ? 'Sua Avaliação' : 'Your Rating'}
+            </h3>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className="p-1 transition-transform hover:scale-110"
+                >
+                  <span className={`material-symbols-outlined text-3xl ${
+                    star <= rating ? 'text-yellow-400' : 'text-gray-600'
+                  }`}>
+                    {star <= rating ? 'star' : 'star_outline'}
+                  </span>
+                </button>
+              ))}
+              {rating > 0 && (
+                <span className="ml-2 text-gray-400 text-sm self-center">
+                  {rating}/5
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Comment */}
+          <div>
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
+              {isPortuguese ? 'Suas Anotações' : 'Your Notes'}
+            </h3>
+            <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder={isPortuguese ? 'Adicione suas reflexões sobre esta leitura...' : 'Add your reflections about this reading...'}
+              className="w-full h-32 px-4 py-3 rounded-xl bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none resize-none"
+            />
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex gap-3 p-6 border-t border-border-dark">
+          <button
+            onClick={onClose}
+            className="flex-1 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors"
+          >
+            {isPortuguese ? 'Cancelar' : 'Cancel'}
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="flex-1 py-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-bold transition-colors flex items-center justify-center gap-2"
+          >
+            {isSaving ? (
+              <>
+                <span className="material-symbols-outlined animate-spin text-lg">progress_activity</span>
+                {isPortuguese ? 'Salvando...' : 'Saving...'}
+              </>
+            ) : (
+              <>
+                <span className="material-symbols-outlined text-lg">save</span>
+                {isPortuguese ? 'Salvar' : 'Save'}
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </>
+  );
+};
+
 // History Page
 const History = () => {
   const navigate = useNavigate();
   const { t, isPortuguese } = useLanguage();
+  const [selectedReading, setSelectedReading] = useState<any | null>(null);
 
   const [savedReadings, setSavedReadings] = useState<any[]>(() => {
     try {
@@ -1156,16 +1316,48 @@ const History = () => {
     }
   });
 
-  const deleteReading = (id: number) => {
+  const deleteReading = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
     const updated = savedReadings.filter(r => r.id !== id);
     setSavedReadings(updated);
     localStorage.setItem('tarot-history', JSON.stringify(updated));
+  };
+
+  const updateReading = (updated: any) => {
+    const newReadings = savedReadings.map(r => r.id === updated.id ? updated : r);
+    setSavedReadings(newReadings);
+    localStorage.setItem('tarot-history', JSON.stringify(newReadings));
+  };
+
+  const renderStars = (rating: number) => {
+    return (
+      <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span key={star} className={`material-symbols-outlined text-sm ${
+            star <= (rating || 0) ? 'text-yellow-400' : 'text-gray-600'
+          }`}>
+            {star <= (rating || 0) ? 'star' : 'star_outline'}
+          </span>
+        ))}
+      </div>
+    );
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-background-dark text-white">
       <Header />
       <CartDrawer />
+
+      {/* Modal */}
+      {selectedReading && (
+        <ReadingModal
+          reading={selectedReading}
+          onClose={() => setSelectedReading(null)}
+          onUpdate={updateReading}
+          isPortuguese={isPortuguese}
+        />
+      )}
+
       <main className="flex-1 justify-center w-full py-12">
         <div className="w-full max-w-[1200px] mx-auto px-4 md:px-10">
           <div className="flex items-center justify-between mb-8">
@@ -1173,8 +1365,9 @@ const History = () => {
               <h2 className="text-white text-3xl font-bold">{t.history.title}</h2>
               <p className="text-gray-400 text-sm mt-1">{t.history.subtitle}</p>
             </div>
-            <button onClick={() => navigate('/')} className="text-primary hover:text-purple-400 text-sm font-bold flex items-center gap-1">
-              {t.nav.newReading} <span className="material-symbols-outlined text-[18px]">add</span>
+            <button onClick={() => navigate('/')} className="px-4 py-2 bg-primary hover:bg-primary-hover rounded-lg text-white text-sm font-bold flex items-center gap-2 transition-colors">
+              <span className="material-symbols-outlined text-lg">add</span>
+              {t.nav.newReading}
             </button>
           </div>
 
@@ -1191,27 +1384,79 @@ const History = () => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="space-y-4">
               {savedReadings.map((item) => (
-                <div key={item.id} className="bg-card-dark rounded-xl overflow-hidden border border-border-dark group hover:border-primary/30 transition-all">
-                  <div
-                    className="h-32 w-full bg-cover bg-center relative"
-                    style={{backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url("${item.previewCards?.[0] || 'https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg'}")`}}
-                  >
-                    <div className={`absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm ${item.typeColor}`}>
-                      {item.typeBadge}
+                <div
+                  key={item.id}
+                  className="bg-card-dark rounded-xl border border-border-dark hover:border-primary/30 transition-all overflow-hidden"
+                >
+                  <div className="flex flex-col md:flex-row">
+                    {/* Cards Preview */}
+                    <div className="flex gap-2 p-4 md:p-5 bg-surface-dark/50 overflow-x-auto">
+                      {item.previewCards?.slice(0, 5).map((cardUrl: string, idx: number) => (
+                        <div key={idx} className="flex-shrink-0 w-14 md:w-16">
+                          <div className="aspect-[2/3] rounded-lg overflow-hidden border border-white/10 shadow-md">
+                            <img
+                              src={cardUrl}
+                              alt={`Card ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=?";
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                      {(item.previewCards?.length || 0) > 5 && (
+                        <div className="flex-shrink-0 w-14 md:w-16 flex items-center justify-center">
+                          <span className="text-gray-500 text-sm">+{item.previewCards.length - 5}</span>
+                        </div>
+                      )}
                     </div>
-                    <button
-                      onClick={() => deleteReading(item.id)}
-                      className="absolute top-2 left-2 p-1.5 rounded bg-red-500/20 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/40"
-                    >
-                      <span className="material-symbols-outlined text-sm">delete</span>
-                    </button>
-                  </div>
-                  <div className="p-4">
-                    <div className="text-xs text-gray-500 mb-1">{item.date}</div>
-                    <h3 className="text-white font-bold text-lg mb-1">{item.spreadName}</h3>
-                    <p className="text-gray-400 text-xs line-clamp-2">{item.notes}</p>
+
+                    {/* Info */}
+                    <div className="flex-1 p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide ${item.typeColor}`}>
+                            {item.typeBadge}
+                          </span>
+                          <span className="text-gray-500 text-xs">{item.date}</span>
+                        </div>
+                        <h3 className="text-white font-bold text-lg mb-1">{item.spreadName}</h3>
+
+                        {/* Rating */}
+                        <div className="mb-2">
+                          {renderStars(item.rating)}
+                        </div>
+
+                        {/* Comment Preview */}
+                        {item.comment ? (
+                          <p className="text-gray-400 text-sm line-clamp-2 italic">"{item.comment}"</p>
+                        ) : (
+                          <p className="text-gray-600 text-sm italic">
+                            {isPortuguese ? 'Sem anotações' : 'No notes'}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-2 md:flex-col">
+                        <button
+                          onClick={() => setSelectedReading(item)}
+                          className="flex-1 md:flex-none px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-medium text-sm flex items-center justify-center gap-2 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-lg">visibility</span>
+                          {isPortuguese ? 'Ver' : 'View'}
+                        </button>
+                        <button
+                          onClick={(e) => deleteReading(item.id, e)}
+                          className="px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm flex items-center justify-center gap-1 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-lg">delete</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1525,8 +1770,12 @@ const Result = () => {
           typeColor: state.spread.cardCount === 3 ? 'text-primary bg-primary/10' :
                      state.spread.cardCount === 10 ? 'text-blue-400 bg-blue-500/10' :
                      'text-pink-400 bg-pink-500/10',
-          previewCards: state.cards.slice(0, 3).map((c: TarotCard) => c.imageUrl),
-          notes: result?.synthesis?.slice(0, 100) + '...' || ''
+          previewCards: state.cards.map((c: TarotCard) => c.imageUrl),
+          cardNames: state.cards.map((c: TarotCard) => c.name),
+          positions: state.spread.positions.map((p: any) => p.name),
+          notes: result?.synthesis || '',
+          comment: '',
+          rating: 0
         };
 
         const existing = JSON.parse(localStorage.getItem('tarot-history') || '[]');
