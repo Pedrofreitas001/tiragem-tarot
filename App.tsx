@@ -534,8 +534,8 @@ const Home = () => {
                 </div>
 
                 {/* FLOATING WIDGETS */}
-                {/* Widget: Planetary Ruler (Top Left) */}
-                <div className="hidden md:block absolute top-20 left-[5%] glass-widget p-6 rounded-xl w-64 float-slow z-30" style={{animationDelay: '0s'}}>
+                {/* Widget: Planetary Ruler (Left) */}
+                <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 glass-widget p-6 rounded-xl w-64 float-slow z-30" style={{animationDelay: '0s'}}>
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{backgroundColor: planetaryRuler.color + '40'}}>
                       <span className="material-symbols-outlined text-2xl" style={{color: planetaryRuler.color}}>{planetaryRuler.icon}</span>
@@ -550,8 +550,8 @@ const Home = () => {
                   </p>
                 </div>
 
-                {/* Widget: Zodiac Season (Bottom Left) */}
-                <div className="hidden md:block absolute bottom-32 left-[8%] glass-widget p-6 rounded-xl w-60 float-slow z-30" style={{animationDelay: '1.5s'}}>
+                {/* Widget: Zodiac Season (Right) */}
+                <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 glass-widget p-6 rounded-xl w-60 float-slow z-30" style={{animationDelay: '1.5s'}}>
                   <div className="flex items-center gap-3 mb-3">
                     <span className="material-symbols-outlined text-primary text-lg">{zodiacSun.icon}</span>
                     <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.zodiacSeason}</h3>
@@ -561,38 +561,6 @@ const Home = () => {
                     <div className="bg-primary h-full w-[65%]"></div>
                   </div>
                   <p className="text-[10px] text-white/50 mt-2">{isPortuguese ? '65% desta fase' : '65% through phase'}</p>
-                </div>
-
-                {/* Widget: Best For (Top Right) */}
-                <div className="hidden md:block absolute top-32 right-[5%] glass-widget p-6 rounded-xl w-64 float-slow z-30" style={{animationDelay: '1s'}}>
-                  <h3 className="text-xs uppercase tracking-widest text-green-400 mb-4 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-sm">check_circle</span>
-                    {t.cosmic.bestFor}
-                  </h3>
-                  <ul className="space-y-3 text-sm">
-                    {(isPortuguese ? bestFor_pt : bestFor).slice(0, 3).map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-[11px]">
-                        <span className="material-symbols-outlined text-primary text-base">star</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Widget: Avoid (Bottom Right) */}
-                <div className="hidden md:block absolute bottom-32 right-[8%] glass-widget p-6 rounded-xl w-60 float-slow z-30" style={{animationDelay: '2.5s'}}>
-                  <h3 className="text-xs uppercase tracking-widest text-red-400 mb-4 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-sm">cancel</span>
-                    {t.cosmic.avoid}
-                  </h3>
-                  <ul className="space-y-3 text-sm">
-                    {(isPortuguese ? avoid_pt : avoid).slice(0, 2).map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-[11px]">
-                        <span className="material-symbols-outlined text-white/40 text-base">block</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               </div>
 
