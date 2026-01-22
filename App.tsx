@@ -568,7 +568,7 @@ const Home = () => {
                                 </div>
 
                                 {/* RIGHT: Mandala */}
-                                <div className="flex items-center justify-center lg:pl-8 lg:pt-16">
+                                <div className="flex items-center justify-center lg:pl-8 lg:pt-28">
                                     <style>{`
                                         .cosmic-gradient { background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%); }
                                         .mandala-glow { box-shadow: 0 0 60px 10px rgba(147, 17, 212, 0.3); }
