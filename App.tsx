@@ -436,104 +436,196 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Cosmic Widgets Section */}
-      <section className="relative z-10 py-16 md:py-24 px-4 md:px-6">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t.cosmic.title}</h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">{isPortuguese ? 'Energias cósmicas do dia' : 'Today\'s cosmic energies'}</p>
-          </div>
+      {/* Cosmic Mandala Animation Section */}
+      <section className="relative z-10 min-h-screen bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark py-12 md:py-0 px-4 md:px-6 flex items-center justify-center">
+        <style>{`
+          .cosmic-gradient {
+            background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%);
+          }
+          .mandala-glow {
+            box-shadow: 0 0 60px 10px rgba(147, 17, 212, 0.3);
+          }
+          .glass-widget {
+            background: rgba(54, 35, 72, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(173, 146, 201, 0.1);
+          }
+          .orbit-rotate {
+            animation: spin 120s linear infinite;
+          }
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+          .float-slow {
+            animation: floating 6s ease-in-out infinite;
+          }
+          @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+          }
+        `}</style>
 
-          {/* Moon Phase & Day Info - Computed from CosmicDay */}
-          {(() => {
-            const currentDate = new Date();
-            const cosmicDay = getCosmicDay(currentDate);
-            const { moonPhase, zodiacSun, planetaryRuler } = cosmicDay;
+        {(() => {
+          const currentDate = new Date();
+          const cosmicDay = getCosmicDay(currentDate);
+          const { moonPhase, zodiacSun, planetaryRuler, bestFor, bestFor_pt, avoid, avoid_pt } = cosmicDay;
+          
+          const monthNames = isPortuguese
+            ? ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+            : ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
-            return (
-              <div className="grid lg:grid-cols-3 gap-6">
-                {/* Moon Phase Card */}
-                <div className="lg:col-span-2 bg-gradient-to-br from-indigo-900/50 to-surface-dark rounded-2xl border border-indigo-500/30 p-6 md:p-8">
-                  <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 flex items-center justify-center relative overflow-hidden flex-shrink-0">
-                      <span className="material-symbols-outlined text-6xl text-indigo-900">{moonPhase.icon}</span>
-                      <div
-                        className="absolute inset-0 bg-indigo-950"
-                        style={{
-                          clipPath: `inset(0 ${100 - moonPhase.illumination}% 0 0)`,
-                          opacity: 0.8
-                        }}
-                      />
+          return (
+            <div className="w-full max-w-7xl relative">
+              {/* CENTRAL MANDALA */}
+              <div className="relative flex items-center justify-center h-screen md:h-auto">
+                {/* Outer Orbits */}
+                <div className="absolute w-[650px] h-[650px] border border-primary/10 rounded-full orbit-rotate hidden md:block"></div>
+                <div className="absolute w-[550px] h-[550px] border border-primary/20 rounded-full border-dashed orbit-rotate hidden md:block" style={{animationDirection: 'reverse', animationDuration: '180s'}}></div>
+                
+                {/* The Mandala Body */}
+                <div className="relative w-80 h-80 md:w-[480px] md:h-[480px] rounded-full bg-background-dark/40 backdrop-blur-xl border border-white/10 flex items-center justify-center mandala-glow">
+                  {/* SVG Mandala Detail */}
+                  <svg className="absolute inset-0 p-4 opacity-40 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
+                    <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
+                    <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
+                  </svg>
+
+                  {/* Moon Phases Ring */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    {/* Full Moon - Top */}
+                    <div className="absolute -top-16 md:-top-20 flex flex-col items-center">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-[0_0_20px_rgba(255,255,255,0.8)]"></div>
+                      <span className="text-[8px] md:text-[10px] mt-2 uppercase tracking-tighter text-white font-bold">{isPortuguese ? 'Cheia' : 'Full'}</span>
                     </div>
-                    <div className="text-center md:text-left flex-1">
-                      <p className="text-indigo-300 text-sm font-medium mb-1">{t.cosmic.moonPhase}</p>
-                      <h3 className="text-2xl font-black text-white mb-2">
-                        {isPortuguese ? moonPhase.name_pt : moonPhase.name}
-                      </h3>
-                      <p className="text-gray-400 mb-3 text-sm">
-                        {isPortuguese ? moonPhase.description_pt : moonPhase.description}
-                      </p>
-                      <div className="flex items-center gap-2 justify-center md:justify-start flex-wrap">
-                        <span className="px-3 py-1 bg-indigo-500/20 rounded-full text-indigo-300 text-xs">
-                          {t.cosmic.illumination}: {moonPhase.illumination}%
-                        </span>
-                        <span className="px-3 py-1 bg-purple-500/20 rounded-full text-purple-300 text-xs">
-                          {isPortuguese ? moonPhase.energy_pt : moonPhase.energy}
-                        </span>
+                    {/* New Moon - Bottom */}
+                    <div className="absolute -bottom-16 md:-bottom-20 flex flex-col items-center">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-zinc-900 border border-zinc-700"></div>
+                      <span className="text-[8px] md:text-[10px] mt-2 uppercase tracking-tighter text-[#ad92c9]">{isPortuguese ? 'Nova' : 'New'}</span>
+                    </div>
+                    {/* First Quarter - Right */}
+                    <div className="absolute -right-16 md:-right-20 flex flex-col items-center">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden flex">
+                        <div className="w-1/2 bg-white"></div>
+                        <div className="w-1/2 bg-zinc-900"></div>
                       </div>
+                      <span className="text-[8px] md:text-[10px] mt-2 uppercase tracking-tighter text-[#ad92c9]">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
+                    </div>
+                    {/* Last Quarter - Left */}
+                    <div className="absolute -left-16 md:-left-20 flex flex-col items-center">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden flex">
+                        <div className="w-1/2 bg-zinc-900"></div>
+                        <div className="w-1/2 bg-white"></div>
+                      </div>
+                      <span className="text-[8px] md:text-[10px] mt-2 uppercase tracking-tighter text-[#ad92c9]">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
+                    </div>
+                  </div>
+
+                  {/* Inner Core */}
+                  <div className="text-center z-30">
+                    <h2 className="text-white text-3xl md:text-5xl font-bold tracking-tight mb-1 md:mb-2">{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
+                    <p className="text-primary text-base md:text-lg font-medium tracking-[0.2em] md:tracking-[0.3em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
+                    <div className="mt-4 md:mt-6 flex justify-center gap-2">
+                      <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] md:text-[10px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Column - Planetary Ruler & Zodiac */}
-                <div className="space-y-4">
-                  {/* Planetary Ruler */}
-                  <div className="bg-card-dark rounded-xl border border-border-dark p-5">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: planetaryRuler.color + '30' }}>
-                        <span className="material-symbols-outlined text-2xl" style={{ color: planetaryRuler.color }}>{planetaryRuler.icon}</span>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-gray-500 text-xs">{t.cosmic.planetaryRuler}</p>
-                        <h3 className="text-white font-bold text-sm">
-                          {isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}
-                        </h3>
-                      </div>
+                {/* FLOATING WIDGETS */}
+                {/* Widget: Planetary Ruler (Top Left) */}
+                <div className="hidden md:block absolute top-20 left-[5%] glass-widget p-6 rounded-xl w-64 float-slow z-30" style={{animationDelay: '0s'}}>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{backgroundColor: planetaryRuler.color + '40'}}>
+                      <span className="material-symbols-outlined text-2xl" style={{color: planetaryRuler.color}}>{planetaryRuler.icon}</span>
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {(isPortuguese ? planetaryRuler.qualities_pt : planetaryRuler.qualities).slice(0, 3).map((q, i) => (
-                        <span key={i} className="px-2 py-1 bg-surface-dark rounded text-gray-400 text-xs">{q}</span>
-                      ))}
+                    <div>
+                      <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.planetaryRuler}</h3>
+                      <p className="text-lg font-bold">{isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}</p>
                     </div>
                   </div>
+                  <p className="text-sm text-white/70 leading-relaxed italic text-[11px]">
+                    {isPortuguese ? planetaryRuler.qualities_pt[0] : planetaryRuler.qualities[0]}
+                  </p>
+                </div>
 
-                  {/* Zodiac Season */}
-                  <div className="bg-card-dark rounded-xl border border-border-dark p-5">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${getElementColor(zodiacSun.element)}`}>
-                        {zodiacSun.icon}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-gray-500 text-xs">{t.cosmic.zodiacSeason}</p>
-                        <h3 className="text-white font-bold text-sm">
-                          {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}
-                        </h3>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      <span className={`px-2 py-1 rounded text-xs ${getElementColor(zodiacSun.element)}`}>
-                        {isPortuguese ? zodiacSun.element_pt : zodiacSun.element}
-                      </span>
-                      {(isPortuguese ? zodiacSun.qualities_pt : zodiacSun.qualities).slice(0, 2).map((q, i) => (
-                        <span key={i} className="px-2 py-1 bg-surface-dark rounded text-gray-400 text-xs">{q}</span>
-                      ))}
-                    </div>
+                {/* Widget: Zodiac Season (Bottom Left) */}
+                <div className="hidden md:block absolute bottom-32 left-[8%] glass-widget p-6 rounded-xl w-60 float-slow z-30" style={{animationDelay: '1.5s'}}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="material-symbols-outlined text-primary text-lg">{zodiacSun.icon}</span>
+                    <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.zodiacSeason}</h3>
                   </div>
+                  <p className="text-2xl font-bold mb-1">{isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
+                  <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden mt-3">
+                    <div className="bg-primary h-full w-[65%]"></div>
+                  </div>
+                  <p className="text-[10px] text-white/50 mt-2">{isPortuguese ? '65% desta fase' : '65% through phase'}</p>
+                </div>
+
+                {/* Widget: Best For (Top Right) */}
+                <div className="hidden md:block absolute top-32 right-[5%] glass-widget p-6 rounded-xl w-64 float-slow z-30" style={{animationDelay: '1s'}}>
+                  <h3 className="text-xs uppercase tracking-widest text-green-400 mb-4 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm">check_circle</span>
+                    {t.cosmic.bestFor}
+                  </h3>
+                  <ul className="space-y-3 text-sm">
+                    {(isPortuguese ? bestFor_pt : bestFor).slice(0, 3).map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-[11px]">
+                        <span className="material-symbols-outlined text-primary text-base">star</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Widget: Avoid (Bottom Right) */}
+                <div className="hidden md:block absolute bottom-32 right-[8%] glass-widget p-6 rounded-xl w-60 float-slow z-30" style={{animationDelay: '2.5s'}}>
+                  <h3 className="text-xs uppercase tracking-widest text-red-400 mb-4 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm">cancel</span>
+                    {t.cosmic.avoid}
+                  </h3>
+                  <ul className="space-y-3 text-sm">
+                    {(isPortuguese ? avoid_pt : avoid).slice(0, 2).map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-[11px]">
+                        <span className="material-symbols-outlined text-white/40 text-base">block</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
-            );
-          })()}
-        </div>
+
+              {/* Mobile-friendly Info Cards */}
+              <div className="md:hidden mt-12 space-y-4 max-w-2xl mx-auto">
+                <div className="glass-widget p-6 rounded-xl">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: planetaryRuler.color + '40'}}>
+                      <span className="material-symbols-outlined text-lg" style={{color: planetaryRuler.color}}>{planetaryRuler.icon}</span>
+                    </div>
+                    <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.planetaryRuler}</h3>
+                  </div>
+                  <p className="text-lg font-bold">{isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}</p>
+                </div>
+
+                <div className="glass-widget p-6 rounded-xl">
+                  <h3 className="text-xs uppercase tracking-widest text-green-400 mb-4 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm">check_circle</span>
+                    {t.cosmic.bestFor}
+                  </h3>
+                  <ul className="space-y-2 text-xs">
+                    {(isPortuguese ? bestFor_pt : bestFor).slice(0, 3).map((item, i) => (
+                      <li key={i} className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </section>
 
       {/* Shop CTA */}
