@@ -43,6 +43,16 @@ export const en: TranslationKeys = {
       description: "Explore your heart's dynamics and connections",
       difficulty: "Intermediate",
     },
+    yesNo: {
+      name: "Yes or No",
+      description: "Get a direct answer to your question with a single card",
+      difficulty: "Beginner",
+    },
+    cardOfDay: {
+      name: "Card of the Day",
+      description: "Discover what energy and guidance the day holds for you",
+      difficulty: "Beginner",
+    },
   },
 
   // Session

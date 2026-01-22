@@ -275,6 +275,8 @@ const Home = () => {
         'three_card': 'token',
         'celtic_cross': 'grid_view',
         'love_check': 'favorite',
+        'yes_no': 'help',
+        'card_of_day': 'wb_sunny',
     };
 
     const getSpreadTranslation = (spreadId: string) => {
@@ -282,6 +284,8 @@ const Home = () => {
             case 'three_card': return t.spreads.threeCard;
             case 'celtic_cross': return t.spreads.celticCross;
             case 'love_check': return t.spreads.loveRelationship;
+            case 'yes_no': return t.spreads.yesNo;
+            case 'card_of_day': return t.spreads.cardOfDay;
             default: return { name: '', description: '', difficulty: '' };
         }
     };
@@ -388,6 +392,8 @@ const Home = () => {
                                 'three_card': '/images/spreads/three_card.png',
                                 'celtic_cross': '/images/spreads/celtic_cross.png',
                                 'love_check': '/images/spreads/love_check.png',
+                                'yes_no': '/images/spreads/yes_no.png',
+                                'card_of_day': '/images/spreads/card_of_day.png',
                             };
                             return (
                                 <div
@@ -2548,18 +2554,32 @@ const Session = () => {
                         {deck.map((card, index) => {
                             const isSelected = selectedCards.some(c => c.card.id === card.id);
                             const totalCards = deck.length;
-                            const leftPos = (index / (totalCards - 1)) * 92;
+
+                            // Distribute cards in a 180-degree arc (more curved)
+                            const angle = (index / (totalCards - 1)) * 180 - 90; // -90 to +90 degrees
+                            const radius = 280; // Radius of the arc
+                            const centerX = 50; // Center percentage
+                            const centerY = 100; // Bottom center in percentage
+
+                            // Calculate position on arc
+                            const radians = (angle * Math.PI) / 180;
+                            const xPos = centerX + (Math.sin(radians) * radius * 0.35); // 0.35 to fit in viewport
+                            const yPos = centerY - (Math.cos(radians) * radius * 0.2); // 0.2 for vertical spread
+
+                            // Rotation follows the arc tangent
+                            const rotation = angle;
 
                             return (
                                 <div
                                     key={card.id}
                                     onClick={() => !isSelected && handleCardClick(card)}
-                                    className={`absolute top-4 w-14 sm:w-16 md:w-20 lg:w-24 aspect-[2/3.4] rounded-lg border border-white/20 bg-gradient-to-br from-surface-dark to-black shadow-xl cursor-pointer transition-all duration-300 ease-out origin-bottom ${isSelected ? 'opacity-0 -translate-y-20 scale-50 pointer-events-none' : 'hover:z-[100] hover:-translate-y-6 hover:scale-105 hover:border-primary hover:shadow-[0_0_20px_rgba(147,17,212,0.4)]'
+                                    className={`absolute w-14 sm:w-16 md:w-20 lg:w-24 aspect-[2/3.4] rounded-lg border border-white/20 bg-gradient-to-br from-surface-dark to-black shadow-xl cursor-pointer transition-all duration-300 ease-out origin-center ${isSelected ? 'opacity-0 -translate-y-20 scale-50 pointer-events-none' : 'hover:z-[100] hover:-translate-y-6 hover:scale-105 hover:border-primary hover:shadow-[0_0_20px_rgba(147,17,212,0.4)]'
                                         }`}
                                     style={{
-                                        left: `${leftPos}%`,
+                                        left: `${xPos}%`,
+                                        top: `${yPos}%`,
+                                        transform: isSelected ? undefined : `translate(-50%, -50%) rotate(${rotation}deg)`,
                                         zIndex: isSelected ? -1 : index,
-                                        transform: isSelected ? undefined : `rotate(${(index - totalCards / 2) * 0.3}deg)`,
                                     }}
                                 >
                                     <div className="absolute inset-0 rounded-lg overflow-hidden bg-surface-dark flex items-center justify-center">

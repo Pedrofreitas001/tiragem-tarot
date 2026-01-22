@@ -41,6 +41,16 @@ export const pt = {
       description: "Explore as dinâmicas do seu coração e conexões",
       difficulty: "Intermediário",
     },
+    yesNo: {
+      name: "Sim ou Não",
+      description: "Obtenha uma resposta direta para sua pergunta com uma carta",
+      difficulty: "Iniciante",
+    },
+    cardOfDay: {
+      name: "Carta do Dia",
+      description: "Descubra qual energia e orientação o dia reserva para você",
+      difficulty: "Iniciante",
+    },
   },
 
   // Session
