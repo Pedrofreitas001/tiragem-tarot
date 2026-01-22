@@ -291,7 +291,7 @@ const Home = () => {
     };
 
     return (
-        <div className="relative flex min-h-screen w-full flex-col" style={{
+        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden" style={{
             backgroundColor: '#1a1628',
             backgroundAttachment: 'fixed'
         }}>
@@ -390,7 +390,7 @@ const Home = () => {
 
                         {/* Right Column - Arcane Symbol */}
                         <div className="flex items-center justify-center lg:justify-end">
-                            <div className="relative w-[380px] h-[380px] md:w-[440px] md:h-[440px]">
+                            <div className="relative w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] md:w-[440px] md:h-[440px]">
                                 {/* Outer Ring */}
                                 <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.25)" strokeWidth="1" fill="none" />
@@ -499,7 +499,7 @@ const Home = () => {
             </section>
 
             {/* Pricing Comparison Section */}
-            <section className="relative z-10 py-16 md:py-24 px-4 md:px-6">
+            <section className="relative z-10 py-16 md:py-24 px-4 md:px-6 overflow-x-hidden">
                 <div className="max-w-[1100px] mx-auto">
                     <div className="text-center mb-12 md:mb-16">
                         <h2 className="text-3xl md:text-5xl font-normal text-white mb-4 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -512,7 +512,7 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto w-full">
 
                         {/* Free Plan */}
                         <div className="relative bg-[#1a1320]/40 backdrop-blur-sm border border-white/5 rounded-lg p-8 md:p-10">
@@ -824,12 +824,12 @@ const Home = () => {
                                     `}</style>
 
                                     <div className="relative w-full max-w-3xl mx-auto">
-                                        {/* Outer Orbits - Expanded */}
-                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-primary/10 rounded-full orbit-rotate"></div>
-                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
+                                        {/* Outer Orbits - Responsive */}
+                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] aspect-square border border-primary/10 rounded-full orbit-rotate"></div>
+                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[75vw] max-w-[420px] aspect-square border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
 
-                                        {/* The Mandala Body - Larger */}
-                                        <div className="relative w-96 h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
+                                        {/* The Mandala Body - Responsive */}
+                                        <div className="relative w-80 h-80 sm:w-96 sm:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
                                             {/* SVG Mandala Detail */}
                                             <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
                                                 <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
@@ -942,6 +942,29 @@ const Home = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label className="block text-gray-300 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                        {isPortuguese ? 'País' : 'Country'}
+                                    </label>
+                                    <select
+                                        className="w-full px-4 py-3 bg-black/40 border border-white/15 rounded-sm text-white text-sm font-light focus:border-[#a77fd4]/50 focus:outline-none transition-colors appearance-none cursor-pointer"
+                                        style={{ fontFamily: "'Inter', sans-serif" }}
+                                    >
+                                        <option value="" className="bg-[#1a1320]">{isPortuguese ? 'Selecione seu país' : 'Select your country'}</option>
+                                        <option value="BR" className="bg-[#1a1320]">Brasil</option>
+                                        <option value="PT" className="bg-[#1a1320]">Portugal</option>
+                                        <option value="US" className="bg-[#1a1320]">United States</option>
+                                        <option value="UK" className="bg-[#1a1320]">United Kingdom</option>
+                                        <option value="ES" className="bg-[#1a1320]">España</option>
+                                        <option value="FR" className="bg-[#1a1320]">France</option>
+                                        <option value="IT" className="bg-[#1a1320]">Italia</option>
+                                        <option value="DE" className="bg-[#1a1320]">Deutschland</option>
+                                        <option value="MX" className="bg-[#1a1320]">México</option>
+                                        <option value="AR" className="bg-[#1a1320]">Argentina</option>
+                                        <option value="OTHER" className="bg-[#1a1320]">{isPortuguese ? 'Outro' : 'Other'}</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-gray-300 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
                                         {isPortuguese ? 'Cidade' : 'City'}
                                     </label>
                                     <input
@@ -951,18 +974,18 @@ const Home = () => {
                                         style={{ fontFamily: "'Inter', sans-serif" }}
                                     />
                                 </div>
+                            </div>
 
-                                <div>
-                                    <label className="block text-gray-300 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                        {isPortuguese ? 'E-mail' : 'Email'}
-                                    </label>
-                                    <input
-                                        type="email"
-                                        placeholder={isPortuguese ? 'seu@email.com' : 'your@email.com'}
-                                        className="w-full px-4 py-3 bg-black/40 border border-white/15 rounded-sm text-white text-sm font-light placeholder-gray-500 focus:border-[#a77fd4]/50 focus:outline-none transition-colors"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    />
-                                </div>
+                            <div>
+                                <label className="block text-gray-300 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese ? 'E-mail' : 'Email'}
+                                </label>
+                                <input
+                                    type="email"
+                                    placeholder={isPortuguese ? 'seu@email.com' : 'your@email.com'}
+                                    className="w-full px-4 py-3 bg-black/40 border border-white/15 rounded-sm text-white text-sm font-light placeholder-gray-500 focus:border-[#a77fd4]/50 focus:outline-none transition-colors"
+                                    style={{ fontFamily: "'Inter', sans-serif" }}
+                                />
                             </div>
 
                             <div>
@@ -970,31 +993,31 @@ const Home = () => {
                                     {isPortuguese ? 'Frequência' : 'Frequency'}
                                 </label>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/30 border border-white/15 rounded-sm cursor-pointer hover:border-[#a77fd4]/50 transition-colors group">
+                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/30 border border-white/15 rounded-sm cursor-pointer hover:border-[#a77fd4]/50 transition-all duration-300 group has-[:checked]:bg-[#a77fd4]/20 has-[:checked]:border-[#a77fd4]/70 has-[:checked]:shadow-[0_0_15px_rgba(167,127,212,0.2)]">
                                         <input type="radio" name="frequency" value="daily" className="sr-only peer" />
                                         <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded-full border-2 border-gray-500 peer-checked:border-[#a77fd4] peer-checked:bg-[#a77fd4] transition-colors" />
-                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            <div className="w-4 h-4 rounded-full border-2 border-gray-500 peer-checked:border-[#a77fd4] peer-checked:bg-[#a77fd4] transition-all duration-300 peer-checked:shadow-[0_0_8px_rgba(167,127,212,0.6)]" />
+                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white peer-checked:font-medium transition-all duration-300" style={{ fontFamily: "'Inter', sans-serif" }}>
                                                 {isPortuguese ? 'Diário' : 'Daily'}
                                             </span>
                                         </div>
                                     </label>
 
-                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/30 border border-white/15 rounded-sm cursor-pointer hover:border-[#a77fd4]/50 transition-colors group">
+                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/30 border border-white/15 rounded-sm cursor-pointer hover:border-[#a77fd4]/50 transition-all duration-300 group has-[:checked]:bg-[#a77fd4]/20 has-[:checked]:border-[#a77fd4]/70 has-[:checked]:shadow-[0_0_15px_rgba(167,127,212,0.2)]">
                                         <input type="radio" name="frequency" value="weekly" className="sr-only peer" defaultChecked />
                                         <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded-full border-2 border-gray-500 peer-checked:border-[#a77fd4] peer-checked:bg-[#a77fd4] transition-colors" />
-                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            <div className="w-4 h-4 rounded-full border-2 border-gray-500 peer-checked:border-[#a77fd4] peer-checked:bg-[#a77fd4] transition-all duration-300 peer-checked:shadow-[0_0_8px_rgba(167,127,212,0.6)]" />
+                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white peer-checked:font-medium transition-all duration-300" style={{ fontFamily: "'Inter', sans-serif" }}>
                                                 {isPortuguese ? 'Semanal' : 'Weekly'}
                                             </span>
                                         </div>
                                     </label>
 
-                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/30 border border-white/15 rounded-sm cursor-pointer hover:border-[#a77fd4]/50 transition-colors group">
+                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/30 border border-white/15 rounded-sm cursor-pointer hover:border-[#a77fd4]/50 transition-all duration-300 group has-[:checked]:bg-[#a77fd4]/20 has-[:checked]:border-[#a77fd4]/70 has-[:checked]:shadow-[0_0_15px_rgba(167,127,212,0.2)]">
                                         <input type="radio" name="frequency" value="monthly" className="sr-only peer" />
                                         <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded-full border-2 border-gray-500 peer-checked:border-[#a77fd4] peer-checked:bg-[#a77fd4] transition-colors" />
-                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            <div className="w-4 h-4 rounded-full border-2 border-gray-500 peer-checked:border-[#a77fd4] peer-checked:bg-[#a77fd4] transition-all duration-300 peer-checked:shadow-[0_0_8px_rgba(167,127,212,0.6)]" />
+                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white peer-checked:font-medium transition-all duration-300" style={{ fontFamily: "'Inter', sans-serif" }}>
                                                 {isPortuguese ? 'Mensal' : 'Monthly'}
                                             </span>
                                         </div>
@@ -1159,11 +1182,23 @@ const Shop = () => {
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-background-dark">
+        <div className="relative flex flex-col min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
             <Header />
             <CartDrawer />
 
-            <main className="flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-6 py-8 md:py-12">
+            {/* Minimal Stars Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
+                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
+            </div>
+
+            <main className="relative z-10 flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-6 py-8 md:py-12">
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl md:text-4xl font-black text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{t.shop.title}</h1>
@@ -2045,9 +2080,21 @@ const History = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-background-dark text-white">
+        <div className="relative flex flex-col min-h-screen text-white overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
             <Header />
             <CartDrawer />
+
+            {/* Minimal Stars Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
+                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
+            </div>
 
             {/* Modal */}
             {selectedReading && (
@@ -2059,7 +2106,7 @@ const History = () => {
                 />
             )}
 
-            <main className="flex-1 justify-center w-full py-12">
+            <main className="relative z-10 flex-1 justify-center w-full py-12">
                 <div className="w-full max-w-[1200px] mx-auto px-4 md:px-10">
                     <div className="flex items-center justify-between mb-8">
                         <div>
@@ -2572,11 +2619,11 @@ const CosmicCalendar = () => {
     const weekDays = isPortuguese ? ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return (
-        <div className="flex flex-col min-h-screen bg-background-dark text-white">
+        <div className="flex flex-col min-h-screen bg-background-dark text-white overflow-x-hidden">
             <Header />
             <CartDrawer />
 
-            <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-10 py-12">
+            <main className="flex-1 w-full max-w-[1200px] mx-auto px-3 md:px-10 py-8 md:py-12">
                 {/* Hero */}
                 <div className="text-center mb-12">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-bold mb-6">
@@ -2587,14 +2634,14 @@ const CosmicCalendar = () => {
                     <p className="text-gray-400 text-lg max-w-xl mx-auto">{t.cosmic.subtitle}</p>
                 </div>
 
-                <div className="grid lg:grid-cols-3 gap-8">
+                <div className="grid lg:grid-cols-3 gap-4 md:gap-8">
                     {/* Left Column - Today's Cosmic Info */}
-                    <div className="lg:col-span-2 space-y-6">
+                    <div className="lg:col-span-2 space-y-4 md:space-y-6">
                         {/* Moon Phase Card */}
-                        <div className="bg-gradient-to-br from-indigo-900/50 to-surface-dark rounded-2xl border border-indigo-500/30 p-6 md:p-8">
-                            <div className="flex flex-col md:flex-row items-center gap-6">
-                                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 flex items-center justify-center relative overflow-hidden">
-                                    <span className="material-symbols-outlined text-6xl text-indigo-900">{moonPhase.icon}</span>
+                        <div className="bg-gradient-to-br from-indigo-900/50 to-surface-dark rounded-xl md:rounded-2xl border border-indigo-500/30 p-4 md:p-8">
+                            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 flex items-center justify-center relative overflow-hidden flex-shrink-0">
+                                    <span className="material-symbols-outlined text-5xl md:text-6xl text-indigo-900">{moonPhase.icon}</span>
                                     <div
                                         className="absolute inset-0 bg-indigo-950"
                                         style={{
@@ -2624,7 +2671,7 @@ const CosmicCalendar = () => {
                         </div>
 
                         {/* Grid of Day Info */}
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid md:grid-cols-2 gap-3 md:gap-4">
                             {/* Planetary Ruler */}
                             <div className="bg-card-dark rounded-xl border border-border-dark p-5">
                                 <div className="flex items-center gap-3 mb-4">
@@ -2724,7 +2771,7 @@ const CosmicCalendar = () => {
                     </div>
 
                     {/* Right Column - Calendar & Energy */}
-                    <div className="space-y-6">
+                    <div className="space-y-4 md:space-y-6">
                         {/* Cosmic Energy */}
                         <div className="bg-gradient-to-br from-primary/20 to-surface-dark rounded-xl border border-primary/30 p-6 text-center">
                             <p className="text-gray-400 text-sm mb-2">{t.cosmic.cosmicEnergy}</p>
@@ -2740,7 +2787,7 @@ const CosmicCalendar = () => {
                         </div>
 
                         {/* Mini Calendar */}
-                        <div className="bg-card-dark rounded-xl border border-border-dark p-4">
+                        <div className="bg-card-dark rounded-xl border border-border-dark p-3 md:p-4">
                             <div className="flex items-center justify-between mb-4">
                                 <button
                                     onClick={() => setSelectedMonth(m => m === 0 ? 11 : m - 1)}
@@ -2827,10 +2874,23 @@ const Explore = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-background-dark">
+        <div className="relative flex flex-col min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
             <Header />
             <CartDrawer />
-            <main className="flex-1 w-full max-w-[1200px] mx-auto px-6 py-12">
+
+            {/* Minimal Stars Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
+                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
+            </div>
+
+            <main className="relative z-10 flex-1 w-full max-w-[1200px] mx-auto px-6 py-12">
                 <div className="mb-10">
                     <button onClick={() => navigate('/')} className="text-gray-400 hover:text-white flex items-center gap-2 text-sm mb-4 transition-colors">
                         <span className="material-symbols-outlined text-base">arrow_back</span> {t.cardDetails.back}
@@ -2937,11 +2997,23 @@ const Session = () => {
     if (!spread) return null;
 
     return (
-        <div className="flex flex-col min-h-screen bg-background-dark overflow-x-hidden">
+        <div className="relative flex flex-col min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
             <Header />
             <CartDrawer />
 
-            <div className="flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
+            {/* Minimal Stars Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
+                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
+            </div>
+
+            <div className="relative z-10 flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
                 <div className="flex flex-wrap justify-between items-end gap-4 mb-6 max-w-[1200px] mx-auto">
                     <div className="flex flex-col gap-2 max-w-2xl">
                         <h1 className="text-white text-3xl md:text-4xl font-black" style={{ fontFamily: "'Crimson Text', serif" }}>{t.session.title}</h1>
@@ -3145,11 +3217,23 @@ const Result = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-background-dark text-white">
+        <div className="relative flex flex-col min-h-screen text-white overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
             <Header />
             <CartDrawer />
 
-            <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
+            {/* Minimal Stars Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
+                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
+            </div>
+
+            <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
                 {/* Page Heading & Actions */}
                 <div className="flex flex-col md:flex-row flex-wrap justify-between gap-6 mb-10 items-start md:items-end">
                     <div className="flex flex-col gap-2 max-w-2xl">
