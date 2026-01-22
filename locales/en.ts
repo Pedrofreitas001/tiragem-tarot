@@ -3,9 +3,10 @@ import { TranslationKeys } from './pt';
 export const en: TranslationKeys = {
   // Header
   nav: {
+    home: "Home",
     newReading: "New Reading",
     history: "History",
-    cardMeanings: "Card Meanings",
+    cardMeanings: "Arcane Archive",
     shop: "Mystic Shop",
     login: "Log In",
     logout: "Log Out",

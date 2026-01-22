@@ -151,7 +151,7 @@ const Header = () => {
 
                     <nav className="hidden md:flex items-center gap-8">
                         <button onClick={() => navigate('/')} className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                            {t.nav.newReading}
+                            {t.nav.home}
                         </button>
                         <button onClick={() => navigate('/explore')} className={`text-sm font-medium transition-colors ${isActive('/explore') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                             {t.nav.cardMeanings}
@@ -191,7 +191,7 @@ const Header = () => {
                 {/* Mobile Menu */}
                 {mobileMenuOpen && (
                     <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
-                        <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.newReading}</button>
+                        <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
                         <button onClick={() => { navigate('/explore'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                         <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
                         <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
@@ -2108,15 +2108,27 @@ const History = () => {
 
             <main className="relative z-10 flex-1 justify-center w-full py-12">
                 <div className="w-full max-w-[1200px] mx-auto px-4 md:px-10">
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
                         <div>
                             <h2 className="text-white text-3xl font-bold" style={{ fontFamily: "'Crimson Text', serif" }}>{t.history.title}</h2>
                             <p className="text-gray-400 text-sm mt-1">{t.history.subtitle}</p>
                         </div>
-                        <button onClick={() => navigate('/')} className="px-4 py-2 bg-primary hover:bg-primary-hover rounded-lg text-white text-sm font-bold flex items-center gap-2 transition-colors">
-                            <span className="material-symbols-outlined text-lg">add</span>
-                            {t.nav.newReading}
-                        </button>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => navigate('/explore')}
+                                className="px-4 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-all"
+                            >
+                                <span className="material-symbols-outlined text-lg">auto_stories</span>
+                                {t.nav.cardMeanings}
+                            </button>
+                            <button
+                                onClick={() => navigate('/')}
+                                className="px-4 py-2.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-lg text-white text-sm font-bold flex items-center gap-2 transition-all"
+                            >
+                                <span className="material-symbols-outlined text-lg">add</span>
+                                {t.nav.newReading}
+                            </button>
+                        </div>
                     </div>
 
                     {savedReadings.length === 0 ? (
@@ -2950,11 +2962,17 @@ const Session = () => {
     const [question, setQuestion] = useState("");
     const [isShuffling, setIsShuffling] = useState(true);
 
-    useEffect(() => {
-        if (!spread) {
-            navigate('/');
-            return;
-        }
+    // Função para embaralhar
+    const shuffleDeck = () => {
+        setIsShuffling(true);
+        setSelectedCards([]);
+
+        // Efeito sonoro de embaralho
+        try {
+            const shuffleSound = new Audio('/sounds/shuffle.mp3');
+            shuffleSound.volume = 0.3;
+            shuffleSound.play().catch(() => { });
+        } catch (e) { }
 
         const newDeck = generateDeck();
         for (let i = newDeck.length - 1; i > 0; i--) {
@@ -2963,12 +2981,35 @@ const Session = () => {
         }
 
         setDeck(newDeck);
-        setTimeout(() => setIsShuffling(false), 1000);
+        setTimeout(() => setIsShuffling(false), 1500);
+    };
+
+    useEffect(() => {
+        if (!spread) {
+            navigate('/');
+            return;
+        }
+
+        // Efeito sonoro de espalhar cartas
+        try {
+            const spreadSound = new Audio('/sounds/spread.mp3');
+            spreadSound.volume = 0.2;
+            spreadSound.play().catch(() => { });
+        } catch (e) { }
+
+        shuffleDeck();
     }, [spread, navigate]);
 
     const handleCardClick = (card: TarotCard) => {
         if (selectedCards.length >= spread.cardCount) return;
         if (selectedCards.find(c => c.card.id === card.id)) return;
+
+        // Efeito sonoro de escolha
+        try {
+            const pickSound = new Audio('/sounds/pick.mp3');
+            pickSound.volume = 0.4;
+            pickSound.play().catch(() => { });
+        } catch (e) { }
 
         const newSelection = [...selectedCards, { card, flipped: false }];
         setSelectedCards(newSelection);
@@ -3019,6 +3060,14 @@ const Session = () => {
                         <h1 className="text-white text-3xl md:text-4xl font-black" style={{ fontFamily: "'Crimson Text', serif" }}>{t.session.title}</h1>
                         <p className="text-gray-400">{t.session.subtitle}</p>
                     </div>
+                    <button
+                        onClick={shuffleDeck}
+                        disabled={isShuffling}
+                        className="px-5 py-2.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-lg text-white text-sm font-bold flex items-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span className="material-symbols-outlined text-lg">{isShuffling ? 'sync' : 'shuffle'}</span>
+                        {isPortuguese ? 'Embaralhar' : 'Shuffle'}
+                    </button>
                 </div>
 
                 <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar max-w-[1200px] mx-auto">
@@ -3045,9 +3094,29 @@ const Session = () => {
                             const positionName = spread.positions[idx]?.name || `Card ${idx + 1}`;
 
                             return (
-                                <div key={idx} className="flex flex-col items-center gap-2">
-                                    <div className={`relative w-full aspect-[2/3] rounded-xl overflow-hidden ${selected
-                                        ? 'shadow-[0_0_30px_rgba(147,17,212,0.4)] border-2 border-primary'
+                                <div
+                                    key={idx}
+                                    className="flex flex-col items-center gap-2"
+                                    style={{
+                                        animation: selected ? `cardAppear 0.5s ease-out ${idx * 0.15}s both` : 'none'
+                                    }}
+                                >
+                                    <style dangerouslySetInnerHTML={{
+                                        __html: `
+                                        @keyframes cardAppear {
+                                            from {
+                                                opacity: 0;
+                                                transform: translateY(-30px) scale(0.8);
+                                            }
+                                            to {
+                                                opacity: 1;
+                                                transform: translateY(0) scale(1);
+                                            }
+                                        }
+                                        `
+                                    }} />
+                                    <div className={`relative w-full aspect-[2/3] rounded-xl overflow-hidden transition-all duration-300 ${selected
+                                        ? 'shadow-[0_0_40px_rgba(147,17,212,0.5)] border-2 border-[#a77fd4]'
                                         : 'border-2 border-dashed border-border-dark bg-surface-dark/50'
                                         }`}>
                                         {selected ? (
@@ -3107,7 +3176,7 @@ const Session = () => {
                                 <div
                                     key={card.id}
                                     onClick={() => !isSelected && handleCardClick(card)}
-                                    className={`absolute w-14 sm:w-16 md:w-20 lg:w-24 aspect-[2/3.4] rounded-lg border border-white/20 bg-gradient-to-br from-surface-dark to-black shadow-xl cursor-pointer transition-all duration-300 ease-out origin-center ${isSelected ? 'opacity-0 -translate-y-20 scale-50 pointer-events-none' : 'hover:z-[100] hover:-translate-y-6 hover:scale-105 hover:border-primary hover:shadow-[0_0_20px_rgba(147,17,212,0.4)]'
+                                    className={`absolute w-14 sm:w-16 md:w-20 lg:w-24 aspect-[2/3.4] rounded-lg border-2 bg-gradient-to-br from-[#1a0d14] via-[#1a0f1e] to-[#0d0810] shadow-2xl cursor-pointer transition-all duration-300 ease-out origin-center ${isSelected ? 'opacity-0 -translate-y-20 scale-50 pointer-events-none' : 'border-[#875faf]/40 hover:z-[100] hover:-translate-y-6 hover:scale-105 hover:border-[#a77fd4] hover:shadow-[0_0_30px_rgba(147,17,212,0.6)]'
                                         }`}
                                     style={{
                                         left: `${xPos}%`,
@@ -3116,8 +3185,8 @@ const Session = () => {
                                         zIndex: isSelected ? -1 : index,
                                     }}
                                 >
-                                    <div className="absolute inset-0 rounded-lg overflow-hidden bg-surface-dark flex items-center justify-center">
-                                        <span className="material-symbols-outlined text-primary/50 text-xs md:text-lg">style</span>
+                                    <div className="absolute inset-0 rounded-lg overflow-hidden bg-gradient-to-br from-[#2a1d34] to-[#1a0f1e] flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-[#a77fd4]/70 text-xs md:text-lg drop-shadow-lg">style</span>
                                     </div>
                                 </div>
                             );

@@ -1,9 +1,10 @@
 export const pt = {
   // Header
   nav: {
+    home: "Início",
     newReading: "Nova Tiragem",
     history: "Histórico",
-    cardMeanings: "Significados",
+    cardMeanings: "Arquivo Arcano",
     shop: "Loja Mística",
     login: "Entrar",
     logout: "Sair",
