@@ -334,7 +334,7 @@ const Home = () => {
                         <span className="text-xs text-gray-300 uppercase tracking-widest">{isPortuguese ? 'Seu Caminho Aguarda' : 'Your Path Awaits'}</span>
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-black text-white leading-tight mb-6 tracking-tight">
+                    <h1 className="text-5xl md:text-7xl font-black text-white leading-tight mb-6 tracking-tight" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
                         {isPortuguese
                             ? 'Revele seu destino com o Tarot'.split(' ').map((word, i) => (
                                 <span key={i} className={i === 4 || i === 5 ? 'text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400' : ''}>
@@ -668,25 +668,25 @@ const Home = () => {
                 </div>
             </section>
 
-    {/* Shop CTA */ }
-    < section className = "relative z-10 py-16 px-6" >
-        <div className="max-w-[800px] mx-auto text-center">
-            <div className="bg-gradient-to-br from-surface-dark to-card-dark rounded-2xl p-8 md:p-12 border border-border-dark">
-                <span className="material-symbols-outlined text-5xl text-primary mb-4">storefront</span>
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{t.home.featuredProducts}</h2>
-                <p className="text-gray-400 mb-6">{t.home.featuredProductsSubtitle}</p>
-                <button
-                    onClick={() => navigate('/shop')}
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary-hover rounded-xl text-white font-bold transition-all"
-                >
-                    {t.nav.shop}
-                    <span className="material-symbols-outlined">arrow_forward</span>
-                </button>
-            </div>
-        </div>
+            {/* Shop CTA */}
+            < section className="relative z-10 py-24 md:py-32 px-6" >
+                <div className="max-w-[800px] mx-auto text-center">
+                    <div className="bg-gradient-to-br from-surface-dark to-card-dark rounded-2xl p-8 md:p-12 border border-border-dark">
+                        <span className="material-symbols-outlined text-5xl text-primary mb-4">storefront</span>
+                        <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{t.home.featuredProducts}</h2>
+                        <p className="text-gray-400 mb-6">{t.home.featuredProductsSubtitle}</p>
+                        <button
+                            onClick={() => navigate('/shop')}
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary-hover rounded-xl text-white font-bold transition-all"
+                        >
+                            {t.nav.shop}
+                            <span className="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
             </section >
 
-    <Footer />
+            <Footer />
         </div >
     );
 };
