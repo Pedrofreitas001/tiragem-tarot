@@ -342,83 +342,93 @@ const Home = () => {
                     }
                 `}} />
 
-                {/* Text Section */}
-                <div className="text-center mb-12 max-w-3xl z-20">
-                    <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
-                        {isPortuguese ? 'Revele seu destino com o Tarot' : 'Reveal your destiny with Tarot'}
-                    </h1>
-                    <p className="text-lg md:text-xl text-[#b09db9] font-light italic leading-relaxed">
-                        {isPortuguese 
-                            ? '"Leitura de Tarot 100% grátis com interpretação personalizada por IA. Onde a sabedoria ancestral encontra a tecnologia moderna."'
-                            : '"100% free Tarot reading with personalized AI interpretation. Where ancient wisdom meets modern technology."'}
-                    </p>
+                {/* Mandala Background with Fade Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                    <div className="relative w-full max-w-5xl aspect-square">
+                        {/* Circular borders */}
+                        <div className="absolute inset-0 rounded-full border border-primary/5 scale-110"></div>
+                        <div className="absolute inset-0 rounded-full border border-primary/10 scale-100"></div>
+                        <div className="absolute inset-0 nebula-glow blur-3xl scale-150"></div>
+
+                        {/* Mandala Image */}
+                        <div className="relative w-full h-full flex items-center justify-center opacity-30">
+                            <div 
+                                className="size-4/5 bg-center bg-no-repeat bg-contain mandala-glow mix-blend-screen" 
+                                style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCubN6bMxSl0Mq19r2qbgIYmHkB3bwTFDfOZGdeCxDlzUynLqfdH3gcj7-Y_NlCr6hvaazUhsNagBFkiMA1jB4KjAYkX-a994gmDUo879kqIH5z3zNLVFtHhwB_9jHAs1sl4xYdttb94WiBkLzbIL_fk7fVeTJjvQ8eVLqzBzJNeVCQElBlRi2enLRckNXRonf12MespobJQjCSQvmU3lN9_o9jH7PCVje-p3QkB9LGtfrkCwzoOtB_j6xGM7vnHW199Cm7WQAPmXwo")' }}
+                            />
+                            <div className="absolute size-4 bg-primary rounded-full blur-[2px] shadow-[0_0_15px_#9311d4]"></div>
+                        </div>
+
+                        {/* Gradient Fade Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-[#1a1225]/60 via-[#1a1225]/80 to-[#1a1225]"></div>
+                    </div>
                 </div>
 
-                {/* Mandala Central with Floating Cards */}
-                <div className="relative w-full max-w-4xl aspect-square flex items-center justify-center mb-16">
-                    {/* Circular borders */}
-                    <div className="absolute inset-0 rounded-full border border-primary/5 scale-110"></div>
-                    <div className="absolute inset-0 rounded-full border border-primary/10 scale-100"></div>
-                    <div className="absolute inset-0 nebula-glow blur-3xl scale-150"></div>
+                {/* Content Layer (above fade) */}
+                <div className="relative z-30 flex flex-col items-center">
+                    {/* Text Section */}
+                    <div className="text-center mb-12 max-w-3xl">
+                        <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
+                            {isPortuguese ? 'Revele seu destino com o Tarot' : 'Reveal your destiny with Tarot'}
+                        </h1>
+                        <p className="text-lg md:text-xl text-[#b09db9] font-light italic leading-relaxed">
+                            {isPortuguese 
+                                ? '"Leitura de Tarot 100% grátis com interpretação personalizada por IA. Onde a sabedoria ancestral encontra a tecnologia moderna."'
+                                : '"100% free Tarot reading with personalized AI interpretation. Where ancient wisdom meets modern technology."'}
+                        </p>
+                    </div>
 
                     {/* Floating Glass Cards */}
-                    <div className="absolute top-[10%] left-[5%] glass-card p-5 rounded-2xl border border-white/10 z-20 hover:scale-105 transition-transform duration-300">
-                        <div className="flex items-center gap-4">
-                            <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-primary">auto_awesome</span>
+                    <div className="relative w-full max-w-4xl h-32 md:h-40 mb-12">
+                        <div className="absolute top-0 left-[10%] glass-card p-4 md:p-5 rounded-2xl border border-white/10 hover:scale-105 transition-transform duration-300">
+                            <div className="flex items-center gap-3 md:gap-4">
+                                <div className="size-8 md:size-10 rounded-full bg-primary/20 flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-primary text-lg md:text-xl">auto_awesome</span>
+                                </div>
+                                <div>
+                                    <p className="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-white/40">{isPortuguese ? 'Arcanos Maiores' : 'Major Arcana'}</p>
+                                    <p className="text-base md:text-lg font-medium">22 {isPortuguese ? 'Cartas' : 'Cards'}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-[10px] uppercase tracking-widest font-bold text-white/40">{isPortuguese ? 'Arcanos Maiores' : 'Major Arcana'}</p>
-                                <p className="text-lg font-medium">22 {isPortuguese ? 'Cartas' : 'Cards'}</p>
+                        </div>
+
+                        <div className="absolute top-0 right-[10%] glass-card p-4 md:p-5 rounded-2xl border border-white/10 hover:scale-105 transition-transform duration-300">
+                            <div className="flex items-center gap-3 md:gap-4">
+                                <div className="size-8 md:size-10 rounded-full bg-primary/20 flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-primary text-lg md:text-xl">style</span>
+                                </div>
+                                <div>
+                                    <p className="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-white/40">{isPortuguese ? 'Tiragens' : 'Spreads'}</p>
+                                    <p className="text-base md:text-lg font-medium">{SPREADS.length} {isPortuguese ? 'Tipos' : 'Types'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 glass-card p-3 md:p-4 rounded-full border border-white/10 hover:scale-105 transition-transform duration-300">
+                            <div className="flex items-center gap-2 md:gap-3 px-2">
+                                <span className="size-2 bg-green-400 rounded-full animate-pulse"></span>
+                                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase">{isPortuguese ? 'IA Ativa' : 'AI Active'}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="absolute bottom-[15%] right-[2%] glass-card p-5 rounded-2xl border border-white/10 z-20 hover:scale-105 transition-transform duration-300">
-                        <div className="flex items-center gap-4">
-                            <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-primary">style</span>
-                            </div>
-                            <div>
-                                <p className="text-[10px] uppercase tracking-widest font-bold text-white/40">{isPortuguese ? 'Tiragens' : 'Spreads'}</p>
-                                <p className="text-lg font-medium">{SPREADS.length} {isPortuguese ? 'Tipos' : 'Types'}</p>
-                            </div>
-                        </div>
+                    {/* Premium Buttons */}
+                    <div className="flex flex-col md:flex-row gap-6">
+                        <button
+                            onClick={() => handleSelectSpread(SPREADS[0])}
+                            className="glow-button group flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 px-10 py-4 rounded-full transition-all"
+                        >
+                            <span className="text-sm font-bold uppercase tracking-widest">{t.home.startReading}</span>
+                            <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">auto_mode</span>
+                        </button>
+                        <button
+                            onClick={() => navigate('/explore')}
+                            className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-10 py-4 rounded-full transition-all"
+                        >
+                            <span className="text-sm font-bold uppercase tracking-widest">{t.home.exploreCards}</span>
+                            <span className="material-symbols-outlined text-lg">history_edu</span>
+                        </button>
                     </div>
-
-                    <div className="absolute top-[40%] right-[-5%] glass-card p-4 rounded-full border border-white/10 z-20 hover:scale-105 transition-transform duration-300">
-                        <div className="flex items-center gap-3 px-2">
-                            <span className="size-2 bg-green-400 rounded-full animate-pulse"></span>
-                            <span className="text-xs font-bold tracking-widest uppercase">{isPortuguese ? 'IA Ativa' : 'AI Active'}</span>
-                        </div>
-                    </div>
-
-                    {/* Mandala Image */}
-                    <div className="relative w-4/5 h-4/5 flex items-center justify-center transition-transform duration-1000 hover:rotate-6">
-                        <div 
-                            className="size-full bg-center bg-no-repeat bg-contain mandala-glow mix-blend-screen" 
-                            style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCubN6bMxSl0Mq19r2qbgIYmHkB3bwTFDfOZGdeCxDlzUynLqfdH3gcj7-Y_NlCr6hvaazUhsNagBFkiMA1jB4KjAYkX-a994gmDUo879kqIH5z3zNLVFtHhwB_9jHAs1sl4xYdttb94WiBkLzbIL_fk7fVeTJjvQ8eVLqzBzJNeVCQElBlRi2enLRckNXRonf12MespobJQjCSQvmU3lN9_o9jH7PCVje-p3QkB9LGtfrkCwzoOtB_j6xGM7vnHW199Cm7WQAPmXwo")' }}
-                        />
-                        <div className="absolute size-4 bg-primary rounded-full blur-[2px] shadow-[0_0_15px_#9311d4]"></div>
-                    </div>
-                </div>
-
-                {/* Premium Buttons */}
-                <div className="flex flex-col md:flex-row gap-6 z-20">
-                    <button
-                        onClick={() => handleSelectSpread(SPREADS[0])}
-                        className="glow-button group flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 px-10 py-4 rounded-full transition-all"
-                    >
-                        <span className="text-sm font-bold uppercase tracking-widest">{t.home.startReading}</span>
-                        <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">auto_mode</span>
-                    </button>
-                    <button
-                        onClick={() => navigate('/explore')}
-                        className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-10 py-4 rounded-full transition-all"
-                    >
-                        <span className="text-sm font-bold uppercase tracking-widest">{t.home.exploreCards}</span>
-                        <span className="material-symbols-outlined text-lg">history_edu</span>
-                    </button>
                 </div>
             </section>
 
