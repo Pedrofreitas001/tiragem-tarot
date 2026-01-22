@@ -324,7 +324,7 @@ const Home = () => {
             </div>
 
             {/* Hero Section - Clean & Modern */}
-            <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden">
+            <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden pt-16 md:pt-20">
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     .glow-button {
@@ -334,21 +334,21 @@ const Home = () => {
 
                 {/* Subtle circular borders */}
                 <div className="absolute inset-0">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-white/[0.02] rounded-full" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] border border-white/[0.015] rounded-full" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] w-[700px] h-[700px] border border-white/[0.02] rounded-full" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] w-[900px] h-[900px] border border-white/[0.015] rounded-full" />
                 </div>
 
                 <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6">
                         <span className="material-symbols-outlined text-primary text-sm">auto_awesome</span>
                         <span className="text-xs text-gray-300 uppercase tracking-widest">{isPortuguese ? 'Seu Caminho Aguarda' : 'Your Path Awaits'}</span>
                     </div>
 
-                    <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
+                    <h1 className="text-6xl md:text-8xl font-black mb-5 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
                         {isPortuguese ? 'Revele seu destino com o Tarot' : 'Reveal your destiny with Tarot'}
                     </h1>
 
-                    <p className="text-lg md:text-xl text-[#c4b5cc] font-normal leading-relaxed max-w-2xl mx-auto mb-16" style={{ fontFamily: "'Crimson Text', serif" }}>
+                    <p className="text-lg md:text-xl text-[#c4b5cc] font-normal leading-relaxed max-w-2xl mx-auto mb-12" style={{ fontFamily: "'Crimson Text', serif" }}>
                         {isPortuguese
                             ? 'Leitura de Tarot grátis com interpretação personalizada. Onde a sabedoria ancestral encontra a tecnologia moderna.'
                             : 'Free Tarot reading with personalized interpretation. Where ancient wisdom meets modern technology.'}
@@ -730,7 +730,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
                 <div className="flex items-center justify-between">
                     <div className="flex items-baseline gap-2">
-                        <span className="text-primary font-bold">{formatPrice(product.price, t.common.currency)}</span>
+                        <span className="text-white font-bold">{formatPrice(product.price, t.common.currency)}</span>
                         {product.compareAtPrice && (
                             <span className="text-gray-500 text-xs line-through">{formatPrice(product.compareAtPrice, t.common.currency)}</span>
                         )}
@@ -763,6 +763,9 @@ const Shop = () => {
     const { t, isPortuguese } = useLanguage();
     const [filter, setFilter] = useState<ProductCategory | 'all'>('all');
     const [sortBy, setSortBy] = useState<'featured' | 'price_low' | 'price_high'>('featured');
+    const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const categories: Array<{ key: ProductCategory | 'all'; label: string; icon: string }> = [
         { key: 'all', label: t.shop.categories.all, icon: 'apps' },
@@ -774,7 +777,36 @@ const Shop = () => {
         { key: 'kits', label: t.shop.categories.kits, icon: 'inventory_2' },
     ];
 
+    const availableTags = [
+        { key: 'bestseller', label: t.shop.bestseller, color: 'text-primary' },
+        { key: 'new', label: t.shop.new, color: 'text-green-500' },
+        { key: 'sale', label: t.shop.sale, color: 'text-red-500' },
+    ];
+
+    const toggleTag = (tag: string) => {
+        setSelectedTags(prev => 
+            prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+        );
+    };
+
+    const resetFilters = () => {
+        setFilter('all');
+        setPriceRange([0, 500]);
+        setSelectedTags([]);
+        setSortBy('featured');
+    };
+
     let filteredProducts = filter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === filter);
+    
+    // Apply price range filter
+    filteredProducts = filteredProducts.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
+    
+    // Apply tag filter
+    if (selectedTags.length > 0) {
+        filteredProducts = filteredProducts.filter(p => 
+            selectedTags.some(tag => p.tags.includes(tag))
+        );
+    }
 
     if (sortBy === 'price_low') {
         filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
@@ -789,55 +821,158 @@ const Shop = () => {
             <Header />
             <CartDrawer />
 
-            <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-6 py-8 md:py-12">
+            <main className="flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-6 py-8 md:py-12">
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl md:text-4xl font-black text-white mb-2">{t.shop.title}</h1>
                     <p className="text-gray-400">{t.shop.subtitle}</p>
                 </div>
 
-                {/* Filters */}
-                <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between mb-8">
-                    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-                        {categories.map(cat => (
-                            <button
-                                key={cat.key}
-                                onClick={() => setFilter(cat.key)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${filter === cat.key
-                                    ? 'bg-primary text-white'
-                                    : 'bg-surface-dark text-gray-400 hover:text-white hover:bg-white/10'
-                                    }`}
-                            >
-                                <span className="material-symbols-outlined text-lg">{cat.icon}</span>
-                                {cat.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    <select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value as any)}
-                        className="px-4 py-2 rounded-lg bg-surface-dark text-gray-300 border border-border-dark text-sm"
+                <div className="flex gap-8">
+                    {/* Mobile Filter Toggle */}
+                    <button
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        className="lg:hidden fixed bottom-6 right-6 z-50 p-4 bg-primary text-white rounded-full shadow-2xl"
                     >
-                        <option value="featured">{t.shop.sortOptions.featured}</option>
-                        <option value="price_low">{t.shop.sortOptions.priceLow}</option>
-                        <option value="price_high">{t.shop.sortOptions.priceHigh}</option>
-                    </select>
-                </div>
+                        <span className="material-symbols-outlined">tune</span>
+                    </button>
 
-                {/* Products Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                    {filteredProducts.map(product => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
+                    {/* Sidebar Filters */}
+                    <aside className={`${
+                        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                    } lg:translate-x-0 fixed lg:relative top-0 left-0 h-full lg:h-auto w-72 lg:w-64 bg-surface-dark lg:bg-transparent border-r border-border-dark lg:border-0 p-6 lg:p-0 transition-transform duration-300 z-40 overflow-y-auto`}>
+                        
+                        {/* Close button mobile */}
+                        <button
+                            onClick={() => setSidebarOpen(false)}
+                            className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white"
+                        >
+                            <span className="material-symbols-outlined">close</span>
+                        </button>
 
-                {filteredProducts.length === 0 && (
-                    <div className="text-center py-20">
-                        <span className="material-symbols-outlined text-6xl text-gray-600 mb-4">inventory_2</span>
-                        <p className="text-gray-400">{isPortuguese ? 'Nenhum produto encontrado' : 'No products found'}</p>
+                        <div className="space-y-6">
+                            {/* Categories */}
+                            <div className="bg-surface-dark lg:bg-surface-dark p-4 rounded-xl border border-border-dark">
+                                <h3 className="text-white font-bold text-sm mb-3 uppercase tracking-wider">
+                                    {isPortuguese ? 'Categorias' : 'Categories'}
+                                </h3>
+                                <div className="space-y-2">
+                                    {categories.map(cat => (
+                                        <button
+                                            key={cat.key}
+                                            onClick={() => setFilter(cat.key)}
+                                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                                                filter === cat.key
+                                                    ? 'bg-primary text-white'
+                                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                            }`}
+                                        >
+                                            <span className="material-symbols-outlined text-base">{cat.icon}</span>
+                                            {cat.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Price Range */}
+                            <div className="bg-surface-dark p-4 rounded-xl border border-border-dark">
+                                <h3 className="text-white font-bold text-sm mb-3 uppercase tracking-wider">
+                                    {isPortuguese ? 'Faixa de Preço' : 'Price Range'}
+                                </h3>
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-2 text-sm text-gray-400">
+                                        <span>{formatPrice(priceRange[0], t.common.currency)}</span>
+                                        <span>-</span>
+                                        <span>{formatPrice(priceRange[1], t.common.currency)}</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="500"
+                                        step="10"
+                                        value={priceRange[1]}
+                                        onChange={(e) => setPriceRange([0, Number(e.target.value)])}
+                                        className="w-full accent-primary"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Tags */}
+                            <div className="bg-surface-dark p-4 rounded-xl border border-border-dark">
+                                <h3 className="text-white font-bold text-sm mb-3 uppercase tracking-wider">
+                                    {isPortuguese ? 'Filtros' : 'Filters'}
+                                </h3>
+                                <div className="space-y-2">
+                                    {availableTags.map(tag => (
+                                        <label
+                                            key={tag.key}
+                                            className="flex items-center gap-3 cursor-pointer group"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedTags.includes(tag.key)}
+                                                onChange={() => toggleTag(tag.key)}
+                                                className="w-4 h-4 accent-primary"
+                                            />
+                                            <span className={`text-sm font-medium ${selectedTags.includes(tag.key) ? tag.color : 'text-gray-400 group-hover:text-white'}`}>
+                                                {tag.label}
+                                            </span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Reset Filters */}
+                            <button
+                                onClick={resetFilters}
+                                className="w-full py-2 px-4 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-sm font-medium rounded-lg transition-colors border border-border-dark"
+                            >
+                                {isPortuguese ? 'Limpar Filtros' : 'Reset Filters'}
+                            </button>
+                        </div>
+                    </aside>
+
+                    {/* Overlay for mobile */}
+                    {sidebarOpen && (
+                        <div
+                            onClick={() => setSidebarOpen(false)}
+                            className="lg:hidden fixed inset-0 bg-black/60 z-30"
+                        />
+                    )}
+
+                    {/* Main Content */}
+                    <div className="flex-1">
+                        {/* Sort and Results Count */}
+                        <div className="flex items-center justify-between mb-6">
+                            <p className="text-gray-400 text-sm">
+                                {filteredProducts.length} {isPortuguese ? 'produtos' : 'products'}
+                            </p>
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value as any)}
+                                className="px-4 py-2 rounded-lg bg-surface-dark text-gray-300 border border-border-dark text-sm"
+                            >
+                                <option value="featured">{t.shop.sortOptions.featured}</option>
+                                <option value="price_low">{t.shop.sortOptions.priceLow}</option>
+                                <option value="price_high">{t.shop.sortOptions.priceHigh}</option>
+                            </select>
+                        </div>
+
+                        {/* Products Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                            {filteredProducts.map(product => (
+                                <ProductCard key={product.id} product={product} />
+                            ))}
+                        </div>
+
+                        {filteredProducts.length === 0 && (
+                            <div className="text-center py-20">
+                                <span className="material-symbols-outlined text-6xl text-gray-600 mb-4">inventory_2</span>
+                                <p className="text-gray-400">{isPortuguese ? 'Nenhum produto encontrado' : 'No products found'}</p>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </main>
 
             <Footer />
