@@ -156,14 +156,11 @@ const Header = () => {
             <button onClick={() => navigate('/explore')} className={`text-sm font-medium transition-colors ${isActive('/explore') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
               {t.nav.cardMeanings}
             </button>
-            <button onClick={() => navigate('/cosmic')} className={`text-sm font-medium transition-colors ${isActive('/cosmic') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-              {t.cosmic.title}
+            <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+              {t.nav.history}
             </button>
             <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
               {t.nav.shop}
-            </button>
-            <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-              {t.nav.history}
             </button>
           </nav>
 
@@ -196,9 +193,8 @@ const Header = () => {
           <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.newReading}</button>
             <button onClick={() => { navigate('/explore'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
-            <button onClick={() => { navigate('/cosmic'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.cosmic.title}</button>
-            <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
+            <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
           </nav>
         )}
       </div>
@@ -440,73 +436,103 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Cosmic Map Section */}
+      {/* Cosmic Widgets Section */}
       <section className="relative z-10 py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-bold mb-6">
-              <span className="material-symbols-outlined text-lg">calendar_month</span>
-              {t.cosmic.title}
-            </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t.cosmic.title}</h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">{t.cosmic.subtitle}</p>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">{isPortuguese ? 'Energias cósmicas do dia' : 'Today\'s cosmic energies'}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {/* Journey Card */}
-            <div className="group bg-gradient-to-br from-indigo-900/30 to-surface-dark rounded-2xl border border-indigo-500/30 p-6 md:p-8 hover:border-indigo-500/50 transition-all">
-              <div className="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined text-2xl">public</span>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">{isPortuguese ? 'Jornada Espiritual' : 'Spiritual Journey'}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-6">
-                {isPortuguese ? 'Descubra sua trajetória através das cartas maiores e as influências cósmicas.' : 'Discover your path through major arcana and cosmic influences.'}
-              </p>
-              <button
-                onClick={() => navigate('/cosmic')}
-                className="text-indigo-400 font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
-              >
-                {t.cosmic.title}
-                <span className="material-symbols-outlined text-base">arrow_forward</span>
-              </button>
-            </div>
+          {/* Moon Phase & Day Info - Computed from CosmicDay */}
+          {(() => {
+            const currentDate = new Date();
+            const cosmicDay = getCosmicDay(currentDate);
+            const { moonPhase, zodiacSun, planetaryRuler } = cosmicDay;
 
-            {/* Cosmic Energies Card */}
-            <div className="group bg-gradient-to-br from-purple-900/30 to-surface-dark rounded-2xl border border-purple-500/30 p-6 md:p-8 hover:border-purple-500/50 transition-all">
-              <div className="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined text-2xl">stars</span>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">{isPortuguese ? 'Energias Cósmicas' : 'Cosmic Energies'}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-6">
-                {isPortuguese ? 'Compreenda as influências planetárias e lunares em seu destino.' : 'Understand planetary and lunar influences on your destiny.'}
-              </p>
-              <button
-                onClick={() => navigate('/cosmic')}
-                className="text-purple-400 font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
-              >
-                {t.cosmic.title}
-                <span className="material-symbols-outlined text-base">arrow_forward</span>
-              </button>
-            </div>
+            return (
+              <div className="grid lg:grid-cols-3 gap-6">
+                {/* Moon Phase Card */}
+                <div className="lg:col-span-2 bg-gradient-to-br from-indigo-900/50 to-surface-dark rounded-2xl border border-indigo-500/30 p-6 md:p-8">
+                  <div className="flex flex-col md:flex-row items-center gap-6">
+                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 flex items-center justify-center relative overflow-hidden flex-shrink-0">
+                      <span className="material-symbols-outlined text-6xl text-indigo-900">{moonPhase.icon}</span>
+                      <div
+                        className="absolute inset-0 bg-indigo-950"
+                        style={{
+                          clipPath: `inset(0 ${100 - moonPhase.illumination}% 0 0)`,
+                          opacity: 0.8
+                        }}
+                      />
+                    </div>
+                    <div className="text-center md:text-left flex-1">
+                      <p className="text-indigo-300 text-sm font-medium mb-1">{t.cosmic.moonPhase}</p>
+                      <h3 className="text-2xl font-black text-white mb-2">
+                        {isPortuguese ? moonPhase.name_pt : moonPhase.name}
+                      </h3>
+                      <p className="text-gray-400 mb-3 text-sm">
+                        {isPortuguese ? moonPhase.description_pt : moonPhase.description}
+                      </p>
+                      <div className="flex items-center gap-2 justify-center md:justify-start flex-wrap">
+                        <span className="px-3 py-1 bg-indigo-500/20 rounded-full text-indigo-300 text-xs">
+                          {t.cosmic.illumination}: {moonPhase.illumination}%
+                        </span>
+                        <span className="px-3 py-1 bg-purple-500/20 rounded-full text-purple-300 text-xs">
+                          {isPortuguese ? moonPhase.energy_pt : moonPhase.energy}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Self Discovery Card */}
-            <div className="group bg-gradient-to-br from-pink-900/30 to-surface-dark rounded-2xl border border-pink-500/30 p-6 md:p-8 hover:border-pink-500/50 transition-all">
-              <div className="w-12 h-12 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined text-2xl">psychology</span>
+                {/* Right Column - Planetary Ruler & Zodiac */}
+                <div className="space-y-4">
+                  {/* Planetary Ruler */}
+                  <div className="bg-card-dark rounded-xl border border-border-dark p-5">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: planetaryRuler.color + '30' }}>
+                        <span className="material-symbols-outlined text-2xl" style={{ color: planetaryRuler.color }}>{planetaryRuler.icon}</span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-gray-500 text-xs">{t.cosmic.planetaryRuler}</p>
+                        <h3 className="text-white font-bold text-sm">
+                          {isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}
+                        </h3>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(isPortuguese ? planetaryRuler.qualities_pt : planetaryRuler.qualities).slice(0, 3).map((q, i) => (
+                        <span key={i} className="px-2 py-1 bg-surface-dark rounded text-gray-400 text-xs">{q}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Zodiac Season */}
+                  <div className="bg-card-dark rounded-xl border border-border-dark p-5">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${getElementColor(zodiacSun.element)}`}>
+                        {zodiacSun.icon}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-gray-500 text-xs">{t.cosmic.zodiacSeason}</p>
+                        <h3 className="text-white font-bold text-sm">
+                          {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}
+                        </h3>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className={`px-2 py-1 rounded text-xs ${getElementColor(zodiacSun.element)}`}>
+                        {isPortuguese ? zodiacSun.element_pt : zodiacSun.element}
+                      </span>
+                      {(isPortuguese ? zodiacSun.qualities_pt : zodiacSun.qualities).slice(0, 2).map((q, i) => (
+                        <span key={i} className="px-2 py-1 bg-surface-dark rounded text-gray-400 text-xs">{q}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">{isPortuguese ? 'Autodescoberta' : 'Self Discovery'}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-6">
-                {isPortuguese ? 'Aprofunde seu autoconhecimento através das energias cósmicas diárias.' : 'Deepen your self-knowledge through daily cosmic energies.'}
-              </p>
-              <button
-                onClick={() => navigate('/cosmic')}
-                className="text-pink-400 font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
-              >
-                {t.cosmic.title}
-                <span className="material-symbols-outlined text-base">arrow_forward</span>
-              </button>
-            </div>
-          </div>
+            );
+          })()}
         </div>
       </section>
 
