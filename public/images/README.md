@@ -59,89 +59,10 @@ Edite `data/products.ts`:
 
 ---
 
-### 3. `/cards/major` - Cartas Maiores do Tarot
-**Uso:** As 22 cartas maiores do tarot (0-21).
-
-**Nomeação requerida:**
-```
-ar00.jpg (The Fool)
-ar01.jpg (The Magician)
-ar02.jpg (The High Priestess)
-... até ...
-ar21.jpg (The World)
-```
-
-**Tamanho recomendado:** 300x520px
-**Formato:** JPG ou PNG
-
----
-
-### 4. `/cards/minor` - Cartas Menores do Tarot
-**Uso:** As 56 cartas menores do tarot (4 naipes x 14 ranks).
-
-**Nomeação requerida:**
-Siga o padrão: `{suit}{rank}.jpg`
-
-**Naipes:**
-- `w` = Wands (Paus)
-- `c` = Cups (Copas)
-- `s` = Swords (Espadas)
-- `p` = Pentacles (Pentáculos)
-
-**Ranks:**
-```
-a   = Ace (Ás)
-2-10 = Number cards (2-10)
-p   = Page (Valete)
-n   = Knight (Cavalo)
-q   = Queen (Rainha)
-k   = King (Rei)
-```
-
-**Exemplos:**
-```
-wa.jpg, w2.jpg, w3.jpg, ... w10.jpg, wp.jpg, wn.jpg, wq.jpg, wk.jpg
-ca.jpg, c2.jpg, c3.jpg, ... c10.jpg, cp.jpg, cn.jpg, cq.jpg, ck.jpg
-sa.jpg, s2.jpg, s3.jpg, ... s10.jpg, sp.jpg, sn.jpg, sq.jpg, sk.jpg
-pa.jpg, p2.jpg, p3.jpg, ... p10.jpg, pp.jpg, pn.jpg, pq.jpg, pk.jpg
-```
-
-**Total:** 56 arquivos
-
-**Tamanho recomendado:** 300x520px
-**Formato:** JPG ou PNG
-
----
-
-## 🔄 Como Atualizar as URLs no Código
-
-### Opção 1: Usar URLs Locais (Recomendado)
-Após adicionar os arquivos em `/public/images`, atualize os caminhos:
-
-```tsx
-// Em constants.ts, função generateDeck()
-const baseUrl = "/images/cards"; // URLs locais
-
-// Construção automática dos caminhos
-const fileIndex = index.toString().padStart(2, '0');
-imageUrl: `${baseUrl}/major/ar${fileIndex}.jpg`
-```
-
-### Opção 2: Usar URLs Externas
-Se preferir manter URLs externas:
-```tsx
-const baseUrl = "https://seu-servidor.com/cartas";
-```
-
----
-
 ## ✅ Checklist de Upload
 
 - [ ] Adicionar 3 imagens em `/spreads`
 - [ ] Adicionar imagens de produtos em `/products`
-- [ ] Adicionar 22 cartas maiores em `/cards/major`
-- [ ] Adicionar 56 cartas menores em `/cards/minor`
-- [ ] Atualizar `constants.ts` com novo `baseUrl`
 - [ ] Atualizar `data/products.ts` com caminhos locais
 - [ ] Atualizar `App.tsx` com caminhos dos spreads
 - [ ] Testar no navegador
@@ -155,6 +76,7 @@ const baseUrl = "https://seu-servidor.com/cartas";
 2. **Formato:** Recomenda-se JPG para melhor compressão ou WebP para qualidade superior
 3. **Otimização:** Comprima as imagens antes de fazer upload (use ferramentas como TinyPNG)
 4. **Responsive:** Certifique-se que as imagens funcionam em móvel, tablet e desktop
+5. **Imagens do Tarot:** As cartas do tarot continuam sendo puxadas do servidor externo (sacred-texts.com) e NÃO precisam ser adicionadas aqui.
 
 ---
 
@@ -164,3 +86,4 @@ const baseUrl = "https://seu-servidor.com/cartas";
 2. Atualize os caminhos no código conforme instruído acima
 3. Execute `npm run dev` para testar localmente
 4. Faça commit e push das mudanças
+
