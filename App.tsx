@@ -486,8 +486,88 @@ const Home = () => {
                         }
 
                         return (
-                            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-                                {/* LEFT: Compact Mandala */}
+                            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center lg:items-start">
+                                {/* LEFT: Calendar */}
+                                <div>
+                                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
+                                    <div className="glass-widget rounded-2xl p-4 border border-primary/20 text-sm">
+                                        {/* Calendar Header - Month Only */}
+                                        <div className="text-center mb-4">
+                                            <h3 className="text-base md:text-lg font-bold text-white">{calendarMonthNames[month]} {year}</h3>
+                                        </div>
+
+                                        {/* Day Names */}
+                                        <div className="grid grid-cols-7 gap-1 mb-3">
+                                            {dayNames.map(day => (
+                                                <div key={day} className="text-center text-[10px] font-bold text-[#ad92c9] uppercase tracking-widest py-0.5">
+                                                    {day}
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Calendar Days */}
+                                        <div className="grid grid-cols-7 gap-1 mb-3">
+                                            {calendarDays.map((day, idx) => {
+                                                if (day === null) {
+                                                    return <div key={`empty-${idx}`} className="aspect-square"></div>;
+                                                }
+
+                                                const moonPhaseData = getMoonPhaseForDay(day);
+                                                const isToday = day === currentDate.getDate();
+                                                const isFull = moonPhaseData.phase === 'full';
+                                                const isNew = moonPhaseData.phase === 'new';
+
+                                                return (
+                                                    <div
+                                                        key={day}
+                                                        className={`aspect-square rounded-sm flex flex-col items-center justify-center cursor-pointer transition-all duration-300 text-xs ${isToday
+                                                            ? 'bg-gradient-to-br from-primary/40 to-primary/20 border-2 border-primary'
+                                                            : isFull
+                                                                ? 'bg-white/10 hover:bg-white/15'
+                                                                : isNew
+                                                                    ? 'bg-zinc-900/40 hover:bg-zinc-800/40'
+                                                                    : 'bg-white/5 hover:bg-white/10'
+                                                            } group border border-white/10 hover:border-primary/30`}
+                                                    >
+                                                        <span className="text-sm group-hover:scale-110 transition-transform font-bold">
+                                                            {moonPhaseData.phase === 'full' && '●'}
+                                                            {moonPhaseData.phase === 'new' && '○'}
+                                                            {moonPhaseData.phase === 'waxing' && '◐'}
+                                                            {moonPhaseData.phase === 'waning' && '◑'}
+                                                        </span>
+                                                        <span className={`text-[8px] font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
+                                                            {day}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {/* Legend */}
+                                        <div className="pt-2 border-t border-white/10">
+                                            <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="text-white font-bold">●</span>
+                                                    <span className="text-white/70">{isPortuguese ? 'Cheia' : 'Full'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="text-white font-bold">○</span>
+                                                    <span className="text-white/70">{isPortuguese ? 'Nova' : 'New'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="text-white font-bold">◐</span>
+                                                    <span className="text-white/70">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="text-white font-bold">◑</span>
+                                                    <span className="text-white/70">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* RIGHT: Mandala */}
                                 <div className="flex items-center justify-center">
                                     <style>{`
                                         .cosmic-gradient { background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%); }
@@ -514,29 +594,23 @@ const Home = () => {
                                             {/* Moon Phases Ring - Larger */}
                                             <div className="absolute inset-0 flex items-center justify-center">
                                                 {/* Full Moon - Top */}
-                                                <div className={`absolute -top-16 flex flex-col items-center transition-opacity duration-300 ${moonPhase.name === 'full' ? 'opacity-100' : 'opacity-40'}`}>
-                                                    <div className={`w-12 h-12 rounded-full ${moonPhase.name === 'full' ? 'bg-white shadow-[0_0_20px_rgba(255,255,255,0.8)]' : 'bg-white/40 shadow-none'}`}></div>
+                                                <div className={`absolute -top-16 flex flex-col items-center transition-all duration-300 ${moonPhase.name === 'full' ? 'opacity-100' : 'opacity-40'}`}>
+                                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold ${moonPhase.name === 'full' ? 'text-white shadow-[0_0_30px_rgba(255,255,255,1),0_0_60px_rgba(255,255,255,0.6)]' : 'text-white/40 shadow-none'}`}>●</div>
                                                     <span className={`text-[8px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.name === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                 </div>
                                                 {/* New Moon - Bottom */}
                                                 <div className={`absolute -bottom-16 flex flex-col items-center transition-opacity duration-300 ${moonPhase.name === 'new' ? 'opacity-100' : 'opacity-40'}`}>
-                                                    <div className={`w-12 h-12 rounded-full ${moonPhase.name === 'new' ? 'bg-zinc-900 border border-zinc-700' : 'bg-zinc-900/40 border border-zinc-700/40'}`}></div>
+                                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold ${moonPhase.name === 'new' ? 'text-zinc-200 border-2 border-zinc-600 shadow-[0_0_20px_rgba(212,212,216,0.3)]' : 'text-zinc-200/40 border border-zinc-700/40'}`}>○</div>
                                                     <span className={`text-[8px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.name === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
                                                 </div>
                                                 {/* Waxing - Right */}
                                                 <div className={`absolute -right-16 flex flex-col items-center transition-opacity duration-300 ${moonPhase.name === 'waxing' ? 'opacity-100' : 'opacity-40'}`}>
-                                                    <div className={`w-12 h-12 rounded-full overflow-hidden flex ${moonPhase.name === 'waxing' ? '' : 'opacity-40'}`}>
-                                                        <div className="w-1/2 bg-white"></div>
-                                                        <div className="w-1/2 bg-zinc-900"></div>
-                                                    </div>
+                                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold ${moonPhase.name === 'waxing' ? 'text-[#ad92c9] shadow-[0_0_20px_rgba(173,146,201,0.4)]' : 'text-[#ad92c9]/40 shadow-none'}`}>◐</div>
                                                     <span className={`text-[8px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.name === 'waxing' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
                                                 </div>
                                                 {/* Waning - Left */}
                                                 <div className={`absolute -left-16 flex flex-col items-center transition-opacity duration-300 ${moonPhase.name === 'waning' ? 'opacity-100' : 'opacity-40'}`}>
-                                                    <div className={`w-12 h-12 rounded-full overflow-hidden flex ${moonPhase.name === 'waning' ? '' : 'opacity-40'}`}>
-                                                        <div className="w-1/2 bg-zinc-900"></div>
-                                                        <div className="w-1/2 bg-white"></div>
-                                                    </div>
+                                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold ${moonPhase.name === 'waning' ? 'text-[#ad92c9] shadow-[0_0_20px_rgba(173,146,201,0.4)]' : 'text-[#ad92c9]/40 shadow-none'}`}>◑</div>
                                                     <span className={`text-[8px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.name === 'waning' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                 </div>
                                             </div>
@@ -547,84 +621,6 @@ const Home = () => {
                                                 <p className="text-primary text-sm md:text-base font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
                                                 <div className="mt-3 flex justify-center gap-2">
                                                     <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* RIGHT: Calendar */}
-                                <div>
-                                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
-                                    <div className="glass-widget rounded-2xl p-6 border border-primary/20">
-                                        {/* Calendar Header - Month Only */}
-                                        <div className="text-center mb-6">
-                                            <h3 className="text-lg md:text-xl font-bold text-white">{calendarMonthNames[month]} {year}</h3>
-                                        </div>
-
-                                        {/* Day Names */}
-                                        <div className="grid grid-cols-7 gap-1.5 mb-4">
-                                            {dayNames.map(day => (
-                                                <div key={day} className="text-center text-xs font-bold text-[#ad92c9] uppercase tracking-widest py-1">
-                                                    {day}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        {/* Calendar Days */}
-                                        <div className="grid grid-cols-7 gap-1.5 mb-4">
-                                            {calendarDays.map((day, idx) => {
-                                                if (day === null) {
-                                                    return <div key={`empty-${idx}`} className="aspect-square"></div>;
-                                                }
-
-                                                const moonPhaseData = getMoonPhaseForDay(day);
-                                                const isToday = day === currentDate.getDate();
-                                                const isFull = moonPhaseData.phase === 'full';
-                                                const isNew = moonPhaseData.phase === 'new';
-                                                const isCurrentPhase = moonPhaseData.phase === moonPhase.name;
-
-                                                return (
-                                                    <div
-                                                        key={day}
-                                                        className={`aspect-square rounded-md flex flex-col items-center justify-center cursor-pointer transition-all duration-300 text-sm ${isToday
-                                                            ? 'bg-gradient-to-br from-primary/40 to-primary/20 border-2 border-primary'
-                                                            : isFull
-                                                                ? 'bg-white/10 hover:bg-white/15'
-                                                                : isNew
-                                                                    ? 'bg-zinc-900/40 hover:bg-zinc-800/40'
-                                                                    : 'bg-white/5 hover:bg-white/10'
-                                                            } group border border-white/10 hover:border-primary/30`}
-                                                    >
-                                                        <span className={`text-lg group-hover:scale-110 transition-all ${isCurrentPhase ? 'opacity-100' : 'opacity-40'}`}>
-                                                            {moonPhaseData.icon}
-                                                        </span>
-                                                        <span className={`text-xs font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
-                                                            {day}
-                                                        </span>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-
-                                        {/* Legend */}
-                                        <div className="pt-4 border-t border-white/10">
-                                            <div className="grid grid-cols-2 gap-2 text-xs">
-                                                <div className={`flex items-center gap-2 transition-opacity ${moonPhase.name === 'full' ? 'opacity-100' : 'opacity-40'}`}>
-                                                    <span>🌕</span>
-                                                    <span className={moonPhase.name === 'full' ? 'text-white font-bold' : 'text-white/70'}>{isPortuguese ? 'Cheia' : 'Full'}</span>
-                                                </div>
-                                                <div className={`flex items-center gap-2 transition-opacity ${moonPhase.name === 'new' ? 'opacity-100' : 'opacity-40'}`}>
-                                                    <span>🌑</span>
-                                                    <span className={moonPhase.name === 'new' ? 'text-white font-bold' : 'text-white/70'}>{isPortuguese ? 'Nova' : 'New'}</span>
-                                                </div>
-                                                <div className={`flex items-center gap-2 transition-opacity ${moonPhase.name === 'waxing' ? 'opacity-100' : 'opacity-40'}`}>
-                                                    <span>🌒</span>
-                                                    <span className={moonPhase.name === 'waxing' ? 'text-white font-bold' : 'text-white/70'}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
-                                                </div>
-                                                <div className={`flex items-center gap-2 transition-opacity ${moonPhase.name === 'waning' ? 'opacity-100' : 'opacity-40'}`}>
-                                                    <span>🌘</span>
-                                                    <span className={moonPhase.name === 'waning' ? 'text-white font-bold' : 'text-white/70'}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                 </div>
                                             </div>
                                         </div>
