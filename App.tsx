@@ -445,7 +445,11 @@ const Home = () => {
 
             {/* Cosmic Mandala Animation Section */}
             <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark">
-                <div className="max-w-7xl mx-auto">
+                <div className="max-w-[1200px] mx-auto">
+                    <div className="text-center md:text-left mb-10 md:mb-14 px-2">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
+                        <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Acompanhe as fases da lua e planeje seus rituais' : 'Track moon phases and plan your rituals'}</p>
+                    </div>
                     {(() => {
                         const currentDate = new Date();
                         const cosmicDay = getCosmicDay(currentDate);
@@ -496,10 +500,6 @@ const Home = () => {
                             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
                                 {/* LEFT: Calendar */}
                                 <div>
-                                    <div className="mb-6">
-                                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
-                                        <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Acompanhe as fases da lua e planeje seus rituais' : 'Track moon phases and plan your rituals'}</p>
-                                    </div>
                                     <div className="glass-widget rounded-2xl p-4 border border-primary/30 text-sm bg-surface-dark/60">
                                         {/* Calendar Header - Month Only */}
                                         <div className="text-center mb-4">
@@ -578,13 +578,8 @@ const Home = () => {
                                 </div>
 
                                 {/* RIGHT: Mandala */}
-                                <div className="flex flex-col lg:pl-8">
-                                    <div className="mb-6">
-                                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{isPortuguese ? 'Energia Cósmica' : 'Cosmic Energy'}</h2>
-                                        <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Conecte-se com as energias celestes do momento' : 'Connect with the celestial energies of the moment'}</p>
-                                    </div>
-                                    <div className="flex items-center justify-center">
-                                        <style>{`
+                                <div className="flex items-center justify-center lg:pl-8 lg:pt-24">
+                                    <style>{`
                                         .cosmic-gradient { background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%); }
                                         .mandala-glow { box-shadow: 0 0 60px 10px rgba(147, 17, 212, 0.3); }
                                         .glass-widget { background: rgba(54, 35, 72, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(173, 146, 201, 0.2); }
