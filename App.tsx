@@ -287,45 +287,53 @@ const Home = () => {
     };
 
     return (
-        <div className="relative flex min-h-screen w-full flex-col bg-background-dark">
+        <div className="relative flex min-h-screen w-full flex-col" style={{
+            background: 'linear-gradient(180deg, #0d0812 0%, #161118 50%, #1a0f1d 100%)',
+            backgroundAttachment: 'fixed'
+        }}>
             <Header />
             <CartDrawer />
 
-            {/* Static Stars Background - Throughout entire page */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                {/* Static Stars */}
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-60" style={{ top: '10%', left: '15%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-40" style={{ top: '20%', left: '80%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-70" style={{ top: '15%', left: '45%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '30%', left: '25%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-80" style={{ top: '25%', left: '70%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-45" style={{ top: '40%', left: '10%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-65" style={{ top: '35%', left: '90%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-55" style={{ top: '50%', left: '5%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-75" style={{ top: '45%', left: '95%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-35" style={{ top: '60%', left: '20%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-85" style={{ top: '55%', left: '75%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '70%', left: '35%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-60" style={{ top: '65%', left: '85%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-70" style={{ top: '80%', left: '50%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-40" style={{ top: '75%', left: '15%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-55" style={{ top: '85%', left: '65%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-65" style={{ top: '12%', left: '55%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-45" style={{ top: '22%', left: '40%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-75" style={{ top: '38%', left: '60%' }} />
-                <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '48%', left: '30%' }} />
+            {/* Optimized Stars Background - Fixed position */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
+                {/* Subtle stars with better distribution */}
+                <div className="absolute w-0.5 h-0.5 bg-white/70 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.8)]" style={{ top: '8%', left: '12%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/50 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.6)]" style={{ top: '18%', left: '78%' }} />
+                <div className="absolute w-1 h-1 bg-white/80 rounded-full shadow-[0_0_3px_rgba(255,255,255,0.9)]" style={{ top: '14%', left: '42%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/60 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.7)]" style={{ top: '28%', left: '22%' }} />
+                <div className="absolute w-1 h-1 bg-white/90 rounded-full shadow-[0_0_3px_rgba(255,255,255,1)]" style={{ top: '24%', left: '68%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/55 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.6)]" style={{ top: '38%', left: '8%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/75 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.8)]" style={{ top: '33%', left: '88%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/65 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.7)]" style={{ top: '48%', left: '3%' }} />
+                <div className="absolute w-1 h-1 bg-white/85 rounded-full shadow-[0_0_3px_rgba(255,255,255,0.9)]" style={{ top: '43%', left: '93%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.5)]" style={{ top: '58%', left: '18%' }} />
+                <div className="absolute w-1 h-1 bg-white/95 rounded-full shadow-[0_0_3px_rgba(255,255,255,1)]" style={{ top: '53%', left: '72%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/60 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.7)]" style={{ top: '68%', left: '32%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/70 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.8)]" style={{ top: '63%', left: '82%' }} />
+                <div className="absolute w-1 h-1 bg-white/80 rounded-full shadow-[0_0_3px_rgba(255,255,255,0.9)]" style={{ top: '78%', left: '48%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/50 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.6)]" style={{ top: '73%', left: '13%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/65 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.7)]" style={{ top: '83%', left: '62%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-purple-300/60 rounded-full shadow-[0_0_2px_rgba(216,180,254,0.7)]" style={{ top: '11%', left: '52%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-purple-300/50 rounded-full shadow-[0_0_2px_rgba(216,180,254,0.6)]" style={{ top: '21%', left: '38%' }} />
+                <div className="absolute w-1 h-1 bg-purple-300/70 rounded-full shadow-[0_0_3px_rgba(216,180,254,0.8)]" style={{ top: '36%', left: '58%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-purple-300/55 rounded-full shadow-[0_0_2px_rgba(216,180,254,0.6)]" style={{ top: '46%', left: '28%' }} />
             </div>
 
             {/* Hero Section - Mystical & Static */}
             <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden">
-                {/* Static Background - Extended with reduced intensity */}
-                <div className="absolute inset-0">
-                    <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 via-background-dark/95 to-background-dark" />
-                    <div className="absolute -top-20 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
-                    <div className="absolute bottom-0 right-1/4 w-[450px] h-[450px] bg-purple-600/8 rounded-full blur-[130px]" />
-                    <div className="absolute top-1/3 right-1/3 w-80 h-80 bg-indigo-500/5 rounded-full blur-[100px]" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-white/[0.03] rounded-full" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] border border-white/[0.02] rounded-full" />
+                {/* Clean gradient overlay - no visible lines */}
+                <div className="absolute inset-0" style={{ willChange: 'transform' }}>
+                    {/* Smooth gradient base */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-purple-950/30 via-transparent to-transparent" />
+
+                    {/* Subtle glow effects - optimized */}
+                    <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] bg-primary/8 rounded-full" style={{ filter: 'blur(120px)' }} />
+                    <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-600/6 rounded-full" style={{ filter: 'blur(100px)' }} />
+                    <div className="absolute top-1/3 right-1/3 w-96 h-96 bg-indigo-500/4 rounded-full" style={{ filter: 'blur(80px)' }} />
+
+                    {/* Subtle circular borders */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-white/[0.02] rounded-full" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] border border-white/[0.015] rounded-full" />
                 </div>
 
                 <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
