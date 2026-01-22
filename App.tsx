@@ -372,7 +372,7 @@ const Home = () => {
             <section className="py-16 md:py-24 px-4 md:px-6">
                 <div className="max-w-[1200px] mx-auto">
                     <div className="text-center md:text-left mb-10 md:mb-14 px-2">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{t.home.chooseReading}</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{t.home.chooseReading}</h2>
                         <p className="text-gray-400 text-lg max-w-xl">{t.home.chooseReadingSubtitle}</p>
                     </div>
 
@@ -435,7 +435,7 @@ const Home = () => {
             <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark">
                 <div className="max-w-[1200px] mx-auto">
                     <div className="text-center md:text-left mb-10 md:mb-14 px-2">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
                         <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Acompanhe as fases da lua e planeje seus rituais' : 'Track moon phases and plan your rituals'}</p>
                     </div>
                     {(() => {
@@ -641,7 +641,7 @@ const Home = () => {
 
                                             {/* Inner Core */}
                                             <div className="text-center z-30">
-                                                <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-1">{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
+                                                <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-1" style={{ fontFamily: "'Crimson Text', serif" }}>{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
                                                 <p className="text-primary text-sm md:text-base font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
                                                 <div className="mt-3 flex justify-center gap-2">
                                                     <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
@@ -661,7 +661,7 @@ const Home = () => {
                 <div className="max-w-[800px] mx-auto text-center">
                     <div className="bg-gradient-to-br from-surface-dark to-card-dark rounded-2xl p-8 md:p-12 border border-border-dark">
                         <span className="material-symbols-outlined text-5xl text-primary mb-4">storefront</span>
-                        <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{t.home.featuredProducts}</h2>
+                        <h2 className="text-2xl md:text-3xl font-bold text-white mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>{t.home.featuredProducts}</h2>
                         <p className="text-gray-400 mb-6">{t.home.featuredProductsSubtitle}</p>
                         <button
                             onClick={() => navigate('/shop')}
@@ -1716,7 +1716,7 @@ const History = () => {
                 <div className="w-full max-w-[1200px] mx-auto px-4 md:px-10">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h2 className="text-white text-3xl font-bold">{t.history.title}</h2>
+                            <h2 className="text-white text-3xl font-bold" style={{ fontFamily: "'Crimson Text', serif" }}>{t.history.title}</h2>
                             <p className="text-gray-400 text-sm mt-1">{t.history.subtitle}</p>
                         </div>
                         <button onClick={() => navigate('/')} className="px-4 py-2 bg-primary hover:bg-primary-hover rounded-lg text-white text-sm font-bold flex items-center gap-2 transition-colors">
