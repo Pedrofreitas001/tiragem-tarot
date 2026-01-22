@@ -339,11 +339,6 @@ const Home = () => {
                 </div>
 
                 <div className="relative z-10 max-w-4xl mx-auto px-6 text-center -mt-12">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-5">
-                        <span className="material-symbols-outlined text-primary text-sm">auto_awesome</span>
-                        <span className="text-xs text-gray-300 uppercase tracking-widest">{isPortuguese ? 'Seu Caminho Aguarda' : 'Your Path Awaits'}</span>
-                    </div>
-
                     <h1 className="text-6xl md:text-8xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
                         {isPortuguese ? 'Revele seu destino com o Tarot' : 'Reveal your destiny with Tarot'}
                     </h1>
@@ -784,7 +779,7 @@ const Shop = () => {
     ];
 
     const toggleTag = (tag: string) => {
-        setSelectedTags(prev => 
+        setSelectedTags(prev =>
             prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
         );
     };
@@ -797,13 +792,13 @@ const Shop = () => {
     };
 
     let filteredProducts = filter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === filter);
-    
+
     // Apply price range filter
     filteredProducts = filteredProducts.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
-    
+
     // Apply tag filter
     if (selectedTags.length > 0) {
-        filteredProducts = filteredProducts.filter(p => 
+        filteredProducts = filteredProducts.filter(p =>
             selectedTags.some(tag => p.tags.includes(tag))
         );
     }
@@ -838,10 +833,9 @@ const Shop = () => {
                     </button>
 
                     {/* Sidebar Filters */}
-                    <aside className={`${
-                        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                    } lg:translate-x-0 fixed lg:relative top-0 left-0 h-full lg:h-auto w-72 lg:w-64 bg-surface-dark lg:bg-transparent border-r border-border-dark lg:border-0 p-6 lg:p-0 transition-transform duration-300 z-40 overflow-y-auto`}>
-                        
+                    <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                        } lg:translate-x-0 fixed lg:relative top-0 left-0 h-full lg:h-auto w-72 lg:w-64 bg-surface-dark lg:bg-transparent border-r border-border-dark lg:border-0 p-6 lg:p-0 transition-transform duration-300 z-40 overflow-y-auto`}>
+
                         {/* Close button mobile */}
                         <button
                             onClick={() => setSidebarOpen(false)}
@@ -861,11 +855,10 @@ const Shop = () => {
                                         <button
                                             key={cat.key}
                                             onClick={() => setFilter(cat.key)}
-                                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                                                filter === cat.key
+                                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${filter === cat.key
                                                     ? 'bg-primary text-white'
                                                     : 'text-gray-400 hover:text-white hover:bg-white/5'
-                                            }`}
+                                                }`}
                                         >
                                             <span className="material-symbols-outlined text-base">{cat.icon}</span>
                                             {cat.label}

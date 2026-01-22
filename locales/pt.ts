@@ -18,7 +18,7 @@ export const pt = {
     exploreCards: "Explorar Cartas",
     chooseReading: "Escolha Sua Tiragem",
     chooseReadingSubtitle: "Selecione o tipo de leitura que mais ressoa com sua busca espiritual",
-    featuredProducts: "Produtos Místicos",
+    featuredProducts: "Nossos Produtos",
     featuredProductsSubtitle: "Potencialize sua jornada espiritual com nossos produtos artesanais",
     viewAll: "Ver Todos",
     start: "Iniciar",

@@ -20,7 +20,7 @@ export const en: TranslationKeys = {
     exploreCards: "Explore Cards",
     chooseReading: "Choose Your Reading",
     chooseReadingSubtitle: "Select the type of reading that resonates with your spiritual quest",
-    featuredProducts: "Mystic Products",
+    featuredProducts: "Our Products",
     featuredProductsSubtitle: "Enhance your spiritual journey with our handcrafted products",
     viewAll: "View All",
     start: "Start",
