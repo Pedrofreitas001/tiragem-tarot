@@ -819,7 +819,7 @@ const Shop = () => {
             <main className="flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-6 py-8 md:py-12">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl md:text-4xl font-black text-white mb-2">{t.shop.title}</h1>
+                    <h1 className="text-3xl md:text-4xl font-black text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{t.shop.title}</h1>
                     <p className="text-gray-400">{t.shop.subtitle}</p>
                 </div>
 
@@ -1068,7 +1068,7 @@ const ProductDetail = () => {
                                     )}
                                 </div>
                             )}
-                            <h1 className="text-3xl md:text-4xl font-black text-white mb-4">{name}</h1>
+                            <h1 className="text-3xl md:text-4xl font-black text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>{name}</h1>
 
                             <div className="flex items-center gap-4 mb-4">
                                 <div className="flex items-center gap-1">
@@ -1226,7 +1226,7 @@ const Checkout = () => {
             <CartDrawer />
 
             <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-6 py-8 md:py-12">
-                <h1 className="text-3xl font-black text-white mb-8">{t.checkout.title}</h1>
+                <h1 className="text-3xl font-black text-white mb-8" style={{ fontFamily: "'Crimson Text', serif" }}>{t.checkout.title}</h1>
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Form */}
@@ -1418,7 +1418,7 @@ const CardDetails = () => {
                                     {card.arcana} {card.suit !== Suit.NONE && `• ${card.suit}`}
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-black leading-tight text-white mb-2">{card.name}</h1>
+                            <h1 className="text-4xl md:text-5xl font-black leading-tight text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</h1>
                         </div>
 
                         {lore && (
@@ -1977,7 +1977,7 @@ const Numerology = () => {
                                         <span className="material-symbols-outlined text-lg">calculate</span>
                                         {isPortuguese ? 'Descubra seu destino' : 'Discover your destiny'}
                                     </div>
-                                    <h1 className="text-4xl md:text-6xl font-black mb-4 bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">
+                                    <h1 className="text-4xl md:text-6xl font-black mb-4 bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent" style={{ fontFamily: "'Crimson Text', serif" }}>
                                         {t.numerology.title}
                                     </h1>
                                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -2063,7 +2063,7 @@ const Numerology = () => {
                                             <span className="material-symbols-outlined text-base">person</span>
                                             {fullName}
                                         </div>
-                                        <h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                                        <h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent" style={{ fontFamily: "'Crimson Text', serif" }}>
                                             {t.numerology.results.title}
                                         </h1>
                                     </div>
@@ -2236,7 +2236,7 @@ const CosmicCalendar = () => {
                         <span className="material-symbols-outlined text-lg">calendar_month</span>
                         {t.cosmic.title}
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black mb-4">{t.cosmic.title}</h1>
+                    <h1 className="text-4xl md:text-5xl font-black mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>{t.cosmic.title}</h1>
                     <p className="text-gray-400 text-lg max-w-xl mx-auto">{t.cosmic.subtitle}</p>
                 </div>
 
@@ -2488,7 +2488,7 @@ const Explore = () => {
                     <button onClick={() => navigate('/')} className="text-gray-400 hover:text-white flex items-center gap-2 text-sm mb-4 transition-colors">
                         <span className="material-symbols-outlined text-base">arrow_back</span> {t.cardDetails.back}
                     </button>
-                    <h1 className="text-4xl font-black text-white mb-2">{t.explore.title}</h1>
+                    <h1 className="text-4xl font-black text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{t.explore.title}</h1>
                     <p className="text-gray-400">{t.explore.subtitle}</p>
                 </div>
 
@@ -2597,7 +2597,7 @@ const Session = () => {
             <div className="flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
                 <div className="flex flex-wrap justify-between items-end gap-4 mb-6 max-w-[1200px] mx-auto">
                     <div className="flex flex-col gap-2 max-w-2xl">
-                        <h1 className="text-white text-3xl md:text-4xl font-black">{t.session.title}</h1>
+                        <h1 className="text-white text-3xl md:text-4xl font-black" style={{ fontFamily: "'Crimson Text', serif" }}>{t.session.title}</h1>
                         <p className="text-gray-400">{t.session.subtitle}</p>
                     </div>
                 </div>
@@ -2810,7 +2810,7 @@ const Result = () => {
                             <span className="material-symbols-outlined text-sm">calendar_month</span>
                             <span>{new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight text-white">{t.result.title}</h1>
+                        <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight text-white" style={{ fontFamily: "'Crimson Text', serif" }}>{t.result.title}</h1>
                         <p className="text-gray-400 text-lg font-normal leading-relaxed mt-1">
                             {spread.name} {state.question && `— ${isPortuguese ? 'Foco' : 'Focus'}: ${state.question}`}
                         </p>
