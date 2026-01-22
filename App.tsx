@@ -1404,14 +1404,14 @@ const CardDetails = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    <div className="lg:col-span-4 flex flex-col items-center lg:fixed lg:left-[max(2rem,calc((100vw-1200px)/2))] lg:w-[calc((min(1200px,100vw-4rem)*4/12)-3rem)]">
+                    <div className="lg:col-span-4 flex flex-col items-center">
                         <div className="relative w-full max-w-[350px] aspect-[2/3.4] rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
                             <img src={card.imageUrl} alt={card.name} onError={handleImageError} className="w-full h-full object-cover" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
                         </div>
                     </div>
 
-                    <div className="lg:col-span-8 lg:col-start-5 space-y-8">
+                    <div className="lg:col-span-8 space-y-8">
                         <div>
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
