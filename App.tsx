@@ -324,7 +324,7 @@ const Home = () => {
             </div>
 
             {/* Hero Section - Clean & Modern */}
-            <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden pt-16 md:pt-20">
+            <section className="relative z-10 min-h-[85vh] flex items-center justify-center overflow-hidden">
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     .glow-button {
@@ -334,21 +334,21 @@ const Home = () => {
 
                 {/* Subtle circular borders */}
                 <div className="absolute inset-0">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] w-[700px] h-[700px] border border-white/[0.02] rounded-full" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] w-[900px] h-[900px] border border-white/[0.015] rounded-full" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[58%] w-[700px] h-[700px] border border-white/[0.02] rounded-full" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[58%] w-[900px] h-[900px] border border-white/[0.015] rounded-full" />
                 </div>
 
-                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6">
+                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center -mt-12">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-5">
                         <span className="material-symbols-outlined text-primary text-sm">auto_awesome</span>
                         <span className="text-xs text-gray-300 uppercase tracking-widest">{isPortuguese ? 'Seu Caminho Aguarda' : 'Your Path Awaits'}</span>
                     </div>
 
-                    <h1 className="text-6xl md:text-8xl font-black mb-5 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
+                    <h1 className="text-6xl md:text-8xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
                         {isPortuguese ? 'Revele seu destino com o Tarot' : 'Reveal your destiny with Tarot'}
                     </h1>
 
-                    <p className="text-lg md:text-xl text-[#c4b5cc] font-normal leading-relaxed max-w-2xl mx-auto mb-12" style={{ fontFamily: "'Crimson Text', serif" }}>
+                    <p className="text-lg md:text-xl text-[#c4b5cc] font-normal leading-relaxed max-w-2xl mx-auto mb-10" style={{ fontFamily: "'Crimson Text', serif" }}>
                         {isPortuguese
                             ? 'Leitura de Tarot grátis com interpretação personalizada. Onde a sabedoria ancestral encontra a tecnologia moderna.'
                             : 'Free Tarot reading with personalized interpretation. Where ancient wisdom meets modern technology.'}
@@ -2679,14 +2679,14 @@ const Session = () => {
 
                             // Distribute cards in a 180-degree arc with tight overlap (78 cards total)
                             const angle = (index / (totalCards - 1)) * 200 - 100; // -100 to +100 degrees (200° arc)
-                            const radius = 350; // Increased radius for more curvature
+                            const radius = 300; // Reduced radius for less curvature
                             const centerX = 50; // Center percentage
-                            const centerY = 120; // Lower center for better arc visibility
+                            const centerY = 80; // Higher center to start cards higher up
 
                             // Calculate position on arc with much tighter spacing for 78 cards
                             const radians = (angle * Math.PI) / 180;
                             const xPos = centerX + (Math.sin(radians) * radius * 0.15); // Reduced to 0.15 for tighter overlap
-                            const yPos = centerY - (Math.cos(radians) * radius * 0.25); // Vertical curve
+                            const yPos = centerY - (Math.cos(radians) * radius * 0.18); // Reduced vertical curve
 
                             // Rotation follows the arc tangent
                             const rotation = angle * 0.9; // Slightly reduced rotation for smoother look
