@@ -568,16 +568,31 @@ const Home = () => {
                                 </div>
 
                                 {/* RIGHT: Mandala */}
-                                <div className="flex items-center justify-center lg:pl-8">
+                                <div className="flex items-center justify-center lg:pl-8 lg:pt-16">
                                     <style>{`
                                         .cosmic-gradient { background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%); }
                                         .mandala-glow { box-shadow: 0 0 60px 10px rgba(147, 17, 212, 0.3); }
                                         .glass-widget { background: rgba(54, 35, 72, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(173, 146, 201, 0.1); }
                                         .orbit-rotate { animation: spin 120s linear infinite; }
                                         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-                                        .moon-glow-full { filter: drop-shadow(0 0 15px rgba(255, 255, 255, 1)) drop-shadow(0 0 30px rgba(255, 255, 255, 0.8)); }
-                                        .moon-glow-new { filter: drop-shadow(0 0 10px rgba(173, 146, 201, 0.8)) drop-shadow(0 0 20px rgba(173, 146, 201, 0.5)); }
-                                        .moon-glow-phase { filter: drop-shadow(0 0 10px rgba(173, 146, 201, 0.9)) drop-shadow(0 0 20px rgba(173, 146, 201, 0.6)); }
+                                        .moon-glow-full { 
+                                            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) 
+                                                   drop-shadow(0 0 40px rgba(255, 255, 255, 0.9)) 
+                                                   drop-shadow(0 0 60px rgba(255, 255, 255, 0.6)); 
+                                            transform: scale(1.15);
+                                        }
+                                        .moon-glow-new { 
+                                            filter: drop-shadow(0 0 15px rgba(173, 146, 201, 1)) 
+                                                   drop-shadow(0 0 30px rgba(173, 146, 201, 0.8)) 
+                                                   drop-shadow(0 0 45px rgba(173, 146, 201, 0.5)); 
+                                            transform: scale(1.15);
+                                        }
+                                        .moon-glow-phase { 
+                                            filter: drop-shadow(0 0 15px rgba(173, 146, 201, 1)) 
+                                                   drop-shadow(0 0 30px rgba(173, 146, 201, 0.9)) 
+                                                   drop-shadow(0 0 45px rgba(173, 146, 201, 0.6)); 
+                                            transform: scale(1.15);
+                                        }
                                     `}</style>
 
                                     <div className="relative w-full max-w-3xl mx-auto">
@@ -597,32 +612,32 @@ const Home = () => {
                                             {/* Moon Phases Ring - Larger */}
                                             <div className="absolute inset-0 flex items-center justify-center">
                                                 {/* Full Moon - Top */}
-                                                <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.name === 'full' ? 'opacity-100 scale-110' : 'opacity-40 scale-100'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.name === 'full' ? 'moon-glow-full' : ''}`}>
+                                                <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
                                                         🌕
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.name === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
+                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                 </div>
                                                 {/* New Moon - Bottom */}
-                                                <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.name === 'new' ? 'opacity-100 scale-110' : 'opacity-40 scale-100'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.name === 'new' ? 'moon-glow-new' : ''}`}>
+                                                <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
                                                         🌑
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.name === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
+                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
                                                 </div>
                                                 {/* Waxing - Right */}
-                                                <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${moonPhase.name === 'waxing' ? 'opacity-100 scale-110' : 'opacity-40 scale-100'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.name === 'waxing' ? 'moon-glow-phase' : ''}`}>
+                                                <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
                                                         🌒
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.name === 'waxing' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
+                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
                                                 </div>
                                                 {/* Waning - Left */}
-                                                <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${moonPhase.name === 'waning' ? 'opacity-100 scale-110' : 'opacity-40 scale-100'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.name === 'waning' ? 'moon-glow-phase' : ''}`}>
+                                                <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
                                                         🌘
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.name === 'waning' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
+                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                 </div>
                                             </div>
 
