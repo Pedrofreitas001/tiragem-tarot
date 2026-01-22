@@ -499,7 +499,7 @@ const Home = () => {
                         return (
                             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
                                 {/* LEFT: Calendar */}
-                                <div>
+                                <div className="mb-12 lg:mb-0">
                                     <div className="glass-widget rounded-2xl p-4 border border-primary/30 text-sm bg-surface-dark/60">
                                         {/* Calendar Header - Month Only */}
                                         <div className="text-center mb-4">
@@ -578,7 +578,7 @@ const Home = () => {
                                 </div>
 
                                 {/* RIGHT: Mandala */}
-                                <div className="flex items-center justify-center lg:pl-8 lg:pt-24">
+                                <div className="flex items-center justify-center mt-8 lg:mt-0 lg:pl-8 lg:pt-24">
                                     <style>{`
                                         .cosmic-gradient { background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%); }
                                         .mandala-glow { box-shadow: 0 0 60px 10px rgba(147, 17, 212, 0.3); }
@@ -1283,7 +1283,7 @@ const CardDetails = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    <div className="lg:col-span-4 flex flex-col items-center sticky top-24 self-start">
+                    <div className="lg:col-span-4 flex flex-col items-center lg:sticky lg:top-24 lg:self-start">
                         <div className="relative w-full max-w-[350px] aspect-[2/3.4] rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
                             <img src={card.imageUrl} alt={card.name} onError={handleImageError} className="w-full h-full object-cover" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
