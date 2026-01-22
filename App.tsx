@@ -2961,11 +2961,13 @@ const Session = () => {
     const [selectedCards, setSelectedCards] = useState<{ card: TarotCard, flipped: boolean }[]>([]);
     const [question, setQuestion] = useState("");
     const [isShuffling, setIsShuffling] = useState(true);
+    const [isSpreadingCards, setIsSpreadingCards] = useState(false);
 
     // Função para embaralhar
     const shuffleDeck = () => {
         setIsShuffling(true);
         setSelectedCards([]);
+        setIsSpreadingCards(false);
 
         // Efeito sonoro de embaralho
         try {
@@ -2974,14 +2976,28 @@ const Session = () => {
             shuffleSound.play().catch(() => { });
         } catch (e) { }
 
-        const newDeck = generateDeck();
-        for (let i = newDeck.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
-        }
-
-        setDeck(newDeck);
-        setTimeout(() => setIsShuffling(false), 1500);
+        // Animação de embaralhamento (múltiplas trocas rápidas)
+        let shuffleCount = 0;
+        const shuffleInterval = setInterval(() => {
+            setDeck(prevDeck => {
+                const newDeck = [...prevDeck];
+                // Fazer várias trocas aleatórias
+                for (let x = 0; x < 5; x++) {
+                    const i = Math.floor(Math.random() * newDeck.length);
+                    const j = Math.floor(Math.random() * newDeck.length);
+                    [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
+                }
+                return newDeck;
+            });
+            shuffleCount++;
+            if (shuffleCount >= 8) {
+                clearInterval(shuffleInterval);
+                setTimeout(() => {
+                    setIsShuffling(false);
+                    setIsSpreadingCards(true);
+                }, 300);
+            }
+        }, 150);
     };
 
     useEffect(() => {
@@ -2997,7 +3013,17 @@ const Session = () => {
             spreadSound.play().catch(() => { });
         } catch (e) { }
 
-        shuffleDeck();
+        const newDeck = generateDeck();
+        for (let i = newDeck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
+        }
+        setDeck(newDeck);
+
+        setTimeout(() => {
+            setIsShuffling(false);
+            setIsSpreadingCards(true);
+        }, 800);
     }, [spread, navigate]);
 
     const handleCardClick = (card: TarotCard) => {
@@ -3154,6 +3180,28 @@ const Session = () => {
                     </div>
                 ) : (
                     <div className="relative w-full max-w-[95%] h-56 md:h-72 flex items-center justify-center perspective-1000 overflow-visible">
+                        <style dangerouslySetInnerHTML={{
+                            __html: `
+                            @keyframes cardSpread {
+                                from {
+                                    opacity: 0;
+                                    transform: translate(-50%, -50%) rotate(0deg) scale(0.3);
+                                }
+                                to {
+                                    opacity: 1;
+                                    transform: translate(-50%, -50%) rotate(var(--card-rotation)) scale(1);
+                                }
+                            }
+                            @keyframes cardShuffle {
+                                0%, 100% {
+                                    transform: translate(-50%, -50%) rotate(var(--card-rotation)) scale(1);
+                                }
+                                50% {
+                                    transform: translate(-50%, -50%) rotate(calc(var(--card-rotation) + 10deg)) scale(1.05);
+                                }
+                            }
+                            `
+                        }} />
                         {deck.map((card, index) => {
                             const isSelected = selectedCards.some(c => c.card.id === card.id);
                             const totalCards = deck.length;
@@ -3183,7 +3231,13 @@ const Session = () => {
                                         top: `${yPos}%`,
                                         transform: isSelected ? undefined : `translate(-50%, -50%) rotate(${rotation}deg)`,
                                         zIndex: isSelected ? -1 : index,
-                                    }}
+                                        '--card-rotation': `${rotation}deg`,
+                                        animation: isSpreadingCards
+                                            ? `cardSpread 0.5s ease-out ${index * 0.01}s both`
+                                            : isShuffling
+                                                ? `cardShuffle 0.3s ease-in-out infinite`
+                                                : 'none',
+                                    } as React.CSSProperties}
                                 >
                                     <div className="absolute inset-0 rounded-lg overflow-hidden bg-gradient-to-br from-[#2a1d34] to-[#1a0f1e] flex items-center justify-center">
                                         <span className="material-symbols-outlined text-[#a77fd4]/70 text-xs md:text-lg drop-shadow-lg">style</span>
