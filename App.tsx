@@ -506,6 +506,10 @@ const Home = () => {
                             {isPortuguese ? 'Escolha sua jornada' : 'Choose your journey'}
                         </h2>
                         <p className="text-gray-300 text-base md:text-lg font-light max-w-2xl mx-auto">
+                            {isPortuguese
+                                ? 'Comece gratuitamente ou aprofunde-se com acesso completo ao arquivo arcano.'
+                                : 'Start for free or deepen your practice with full access to the arcane archive.'}
+                        </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
