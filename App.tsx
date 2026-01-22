@@ -325,7 +325,8 @@ const Home = () => {
 
             {/* Hero Section - Clean & Modern */}
             <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden">
-                <style dangerouslySetInnerHTML={{ __html: `
+                <style dangerouslySetInnerHTML={{
+                    __html: `
                     .glow-button {
                         box-shadow: 0 0 15px rgba(147, 17, 212, 0.3);
                     }
@@ -343,14 +344,14 @@ const Home = () => {
                         <span className="text-xs text-gray-300 uppercase tracking-widest">{isPortuguese ? 'Seu Caminho Aguarda' : 'Your Path Awaits'}</span>
                     </div>
 
-                    <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
+                    <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
                         {isPortuguese ? 'Revele seu destino com o Tarot' : 'Reveal your destiny with Tarot'}
                     </h1>
 
-                    <p className="text-lg md:text-xl text-[#b09db9] font-light italic leading-relaxed max-w-2xl mx-auto mb-10">
-                        {isPortuguese 
-                            ? '"Leitura de Tarot 100% grátis com interpretação personalizada por IA. Onde a sabedoria ancestral encontra a tecnologia moderna."'
-                            : '"100% free Tarot reading with personalized AI interpretation. Where ancient wisdom meets modern technology."'}
+                    <p className="text-lg md:text-xl text-[#c4b5cc] font-normal leading-relaxed max-w-2xl mx-auto mb-16" style={{ fontFamily: "'Crimson Text', serif" }}>
+                        {isPortuguese
+                            ? 'Leitura de Tarot grátis com interpretação personalizada. Onde a sabedoria ancestral encontra a tecnologia moderna.'
+                            : 'Free Tarot reading with personalized interpretation. Where ancient wisdom meets modern technology.'}
                     </p>
 
                     <div className="flex flex-col md:flex-row gap-6 justify-center">
@@ -394,11 +395,11 @@ const Home = () => {
                                 <div
                                     key={spread.id}
                                     onClick={() => handleSelectSpread(spread)}
-                                    className="group relative flex flex-col h-[340px] md:h-[380px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-2 border border-border-dark hover:border-primary/50"
+                                    className="group relative flex flex-col h-[340px] md:h-[380px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-border-dark hover:border-primary/50"
                                 >
-                                    {/* Background Image with Zoom */}
+                                    {/* Background Image with subtle Zoom */}
                                     <div
-                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                                         style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }}
                                     />
 
@@ -406,20 +407,11 @@ const Home = () => {
                                     <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/50 to-transparent group-hover:via-background-dark/30 transition-colors duration-500" />
 
                                     {/* Content */}
-                                    <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col h-full justify-between">
-                                        {/* Icon */}
-                                        <div className="w-14 h-14 rounded-2xl bg-primary/20 backdrop-blur-xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 border border-primary/30">
-                                            <span className="material-symbols-outlined text-[32px]">{spreadIcons[spread.id]}</span>
-                                        </div>
-
-                                        {/* Text Content */}
+                                    <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col justify-end">
                                         <div className="flex flex-col gap-3">
                                             <div className="flex items-center gap-2">
                                                 <span className="px-2.5 py-1 rounded-md bg-primary/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10">
                                                     {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
-                                                </span>
-                                                <span className="px-2.5 py-1 rounded-md bg-white/10 backdrop-blur-md text-white/80 text-[10px] font-bold uppercase tracking-widest">
-                                                    {translation.difficulty}
                                                 </span>
                                             </div>
 
