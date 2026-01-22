@@ -457,7 +457,7 @@ const Home = () => {
                                 <div
                                     key={spread.id}
                                     onClick={() => handleSelectSpread(spread)}
-                                    className="group relative flex flex-col h-[340px] md:h-[380px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-border-dark hover:border-primary/50"
+                                    className="group relative flex flex-col h-[340px] md:h-[380px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
                                 >
                                     {/* Background Image with subtle Zoom */}
                                     <div
@@ -465,14 +465,14 @@ const Home = () => {
                                         style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }}
                                     />
 
-                                    {/* Gradient Overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/50 to-transparent group-hover:via-background-dark/30 transition-colors duration-500" />
+                                    {/* Gradient Overlay - Dark red to purple */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d14] via-[#1a0f1e]/90 to-transparent group-hover:via-[#1a0f1e]/70 transition-colors duration-500" />
 
                                     {/* Content */}
                                     <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col justify-end">
                                         <div className="flex flex-col gap-3">
                                             <div className="flex items-center gap-2">
-                                                <span className="px-2.5 py-1 rounded-md bg-primary/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10">
+                                                <span className="px-2.5 py-1 rounded-md bg-gradient-to-r from-[#875faf] to-[#a77fd4] backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10 shadow-lg shadow-purple-900/30">
                                                     {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
                                                 </span>
                                             </div>
@@ -485,7 +485,7 @@ const Home = () => {
                                                 {translation.description}
                                             </p>
 
-                                            <div className="mt-3 flex items-center text-primary group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
+                                            <div className="mt-3 flex items-center text-[#a77fd4] group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
                                                 {t.home.start}
                                                 <span className="material-symbols-outlined text-[18px] ml-2 transform group-hover:translate-x-2 transition-transform">arrow_forward</span>
                                             </div>
@@ -494,6 +494,304 @@ const Home = () => {
                                 </div>
                             );
                         })}
+                    </div>
+                </div>
+            </section>
+
+            {/* Pricing Comparison Section */}
+            <section className="relative z-10 py-16 md:py-24 px-4 md:px-6">
+                <div className="max-w-[1100px] mx-auto">
+                    <div className="text-center mb-12 md:mb-16">
+                        <h2 className="text-3xl md:text-5xl font-normal text-white mb-4 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Escolha sua jornada' : 'Choose your journey'}
+                        </h2>
+                        <p className="text-gray-400 text-base md:text-lg font-light max-w-2xl mx-auto">
+                            {isPortuguese
+                                ? 'Comece gratuitamente ou aprofunde-se com acesso completo ao arquivo arcano.'
+                                : 'Start for free or deepen your practice with full access to the arcane archive.'}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
+
+                        {/* Free Plan */}
+                        <div className="relative bg-[#1a1320]/40 backdrop-blur-sm border border-white/5 rounded-lg p-8 md:p-10">
+                            <div className="mb-8">
+                                <h3 className="text-2xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    {isPortuguese ? 'Exploração Livre' : 'Free Exploration'}
+                                </h3>
+                                <div className="text-gray-400 text-sm font-light">
+                                    {isPortuguese ? 'Para começar sua prática' : 'To begin your practice'}
+                                </div>
+                                <div className="mt-6">
+                                    <span className="text-4xl font-light text-white">R$ 0</span>
+                                    <span className="text-gray-500 text-sm ml-2">{isPortuguese ? '/sempre' : '/forever'}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
+                                    <div>
+                                        <div className="text-white text-sm font-light">{isPortuguese ? '3 tiragens por dia' : '3 readings per day'}</div>
+                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Acesso básico às cartas' : 'Basic card access'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
+                                    <div>
+                                        <div className="text-white text-sm font-light">{isPortuguese ? 'Interpretação simples' : 'Simple interpretation'}</div>
+                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Sem análise de IA' : 'No AI analysis'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
+                                    <div>
+                                        <div className="text-white text-sm font-light">{isPortuguese ? 'Histórico limitado' : 'Limited history'}</div>
+                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Últimas 7 tiragens' : 'Last 7 readings'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
+                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Análise de padrões' : 'Pattern analysis'}</div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
+                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Conteúdo exclusivo' : 'Exclusive content'}</div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
+                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Relatórios detalhados' : 'Detailed reports'}</div>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => handleSelectSpread(SPREADS[0])}
+                                className="w-full mt-8 px-6 py-3.5 bg-white/5 border border-white/10 text-gray-300 text-sm font-light tracking-wide rounded-sm hover:bg-white/8 transition-all duration-300"
+                                style={{ fontFamily: "'Inter', sans-serif" }}
+                            >
+                                {isPortuguese ? 'Começar Agora' : 'Start Now'}
+                            </button>
+                        </div>
+
+                        {/* Premium Plan */}
+                        <div className="relative bg-gradient-to-br from-[#1a0d14] to-[#1a0f1e] border-2 border-[#875faf]/40 rounded-lg p-8 md:p-10 shadow-2xl shadow-purple-900/20">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-xs font-medium uppercase tracking-wider rounded-full">
+                                {isPortuguese ? 'Recomendado' : 'Recommended'}
+                            </div>
+
+                            <div className="mb-8">
+                                <h3 className="text-2xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
+                                </h3>
+                                <div className="text-gray-300 text-sm font-light">
+                                    {isPortuguese ? 'Para praticantes dedicados' : 'For dedicated practitioners'}
+                                </div>
+                                <div className="mt-6">
+                                    <span className="text-4xl font-light text-white">R$ 19</span>
+                                    <span className="text-gray-400 text-sm ml-2">{isPortuguese ? '/mês' : '/month'}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Consulte quantas vezes quiser' : 'Consult as many times as you want'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Síntese com IA' : 'AI synthesis'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Interpretação profunda personalizada' : 'Deep personalized interpretation'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Histórico completo' : 'Complete history'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Todas as suas tiragens salvas' : 'All your readings saved'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern analysis'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Identifique tendências na sua jornada' : 'Identify trends in your journey'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Conteúdo exclusivo' : 'Exclusive content'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Spreads e guias especiais' : 'Special spreads and guides'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Relatórios detalhados' : 'Detailed reports'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Exportação em PDF' : 'PDF export'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Sem anúncios' : 'Ad-free'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Experiência pura e focada' : 'Pure and focused experience'}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                className="w-full mt-8 px-6 py-3.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-sm font-medium tracking-wide rounded-sm hover:shadow-lg hover:shadow-purple-900/40 transition-all duration-300"
+                                style={{ fontFamily: "'Inter', sans-serif" }}
+                            >
+                                {isPortuguese ? 'Acessar Arquivo Arcano' : 'Access Arcane Archive'}
+                            </button>
+
+                            <div className="mt-4 text-center text-xs text-gray-500 font-light">
+                                {isPortuguese ? 'Cancele quando quiser • Sem compromisso' : 'Cancel anytime • No commitment'}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            {/* Newsletter / Card of the Day Subscription */}
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 overflow-hidden">
+                {/* Subtle background element */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1a0f1e]/20 to-transparent" />
+
+                <div className="relative max-w-[900px] mx-auto">
+                    <div className="bg-gradient-to-br from-[#1a0d14]/60 to-[#1a0f1e]/60 backdrop-blur-sm border border-[#875faf]/20 rounded-2xl p-8 md:p-12">
+
+                        <div className="text-center mb-10">
+                            <div className="inline-block mb-4">
+                                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="24" cy="24" r="20" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1.5" fill="none" />
+                                    <circle cx="24" cy="24" r="14" stroke="rgba(135, 95, 175, 0.25)" strokeWidth="1" fill="none" />
+                                    <circle cx="24" cy="24" r="3" fill="rgba(135, 95, 175, 0.5)" />
+                                </svg>
+                            </div>
+                            <h2 className="text-3xl md:text-4xl font-normal text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                {isPortuguese ? 'Receba sua carta do dia' : 'Receive your daily card'}
+                            </h2>
+                            <p className="text-gray-400 text-base font-light max-w-xl mx-auto leading-relaxed">
+                                {isPortuguese
+                                    ? 'Uma mensagem simbólica todas as manhãs. Orientação semanal. Insights mensais sobre sua jornada.'
+                                    : 'A symbolic message every morning. Weekly guidance. Monthly insights about your journey.'}
+                            </p>
+                        </div>
+
+                        <form className="space-y-5 max-w-2xl mx-auto">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label className="block text-gray-400 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                        {isPortuguese ? 'Nome' : 'Name'}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder={isPortuguese ? 'Seu nome' : 'Your name'}
+                                        className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-sm text-white text-sm font-light placeholder-gray-600 focus:border-[#875faf]/50 focus:outline-none transition-colors"
+                                        style={{ fontFamily: "'Inter', sans-serif" }}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-gray-400 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                        {isPortuguese ? 'Idade' : 'Age'}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        placeholder={isPortuguese ? 'Sua idade' : 'Your age'}
+                                        className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-sm text-white text-sm font-light placeholder-gray-600 focus:border-[#875faf]/50 focus:outline-none transition-colors"
+                                        style={{ fontFamily: "'Inter', sans-serif" }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label className="block text-gray-400 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                        {isPortuguese ? 'Cidade' : 'City'}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder={isPortuguese ? 'Sua cidade' : 'Your city'}
+                                        className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-sm text-white text-sm font-light placeholder-gray-600 focus:border-[#875faf]/50 focus:outline-none transition-colors"
+                                        style={{ fontFamily: "'Inter', sans-serif" }}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-gray-400 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                        {isPortuguese ? 'E-mail' : 'Email'}
+                                    </label>
+                                    <input
+                                        type="email"
+                                        placeholder={isPortuguese ? 'seu@email.com' : 'your@email.com'}
+                                        className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-sm text-white text-sm font-light placeholder-gray-600 focus:border-[#875faf]/50 focus:outline-none transition-colors"
+                                        style={{ fontFamily: "'Inter', sans-serif" }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-gray-400 text-xs font-light mb-3 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese ? 'Frequência' : 'Frequency'}
+                                </label>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/20 border border-white/10 rounded-sm cursor-pointer hover:border-[#875faf]/40 transition-colors group">
+                                        <input type="radio" name="frequency" value="daily" className="sr-only peer" />
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 rounded-full border-2 border-gray-600 peer-checked:border-[#875faf] peer-checked:bg-[#875faf] transition-colors" />
+                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                                {isPortuguese ? 'Diário' : 'Daily'}
+                                            </span>
+                                        </div>
+                                    </label>
+
+                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/20 border border-white/10 rounded-sm cursor-pointer hover:border-[#875faf]/40 transition-colors group">
+                                        <input type="radio" name="frequency" value="weekly" className="sr-only peer" defaultChecked />
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 rounded-full border-2 border-gray-600 peer-checked:border-[#875faf] peer-checked:bg-[#875faf] transition-colors" />
+                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                                {isPortuguese ? 'Semanal' : 'Weekly'}
+                                            </span>
+                                        </div>
+                                    </label>
+
+                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/20 border border-white/10 rounded-sm cursor-pointer hover:border-[#875faf]/40 transition-colors group">
+                                        <input type="radio" name="frequency" value="monthly" className="sr-only peer" />
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 rounded-full border-2 border-gray-600 peer-checked:border-[#875faf] peer-checked:bg-[#875faf] transition-colors" />
+                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                                {isPortuguese ? 'Mensal' : 'Monthly'}
+                                            </span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="w-full px-8 py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-sm font-medium tracking-wide rounded-sm hover:shadow-lg hover:shadow-purple-900/40 transition-all duration-300"
+                                style={{ fontFamily: "'Inter', sans-serif" }}
+                            >
+                                {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
+                            </button>
+
+                            <p className="text-center text-xs text-gray-600 font-light mt-4">
+                                {isPortuguese
+                                    ? 'Sem spam. Cancele quando quiser. Suas informações são privadas.'
+                                    : 'No spam. Cancel anytime. Your information is private.'}
+                            </p>
+                        </form>
+
                     </div>
                 </div>
             </section>
