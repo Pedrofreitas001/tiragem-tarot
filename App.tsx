@@ -156,9 +156,6 @@ const Header = () => {
             <button onClick={() => navigate('/explore')} className={`text-sm font-medium transition-colors ${isActive('/explore') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
               {t.nav.cardMeanings}
             </button>
-            <button onClick={() => navigate('/numerology')} className={`text-sm font-medium transition-colors ${isActive('/numerology') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-              {t.numerology.title}
-            </button>
             <button onClick={() => navigate('/cosmic')} className={`text-sm font-medium transition-colors ${isActive('/cosmic') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
               {t.cosmic.title}
             </button>
@@ -199,7 +196,6 @@ const Header = () => {
           <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.newReading}</button>
             <button onClick={() => { navigate('/explore'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
-            <button onClick={() => { navigate('/numerology'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.numerology.title}</button>
             <button onClick={() => { navigate('/cosmic'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.cosmic.title}</button>
             <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
@@ -299,8 +295,33 @@ const Home = () => {
       <Header />
       <CartDrawer />
 
+      {/* Static Stars Background - Throughout entire page */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        {/* Static Stars */}
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-60" style={{ top: '10%', left: '15%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-40" style={{ top: '20%', left: '80%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-70" style={{ top: '15%', left: '45%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '30%', left: '25%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-80" style={{ top: '25%', left: '70%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-45" style={{ top: '40%', left: '10%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-65" style={{ top: '35%', left: '90%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-55" style={{ top: '50%', left: '5%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-75" style={{ top: '45%', left: '95%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-35" style={{ top: '60%', left: '20%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-85" style={{ top: '55%', left: '75%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '70%', left: '35%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-60" style={{ top: '65%', left: '85%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-70" style={{ top: '80%', left: '50%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-40" style={{ top: '75%', left: '15%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-55" style={{ top: '85%', left: '65%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-65" style={{ top: '12%', left: '55%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-45" style={{ top: '22%', left: '40%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-75" style={{ top: '38%', left: '60%' }} />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '48%', left: '30%' }} />
+      </div>
+
       {/* Hero Section - Mystical & Static */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden">
         {/* Static Background - Extended with reduced intensity */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 via-background-dark/95 to-background-dark" />
@@ -309,28 +330,6 @@ const Home = () => {
           <div className="absolute top-1/3 right-1/3 w-80 h-80 bg-indigo-500/5 rounded-full blur-[100px]" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-white/[0.03] rounded-full" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] border border-white/[0.02] rounded-full" />
-
-          {/* Static Stars */}
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-60" style={{ top: '10%', left: '15%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-40" style={{ top: '20%', left: '80%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-70" style={{ top: '15%', left: '45%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '30%', left: '25%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-80" style={{ top: '25%', left: '70%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-45" style={{ top: '40%', left: '10%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-65" style={{ top: '35%', left: '90%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-55" style={{ top: '50%', left: '5%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-75" style={{ top: '45%', left: '95%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-35" style={{ top: '60%', left: '20%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-85" style={{ top: '55%', left: '75%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '70%', left: '35%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-60" style={{ top: '65%', left: '85%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-70" style={{ top: '80%', left: '50%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-40" style={{ top: '75%', left: '15%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-55" style={{ top: '85%', left: '65%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-65" style={{ top: '12%', left: '55%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-45" style={{ top: '22%', left: '40%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-75" style={{ top: '38%', left: '60%' }} />
-          <div className="absolute w-1 h-1 bg-white rounded-full opacity-50" style={{ top: '48%', left: '30%' }} />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
@@ -379,7 +378,7 @@ const Home = () => {
             <p className="text-gray-400 text-lg max-w-xl">{t.home.chooseReadingSubtitle}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 px-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 px-2">
             {SPREADS.map((spread) => {
               const translation = getSpreadTranslation(spread.id);
               const spreadImages: Record<string, string> = {
@@ -391,7 +390,7 @@ const Home = () => {
                 <div
                   key={spread.id}
                   onClick={() => handleSelectSpread(spread)}
-                  className="group relative flex flex-col h-[420px] md:h-[480px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-2 border border-border-dark hover:border-primary/50"
+                  className="group relative flex flex-col h-[340px] md:h-[380px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-2 border border-border-dark hover:border-primary/50"
                 >
                   {/* Background Image with Zoom */}
                   <div
@@ -441,8 +440,78 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Cosmic Map Section */}
+      <section className="relative z-10 py-16 md:py-24 px-4 md:px-6">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-bold mb-6">
+              <span className="material-symbols-outlined text-lg">calendar_month</span>
+              {t.cosmic.title}
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t.cosmic.title}</h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">{t.cosmic.subtitle}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            {/* Journey Card */}
+            <div className="group bg-gradient-to-br from-indigo-900/30 to-surface-dark rounded-2xl border border-indigo-500/30 p-6 md:p-8 hover:border-indigo-500/50 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-6">
+                <span className="material-symbols-outlined text-2xl">public</span>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">{isPortuguese ? 'Jornada Espiritual' : 'Spiritual Journey'}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                {isPortuguese ? 'Descubra sua trajetória através das cartas maiores e as influências cósmicas.' : 'Discover your path through major arcana and cosmic influences.'}
+              </p>
+              <button
+                onClick={() => navigate('/cosmic')}
+                className="text-indigo-400 font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
+              >
+                {t.cosmic.title}
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
+              </button>
+            </div>
+
+            {/* Cosmic Energies Card */}
+            <div className="group bg-gradient-to-br from-purple-900/30 to-surface-dark rounded-2xl border border-purple-500/30 p-6 md:p-8 hover:border-purple-500/50 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-6">
+                <span className="material-symbols-outlined text-2xl">stars</span>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">{isPortuguese ? 'Energias Cósmicas' : 'Cosmic Energies'}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                {isPortuguese ? 'Compreenda as influências planetárias e lunares em seu destino.' : 'Understand planetary and lunar influences on your destiny.'}
+              </p>
+              <button
+                onClick={() => navigate('/cosmic')}
+                className="text-purple-400 font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
+              >
+                {t.cosmic.title}
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
+              </button>
+            </div>
+
+            {/* Self Discovery Card */}
+            <div className="group bg-gradient-to-br from-pink-900/30 to-surface-dark rounded-2xl border border-pink-500/30 p-6 md:p-8 hover:border-pink-500/50 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center mb-6">
+                <span className="material-symbols-outlined text-2xl">psychology</span>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">{isPortuguese ? 'Autodescoberta' : 'Self Discovery'}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                {isPortuguese ? 'Aprofunde seu autoconhecimento através das energias cósmicas diárias.' : 'Deepen your self-knowledge through daily cosmic energies.'}
+              </p>
+              <button
+                onClick={() => navigate('/cosmic')}
+                className="text-pink-400 font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
+              >
+                {t.cosmic.title}
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Shop CTA */}
-      <section className="py-16 px-6">
+      <section className="relative z-10 py-16 px-6">
         <div className="max-w-[800px] mx-auto text-center">
           <div className="bg-gradient-to-br from-surface-dark to-card-dark rounded-2xl p-8 md:p-12 border border-border-dark">
             <span className="material-symbols-outlined text-5xl text-primary mb-4">storefront</span>
