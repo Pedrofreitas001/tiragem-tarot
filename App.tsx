@@ -288,7 +288,7 @@ const Home = () => {
 
     return (
         <div className="relative flex min-h-screen w-full flex-col" style={{
-            background: 'linear-gradient(180deg, #0d0812 0%, #161118 50%, #1a0f1d 100%)',
+            backgroundColor: '#1a1225',
             backgroundAttachment: 'fixed'
         }}>
             <Header />
@@ -321,17 +321,9 @@ const Home = () => {
 
             {/* Hero Section - Mystical & Static */}
             <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden">
-                {/* Clean gradient overlay - no visible lines */}
-                <div className="absolute inset-0" style={{ willChange: 'transform' }}>
-                    {/* Smooth gradient base */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-purple-950/30 via-transparent to-transparent" />
-
-                    {/* Subtle glow effects - optimized */}
-                    <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] bg-primary/8 rounded-full" style={{ filter: 'blur(120px)' }} />
-                    <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-600/6 rounded-full" style={{ filter: 'blur(100px)' }} />
-                    <div className="absolute top-1/3 right-1/3 w-96 h-96 bg-indigo-500/4 rounded-full" style={{ filter: 'blur(80px)' }} />
-
-                    {/* Subtle circular borders */}
+                {/* Clean solid background - no gradients */}
+                <div className="absolute inset-0">
+                    {/* Subtle circular borders only */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-white/[0.02] rounded-full" />
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] border border-white/[0.015] rounded-full" />
                 </div>
