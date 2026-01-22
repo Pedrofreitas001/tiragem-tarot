@@ -323,57 +323,102 @@ const Home = () => {
                 <div className="absolute w-0.5 h-0.5 bg-purple-300/55 rounded-full shadow-[0_0_2px_rgba(216,180,254,0.6)]" style={{ top: '46%', left: '28%' }} />
             </div>
 
-            {/* Hero Section - Mystical & Static */}
-            <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden">
-                {/* Clean solid background - no gradients */}
-                <div className="absolute inset-0">
-                    {/* Subtle circular borders only */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-white/[0.02] rounded-full" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] border border-white/[0.015] rounded-full" />
+            {/* Hero Section - Premium Modern Style */}
+            <section className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-180px)] px-6 py-12">
+                <style dangerouslySetInnerHTML={{ __html: `
+                    .glass-card {
+                        background: rgba(255, 255, 255, 0.03);
+                        backdrop-filter: blur(16px);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                    }
+                    .mandala-glow {
+                        filter: drop-shadow(0 0 30px rgba(147, 17, 212, 0.3));
+                    }
+                    .glow-button {
+                        box-shadow: 0 0 15px rgba(147, 17, 212, 0.3);
+                    }
+                    .nebula-glow {
+                        background: radial-gradient(circle at center, rgba(147, 17, 212, 0.15) 0%, transparent 70%);
+                    }
+                `}} />
+
+                {/* Text Section */}
+                <div className="text-center mb-12 max-w-3xl z-20">
+                    <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
+                        {isPortuguese ? 'Revele seu destino com o Tarot' : 'Reveal your destiny with Tarot'}
+                    </h1>
+                    <p className="text-lg md:text-xl text-[#b09db9] font-light italic leading-relaxed">
+                        {isPortuguese 
+                            ? '"Leitura de Tarot 100% grátis com interpretação personalizada por IA. Onde a sabedoria ancestral encontra a tecnologia moderna."'
+                            : '"100% free Tarot reading with personalized AI interpretation. Where ancient wisdom meets modern technology."'}
+                    </p>
                 </div>
 
-                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
-                        <span className="material-symbols-outlined text-primary text-sm">auto_awesome</span>
-                        <span className="text-xs text-gray-300 uppercase tracking-widest">{isPortuguese ? 'Seu Caminho Aguarda' : 'Your Path Awaits'}</span>
+                {/* Mandala Central with Floating Cards */}
+                <div className="relative w-full max-w-4xl aspect-square flex items-center justify-center mb-16">
+                    {/* Circular borders */}
+                    <div className="absolute inset-0 rounded-full border border-primary/5 scale-110"></div>
+                    <div className="absolute inset-0 rounded-full border border-primary/10 scale-100"></div>
+                    <div className="absolute inset-0 nebula-glow blur-3xl scale-150"></div>
+
+                    {/* Floating Glass Cards */}
+                    <div className="absolute top-[10%] left-[5%] glass-card p-5 rounded-2xl border border-white/10 z-20 hover:scale-105 transition-transform duration-300">
+                        <div className="flex items-center gap-4">
+                            <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center">
+                                <span className="material-symbols-outlined text-primary">auto_awesome</span>
+                            </div>
+                            <div>
+                                <p className="text-[10px] uppercase tracking-widest font-bold text-white/40">{isPortuguese ? 'Arcanos Maiores' : 'Major Arcana'}</p>
+                                <p className="text-lg font-medium">22 {isPortuguese ? 'Cartas' : 'Cards'}</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-black text-white leading-tight mb-6 tracking-tight" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
-                        {isPortuguese
-                            ? 'Revele seu destino com o Tarot'.split(' ').map((word, i) => (
-                                <span key={i} className={i === 4 || i === 5 ? 'text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400' : ''}>
-                                    {word}{' '}
-                                </span>
-                            ))
-                            : 'Reveal your destiny with Tarot'.split(' ').map((word, i) => (
-                                <span key={i} className={i === 4 ? 'text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400' : ''}>
-                                    {word}{' '}
-                                </span>
-                            ))
-                        }
-                    </h1>
-
-                    <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-                        {isPortuguese ? 'Leitura de Tarot 100% grátis com interpretação personalizada por IA' : 'Free Tarot reading with personalized AI interpretation'}
-                    </p>
-
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button
-                            onClick={() => handleSelectSpread(SPREADS[0])}
-                            className="group relative px-8 py-4 bg-primary hover:bg-primary-hover rounded-xl text-white font-bold text-lg transition-all shadow-[0_0_30px_rgba(147,17,212,0.4)] hover:shadow-[0_0_50px_rgba(147,17,212,0.6)]"
-                        >
-                            <span className="relative z-10 flex items-center justify-center gap-2">
-                                {t.home.startReading}
-                                <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </span>
-                        </button>
-                        <button
-                            onClick={() => navigate('/explore')}
-                            className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl text-white font-bold text-lg transition-all backdrop-blur-sm"
-                        >
-                            {t.home.exploreCards}
-                        </button>
+                    <div className="absolute bottom-[15%] right-[2%] glass-card p-5 rounded-2xl border border-white/10 z-20 hover:scale-105 transition-transform duration-300">
+                        <div className="flex items-center gap-4">
+                            <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center">
+                                <span className="material-symbols-outlined text-primary">style</span>
+                            </div>
+                            <div>
+                                <p className="text-[10px] uppercase tracking-widest font-bold text-white/40">{isPortuguese ? 'Tiragens' : 'Spreads'}</p>
+                                <p className="text-lg font-medium">{SPREADS.length} {isPortuguese ? 'Tipos' : 'Types'}</p>
+                            </div>
+                        </div>
                     </div>
+
+                    <div className="absolute top-[40%] right-[-5%] glass-card p-4 rounded-full border border-white/10 z-20 hover:scale-105 transition-transform duration-300">
+                        <div className="flex items-center gap-3 px-2">
+                            <span className="size-2 bg-green-400 rounded-full animate-pulse"></span>
+                            <span className="text-xs font-bold tracking-widest uppercase">{isPortuguese ? 'IA Ativa' : 'AI Active'}</span>
+                        </div>
+                    </div>
+
+                    {/* Mandala Image */}
+                    <div className="relative w-4/5 h-4/5 flex items-center justify-center transition-transform duration-1000 hover:rotate-6">
+                        <div 
+                            className="size-full bg-center bg-no-repeat bg-contain mandala-glow mix-blend-screen" 
+                            style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCubN6bMxSl0Mq19r2qbgIYmHkB3bwTFDfOZGdeCxDlzUynLqfdH3gcj7-Y_NlCr6hvaazUhsNagBFkiMA1jB4KjAYkX-a994gmDUo879kqIH5z3zNLVFtHhwB_9jHAs1sl4xYdttb94WiBkLzbIL_fk7fVeTJjvQ8eVLqzBzJNeVCQElBlRi2enLRckNXRonf12MespobJQjCSQvmU3lN9_o9jH7PCVje-p3QkB9LGtfrkCwzoOtB_j6xGM7vnHW199Cm7WQAPmXwo")' }}
+                        />
+                        <div className="absolute size-4 bg-primary rounded-full blur-[2px] shadow-[0_0_15px_#9311d4]"></div>
+                    </div>
+                </div>
+
+                {/* Premium Buttons */}
+                <div className="flex flex-col md:flex-row gap-6 z-20">
+                    <button
+                        onClick={() => handleSelectSpread(SPREADS[0])}
+                        className="glow-button group flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 px-10 py-4 rounded-full transition-all"
+                    >
+                        <span className="text-sm font-bold uppercase tracking-widest">{t.home.startReading}</span>
+                        <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">auto_mode</span>
+                    </button>
+                    <button
+                        onClick={() => navigate('/explore')}
+                        className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-10 py-4 rounded-full transition-all"
+                    >
+                        <span className="text-sm font-bold uppercase tracking-widest">{t.home.exploreCards}</span>
+                        <span className="material-symbols-outlined text-lg">history_edu</span>
+                    </button>
                 </div>
             </section>
 
@@ -2555,19 +2600,19 @@ const Session = () => {
                             const isSelected = selectedCards.some(c => c.card.id === card.id);
                             const totalCards = deck.length;
 
-                            // Distribute cards in a 180-degree arc (more curved)
-                            const angle = (index / (totalCards - 1)) * 180 - 90; // -90 to +90 degrees
-                            const radius = 280; // Radius of the arc
+                            // Distribute cards in a 180-degree arc (more curved, tighter spacing)
+                            const angle = (index / (totalCards - 1)) * 200 - 100; // -100 to +100 degrees (wider arc)
+                            const radius = 350; // Increased radius for more curvature
                             const centerX = 50; // Center percentage
-                            const centerY = 100; // Bottom center in percentage
+                            const centerY = 120; // Lower center for better arc visibility
 
                             // Calculate position on arc
                             const radians = (angle * Math.PI) / 180;
-                            const xPos = centerX + (Math.sin(radians) * radius * 0.35); // 0.35 to fit in viewport
-                            const yPos = centerY - (Math.cos(radians) * radius * 0.2); // 0.2 for vertical spread
+                            const xPos = centerX + (Math.sin(radians) * radius * 0.28); // Reduced to 0.28 to fit better
+                            const yPos = centerY - (Math.cos(radians) * radius * 0.25); // Increased to 0.25 for more vertical curve
 
                             // Rotation follows the arc tangent
-                            const rotation = angle;
+                            const rotation = angle * 0.9; // Slightly reduced rotation for smoother look
 
                             return (
                                 <div
