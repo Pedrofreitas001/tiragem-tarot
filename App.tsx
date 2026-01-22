@@ -8,6 +8,8 @@ import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/Langua
 import { CartProvider, useCart } from './contexts/CartContext';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
+import { getCardName, getCardBySlug } from './tarotData';
+import { getCardName } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 
@@ -1743,11 +1745,20 @@ const CardDetails = () => {
 
     useEffect(() => {
         const deck = generateDeck();
-        const foundCard = deck.find(c => c.id === cardId);
+        // Try to find card by ID first, then by slug
+        let foundCard = deck.find(c => c.id === cardId);
+
+        if (!foundCard && cardId) {
+            // Try to find by slug in the complete database
+            const cardData = getCardBySlug(cardId);
+            if (cardData) {
+                foundCard = deck.find(c => c.id === cardData.id);
+            }
+        }
 
         if (foundCard) {
             setCard(foundCard);
-            const staticData = getStaticLore(foundCard);
+            const staticData = getStaticLore(foundCard, isPortuguese);
             setLore(staticData);
 
             setIsLoadingApi(true);
@@ -1765,7 +1776,7 @@ const CardDetails = () => {
         } else {
             navigate('/explore');
         }
-    }, [cardId, navigate]);
+    }, [cardId, navigate, isPortuguese]);
 
     if (!card) return null;
 
@@ -1778,7 +1789,7 @@ const CardDetails = () => {
                     <div className="flex items-center gap-2 text-sm text-gray-400">
                         <span onClick={() => navigate('/explore')} className="cursor-pointer hover:text-primary">{t.explore.title}</span>
                         <span>/</span>
-                        <span className="text-white font-bold">{card.name}</span>
+                        <span className="text-white font-bold">{getCardName(card.id, isPortuguese)}</span>
                     </div>
                     <button onClick={() => navigate('/explore')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-dark hover:bg-white/5 transition-colors text-sm font-medium">
                         <span className="material-symbols-outlined text-base">arrow_back</span> {t.cardDetails.back}
@@ -1788,7 +1799,7 @@ const CardDetails = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     <div className="lg:col-span-4 flex flex-col items-center">
                         <div className="relative w-full max-w-[350px] aspect-[2/3.4] rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
-                            <img src={card.imageUrl} alt={card.name} onError={handleImageError} className="w-full h-full object-cover" />
+                            <img src={card.imageUrl} alt={getCardName(card.id, isPortuguese)} onError={handleImageError} className="w-full h-full object-cover" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
                         </div>
                     </div>
@@ -1800,7 +1811,7 @@ const CardDetails = () => {
                                     {card.arcana} {card.suit !== Suit.NONE && `• ${card.suit}`}
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-black leading-tight text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</h1>
+                            <h1 className="text-4xl md:text-5xl font-black leading-tight text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{getCardName(card.id, isPortuguese)}</h1>
                         </div>
 
                         {lore && (
@@ -2924,25 +2935,31 @@ const Explore = () => {
                 <p className="text-gray-500 text-sm mb-6">{filteredDeck.length} {t.explore.cards}</p>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                    {filteredDeck.map(card => (
-                        <div
-                            key={card.id}
-                            onClick={() => navigate(`/explore/${card.id}`)}
-                            className="group relative aspect-[2/3.4] rounded-lg overflow-hidden border border-white/5 bg-surface-dark hover:border-primary/50 transition-all hover:-translate-y-2 cursor-pointer shadow-lg hover:shadow-primary/20"
-                        >
-                            <img
-                                src={card.imageUrl}
-                                alt={card.name}
-                                onError={handleImageError}
-                                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-                            <div className="absolute bottom-0 left-0 p-3">
-                                <p className="text-xs text-primary font-bold uppercase mb-0.5">{card.arcana === ArcanaType.MAJOR ? (isPortuguese ? 'Maior' : 'Major') : card.suit}</p>
-                                <p className="text-white text-sm font-bold leading-tight">{card.name}</p>
+                    {filteredDeck.map(card => {
+                        // Get card data to access slugs
+                        const cardData = getCardBySlug(card.id) || getCardBySlug(card.name);
+                        const cardSlug = cardData ? (isPortuguese ? cardData.slug_pt : cardData.slug) : card.id;
+
+                        return (
+                            <div
+                                key={card.id}
+                                onClick={() => navigate(`/explore/${cardSlug}`)}
+                                className="group relative aspect-[2/3.4] rounded-lg overflow-hidden border border-white/5 bg-surface-dark hover:border-primary/50 transition-all hover:-translate-y-2 cursor-pointer shadow-lg hover:shadow-primary/20"
+                            >
+                                <img
+                                    src={card.imageUrl}
+                                    alt={card.name}
+                                    onError={handleImageError}
+                                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+                                <div className="absolute bottom-0 left-0 p-3">
+                                    <p className="text-xs text-primary font-bold uppercase mb-0.5">{card.arcana === ArcanaType.MAJOR ? (isPortuguese ? 'Maior' : 'Major') : card.suit}</p>
+                                    <p className="text-white text-sm font-bold leading-tight">{getCardName(card.id, isPortuguese)}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </main>
             <Footer />
@@ -3151,10 +3168,10 @@ const Session = () => {
                                                     <span className="material-symbols-outlined text-primary text-2xl">style</span>
                                                 </div>
                                                 <div className="card-back absolute inset-0">
-                                                    <img src={selected.card.imageUrl} alt={selected.card.name} onError={handleImageError} className="w-full h-full object-cover" />
+                                                    <img src={selected.card.imageUrl} alt={getCardName(selected.card.id, isPortuguese)} onError={handleImageError} className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                                                     <div className="absolute bottom-3 left-0 right-0 text-center">
-                                                        <h3 className="text-white font-bold text-sm md:text-base">{selected.card.name}</h3>
+                                                        <h3 className="text-white font-bold text-sm md:text-base">{getCardName(selected.card.id, isPortuguese)}</h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -3441,7 +3458,7 @@ const Result = () => {
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2 md:p-3">
                                                 <span className="text-[10px] text-primary font-bold uppercase truncate">{idx + 1}. {position?.name}</span>
-                                                <span className="text-white font-bold text-xs md:text-sm truncate">{card.name}</span>
+                                                <span className="text-white font-bold text-xs md:text-sm truncate">{getCardName(card.id, isPortuguese)}</span>
                                             </div>
                                         </div>
                                     );
@@ -3460,7 +3477,7 @@ const Result = () => {
                         {cards.map((card: TarotCard, idx: number) => {
                             const position = spread.positions[idx];
                             const cardInterpretation = analysis?.cards?.[idx];
-                            const cardLore = getStaticLore(card);
+                            const cardLore = getStaticLore(card, isPortuguese);
 
                             return (
                                 <article
@@ -3485,7 +3502,7 @@ const Result = () => {
                                                 <span className="text-primary text-xs font-bold uppercase tracking-wider mb-1 block">
                                                     {isPortuguese ? 'Posição' : 'Position'}: {position?.name}
                                                 </span>
-                                                <h3 className="text-white text-xl font-bold">{card.name}</h3>
+                                                <h3 className="text-white text-xl font-bold">{getCardName(card.id, isPortuguese)}</h3>
                                             </div>
                                             <span className="px-2 py-1 rounded bg-white/5 text-gray-400 text-xs font-medium">
                                                 {getArcanaType(card)}

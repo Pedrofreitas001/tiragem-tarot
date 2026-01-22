@@ -14,15 +14,88 @@ export const pt = {
   home: {
     heroTitle: "Revele Seu Destino",
     heroSubtitle: "Desvende a sabedoria ancestral das cartas e descubra os segredos que o universo guarda para você",
-    startReading: "Começar Leitura",
+    heroTagline: "Observe o que se revela.",
+    startReading: "Iniciar Abertura",
     learnMore: "Saiba Mais",
     exploreCards: "Explorar Cartas",
+    exploreArchive: "Explorar o Arquivo Arcano",
     chooseReading: "Escolha Sua Tiragem",
     chooseReadingSubtitle: "Selecione o tipo de leitura que mais ressoa com sua busca espiritual",
     featuredProducts: "Nossos Produtos",
     featuredProductsSubtitle: "Potencialize sua jornada espiritual com nossos produtos artesanais",
     viewAll: "Ver Todos",
     start: "Iniciar",
+    cards: "cartas",
+  },
+
+  // Pricing
+  pricing: {
+    chooseJourney: "Escolha sua jornada",
+    subtitle: "Comece gratuitamente ou aprofunde-se com acesso completo ao arquivo arcano.",
+    free: "Exploração Livre",
+    freeSubtitle: "Para começar sua prática",
+    premium: "Arquivo Arcano",
+    premiumSubtitle: "Para praticantes dedicados",
+    forever: "/sempre",
+    perMonth: "/mês",
+    recommended: "Recomendado",
+    startNow: "Começar Agora",
+    accessArchive: "Acessar Arquivo Arcano",
+    cancelAnytime: "Cancele quando quiser • Sem compromisso",
+    features: {
+      dailyReadings: "3 tiragens por dia",
+      basicAccess: "Acesso básico às cartas",
+      simpleInterpretation: "Interpretação simples",
+      noAI: "Sem análise de IA",
+      limitedHistory: "Histórico limitado",
+      last7: "Últimas 7 tiragens",
+      patternAnalysis: "Análise de padrões",
+      exclusiveContent: "Conteúdo exclusivo",
+      detailedReports: "Relatórios detalhados",
+      unlimitedReadings: "Tiragens ilimitadas",
+      unlimitedDesc: "Consulte quantas vezes quiser",
+      aiSynthesis: "Síntese com IA",
+      aiDesc: "Interpretação profunda personalizada",
+      completeHistory: "Histórico completo",
+      completeHistoryDesc: "Todas as suas tiragens salvas",
+      patternAnalysisDesc: "Identifique tendências na sua jornada",
+      exclusiveContentDesc: "Spreads e guias especiais",
+      detailedReportsDesc: "Exportação em PDF",
+      adFree: "Sem anúncios",
+      adFreeDesc: "Experiência pura e focada",
+    },
+  },
+
+  // Lunar Calendar
+  lunar: {
+    title: "Calendário Lunar",
+    subtitle: "Acompanhe as fases da lua e planeje seus rituais",
+    moonIn: "Lua em",
+    full: "Cheia",
+    new: "Nova",
+    waxing: "Cresc.",
+    waning: "Ling.",
+  },
+
+  // Newsletter
+  newsletter: {
+    title: "Receba sua carta do dia",
+    name: "Nome",
+    namePlaceholder: "Seu nome",
+    age: "Idade",
+    agePlaceholder: "Sua idade",
+    country: "País",
+    selectCountry: "Selecione seu país",
+    other: "Outro",
+    city: "Cidade",
+    cityPlaceholder: "Sua cidade",
+    email: "E-mail",
+    emailPlaceholder: "seu@email.com",
+    frequency: "Frequência",
+    daily: "Diário",
+    weekly: "Semanal",
+    monthly: "Mensal",
+    startReceiving: "Começar a Receber",
   },
 
   // Spreads
@@ -64,6 +137,8 @@ export const pt = {
     revealAll: "Revelar Todas",
     seeResult: "Ver Resultado",
     back: "Voltar",
+    shuffle: "Embaralhar",
+    shuffling: "Embaralhando...",
   },
 
   // Result
@@ -79,6 +154,8 @@ export const pt = {
     upright: "Normal",
     reversed: "Invertida",
     loading: "Consultando o oráculo...",
+    quick: "RÁPIDA",
+    discover: "Descubra seu destino",
   },
 
   // Explore
@@ -95,6 +172,7 @@ export const pt = {
       pentacles: "Ouros",
     },
     cards: "cartas",
+    majorArcana: "Maior",
   },
 
   // Card Details
@@ -118,6 +196,18 @@ export const pt = {
     startFirst: "Faça sua primeira tiragem",
     delete: "Excluir",
     view: "Ver Detalhes",
+    viewShort: "Ver",
+    readingCards: "Cartas da Leitura",
+    position: "Posição",
+    card: "Carta",
+    synthesis: "Síntese da Leitura",
+    yourRating: "Sua Avaliação",
+    yourNotes: "Suas Anotações",
+    notesPlaceholder: "Adicione suas reflexões sobre esta leitura...",
+    noNotes: "Sem anotações",
+    cancel: "Cancelar",
+    saving: "Salvando...",
+    save: "Salvar",
   },
 
   // Shop
@@ -133,7 +223,13 @@ export const pt = {
       crystals: "Cristais",
       kits: "Kits",
     },
+    categoriesLabel: "Categorias",
     filters: "Filtros",
+    priceRange: "Faixa de Preço",
+    resetFilters: "Limpar Filtros",
+    products: "produtos",
+    noProducts: "Nenhum produto encontrado",
+    productNotFound: "Produto não encontrado",
     sortBy: "Ordenar por",
     sortOptions: {
       featured: "Destaque",
@@ -205,6 +301,7 @@ export const pt = {
     placeOrder: "Finalizar Pedido",
     processing: "Processando...",
     mercadoPago: "Pagamento seguro via Mercado Pago",
+    orderSuccess: "Pedido realizado com sucesso! (Simulação)",
   },
 
   // Footer
@@ -283,12 +380,19 @@ export const pt = {
     element: "Elemento",
     qualities: "Qualidades",
     rulingPlanet: "Planeta Regente",
+    favorableDay: "Dia favorável para a maioria das atividades",
   },
 
   // Numerology
   numerology: {
     title: "Numerologia",
     subtitle: "Descubra os números que regem sua vida e revelam seu destino",
+    corePillars: "Os Pilares Centrais",
+    corePillarsDesc: "Os três números que definem sua essência",
+    additionalNumbers: "Números Complementares",
+    additionalNumbersDesc: "Aspectos adicionais da sua personalidade",
+    timeCycles: "Ciclos Temporais",
+    timeCyclesDesc: "As energias que influenciam você agora",
     form: {
       fullName: "Nome Completo",
       fullNamePlaceholder: "Digite seu nome de nascimento completo",

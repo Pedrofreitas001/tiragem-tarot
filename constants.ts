@@ -148,18 +148,18 @@ const findCardData = (card: TarotCard): TarotCardData | undefined => {
 };
 
 // Helper to generate deterministic lore for cards using complete database
-export const getStaticLore = (card: TarotCard): CardLore => {
+export const getStaticLore = (card: TarotCard, isPortuguese: boolean = true): CardLore => {
   // 1. Look up card in the complete TAROT_CARDS database
   const cardData = findCardData(card);
 
   if (cardData) {
     return {
-      keywords: cardData.keywords_pt.length > 0 ? cardData.keywords_pt : cardData.keywords,
-      generalMeaning: cardData.meaning_up_pt || cardData.meaning_up,
+      keywords: isPortuguese ? cardData.keywords_pt : cardData.keywords,
+      generalMeaning: isPortuguese ? cardData.meaning_up_pt : cardData.meaning_up,
       love: cardData.love,
       career: cardData.career,
       advice: cardData.advice,
-      reversed: cardData.meaning_rev_pt || cardData.meaning_rev
+      reversed: isPortuguese ? cardData.meaning_rev_pt : cardData.meaning_rev
     };
   }
 
