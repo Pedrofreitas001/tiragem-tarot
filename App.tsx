@@ -47,7 +47,7 @@ const CartDrawer = () => {
     return (
         <>
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={() => toggleCart(false)} />
-            <div className="fixed right-0 top-0 h-full w-full max-w-md bg-card-dark border-l border-border-dark z-50 flex flex-col animate-slide-in-right">
+            <div className="fixed right-0 top-0 h-full w-full max-w-md bg-card-dark/95 backdrop-blur-md border-l border-border-dark/80 z-50 flex flex-col animate-slide-in-right">
                 <div className="flex items-center justify-between p-6 border-b border-border-dark">
                     <h2 className="text-xl font-bold text-white">{t.cart.title}</h2>
                     <button onClick={() => toggleCart(false)} className="text-gray-400 hover:text-white">
@@ -335,15 +335,22 @@ const Home = () => {
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-black text-white leading-tight mb-6 tracking-tight">
-                        {t.home.heroTitle.split(' ').map((word, i) => (
-                            <span key={i} className={i === 1 ? 'text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400' : ''}>
-                                {word}{' '}
-                            </span>
-                        ))}
+                        {isPortuguese
+                            ? 'Revele seu destino com o Tarot'.split(' ').map((word, i) => (
+                                <span key={i} className={i === 4 || i === 5 ? 'text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400' : ''}>
+                                    {word}{' '}
+                                </span>
+                            ))
+                            : 'Reveal your destiny with Tarot'.split(' ').map((word, i) => (
+                                <span key={i} className={i === 4 ? 'text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400' : ''}>
+                                    {word}{' '}
+                                </span>
+                            ))
+                        }
                     </h1>
 
                     <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-                        {isPortuguese ? 'Revele seu destino com o Tarot e descubra os segredos do universo' : 'Reveal your destiny with Tarot and uncover the secrets of the universe'}
+                        {isPortuguese ? 'Leitura de Tarot 100% grátis com interpretação personalizada por IA' : 'Free Tarot reading with personalized AI interpretation'}
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -486,14 +493,14 @@ const Home = () => {
                         }
 
                         return (
-                            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center lg:items-start">
+                            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
                                 {/* LEFT: Calendar */}
                                 <div>
                                     <div className="mb-6">
                                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
                                         <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Acompanhe as fases da lua e planeje seus rituais' : 'Track moon phases and plan your rituals'}</p>
                                     </div>
-                                    <div className="glass-widget rounded-2xl p-4 border border-primary/20 text-sm">
+                                    <div className="glass-widget rounded-2xl p-4 border border-primary/30 text-sm bg-surface-dark/60">
                                         {/* Calendar Header - Month Only */}
                                         <div className="text-center mb-4">
                                             <h3 className="text-base md:text-lg font-bold text-white">{calendarMonthNames[month]} {year}</h3>
@@ -571,11 +578,16 @@ const Home = () => {
                                 </div>
 
                                 {/* RIGHT: Mandala */}
-                                <div className="flex items-center justify-center lg:pl-8 lg:pt-28">
-                                    <style>{`
+                                <div className="flex flex-col lg:pl-8">
+                                    <div className="mb-6">
+                                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{isPortuguese ? 'Energia Cósmica' : 'Cosmic Energy'}</h2>
+                                        <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Conecte-se com as energias celestes do momento' : 'Connect with the celestial energies of the moment'}</p>
+                                    </div>
+                                    <div className="flex items-center justify-center">
+                                        <style>{`
                                         .cosmic-gradient { background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%); }
                                         .mandala-glow { box-shadow: 0 0 60px 10px rgba(147, 17, 212, 0.3); }
-                                        .glass-widget { background: rgba(54, 35, 72, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(173, 146, 201, 0.1); }
+                                        .glass-widget { background: rgba(54, 35, 72, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(173, 146, 201, 0.2); }
                                         .orbit-rotate { animation: spin 120s linear infinite; }
                                         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
                                         .moon-glow-full { 
@@ -598,58 +610,59 @@ const Home = () => {
                                         }
                                     `}</style>
 
-                                    <div className="relative w-full max-w-3xl mx-auto">
-                                        {/* Outer Orbits - Expanded */}
-                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-primary/10 rounded-full orbit-rotate"></div>
-                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
+                                        <div className="relative w-full max-w-3xl mx-auto">
+                                            {/* Outer Orbits - Expanded */}
+                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-primary/10 rounded-full orbit-rotate"></div>
+                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
 
-                                        {/* The Mandala Body - Larger */}
-                                        <div className="relative w-96 h-96 mx-auto rounded-full bg-background-dark/40 backdrop-blur-xl border border-white/10 flex items-center justify-center mandala-glow">
-                                            {/* SVG Mandala Detail */}
-                                            <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
-                                                <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
-                                                <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
-                                                <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
-                                            </svg>
+                                            {/* The Mandala Body - Larger */}
+                                            <div className="relative w-96 h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
+                                                {/* SVG Mandala Detail */}
+                                                <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
+                                                    <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
+                                                    <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
+                                                    <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
+                                                </svg>
 
-                                            {/* Moon Phases Ring - Larger */}
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                {/* Full Moon - Top */}
-                                                <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
-                                                        🌕
+                                                {/* Moon Phases Ring - Larger */}
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    {/* Full Moon - Top */}
+                                                    <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
+                                                            🌕
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
-                                                </div>
-                                                {/* New Moon - Bottom */}
-                                                <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
-                                                        🌑
+                                                    {/* New Moon - Bottom */}
+                                                    <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
+                                                            🌑
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
-                                                </div>
-                                                {/* Waxing - Right */}
-                                                <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                        🌒
+                                                    {/* Waxing - Right */}
+                                                    <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
+                                                            🌒
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
-                                                </div>
-                                                {/* Waning - Left */}
-                                                <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                        🌘
+                                                    {/* Waning - Left */}
+                                                    <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
+                                                            🌘
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                 </div>
-                                            </div>
 
-                                            {/* Inner Core */}
-                                            <div className="text-center z-30">
-                                                <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-1">{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
-                                                <p className="text-primary text-sm md:text-base font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
-                                                <div className="mt-3 flex justify-center gap-2">
-                                                    <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
+                                                {/* Inner Core */}
+                                                <div className="text-center z-30">
+                                                    <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-1">{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
+                                                    <p className="text-primary text-sm md:text-base font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
+                                                    <div className="mt-3 flex justify-center gap-2">
+                                                        <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
