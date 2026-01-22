@@ -357,7 +357,7 @@ const Home = () => {
 
                 <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-12 w-full">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-                        
+
                         {/* Left Column - Content */}
                         <div className="space-y-8 lg:pr-8">
                             <h1 className="text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-white" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -366,8 +366,8 @@ const Home = () => {
 
                             <p className="text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
                                 {isPortuguese
-                                    ? 'Um oráculo digital para registrar padrões, refletir escolhas e acompanhar sua jornada simbólica.'
-                                    : 'A digital oracle to record patterns, reflect on choices, and track your symbolic journey.'}
+                                    ? 'Um Tarot digital para registrar padrões, refletir escolhas e acompanhar sua jornada simbólica.'
+                                    : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -393,43 +393,39 @@ const Home = () => {
                             <div className="relative w-[380px] h-[380px] md:w-[440px] md:h-[440px]">
                                 {/* Outer Ring */}
                                 <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.15)" strokeWidth="1" fill="none" />
-                                    <circle cx="220" cy="40" r="3" fill="rgba(135, 95, 175, 0.4)" />
-                                    <circle cx="220" cy="400" r="3" fill="rgba(135, 95, 175, 0.4)" />
-                                    <circle cx="40" cy="220" r="3" fill="rgba(135, 95, 175, 0.4)" />
-                                    <circle cx="400" cy="220" r="3" fill="rgba(135, 95, 175, 0.4)" />
-                                    <path d="M 220,20 L 220,50" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1" />
-                                    <path d="M 220,390 L 220,420" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1" />
-                                    <path d="M 20,220 L 50,220" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1" />
-                                    <path d="M 390,220 L 420,220" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1" />
+                                    <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.25)" strokeWidth="1" fill="none" />
+                                    <circle cx="220" cy="40" r="3" fill="rgba(135, 95, 175, 0.5)" />
+                                    <circle cx="220" cy="400" r="3" fill="rgba(135, 95, 175, 0.5)" />
+                                    <circle cx="40" cy="220" r="3" fill="rgba(135, 95, 175, 0.5)" />
+                                    <circle cx="400" cy="220" r="3" fill="rgba(135, 95, 175, 0.5)" />
+                                    <path d="M 220,20 L 220,50" stroke="rgba(135, 95, 175, 0.4)" strokeWidth="1" />
+                                    <path d="M 220,390 L 220,420" stroke="rgba(135, 95, 175, 0.4)" strokeWidth="1" />
+                                    <path d="M 20,220 L 50,220" stroke="rgba(135, 95, 175, 0.4)" strokeWidth="1" />
+                                    <path d="M 390,220 L 420,220" stroke="rgba(135, 95, 175, 0.4)" strokeWidth="1" />
                                 </svg>
 
                                 {/* Middle Ring */}
                                 <svg className="arcane-ring-middle absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="140" stroke="rgba(135, 95, 175, 0.12)" strokeWidth="1" fill="none" />
-                                    <circle cx="220" cy="80" r="2.5" fill="rgba(255, 255, 255, 0.3)" />
-                                    <circle cx="220" cy="360" r="2.5" fill="rgba(255, 255, 255, 0.3)" />
-                                    <circle cx="80" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.3)" />
-                                    <circle cx="360" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.3)" />
-                                    <circle cx="130" cy="130" r="2" fill="rgba(135, 95, 175, 0.25)" />
-                                    <circle cx="310" cy="130" r="2" fill="rgba(135, 95, 175, 0.25)" />
-                                    <circle cx="130" cy="310" r="2" fill="rgba(135, 95, 175, 0.25)" />
-                                    <circle cx="310" cy="310" r="2" fill="rgba(135, 95, 175, 0.25)" />
+                                    <circle cx="220" cy="220" r="140" stroke="rgba(135, 95, 175, 0.22)" strokeWidth="1" fill="none" />
+                                    <circle cx="220" cy="80" r="2.5" fill="rgba(255, 255, 255, 0.4)" />
+                                    <circle cx="220" cy="360" r="2.5" fill="rgba(255, 255, 255, 0.4)" />
+                                    <circle cx="80" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.4)" />
+                                    <circle cx="360" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.4)" />
+                                    <circle cx="130" cy="130" r="2" fill="rgba(135, 95, 175, 0.35)" />
+                                    <circle cx="310" cy="130" r="2" fill="rgba(135, 95, 175, 0.35)" />
+                                    <circle cx="130" cy="310" r="2" fill="rgba(135, 95, 175, 0.35)" />
+                                    <circle cx="310" cy="310" r="2" fill="rgba(135, 95, 175, 0.35)" />
                                 </svg>
 
                                 {/* Inner Ring */}
                                 <svg className="arcane-ring-inner absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="80" stroke="rgba(135, 95, 175, 0.2)" strokeWidth="1.5" fill="none" />
+                                    <circle cx="220" cy="220" r="80" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1.5" fill="none" />
                                 </svg>
 
                                 {/* Center Symbol */}
                                 <div className="arcane-center absolute inset-0 flex items-center justify-center">
-                                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M 30,5 L 35,20 L 50,20 L 38,30 L 42,45 L 30,37 L 18,45 L 22,30 L 10,20 L 25,20 Z" 
-                                              fill="none" 
-                                              stroke="rgba(255, 255, 255, 0.5)" 
-                                              strokeWidth="1" />
-                                        <circle cx="30" cy="30" r="4" fill="rgba(135, 95, 175, 0.6)" />
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="6" cy="6" r="4" fill="rgba(135, 95, 175, 0.5)" />
                                     </svg>
                                 </div>
                             </div>
