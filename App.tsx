@@ -489,7 +489,10 @@ const Home = () => {
                             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center lg:items-start">
                                 {/* LEFT: Calendar */}
                                 <div>
-                                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
+                                    <div className="mb-6">
+                                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
+                                        <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Acompanhe as fases da lua e planeje seus rituais' : 'Track moon phases and plan your rituals'}</p>
+                                    </div>
                                     <div className="glass-widget rounded-2xl p-4 border border-primary/20 text-sm">
                                         {/* Calendar Header - Month Only */}
                                         <div className="text-center mb-4">
