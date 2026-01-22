@@ -300,14 +300,15 @@ const Home = () => {
       <CartDrawer />
 
       {/* Hero Section - Mystical & Static */}
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-        {/* Static Background */}
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Static Background - Extended with reduced intensity */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-background-dark to-background-dark" />
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-600/20 rounded-full blur-[100px]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-white/5 rounded-full" />
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 via-background-dark/95 to-background-dark" />
+          <div className="absolute -top-20 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
+          <div className="absolute bottom-0 right-1/4 w-[450px] h-[450px] bg-purple-600/8 rounded-full blur-[130px]" />
+          <div className="absolute top-1/3 right-1/3 w-80 h-80 bg-indigo-500/5 rounded-full blur-[100px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-white/[0.03] rounded-full" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] border border-white/[0.02] rounded-full" />
 
           {/* Static Stars */}
           <div className="absolute w-1 h-1 bg-white rounded-full opacity-60" style={{ top: '10%', left: '15%' }} />
@@ -1512,19 +1513,21 @@ const Numerology = () => {
   const PillarCard = ({ num, title, description, icon, gradient }: { num: NumerologyNumber; title: string; description: string; icon: string; gradient: string }) => {
     const meaning = isPortuguese ? num.meaning.title_pt : num.meaning.title;
     const keywords = isPortuguese ? num.meaning.keywords_pt : num.meaning.keywords;
+    const isMaster = num.masterNumber;
 
     return (
-      <div className={`relative group rounded-2xl p-[1px] ${gradient} overflow-hidden`}>
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl bg-inherit" />
+      <div className={`relative group rounded-2xl p-[1px] ${isMaster ? 'bg-gradient-to-br from-yellow-400 via-orange-500 to-yellow-500' : gradient} overflow-hidden`}>
+        {/* Glow effect */}
+        <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl ${isMaster ? 'bg-gradient-to-br from-yellow-400/50 to-orange-500/50' : 'bg-inherit'}`} />
         <div className="relative bg-[#0d0d14]/95 backdrop-blur-xl rounded-2xl p-6 h-full">
           {/* Number display */}
-          <div className="flex justify-center mb-6">
-            <div className={`w-24 h-24 rounded-full ${gradient} p-[2px]`}>
+          <div className="flex justify-center mb-5">
+            <div className={`w-24 h-24 rounded-full ${isMaster ? 'bg-gradient-to-br from-yellow-400 via-orange-500 to-yellow-500' : gradient} p-[2px] shadow-lg ${isMaster ? 'shadow-yellow-500/30' : 'shadow-primary/20'}`}>
               <div className="w-full h-full rounded-full bg-[#0d0d14] flex items-center justify-center relative">
-                <span className="text-5xl font-black text-white">{num.value}</span>
-                {num.masterNumber && (
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                    <span className="text-[10px] font-bold text-black">M</span>
+                <span className={`text-5xl font-black ${isMaster ? 'bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent' : 'text-white'}`}>{num.value}</span>
+                {isMaster && (
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/50">
+                    <span className="material-symbols-outlined text-black text-sm">star</span>
                   </div>
                 )}
               </div>
@@ -1534,7 +1537,7 @@ const Numerology = () => {
           {/* Title & Description */}
           <div className="text-center mb-4">
             <div className="flex items-center justify-center gap-2 mb-2">
-              <span className="material-symbols-outlined text-primary">{icon}</span>
+              <span className={`material-symbols-outlined ${isMaster ? 'text-yellow-400' : 'text-primary'}`}>{icon}</span>
               <h3 className="text-lg font-bold text-white">{title}</h3>
             </div>
             <p className="text-gray-500 text-xs">{description}</p>
@@ -1542,18 +1545,21 @@ const Numerology = () => {
 
           {/* Meaning */}
           <div className="text-center mb-4">
-            <span className="text-primary font-semibold text-sm">{meaning}</span>
-            {num.masterNumber && (
-              <span className="ml-2 px-2 py-0.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 text-[10px] font-bold rounded-full">
-                {t.numerology.masterNumber}
-              </span>
+            <span className={`font-semibold ${isMaster ? 'text-yellow-400' : 'text-primary'}`}>{meaning}</span>
+            {isMaster && (
+              <div className="mt-2">
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 text-xs font-bold rounded-full border border-yellow-500/30">
+                  <span className="material-symbols-outlined text-xs">auto_awesome</span>
+                  {t.numerology.masterNumber}
+                </span>
+              </div>
             )}
           </div>
 
           {/* Keywords */}
           <div className="flex flex-wrap gap-2 justify-center">
             {keywords.slice(0, 3).map((kw, i) => (
-              <span key={i} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-gray-300 text-xs">
+              <span key={i} className={`px-3 py-1.5 rounded-full text-xs ${isMaster ? 'bg-yellow-500/10 border border-yellow-500/20 text-yellow-300' : 'bg-white/5 border border-white/10 text-gray-300'}`}>
                 {kw}
               </span>
             ))}
@@ -1569,31 +1575,36 @@ const Numerology = () => {
     const keywords = isPortuguese ? num.meaning.keywords_pt : num.meaning.keywords;
 
     return (
-      <div className="relative group rounded-xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 p-5 hover:border-primary/30 transition-all duration-300">
-        <div className="flex items-start gap-4">
+      <div className="relative group rounded-xl bg-card-dark border border-border-dark p-5 hover:border-primary/30 transition-all duration-300 overflow-hidden">
+        {/* Subtle glow on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+        <div className="relative flex items-start gap-4">
           {/* Number */}
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/30 to-purple-600/30 border border-primary/30 flex items-center justify-center flex-shrink-0">
+          <div className={`w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 ${num.masterNumber ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30' : 'bg-gradient-to-br from-primary/20 to-purple-600/20 border border-primary/20'}`}>
             <span className="text-2xl font-black text-white">{num.value}</span>
           </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="material-symbols-outlined text-primary text-sm">{icon}</span>
-              <h4 className="text-white font-semibold text-sm">{title}</h4>
+              <span className={`material-symbols-outlined text-base ${num.masterNumber ? 'text-yellow-400' : 'text-primary'}`}>{icon}</span>
+              <h4 className="text-white font-bold">{title}</h4>
               {num.masterNumber && (
-                <span className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 text-[9px] font-bold rounded">M</span>
+                <span className="px-2 py-0.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 text-[10px] font-bold rounded-full border border-yellow-500/30">
+                  {t.numerology.masterNumber}
+                </span>
               )}
             </div>
             <p className="text-gray-500 text-xs mb-2">{description}</p>
-            <p className="text-primary text-sm font-medium">{meaning}</p>
+            <p className={`text-sm font-semibold ${num.masterNumber ? 'text-yellow-400' : 'text-primary'}`}>{meaning}</p>
           </div>
         </div>
 
         {/* Keywords */}
-        <div className="flex flex-wrap gap-1.5 mt-4 pt-4 border-t border-white/5">
+        <div className="relative flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/5">
           {keywords.slice(0, 4).map((kw, i) => (
-            <span key={i} className="px-2 py-1 bg-white/5 rounded text-gray-400 text-xs">
+            <span key={i} className="px-2.5 py-1 bg-surface-dark rounded-lg text-gray-400 text-xs border border-white/5">
               {kw}
             </span>
           ))}
@@ -1870,293 +1881,199 @@ const CosmicCalendar = () => {
 
   const weekDays = isPortuguese ? ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  // Get energy level color
-  const getEnergyColor = (level: number) => {
-    if (level >= 8) return 'from-green-500 to-emerald-500';
-    if (level >= 5) return 'from-yellow-500 to-amber-500';
-    return 'from-orange-500 to-red-500';
-  };
-
   return (
-    <div className="flex flex-col min-h-screen bg-[#0a0a0f] text-white">
+    <div className="flex flex-col min-h-screen bg-background-dark text-white">
       <Header />
       <CartDrawer />
 
-      <main className="flex-1 w-full">
-        {/* Hero Section with cosmic background */}
-        <div className="relative overflow-hidden">
-          {/* Background effects */}
-          <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/20 via-transparent to-transparent" />
-          <div className="absolute top-20 left-1/4 w-96 h-96 bg-indigo-600/15 rounded-full blur-[120px]" />
-          <div className="absolute top-40 right-1/4 w-72 h-72 bg-purple-600/15 rounded-full blur-[100px]" />
+      <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-10 py-12">
+        {/* Hero */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-bold mb-6">
+            <span className="material-symbols-outlined text-lg">calendar_month</span>
+            {t.cosmic.title}
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black mb-4">{t.cosmic.title}</h1>
+          <p className="text-gray-400 text-lg max-w-xl mx-auto">{t.cosmic.subtitle}</p>
+        </div>
 
-          <div className="relative max-w-[1200px] mx-auto px-4 md:px-10 py-12">
-            {/* Header */}
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 rounded-full text-indigo-300 text-sm font-semibold mb-6 backdrop-blur-sm">
-                <span className="material-symbols-outlined text-lg">calendar_month</span>
-                {t.cosmic.today}
-              </div>
-              <h1 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">
-                {t.cosmic.title}
-              </h1>
-              <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-2">
-                {t.cosmic.subtitle}
-              </p>
-              <p className="text-white font-semibold text-xl">
-                {currentDate.toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US', {
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric'
-                })}
-              </p>
-            </div>
-
-            {/* Main Moon Phase Card */}
-            <div className="mb-10">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity" />
-                <div className="relative bg-gradient-to-br from-[#1a1a2e]/90 to-[#0d0d14]/90 backdrop-blur-xl rounded-3xl border border-white/10 p-8 md:p-10">
-                  <div className="flex flex-col lg:flex-row items-center gap-8">
-                    {/* Moon Visualization */}
-                    <div className="relative">
-                      <div className="w-40 h-40 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 relative overflow-hidden shadow-2xl shadow-indigo-500/20">
-                        {/* Moon surface texture */}
-                        <div className="absolute inset-0 opacity-30" style={{
-                          backgroundImage: 'radial-gradient(circle at 30% 30%, transparent 0%, rgba(0,0,0,0.1) 50%), radial-gradient(circle at 70% 60%, transparent 0%, rgba(0,0,0,0.1) 40%)'
-                        }} />
-                        {/* Shadow based on illumination */}
-                        <div
-                          className="absolute inset-0 bg-gradient-to-r from-[#0d0d14] to-transparent"
-                          style={{
-                            clipPath: `inset(0 ${moonPhase.illumination}% 0 0)`,
-                          }}
-                        />
-                        {/* Glow effect */}
-                        <div className="absolute inset-0 rounded-full" style={{
-                          boxShadow: 'inset 0 0 40px rgba(255,255,255,0.3), 0 0 60px rgba(99, 102, 241, 0.3)'
-                        }} />
-                      </div>
-                      {/* Illumination percentage badge */}
-                      <div className="absolute -bottom-2 -right-2 px-3 py-1.5 bg-indigo-500 rounded-full text-white text-sm font-bold shadow-lg">
-                        {moonPhase.illumination}%
-                      </div>
-                    </div>
-
-                    {/* Moon Info */}
-                    <div className="flex-1 text-center lg:text-left">
-                      <p className="text-indigo-300 text-sm font-medium uppercase tracking-wider mb-2">{t.cosmic.moonPhase}</p>
-                      <h2 className="text-3xl md:text-4xl font-black text-white mb-3">
-                        {isPortuguese ? moonPhase.name_pt : moonPhase.name}
-                      </h2>
-                      <p className="text-gray-400 text-lg mb-6 max-w-xl">
-                        {isPortuguese ? moonPhase.description_pt : moonPhase.description}
-                      </p>
-                      <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
-                        <span className="px-4 py-2 bg-indigo-500/20 border border-indigo-500/30 rounded-xl text-indigo-300 text-sm font-medium">
-                          {t.cosmic.illumination}: {moonPhase.illumination}%
-                        </span>
-                        <span className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 rounded-xl text-purple-300 text-sm font-medium">
-                          {isPortuguese ? moonPhase.energy_pt : moonPhase.energy}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Left Column - Today's Cosmic Info */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Moon Phase Card */}
+            <div className="bg-gradient-to-br from-indigo-900/50 to-surface-dark rounded-2xl border border-indigo-500/30 p-6 md:p-8">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 flex items-center justify-center relative overflow-hidden">
+                  <span className="material-symbols-outlined text-6xl text-indigo-900">{moonPhase.icon}</span>
+                  <div
+                    className="absolute inset-0 bg-indigo-950"
+                    style={{
+                      clipPath: `inset(0 ${100 - moonPhase.illumination}% 0 0)`,
+                      opacity: 0.8
+                    }}
+                  />
                 </div>
-              </div>
-            </div>
-
-            {/* Info Cards Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-              {/* Planetary Ruler Card */}
-              <div className="relative group rounded-2xl p-[1px] bg-gradient-to-br from-amber-500/50 to-orange-500/50">
-                <div className="bg-[#0d0d14]/95 backdrop-blur-xl rounded-2xl p-5 h-full">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: planetaryRuler.color + '30' }}>
-                      <span className="material-symbols-outlined text-2xl" style={{ color: planetaryRuler.color }}>{planetaryRuler.icon}</span>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs uppercase tracking-wider">{t.cosmic.planetaryRuler}</p>
-                      <h3 className="text-white font-bold text-lg">
-                        {isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}
-                      </h3>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {(isPortuguese ? planetaryRuler.qualities_pt : planetaryRuler.qualities).slice(0, 3).map((q, i) => (
-                      <span key={i} className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-gray-400 text-xs">{q}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Zodiac Season Card */}
-              <div className="relative group rounded-2xl p-[1px] bg-gradient-to-br from-violet-500/50 to-purple-500/50">
-                <div className="bg-[#0d0d14]/95 backdrop-blur-xl rounded-2xl p-5 h-full">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${getElementColor(zodiacSun.element)}`}>
-                      {zodiacSun.icon}
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs uppercase tracking-wider">{t.cosmic.zodiacSeason}</p>
-                      <h3 className="text-white font-bold text-lg">
-                        {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}
-                      </h3>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    <span className={`px-2 py-1 rounded-lg text-xs ${getElementColor(zodiacSun.element)}`}>
-                      {isPortuguese ? zodiacSun.element_pt : zodiacSun.element}
-                    </span>
-                    {(isPortuguese ? zodiacSun.qualities_pt : zodiacSun.qualities).slice(0, 2).map((q, i) => (
-                      <span key={i} className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-gray-400 text-xs">{q}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Cosmic Energy Card */}
-              <div className="relative group rounded-2xl p-[1px] bg-gradient-to-br from-cyan-500/50 to-blue-500/50">
-                <div className="bg-[#0d0d14]/95 backdrop-blur-xl rounded-2xl p-5 h-full">
-                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-3">{t.cosmic.cosmicEnergy}</p>
-                  <div className="flex items-center gap-4">
-                    <div className={`text-5xl font-black bg-gradient-to-r ${getEnergyColor(cosmicEnergy)} bg-clip-text text-transparent`}>
-                      {cosmicEnergy}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex gap-1 mb-2">
-                        {Array.from({ length: 10 }).map((_, i) => (
-                          <div
-                            key={i}
-                            className={`flex-1 h-2 rounded-full ${i < cosmicEnergy ? `bg-gradient-to-r ${getEnergyColor(cosmicEnergy)}` : 'bg-white/10'}`}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-gray-400 text-xs">
-                        {cosmicEnergy >= 8 ? (isPortuguese ? 'Excelente' : 'Excellent') :
-                         cosmicEnergy >= 5 ? (isPortuguese ? 'Moderada' : 'Moderate') :
-                         (isPortuguese ? 'Desafiadora' : 'Challenging')}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Today Date Card */}
-              <div className="relative group rounded-2xl p-[1px] bg-gradient-to-br from-pink-500/50 to-rose-500/50">
-                <div className="bg-[#0d0d14]/95 backdrop-blur-xl rounded-2xl p-5 h-full flex flex-col justify-center">
-                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">{t.cosmic.today}</p>
-                  <p className="text-3xl font-black text-white mb-1">{currentDate.getDate()}</p>
-                  <p className="text-gray-400 text-sm">
-                    {currentDate.toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US', { weekday: 'long' })}
+                <div className="text-center md:text-left flex-1">
+                  <p className="text-indigo-300 text-sm font-medium mb-1">{t.cosmic.moonPhase}</p>
+                  <h2 className="text-3xl font-black text-white mb-2">
+                    {isPortuguese ? moonPhase.name_pt : moonPhase.name}
+                  </h2>
+                  <p className="text-gray-400 mb-3">
+                    {isPortuguese ? moonPhase.description_pt : moonPhase.description}
                   </p>
+                  <div className="flex items-center gap-4 justify-center md:justify-start">
+                    <span className="px-3 py-1 bg-indigo-500/20 rounded-full text-indigo-300 text-sm">
+                      {t.cosmic.illumination}: {moonPhase.illumination}%
+                    </span>
+                    <span className="px-3 py-1 bg-purple-500/20 rounded-full text-purple-300 text-sm">
+                      {isPortuguese ? moonPhase.energy_pt : moonPhase.energy}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Best For / Avoid Section */}
-            <div className="grid md:grid-cols-2 gap-6 mb-10">
-              {/* Best For */}
-              <div className="relative rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/30 to-emerald-500/30 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-green-400">check_circle</span>
+            {/* Grid of Day Info */}
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Planetary Ruler */}
+              <div className="bg-card-dark rounded-xl border border-border-dark p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: planetaryRuler.color + '30' }}>
+                    <span className="material-symbols-outlined text-2xl" style={{ color: planetaryRuler.color }}>{planetaryRuler.icon}</span>
                   </div>
-                  <h3 className="text-white font-bold text-lg">{t.cosmic.bestFor}</h3>
+                  <div>
+                    <p className="text-gray-500 text-xs">{t.cosmic.planetaryRuler}</p>
+                    <h3 className="text-white font-bold text-lg">
+                      {isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}
+                    </h3>
+                  </div>
                 </div>
-                <ul className="space-y-3">
-                  {(isPortuguese ? bestFor_pt : bestFor).slice(0, 5).map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span className="w-2 h-2 rounded-full bg-green-400 mt-2 flex-shrink-0"></span>
-                      <span className="text-gray-300">{item}</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {(isPortuguese ? planetaryRuler.qualities_pt : planetaryRuler.qualities).map((q, i) => (
+                    <span key={i} className="px-2 py-1 bg-surface-dark rounded text-gray-400 text-xs">{q}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Zodiac Season */}
+              <div className="bg-card-dark rounded-xl border border-border-dark p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${getElementColor(zodiacSun.element)}`}>
+                    {zodiacSun.icon}
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs">{t.cosmic.zodiacSeason}</p>
+                    <h3 className="text-white font-bold text-lg">
+                      {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}
+                    </h3>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className={`px-2 py-1 rounded text-xs ${getElementColor(zodiacSun.element)}`}>
+                    {isPortuguese ? zodiacSun.element_pt : zodiacSun.element}
+                  </span>
+                  {(isPortuguese ? zodiacSun.qualities_pt : zodiacSun.qualities).slice(0, 2).map((q, i) => (
+                    <span key={i} className="px-2 py-1 bg-surface-dark rounded text-gray-400 text-xs">{q}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Best For */}
+              <div className="bg-card-dark rounded-xl border border-border-dark p-5">
+                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-green-400">check_circle</span>
+                  {t.cosmic.bestFor}
+                </h3>
+                <ul className="space-y-2">
+                  {(isPortuguese ? bestFor_pt : bestFor).slice(0, 4).map((item, i) => (
+                    <li key={i} className="text-gray-400 text-sm flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                      {item}
                     </li>
                   ))}
                 </ul>
               </div>
 
               {/* Avoid */}
-              <div className="relative rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500/30 to-orange-500/30 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-red-400">do_not_disturb</span>
-                  </div>
-                  <h3 className="text-white font-bold text-lg">{t.cosmic.avoid}</h3>
-                </div>
+              <div className="bg-card-dark rounded-xl border border-border-dark p-5">
+                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-red-400">do_not_disturb</span>
+                  {t.cosmic.avoid}
+                </h3>
                 {(isPortuguese ? avoid_pt : avoid).length > 0 ? (
-                  <ul className="space-y-3">
+                  <ul className="space-y-2">
                     {(isPortuguese ? avoid_pt : avoid).map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="w-2 h-2 rounded-full bg-red-400 mt-2 flex-shrink-0"></span>
-                        <span className="text-gray-300">{item}</span>
+                      <li key={i} className="text-gray-400 text-sm flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                        {item}
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-gray-400 italic">
+                  <p className="text-gray-500 text-sm italic">
                     {isPortuguese ? 'Dia favorável para a maioria das atividades' : 'Favorable day for most activities'}
                   </p>
                 )}
               </div>
             </div>
 
-            {/* Rituals Section */}
-            <div className="relative rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 p-6 mb-10">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/30 to-purple-500/30 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary">self_improvement</span>
-                </div>
-                <div>
-                  <h3 className="text-white font-bold text-lg">{t.cosmic.rituals}</h3>
-                  <p className="text-gray-500 text-sm">
-                    {isPortuguese ? 'Práticas recomendadas para esta fase lunar' : 'Recommended practices for this lunar phase'}
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-3">
+            {/* Rituals */}
+            <div className="bg-card-dark rounded-xl border border-border-dark p-6">
+              <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">self_improvement</span>
+                {t.cosmic.rituals}
+              </h3>
+              <div className="flex flex-wrap gap-2">
                 {(isPortuguese ? moonPhase.rituals_pt : moonPhase.rituals).map((ritual, i) => (
-                  <span key={i} className="px-5 py-2.5 bg-primary/10 border border-primary/30 rounded-xl text-primary font-medium hover:bg-primary/20 transition-colors cursor-default">
+                  <span key={i} className="px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg text-primary text-sm">
                     {ritual}
                   </span>
                 ))}
               </div>
             </div>
+          </div>
 
-            {/* Monthly Calendar */}
-            <div className="relative rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/30 to-violet-500/30 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-indigo-400">calendar_month</span>
-                  </div>
-                  <h3 className="text-white font-bold text-lg">{t.cosmic.monthView}</h3>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setSelectedMonth(m => m === 0 ? 11 : m - 1)}
-                    className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors"
-                  >
-                    <span className="material-symbols-outlined text-gray-400">chevron_left</span>
-                  </button>
-                  <span className="text-white font-semibold min-w-[140px] text-center">{monthNames[selectedMonth]} {selectedYear}</span>
-                  <button
-                    onClick={() => setSelectedMonth(m => m === 11 ? 0 : m + 1)}
-                    className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors"
-                  >
-                    <span className="material-symbols-outlined text-gray-400">chevron_right</span>
-                  </button>
-                </div>
+          {/* Right Column - Calendar & Energy */}
+          <div className="space-y-6">
+            {/* Cosmic Energy */}
+            <div className="bg-gradient-to-br from-primary/20 to-surface-dark rounded-xl border border-primary/30 p-6 text-center">
+              <p className="text-gray-400 text-sm mb-2">{t.cosmic.cosmicEnergy}</p>
+              <div className="text-6xl font-black text-primary mb-2">{cosmicEnergy}</div>
+              <div className="flex justify-center gap-1">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-2 h-6 rounded-full ${i < cosmicEnergy ? 'bg-primary' : 'bg-surface-dark'}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Mini Calendar */}
+            <div className="bg-card-dark rounded-xl border border-border-dark p-4">
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  onClick={() => setSelectedMonth(m => m === 0 ? 11 : m - 1)}
+                  className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  <span className="material-symbols-outlined text-gray-400">chevron_left</span>
+                </button>
+                <h3 className="text-white font-bold">{monthNames[selectedMonth]} {selectedYear}</h3>
+                <button
+                  onClick={() => setSelectedMonth(m => m === 11 ? 0 : m + 1)}
+                  className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  <span className="material-symbols-outlined text-gray-400">chevron_right</span>
+                </button>
               </div>
 
-              {/* Week days header */}
-              <div className="grid grid-cols-7 gap-2 mb-3">
+              <div className="grid grid-cols-7 gap-1 mb-2">
                 {weekDays.map(day => (
-                  <div key={day} className="text-center text-gray-500 text-sm font-medium py-2">{day}</div>
+                  <div key={day} className="text-center text-gray-500 text-xs py-1">{day}</div>
                 ))}
               </div>
 
-              {/* Calendar grid */}
-              <div className="grid grid-cols-7 gap-2">
+              <div className="grid grid-cols-7 gap-1">
                 {Array.from({ length: firstDayOfWeek }).map((_, i) => (
                   <div key={`empty-${i}`} className="aspect-square" />
                 ))}
@@ -2167,38 +2084,28 @@ const CosmicCalendar = () => {
                   return (
                     <div
                       key={day.getDate()}
-                      className={`aspect-square rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer ${
-                        isToday
-                          ? 'bg-gradient-to-br from-primary to-purple-600 text-white shadow-lg shadow-primary/30'
-                          : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white'
+                      className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-colors cursor-pointer hover:bg-white/5 ${
+                        isToday ? 'bg-primary text-white ring-2 ring-primary ring-offset-2 ring-offset-card-dark' : 'text-gray-400'
                       }`}
                     >
-                      <span className="font-semibold text-sm">{day.getDate()}</span>
-                      <span className="material-symbols-outlined text-xs opacity-60">{dayMoon.icon}</span>
+                      <span className="font-medium">{day.getDate()}</span>
+                      <span className="material-symbols-outlined text-[10px] opacity-50">{dayMoon.icon}</span>
                     </div>
                   );
                 })}
               </div>
+            </div>
 
-              {/* Legend */}
-              <div className="flex items-center justify-center gap-6 mt-6 pt-6 border-t border-white/5">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-gray-400">dark_mode</span>
-                  <span className="text-gray-500 text-xs">{isPortuguese ? 'Lua Nova' : 'New Moon'}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-gray-400">brightness_3</span>
-                  <span className="text-gray-500 text-xs">{isPortuguese ? 'Crescente' : 'Waxing'}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-gray-400">light_mode</span>
-                  <span className="text-gray-500 text-xs">{isPortuguese ? 'Lua Cheia' : 'Full Moon'}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-gray-400">brightness_2</span>
-                  <span className="text-gray-500 text-xs">{isPortuguese ? 'Minguante' : 'Waning'}</span>
-                </div>
-              </div>
+            {/* Today Box */}
+            <div className="bg-surface-dark rounded-xl border border-border-dark p-4 text-center">
+              <p className="text-gray-500 text-sm mb-1">{t.cosmic.today}</p>
+              <p className="text-white font-bold text-lg">
+                {currentDate.toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long'
+                })}
+              </p>
             </div>
           </div>
         </div>
