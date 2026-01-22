@@ -26,49 +26,17 @@ const getSuitPrefix = (suit: Suit): string => {
 };
 
 export const generateDeck = (): TarotCard[] => {
-  const deck: TarotCard[] = [];
-  const baseUrl = "https://www.sacred-texts.com/tarot/pkt/img";
-
-  // Generate Major Arcana
-  MAJOR_ARCANA_NAMES.forEach((name, index) => {
-    // ar00.jpg, ar01.jpg, etc.
-    const fileIndex = index.toString().padStart(2, '0');
-
-    deck.push({
-      id: `maj_${index}`,
-      name,
-      number: index,
-      arcana: ArcanaType.MAJOR,
-      suit: Suit.NONE,
-      description: "A Major Arcana card representing significant life events.",
-      imageSeed: `tarot_major_${index}`,
-      imageUrl: `${baseUrl}/ar${fileIndex}.jpg`
-    });
-  });
-
-  // Generate Minor Arcana
-  Object.values(Suit).forEach((suit) => {
-    if (suit === Suit.NONE) return;
-
-    const suitPrefix = getSuitPrefix(suit as Suit);
-
-    MINOR_RANKS.forEach((rank, index) => {
-      const rankCode = MINOR_RANK_CODES[index];
-
-      deck.push({
-        id: `min_${suit}_${index}`,
-        name: `${rank} of ${suit}`,
-        number: index + 1,
-        arcana: ArcanaType.MINOR,
-        suit: suit as Suit,
-        description: `A card from the suit of ${suit}.`,
-        imageSeed: `tarot_${suit}_${index}`,
-        imageUrl: `${baseUrl}/${suitPrefix}${rankCode}.jpg`
-      });
-    });
-  });
-
-  return deck;
+  // Convert TAROT_CARDS to TarotCard format
+  return TAROT_CARDS.map(card => ({
+    id: card.id,
+    name: card.name,
+    number: card.number,
+    arcana: card.arcana === 'major' ? ArcanaType.MAJOR : ArcanaType.MINOR,
+    suit: card.suit ? (card.suit as Suit) : Suit.NONE,
+    description: card.description,
+    imageSeed: `tarot_${card.id}`,
+    imageUrl: card.imageUrl
+  }));
 };
 
 export const SPREADS: Spread[] = [

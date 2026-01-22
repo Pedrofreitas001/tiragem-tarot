@@ -133,12 +133,14 @@ const CartDrawer = () => {
 const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { t } = useLanguage();
+    const { t, isPortuguese } = useLanguage();
     const { toggleCart, getItemCount } = useCart();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
     const itemCount = getItemCount();
+    
+    const exploreRoute = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
 
     return (
         <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
@@ -155,7 +157,7 @@ const Header = () => {
                         <button onClick={() => navigate('/')} className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                             {t.nav.home}
                         </button>
-                        <button onClick={() => navigate('/explore')} className={`text-sm font-medium transition-colors ${isActive('/explore') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                        <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                             {t.nav.cardMeanings}
                         </button>
                         <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
@@ -194,7 +196,7 @@ const Header = () => {
                 {mobileMenuOpen && (
                     <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
                         <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
-                        <button onClick={() => { navigate('/explore'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
+                        <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                         <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
                         <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
                     </nav>
@@ -207,7 +209,9 @@ const Header = () => {
 // Footer Component
 const Footer = () => {
     const navigate = useNavigate();
-    const { t } = useLanguage();
+    const { t, isPortuguese } = useLanguage();
+    
+    const exploreRoute = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
 
     return (
         <footer className="flex justify-center w-full bg-[#0d090f] border-t border-border-dark py-12 mt-auto">
@@ -227,7 +231,7 @@ const Footer = () => {
                         <h4 className="text-white font-bold text-sm mb-4">{t.footer.explore}</h4>
                         <div className="flex flex-col gap-2">
                             <button onClick={() => navigate('/')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.readings}</button>
-                            <button onClick={() => navigate('/explore')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.cardLibrary}</button>
+                            <button onClick={() => navigate(exploreRoute)} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.cardLibrary}</button>
                             <button onClick={() => navigate('/history')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.history}</button>
                         </div>
                     </div>
@@ -381,7 +385,7 @@ const Home = () => {
                                     {isPortuguese ? 'Iniciar Abertura' : 'Begin Opening'}
                                 </button>
                                 <button
-                                    onClick={() => navigate('/explore')}
+                                    onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
                                     className="hero-cta-secondary px-8 py-4 bg-transparent border border-white/10 text-gray-300 text-sm font-light tracking-wide rounded-sm"
                                     style={{ fontFamily: "'Inter', sans-serif" }}
                                 >
@@ -1774,7 +1778,7 @@ const CardDetails = () => {
                 setIsLoadingApi(false);
             }).catch(() => setIsLoadingApi(false));
         } else {
-            navigate('/explore');
+            navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive');
         }
     }, [cardId, navigate, isPortuguese]);
 
@@ -1787,11 +1791,11 @@ const CardDetails = () => {
             <main className="flex-1 w-full max-w-6xl mx-auto px-6 py-12">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <span onClick={() => navigate('/explore')} className="cursor-pointer hover:text-primary">{t.explore.title}</span>
+                        <span onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')} className="cursor-pointer hover:text-primary">{t.explore.title}</span>
                         <span>/</span>
                         <span className="text-white font-bold">{getCardName(card.id, isPortuguese)}</span>
                     </div>
-                    <button onClick={() => navigate('/explore')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-dark hover:bg-white/5 transition-colors text-sm font-medium">
+                    <button onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-dark hover:bg-white/5 transition-colors text-sm font-medium">
                         <span className="material-symbols-outlined text-base">arrow_back</span> {t.cardDetails.back}
                     </button>
                 </div>
@@ -2126,7 +2130,7 @@ const History = () => {
                         </div>
                         <div className="flex gap-3">
                             <button
-                                onClick={() => navigate('/explore')}
+                                onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
                                 className="px-4 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-all"
                             >
                                 <span className="material-symbols-outlined text-lg">auto_stories</span>
@@ -2943,7 +2947,7 @@ const Explore = () => {
                         return (
                             <div
                                 key={card.id}
-                                onClick={() => navigate(`/explore/${cardSlug}`)}
+                                onClick={() => navigate(`/${isPortuguese ? 'arquivo-arcano' : 'arcane-archive'}/${cardSlug}`)}
                                 className="group relative aspect-[2/3.4] rounded-lg overflow-hidden border border-white/5 bg-surface-dark hover:border-primary/50 transition-all hover:-translate-y-2 cursor-pointer shadow-lg hover:shadow-primary/20"
                             >
                                 <img
@@ -3554,8 +3558,19 @@ const App = () => {
                 <Router>
                     <Routes>
                         <Route path="/" element={<Home />} />
+                        
+                        {/* Rotas em Português */}
+                        <Route path="/arquivo-arcano" element={<Explore />} />
+                        <Route path="/arquivo-arcano/:cardSlug" element={<CardDetails />} />
+                        
+                        {/* Rotas em Inglês */}
+                        <Route path="/arcane-archive" element={<Explore />} />
+                        <Route path="/arcane-archive/:cardSlug" element={<CardDetails />} />
+                        
+                        {/* Rotas antigas (manter compatibilidade) */}
                         <Route path="/explore" element={<Explore />} />
                         <Route path="/explore/:cardId" element={<CardDetails />} />
+                        
                         <Route path="/session" element={<Session />} />
                         <Route path="/result" element={<Result />} />
                         <Route path="/history" element={<History />} />
