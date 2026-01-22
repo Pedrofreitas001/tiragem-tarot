@@ -437,140 +437,18 @@ const Home = () => {
             </section>
 
             {/* Cosmic Mandala Animation Section */}
-            <section className="relative z-10 min-h-screen bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark py-12 md:py-0 px-4 md:px-6 flex items-center justify-center">
-                <style>{`
-          .cosmic-gradient {
-            background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%);
-          }
-          .mandala-glow {
-            box-shadow: 0 0 60px 10px rgba(147, 17, 212, 0.3);
-          }
-          .glass-widget {
-            background: rgba(54, 35, 72, 0.4);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(173, 146, 201, 0.1);
-          }
-          .orbit-rotate {
-            animation: spin 120s linear infinite;
-          }
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-          .float-slow {
-            animation: floating 6s ease-in-out infinite;
-          }
-          @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-          }
-        `}</style>
-
-                {(() => {
-                    const currentDate = new Date();
-                    const cosmicDay = getCosmicDay(currentDate);
-                    const { moonPhase, zodiacSun, planetaryRuler, bestFor, bestFor_pt, avoid, avoid_pt } = cosmicDay;
-
-                    const monthNames = isPortuguese
-                        ? ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
-                        : ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-
-                    return (
-                        <div className="w-full max-w-7xl relative">
-                            {/* CENTRAL MANDALA */}
-                            <div className="relative flex items-center justify-center h-screen md:h-auto">
-                                {/* Outer Orbits */}
-                                <div className="absolute w-[650px] h-[650px] border border-primary/10 rounded-full orbit-rotate hidden md:block"></div>
-                                <div className="absolute w-[550px] h-[550px] border border-primary/20 rounded-full border-dashed orbit-rotate hidden md:block" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
-
-                                {/* The Mandala Body */}
-                                <div className="relative w-80 h-80 md:w-[480px] md:h-[480px] rounded-full bg-background-dark/40 backdrop-blur-xl border border-white/10 flex items-center justify-center mandala-glow">
-                                    {/* SVG Mandala Detail */}
-                                    <svg className="absolute inset-0 p-4 opacity-40 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
-                                        <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
-                                        <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
-                                        <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
-                                    </svg>
-
-                                    {/* Moon Phases Ring */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        {/* Full Moon - Top */}
-                                        <div className="absolute -top-16 md:-top-20 flex flex-col items-center">
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-[0_0_20px_rgba(255,255,255,0.8)]"></div>
-                                            <span className="text-[8px] md:text-[10px] mt-2 uppercase tracking-tighter text-white font-bold">{isPortuguese ? 'Cheia' : 'Full'}</span>
-                                        </div>
-                                        {/* New Moon - Bottom */}
-                                        <div className="absolute -bottom-16 md:-bottom-20 flex flex-col items-center">
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-zinc-900 border border-zinc-700"></div>
-                                            <span className="text-[8px] md:text-[10px] mt-2 uppercase tracking-tighter text-[#ad92c9]">{isPortuguese ? 'Nova' : 'New'}</span>
-                                        </div>
-                                        {/* First Quarter - Right */}
-                                        <div className="absolute -right-16 md:-right-20 flex flex-col items-center">
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden flex">
-                                                <div className="w-1/2 bg-white"></div>
-                                                <div className="w-1/2 bg-zinc-900"></div>
-                                            </div>
-                                            <span className="text-[8px] md:text-[10px] mt-2 uppercase tracking-tighter text-[#ad92c9]">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
-                                        </div>
-                                        {/* Last Quarter - Left */}
-                                        <div className="absolute -left-16 md:-left-20 flex flex-col items-center">
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden flex">
-                                                <div className="w-1/2 bg-zinc-900"></div>
-                                                <div className="w-1/2 bg-white"></div>
-                                            </div>
-                                            <span className="text-[8px] md:text-[10px] mt-2 uppercase tracking-tighter text-[#ad92c9]">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Inner Core */}
-                                    <div className="text-center z-30">
-                                        <h2 className="text-white text-3xl md:text-5xl font-bold tracking-tight mb-1 md:mb-2">{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
-                                        <p className="text-primary text-base md:text-lg font-medium tracking-[0.2em] md:tracking-[0.3em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
-                                        <div className="mt-4 md:mt-6 flex justify-center gap-2">
-                                            <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] md:text-[10px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Mobile-friendly Info Cards */}
-                            <div className="md:hidden mt-12 space-y-4 max-w-2xl mx-auto">
-                                <div className="glass-widget p-6 rounded-xl">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: planetaryRuler.color + '40' }}>
-                                            <span className="material-symbols-outlined text-lg" style={{ color: planetaryRuler.color }}>{planetaryRuler.icon}</span>
-                                        </div>
-                                        <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.planetaryRuler}</h3>
-                                    </div>
-                                    <p className="text-lg font-bold">{isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}</p>
-                                </div>
-
-                                <div className="glass-widget p-6 rounded-xl">
-                                    <h3 className="text-xs uppercase tracking-widest text-green-400 mb-4 flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-sm">check_circle</span>
-                                        {t.cosmic.bestFor}
-                                    </h3>
-                                    <ul className="space-y-2 text-xs">
-                                        {(isPortuguese ? bestFor_pt : bestFor).slice(0, 3).map((item, i) => (
-                                            <li key={i} className="flex items-center gap-2">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })()}
-            </section>
-
-            {/* Lunar Calendar Section */}
-            <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark to-surface-dark">
+            <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark">
                 <div className="max-w-7xl mx-auto">
                     {(() => {
                         const currentDate = new Date();
+                        const cosmicDay = getCosmicDay(currentDate);
+                        const { moonPhase, zodiacSun, planetaryRuler, bestFor, bestFor_pt, avoid, avoid_pt } = cosmicDay;
+
+                        const monthNames = isPortuguese
+                            ? ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+                            : ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+                        // Calendar generation
                         const year = currentDate.getFullYear();
                         const month = currentDate.getMonth();
                         const firstDay = new Date(year, month, 1);
@@ -578,7 +456,7 @@ const Home = () => {
                         const daysInMonth = lastDay.getDate();
                         const startingDayOfWeek = firstDay.getDay();
 
-                        const monthNames = isPortuguese
+                        const calendarMonthNames = isPortuguese
                             ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
                             : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -588,9 +466,8 @@ const Home = () => {
 
                         const getMoonPhaseForDay = (day: number) => {
                             const dateToCheck = new Date(year, month, day);
-                            const dayOfMonth = dateToCheck.getDate();
-                            const lunarCycle = 29.53; // Moon cycle in days
-                            const newMoonDate = new Date(2024, 0, 11); // Known new moon
+                            const lunarCycle = 29.53;
+                            const newMoonDate = new Date(2024, 0, 11);
                             const daysSinceNewMoon = (dateToCheck.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
                             const lunarDay = (daysSinceNewMoon % lunarCycle) / lunarCycle;
 
@@ -609,65 +486,92 @@ const Home = () => {
                         }
 
                         return (
-                            <div className="relative">
-                                {/* Floating Widgets - Now Fixed to sides of calendar */}
-                                {(() => {
-                                    const cosmicDay = getCosmicDay(currentDate);
-                                    const { planetaryRuler, zodiacSun } = cosmicDay;
+                            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                                {/* LEFT: Compact Mandala */}
+                                <div className="flex items-center justify-center">
+                                    <style>{`
+                                        .cosmic-gradient { background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%); }
+                                        .mandala-glow { box-shadow: 0 0 60px 10px rgba(147, 17, 212, 0.3); }
+                                        .glass-widget { background: rgba(54, 35, 72, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(173, 146, 201, 0.1); }
+                                        .orbit-rotate { animation: spin 120s linear infinite; }
+                                        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                                    `}</style>
 
-                                    return (
-                                        <>
-                                            {/* Left Widget */}
-                                            <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-96 glass-widget p-6 rounded-xl w-72 z-20">
-                                                <div className="flex items-center gap-4 mb-4">
-                                                    <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: planetaryRuler.color + '40' }}>
-                                                        <span className="material-symbols-outlined text-2xl" style={{ color: planetaryRuler.color }}>{planetaryRuler.icon}</span>
-                                                    </div>
-                                                    <div>
-                                                        <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.planetaryRuler}</h3>
-                                                        <p className="text-lg font-bold text-white">{isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}</p>
-                                                    </div>
+                                    <div className="relative w-full max-w-sm">
+                                        {/* Outer Orbits - Reduced */}
+                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 border border-primary/10 rounded-full orbit-rotate"></div>
+                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
+
+                                        {/* The Mandala Body - Smaller */}
+                                        <div className="relative w-48 h-48 mx-auto rounded-full bg-background-dark/40 backdrop-blur-xl border border-white/10 flex items-center justify-center mandala-glow">
+                                            {/* SVG Mandala Detail */}
+                                            <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
+                                                <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
+                                                <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
+                                                <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
+                                            </svg>
+
+                                            {/* Moon Phases Ring - Smaller */}
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                {/* Full Moon - Top */}
+                                                <div className="absolute -top-12 flex flex-col items-center">
+                                                    <div className="w-8 h-8 rounded-full bg-white shadow-[0_0_20px_rgba(255,255,255,0.8)]"></div>
+                                                    <span className="text-[7px] mt-1 uppercase tracking-tighter text-white font-bold">{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                 </div>
-                                                <p className="text-sm text-white/70 leading-relaxed italic text-[11px]">
-                                                    {isPortuguese ? planetaryRuler.qualities_pt[0] : planetaryRuler.qualities[0]}
-                                                </p>
+                                                {/* New Moon - Bottom */}
+                                                <div className="absolute -bottom-12 flex flex-col items-center">
+                                                    <div className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-700"></div>
+                                                    <span className="text-[7px] mt-1 uppercase tracking-tighter text-[#ad92c9]">{isPortuguese ? 'Nova' : 'New'}</span>
+                                                </div>
+                                                {/* Waxing - Right */}
+                                                <div className="absolute -right-12 flex flex-col items-center">
+                                                    <div className="w-8 h-8 rounded-full overflow-hidden flex">
+                                                        <div className="w-1/2 bg-white"></div>
+                                                        <div className="w-1/2 bg-zinc-900"></div>
+                                                    </div>
+                                                    <span className="text-[7px] mt-1 uppercase tracking-tighter text-[#ad92c9]">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
+                                                </div>
+                                                {/* Waning - Left */}
+                                                <div className="absolute -left-12 flex flex-col items-center">
+                                                    <div className="w-8 h-8 rounded-full overflow-hidden flex">
+                                                        <div className="w-1/2 bg-zinc-900"></div>
+                                                        <div className="w-1/2 bg-white"></div>
+                                                    </div>
+                                                    <span className="text-[7px] mt-1 uppercase tracking-tighter text-[#ad92c9]">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
+                                                </div>
                                             </div>
 
-                                            {/* Right Widget */}
-                                            <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-96 glass-widget p-6 rounded-xl w-72 z-20">
-                                                <div className="flex items-center gap-3 mb-3">
-                                                    <span className="material-symbols-outlined text-primary text-lg">{zodiacSun.icon}</span>
-                                                    <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.zodiacSeason}</h3>
+                                            {/* Inner Core */}
+                                            <div className="text-center z-30">
+                                                <h2 className="text-white text-xl md:text-2xl font-bold tracking-tight mb-1">{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
+                                                <p className="text-primary text-xs md:text-sm font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
+                                                <div className="mt-3 flex justify-center gap-2">
+                                                    <div className="px-2 py-0.5 bg-primary/20 rounded-full border border-primary/30 text-[7px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
                                                 </div>
-                                                <p className="text-2xl font-bold mb-1 text-white">{isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
-                                                <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden mt-3">
-                                                    <div className="bg-primary h-full w-[65%]"></div>
-                                                </div>
-                                                <p className="text-[10px] text-white/50 mt-2">{isPortuguese ? '65% desta fase' : '65% through phase'}</p>
                                             </div>
-                                        </>
-                                    );
-                                })()}
+                                        </div>
+                                    </div>
+                                </div>
 
-                                {/* Calendar Container */}
-                                <div className="max-w-2xl mx-auto glass-widget rounded-2xl p-8 border border-primary/20">
+                                {/* RIGHT: Calendar */}
+                                <div className="glass-widget rounded-2xl p-6 border border-primary/20">
                                     {/* Calendar Header */}
-                                    <div className="text-center mb-8">
-                                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">{monthNames[month]} {year}</h2>
-                                        <p className="text-primary text-sm uppercase tracking-widest">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</p>
+                                    <div className="text-center mb-6">
+                                        <h2 className="text-2xl md:text-3xl font-bold text-white mb-1">{calendarMonthNames[month]}</h2>
+                                        <p className="text-primary text-xs uppercase tracking-widest">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</p>
                                     </div>
 
                                     {/* Day Names */}
-                                    <div className="grid grid-cols-7 gap-2 md:gap-3 mb-6">
+                                    <div className="grid grid-cols-7 gap-1.5 mb-4">
                                         {dayNames.map(day => (
-                                            <div key={day} className="text-center text-xs md:text-sm font-bold text-[#ad92c9] uppercase tracking-widest py-2">
+                                            <div key={day} className="text-center text-xs font-bold text-[#ad92c9] uppercase tracking-widest py-1">
                                                 {day}
                                             </div>
                                         ))}
                                     </div>
 
                                     {/* Calendar Days */}
-                                    <div className="grid grid-cols-7 gap-2 md:gap-3">
+                                    <div className="grid grid-cols-7 gap-1.5 mb-4">
                                         {calendarDays.map((day, idx) => {
                                             if (day === null) {
                                                 return <div key={`empty-${idx}`} className="aspect-square"></div>;
@@ -681,19 +585,20 @@ const Home = () => {
                                             return (
                                                 <div
                                                     key={day}
-                                                    className={`aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${isToday
+                                                    className={`aspect-square rounded-md flex flex-col items-center justify-center cursor-pointer transition-all duration-300 text-sm ${
+                                                        isToday
                                                             ? 'bg-gradient-to-br from-primary/40 to-primary/20 border-2 border-primary'
                                                             : isFull
-                                                                ? 'bg-white/10 hover:bg-white/15'
-                                                                : isNew
-                                                                    ? 'bg-zinc-900/40 hover:bg-zinc-800/40'
-                                                                    : 'bg-white/5 hover:bg-white/10'
-                                                        } group border border-white/10 hover:border-primary/30`}
+                                                            ? 'bg-white/10 hover:bg-white/15'
+                                                            : isNew
+                                                            ? 'bg-zinc-900/40 hover:bg-zinc-800/40'
+                                                            : 'bg-white/5 hover:bg-white/10'
+                                                    } group border border-white/10 hover:border-primary/30`}
                                                 >
-                                                    <span className="text-xl md:text-2xl mb-1 group-hover:scale-110 transition-transform">
+                                                    <span className="text-lg group-hover:scale-110 transition-transform">
                                                         {moonPhaseData.icon}
                                                     </span>
-                                                    <span className={`text-xs md:text-sm font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
+                                                    <span className={`text-xs font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
                                                         {day}
                                                     </span>
                                                 </div>
@@ -702,23 +607,23 @@ const Home = () => {
                                     </div>
 
                                     {/* Legend */}
-                                    <div className="mt-8 pt-6 border-t border-white/10">
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div className="pt-4 border-t border-white/10">
+                                        <div className="grid grid-cols-2 gap-2 text-xs">
                                             <div className="flex items-center gap-2">
-                                                <span className="text-2xl">🌕</span>
-                                                <span className="text-xs text-white/70">{isPortuguese ? 'Lua Cheia' : 'Full Moon'}</span>
+                                                <span>🌕</span>
+                                                <span className="text-white/70">{isPortuguese ? 'Cheia' : 'Full'}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-2xl">🌑</span>
-                                                <span className="text-xs text-white/70">{isPortuguese ? 'Lua Nova' : 'New Moon'}</span>
+                                                <span>🌑</span>
+                                                <span className="text-white/70">{isPortuguese ? 'Nova' : 'New'}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-2xl">🌒</span>
-                                                <span className="text-xs text-white/70">{isPortuguese ? 'Crescente' : 'Waxing'}</span>
+                                                <span>🌒</span>
+                                                <span className="text-white/70">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-2xl">🌘</span>
-                                                <span className="text-xs text-white/70">{isPortuguese ? 'Minguante' : 'Waning'}</span>
+                                                <span>🌘</span>
+                                                <span className="text-white/70">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                             </div>
                                         </div>
                                     </div>
