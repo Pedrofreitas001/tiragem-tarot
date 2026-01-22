@@ -1,13 +1,17 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ReadingSession, ReadingAnalysis } from "../types";
 
-// Initialize Gemini Client
-// Requires process.env.API_KEY to be set
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Initialize Gemini Client only if API key is available
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+
+let ai: GoogleGenAI | null = null;
+if (API_KEY) {
+  ai = new GoogleGenAI({ apiKey: API_KEY });
+}
 
 export const getGeminiInterpretation = async (session: ReadingSession): Promise<ReadingAnalysis | null> => {
-  if (!process.env.API_KEY) {
-    console.error("API Key is missing.");
+  if (!API_KEY || !ai) {
+    console.warn("Gemini API Key is not configured. Using fallback interpretation.");
     return null;
   }
 
