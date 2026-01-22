@@ -532,36 +532,6 @@ const Home = () => {
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* FLOATING WIDGETS */}
-                                {/* Widget: Planetary Ruler (Left) */}
-                                <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 glass-widget p-6 rounded-xl w-64 float-slow z-30" style={{ animationDelay: '0s' }}>
-                                    <div className="flex items-center gap-4 mb-4">
-                                        <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: planetaryRuler.color + '40' }}>
-                                            <span className="material-symbols-outlined text-2xl" style={{ color: planetaryRuler.color }}>{planetaryRuler.icon}</span>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.planetaryRuler}</h3>
-                                            <p className="text-lg font-bold">{isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-sm text-white/70 leading-relaxed italic text-[11px]">
-                                        {isPortuguese ? planetaryRuler.qualities_pt[0] : planetaryRuler.qualities[0]}
-                                    </p>
-                                </div>
-
-                                {/* Widget: Zodiac Season (Right) */}
-                                <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 glass-widget p-6 rounded-xl w-60 float-slow z-30" style={{ animationDelay: '1.5s' }}>
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-primary text-lg">{zodiacSun.icon}</span>
-                                        <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.zodiacSeason}</h3>
-                                    </div>
-                                    <p className="text-2xl font-bold mb-1">{isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
-                                    <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden mt-3">
-                                        <div className="bg-primary h-full w-[65%]"></div>
-                                    </div>
-                                    <p className="text-[10px] text-white/50 mt-2">{isPortuguese ? '65% desta fase' : '65% through phase'}</p>
-                                </div>
                             </div>
 
                             {/* Mobile-friendly Info Cards */}
@@ -594,6 +564,169 @@ const Home = () => {
                         </div>
                     );
                 })()}
+            </section>
+
+            {/* Lunar Calendar Section */}
+            <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark to-surface-dark">
+                <div className="max-w-7xl mx-auto">
+                    {(() => {
+                        const currentDate = new Date();
+                        const year = currentDate.getFullYear();
+                        const month = currentDate.getMonth();
+                        const firstDay = new Date(year, month, 1);
+                        const lastDay = new Date(year, month + 1, 0);
+                        const daysInMonth = lastDay.getDate();
+                        const startingDayOfWeek = firstDay.getDay();
+
+                        const monthNames = isPortuguese
+                            ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+                            : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+                        const dayNames = isPortuguese
+                            ? ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
+                            : ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+                        const getMoonPhaseForDay = (day: number) => {
+                            const dateToCheck = new Date(year, month, day);
+                            const dayOfMonth = dateToCheck.getDate();
+                            const lunarCycle = 29.53; // Moon cycle in days
+                            const newMoonDate = new Date(2024, 0, 11); // Known new moon
+                            const daysSinceNewMoon = (dateToCheck.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
+                            const lunarDay = (daysSinceNewMoon % lunarCycle) / lunarCycle;
+
+                            if (lunarDay < 0.125 || lunarDay > 0.875) return { phase: 'new', icon: '🌑', pt: 'Nova' };
+                            if (lunarDay < 0.375) return { phase: 'waxing', icon: '🌒', pt: 'Crescente' };
+                            if (lunarDay < 0.625) return { phase: 'full', icon: '🌕', pt: 'Cheia' };
+                            return { phase: 'waning', icon: '🌘', pt: 'Minguante' };
+                        };
+
+                        const calendarDays = [];
+                        for (let i = 0; i < startingDayOfWeek; i++) {
+                            calendarDays.push(null);
+                        }
+                        for (let i = 1; i <= daysInMonth; i++) {
+                            calendarDays.push(i);
+                        }
+
+                        return (
+                            <div className="relative">
+                                {/* Floating Widgets - Now Fixed to sides of calendar */}
+                                {(() => {
+                                    const cosmicDay = getCosmicDay(currentDate);
+                                    const { planetaryRuler, zodiacSun } = cosmicDay;
+
+                                    return (
+                                        <>
+                                            {/* Left Widget */}
+                                            <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-96 glass-widget p-6 rounded-xl w-72 z-20">
+                                                <div className="flex items-center gap-4 mb-4">
+                                                    <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: planetaryRuler.color + '40' }}>
+                                                        <span className="material-symbols-outlined text-2xl" style={{ color: planetaryRuler.color }}>{planetaryRuler.icon}</span>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.planetaryRuler}</h3>
+                                                        <p className="text-lg font-bold text-white">{isPortuguese ? planetaryRuler.planet_pt : planetaryRuler.planet}</p>
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm text-white/70 leading-relaxed italic text-[11px]">
+                                                    {isPortuguese ? planetaryRuler.qualities_pt[0] : planetaryRuler.qualities[0]}
+                                                </p>
+                                            </div>
+
+                                            {/* Right Widget */}
+                                            <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-96 glass-widget p-6 rounded-xl w-72 z-20">
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <span className="material-symbols-outlined text-primary text-lg">{zodiacSun.icon}</span>
+                                                    <h3 className="text-xs uppercase tracking-widest text-[#ad92c9]">{t.cosmic.zodiacSeason}</h3>
+                                                </div>
+                                                <p className="text-2xl font-bold mb-1 text-white">{isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
+                                                <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden mt-3">
+                                                    <div className="bg-primary h-full w-[65%]"></div>
+                                                </div>
+                                                <p className="text-[10px] text-white/50 mt-2">{isPortuguese ? '65% desta fase' : '65% through phase'}</p>
+                                            </div>
+                                        </>
+                                    );
+                                })()}
+
+                                {/* Calendar Container */}
+                                <div className="max-w-2xl mx-auto glass-widget rounded-2xl p-8 border border-primary/20">
+                                    {/* Calendar Header */}
+                                    <div className="text-center mb-8">
+                                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">{monthNames[month]} {year}</h2>
+                                        <p className="text-primary text-sm uppercase tracking-widest">{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</p>
+                                    </div>
+
+                                    {/* Day Names */}
+                                    <div className="grid grid-cols-7 gap-2 md:gap-3 mb-6">
+                                        {dayNames.map(day => (
+                                            <div key={day} className="text-center text-xs md:text-sm font-bold text-[#ad92c9] uppercase tracking-widest py-2">
+                                                {day}
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Calendar Days */}
+                                    <div className="grid grid-cols-7 gap-2 md:gap-3">
+                                        {calendarDays.map((day, idx) => {
+                                            if (day === null) {
+                                                return <div key={`empty-${idx}`} className="aspect-square"></div>;
+                                            }
+
+                                            const moonPhaseData = getMoonPhaseForDay(day);
+                                            const isToday = day === currentDate.getDate();
+                                            const isFull = moonPhaseData.phase === 'full';
+                                            const isNew = moonPhaseData.phase === 'new';
+
+                                            return (
+                                                <div
+                                                    key={day}
+                                                    className={`aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${isToday
+                                                            ? 'bg-gradient-to-br from-primary/40 to-primary/20 border-2 border-primary'
+                                                            : isFull
+                                                                ? 'bg-white/10 hover:bg-white/15'
+                                                                : isNew
+                                                                    ? 'bg-zinc-900/40 hover:bg-zinc-800/40'
+                                                                    : 'bg-white/5 hover:bg-white/10'
+                                                        } group border border-white/10 hover:border-primary/30`}
+                                                >
+                                                    <span className="text-xl md:text-2xl mb-1 group-hover:scale-110 transition-transform">
+                                                        {moonPhaseData.icon}
+                                                    </span>
+                                                    <span className={`text-xs md:text-sm font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
+                                                        {day}
+                                                    </span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Legend */}
+                                    <div className="mt-8 pt-6 border-t border-white/10">
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-2xl">🌕</span>
+                                                <span className="text-xs text-white/70">{isPortuguese ? 'Lua Cheia' : 'Full Moon'}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-2xl">🌑</span>
+                                                <span className="text-xs text-white/70">{isPortuguese ? 'Lua Nova' : 'New Moon'}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-2xl">🌒</span>
+                                                <span className="text-xs text-white/70">{isPortuguese ? 'Crescente' : 'Waxing'}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-2xl">🌘</span>
+                                                <span className="text-xs text-white/70">{isPortuguese ? 'Minguante' : 'Waning'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })()}
+                </div>
             </section>
 
             {/* Shop CTA */}
@@ -739,8 +872,8 @@ const Shop = () => {
                                 key={cat.key}
                                 onClick={() => setFilter(cat.key)}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${filter === cat.key
-                                        ? 'bg-primary text-white'
-                                        : 'bg-surface-dark text-gray-400 hover:text-white hover:bg-white/10'
+                                    ? 'bg-primary text-white'
+                                    : 'bg-surface-dark text-gray-400 hover:text-white hover:bg-white/10'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-lg">{cat.icon}</span>
@@ -908,8 +1041,8 @@ const ProductDetail = () => {
                                                 key={variant.id}
                                                 onClick={() => setSelectedVariant(variant)}
                                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedVariant?.id === variant.id
-                                                        ? 'bg-primary text-white'
-                                                        : 'bg-surface-dark text-gray-300 hover:bg-white/10 border border-border-dark'
+                                                    ? 'bg-primary text-white'
+                                                    : 'bg-surface-dark text-gray-300 hover:bg-white/10 border border-border-dark'
                                                     }`}
                                             >
                                                 {vName}
@@ -2415,8 +2548,8 @@ const Session = () => {
                             key={s.id}
                             onClick={() => navigate('/session', { state: { spread: s } })}
                             className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full pl-4 pr-4 border transition-colors ${spread.id === s.id
-                                    ? 'bg-primary text-white border-primary'
-                                    : 'bg-surface-highlight hover:bg-[#3d2b45] border-border-dark text-white/70 hover:text-white'
+                                ? 'bg-primary text-white border-primary'
+                                : 'bg-surface-highlight hover:bg-[#3d2b45] border-border-dark text-white/70 hover:text-white'
                                 }`}
                         >
                             <p className="text-sm font-medium">{s.name}</p>
@@ -2435,8 +2568,8 @@ const Session = () => {
                             return (
                                 <div key={idx} className="flex flex-col items-center gap-2">
                                     <div className={`relative w-full aspect-[2/3] rounded-xl overflow-hidden ${selected
-                                            ? 'shadow-[0_0_30px_rgba(147,17,212,0.4)] border-2 border-primary'
-                                            : 'border-2 border-dashed border-border-dark bg-surface-dark/50'
+                                        ? 'shadow-[0_0_30px_rgba(147,17,212,0.4)] border-2 border-primary'
+                                        : 'border-2 border-dashed border-border-dark bg-surface-dark/50'
                                         }`}>
                                         {selected ? (
                                             <div className={`card-flip w-full h-full ${selected.flipped ? 'flipped' : ''}`}>
