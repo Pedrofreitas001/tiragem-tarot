@@ -2677,16 +2677,16 @@ const Session = () => {
                             const isSelected = selectedCards.some(c => c.card.id === card.id);
                             const totalCards = deck.length;
 
-                            // Distribute cards in a 180-degree arc (more curved, tighter spacing)
-                            const angle = (index / (totalCards - 1)) * 200 - 100; // -100 to +100 degrees (wider arc)
+                            // Distribute cards in a 180-degree arc with tight overlap (78 cards total)
+                            const angle = (index / (totalCards - 1)) * 200 - 100; // -100 to +100 degrees (200° arc)
                             const radius = 350; // Increased radius for more curvature
                             const centerX = 50; // Center percentage
                             const centerY = 120; // Lower center for better arc visibility
 
-                            // Calculate position on arc
+                            // Calculate position on arc with much tighter spacing for 78 cards
                             const radians = (angle * Math.PI) / 180;
-                            const xPos = centerX + (Math.sin(radians) * radius * 0.28); // Reduced to 0.28 to fit better
-                            const yPos = centerY - (Math.cos(radians) * radius * 0.25); // Increased to 0.25 for more vertical curve
+                            const xPos = centerX + (Math.sin(radians) * radius * 0.15); // Reduced to 0.15 for tighter overlap
+                            const yPos = centerY - (Math.cos(radians) * radius * 0.25); // Vertical curve
 
                             // Rotation follows the arc tangent
                             const rotation = angle * 0.9; // Slightly reduced rotation for smoother look
