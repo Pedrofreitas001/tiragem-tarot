@@ -605,59 +605,58 @@ const Home = () => {
                                         }
                                     `}</style>
 
-                                        <div className="relative w-full max-w-3xl mx-auto">
-                                            {/* Outer Orbits - Expanded */}
-                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-primary/10 rounded-full orbit-rotate"></div>
-                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
+                                    <div className="relative w-full max-w-3xl mx-auto">
+                                        {/* Outer Orbits - Expanded */}
+                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-primary/10 rounded-full orbit-rotate"></div>
+                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
 
-                                            {/* The Mandala Body - Larger */}
-                                            <div className="relative w-96 h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
-                                                {/* SVG Mandala Detail */}
-                                                <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
-                                                    <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
-                                                    <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
-                                                    <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
-                                                </svg>
+                                        {/* The Mandala Body - Larger */}
+                                        <div className="relative w-96 h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
+                                            {/* SVG Mandala Detail */}
+                                            <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
+                                                <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
+                                                <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
+                                                <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
+                                            </svg>
 
-                                                {/* Moon Phases Ring - Larger */}
-                                                <div className="absolute inset-0 flex items-center justify-center">
-                                                    {/* Full Moon - Top */}
-                                                    <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
-                                                            🌕
-                                                        </div>
-                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
+                                            {/* Moon Phases Ring - Larger */}
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                {/* Full Moon - Top */}
+                                                <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
+                                                        🌕
                                                     </div>
-                                                    {/* New Moon - Bottom */}
-                                                    <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
-                                                            🌑
-                                                        </div>
-                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
-                                                    </div>
-                                                    {/* Waxing - Right */}
-                                                    <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                            🌒
-                                                        </div>
-                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
-                                                    </div>
-                                                    {/* Waning - Left */}
-                                                    <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                            🌘
-                                                        </div>
-                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
-                                                    </div>
+                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                 </div>
-
-                                                {/* Inner Core */}
-                                                <div className="text-center z-30">
-                                                    <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-1">{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
-                                                    <p className="text-primary text-sm md:text-base font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
-                                                    <div className="mt-3 flex justify-center gap-2">
-                                                        <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
+                                                {/* New Moon - Bottom */}
+                                                <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
+                                                        🌑
                                                     </div>
+                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
+                                                </div>
+                                                {/* Waxing - Right */}
+                                                <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
+                                                        🌒
+                                                    </div>
+                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
+                                                </div>
+                                                {/* Waning - Left */}
+                                                <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
+                                                        🌘
+                                                    </div>
+                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Inner Core */}
+                                            <div className="text-center z-30">
+                                                <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-1">{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
+                                                <p className="text-primary text-sm md:text-base font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
+                                                <div className="mt-3 flex justify-center gap-2">
+                                                    <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -669,26 +668,26 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Shop CTA */}
-            <section className="relative z-10 py-16 px-6">
-                <div className="max-w-[800px] mx-auto text-center">
-                    <div className="bg-gradient-to-br from-surface-dark to-card-dark rounded-2xl p-8 md:p-12 border border-border-dark">
-                        <span className="material-symbols-outlined text-5xl text-primary mb-4">storefront</span>
-                        <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{t.home.featuredProducts}</h2>
-                        <p className="text-gray-400 mb-6">{t.home.featuredProductsSubtitle}</p>
-                        <button
-                            onClick={() => navigate('/shop')}
-                            className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary-hover rounded-xl text-white font-bold transition-all"
-                        >
-                            {t.nav.shop}
-                            <span className="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <Footer />
+    {/* Shop CTA */ }
+    < section className = "relative z-10 py-16 px-6" >
+        <div className="max-w-[800px] mx-auto text-center">
+            <div className="bg-gradient-to-br from-surface-dark to-card-dark rounded-2xl p-8 md:p-12 border border-border-dark">
+                <span className="material-symbols-outlined text-5xl text-primary mb-4">storefront</span>
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{t.home.featuredProducts}</h2>
+                <p className="text-gray-400 mb-6">{t.home.featuredProductsSubtitle}</p>
+                <button
+                    onClick={() => navigate('/shop')}
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary-hover rounded-xl text-white font-bold transition-all"
+                >
+                    {t.nav.shop}
+                    <span className="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
         </div>
+            </section >
+
+    <Footer />
+        </div >
     );
 };
 
