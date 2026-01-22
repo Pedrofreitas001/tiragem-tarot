@@ -292,78 +292,149 @@ const Home = () => {
 
     return (
         <div className="relative flex min-h-screen w-full flex-col" style={{
-            backgroundColor: '#1a1225',
+            backgroundColor: '#161320',
             backgroundAttachment: 'fixed'
         }}>
             <Header />
             <CartDrawer />
 
-            {/* Optimized Stars Background - Fixed position */}
+            {/* Minimal Stars Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
-                {/* Subtle stars with better distribution */}
-                <div className="absolute w-0.5 h-0.5 bg-white/70 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.8)]" style={{ top: '8%', left: '12%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/50 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.6)]" style={{ top: '18%', left: '78%' }} />
-                <div className="absolute w-1 h-1 bg-white/80 rounded-full shadow-[0_0_3px_rgba(255,255,255,0.9)]" style={{ top: '14%', left: '42%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/60 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.7)]" style={{ top: '28%', left: '22%' }} />
-                <div className="absolute w-1 h-1 bg-white/90 rounded-full shadow-[0_0_3px_rgba(255,255,255,1)]" style={{ top: '24%', left: '68%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/55 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.6)]" style={{ top: '38%', left: '8%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/75 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.8)]" style={{ top: '33%', left: '88%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/65 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.7)]" style={{ top: '48%', left: '3%' }} />
-                <div className="absolute w-1 h-1 bg-white/85 rounded-full shadow-[0_0_3px_rgba(255,255,255,0.9)]" style={{ top: '43%', left: '93%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.5)]" style={{ top: '58%', left: '18%' }} />
-                <div className="absolute w-1 h-1 bg-white/95 rounded-full shadow-[0_0_3px_rgba(255,255,255,1)]" style={{ top: '53%', left: '72%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/60 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.7)]" style={{ top: '68%', left: '32%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/70 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.8)]" style={{ top: '63%', left: '82%' }} />
-                <div className="absolute w-1 h-1 bg-white/80 rounded-full shadow-[0_0_3px_rgba(255,255,255,0.9)]" style={{ top: '78%', left: '48%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/50 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.6)]" style={{ top: '73%', left: '13%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/65 rounded-full shadow-[0_0_2px_rgba(255,255,255,0.7)]" style={{ top: '83%', left: '62%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-purple-300/60 rounded-full shadow-[0_0_2px_rgba(216,180,254,0.7)]" style={{ top: '11%', left: '52%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-purple-300/50 rounded-full shadow-[0_0_2px_rgba(216,180,254,0.6)]" style={{ top: '21%', left: '38%' }} />
-                <div className="absolute w-1 h-1 bg-purple-300/70 rounded-full shadow-[0_0_3px_rgba(216,180,254,0.8)]" style={{ top: '36%', left: '58%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-purple-300/55 rounded-full shadow-[0_0_2px_rgba(216,180,254,0.6)]" style={{ top: '46%', left: '28%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '12%', left: '15%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/25 rounded-full" style={{ top: '8%', left: '68%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '25%', left: '42%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/20 rounded-full" style={{ top: '35%', left: '82%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/28 rounded-full" style={{ top: '48%', left: '22%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '62%', left: '58%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/22 rounded-full" style={{ top: '75%', left: '35%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/26 rounded-full" style={{ top: '88%', left: '72%' }} />
             </div>
 
-            {/* Hero Section - Clean & Modern */}
-            <section className="relative z-10 min-h-[85vh] flex items-center justify-center overflow-hidden">
+            {/* Hero Section - Editorial Premium */}
+            <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden py-16">
                 <style dangerouslySetInnerHTML={{
                     __html: `
-                    .glow-button {
-                        box-shadow: 0 0 15px rgba(147, 17, 212, 0.3);
+                    @keyframes rotate-slow {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(360deg); }
+                    }
+                    @keyframes rotate-reverse {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(-360deg); }
+                    }
+                    @keyframes pulse-subtle {
+                        0%, 100% { opacity: 0.4; }
+                        50% { opacity: 0.6; }
+                    }
+                    .arcane-ring-outer {
+                        animation: rotate-slow 30s linear infinite;
+                    }
+                    .arcane-ring-middle {
+                        animation: rotate-reverse 25s linear infinite;
+                    }
+                    .arcane-ring-inner {
+                        animation: rotate-slow 20s linear infinite;
+                    }
+                    .arcane-center {
+                        animation: pulse-subtle 4s ease-in-out infinite;
+                    }
+                    .hero-cta-primary {
+                        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    .hero-cta-primary:hover {
+                        transform: translateY(-2px);
+                        background-color: rgba(135, 95, 175, 0.95);
+                    }
+                    .hero-cta-secondary {
+                        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    .hero-cta-secondary:hover {
+                        transform: translateY(-2px);
+                        border-color: rgba(255, 255, 255, 0.2);
+                        background-color: rgba(255, 255, 255, 0.03);
                     }
                 `}} />
 
-                {/* Subtle circular borders */}
-                <div className="absolute inset-0">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[58%] w-[700px] h-[700px] border border-white/[0.02] rounded-full" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[58%] w-[900px] h-[900px] border border-white/[0.015] rounded-full" />
-                </div>
+                <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-12 w-full">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                        
+                        {/* Left Column - Content */}
+                        <div className="space-y-8 lg:pr-8">
+                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-white" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                {isPortuguese ? 'Observe o que se revela.' : 'Observe what reveals itself.'}
+                            </h1>
 
-                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center -mt-12">
-                    <h1 className="text-6xl md:text-8xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60" style={{ fontFamily: "'Cinzel Decorative', serif" }}>
-                        {isPortuguese ? 'Revele seu destino com o Tarot' : 'Reveal your destiny with Tarot'}
-                    </h1>
+                            <p className="text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
+                                {isPortuguese
+                                    ? 'Um oráculo digital para registrar padrões, refletir escolhas e acompanhar sua jornada simbólica.'
+                                    : 'A digital oracle to record patterns, reflect on choices, and track your symbolic journey.'}
+                            </p>
 
-                    <p className="text-lg md:text-xl text-[#c4b5cc] font-normal leading-relaxed max-w-2xl mx-auto mb-10" style={{ fontFamily: "'Crimson Text', serif" }}>
-                        {isPortuguese
-                            ? 'Leitura de Tarot grátis com interpretação personalizada. Onde a sabedoria ancestral encontra a tecnologia moderna.'
-                            : 'Free Tarot reading with personalized interpretation. Where ancient wisdom meets modern technology.'}
-                    </p>
+                            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                                <button
+                                    onClick={() => handleSelectSpread(SPREADS[0])}
+                                    className="hero-cta-primary px-8 py-4 bg-[#875faf] text-white text-sm font-medium tracking-wide rounded-sm"
+                                    style={{ fontFamily: "'Inter', sans-serif" }}
+                                >
+                                    {isPortuguese ? 'Iniciar Abertura' : 'Begin Opening'}
+                                </button>
+                                <button
+                                    onClick={() => navigate('/explore')}
+                                    className="hero-cta-secondary px-8 py-4 bg-transparent border border-white/10 text-gray-300 text-sm font-light tracking-wide rounded-sm"
+                                    style={{ fontFamily: "'Inter', sans-serif" }}
+                                >
+                                    {isPortuguese ? 'Explorar o Arquivo Arcano' : 'Explore the Arcane Archive'}
+                                </button>
+                            </div>
+                        </div>
 
-                    <div className="flex flex-col md:flex-row gap-6 justify-center">
-                        <button
-                            onClick={() => handleSelectSpread(SPREADS[0])}
-                            className="glow-button group flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 px-10 py-4 rounded-full transition-all"
-                        >
-                            <span className="text-sm font-bold uppercase tracking-widest">{t.home.startReading}</span>
-                            <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">auto_mode</span>
-                        </button>
-                        <button
-                            onClick={() => navigate('/explore')}
-                            className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-10 py-4 rounded-full transition-all"
-                        >
-                            <span className="text-sm font-bold uppercase tracking-widest">{t.home.exploreCards}</span>
-                            <span className="material-symbols-outlined text-lg">history_edu</span>
-                        </button>
+                        {/* Right Column - Arcane Symbol */}
+                        <div className="flex items-center justify-center lg:justify-end">
+                            <div className="relative w-[380px] h-[380px] md:w-[440px] md:h-[440px]">
+                                {/* Outer Ring */}
+                                <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.15)" strokeWidth="1" fill="none" />
+                                    <circle cx="220" cy="40" r="3" fill="rgba(135, 95, 175, 0.4)" />
+                                    <circle cx="220" cy="400" r="3" fill="rgba(135, 95, 175, 0.4)" />
+                                    <circle cx="40" cy="220" r="3" fill="rgba(135, 95, 175, 0.4)" />
+                                    <circle cx="400" cy="220" r="3" fill="rgba(135, 95, 175, 0.4)" />
+                                    <path d="M 220,20 L 220,50" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1" />
+                                    <path d="M 220,390 L 220,420" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1" />
+                                    <path d="M 20,220 L 50,220" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1" />
+                                    <path d="M 390,220 L 420,220" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1" />
+                                </svg>
+
+                                {/* Middle Ring */}
+                                <svg className="arcane-ring-middle absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="220" cy="220" r="140" stroke="rgba(135, 95, 175, 0.12)" strokeWidth="1" fill="none" />
+                                    <circle cx="220" cy="80" r="2.5" fill="rgba(255, 255, 255, 0.3)" />
+                                    <circle cx="220" cy="360" r="2.5" fill="rgba(255, 255, 255, 0.3)" />
+                                    <circle cx="80" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.3)" />
+                                    <circle cx="360" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.3)" />
+                                    <circle cx="130" cy="130" r="2" fill="rgba(135, 95, 175, 0.25)" />
+                                    <circle cx="310" cy="130" r="2" fill="rgba(135, 95, 175, 0.25)" />
+                                    <circle cx="130" cy="310" r="2" fill="rgba(135, 95, 175, 0.25)" />
+                                    <circle cx="310" cy="310" r="2" fill="rgba(135, 95, 175, 0.25)" />
+                                </svg>
+
+                                {/* Inner Ring */}
+                                <svg className="arcane-ring-inner absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="220" cy="220" r="80" stroke="rgba(135, 95, 175, 0.2)" strokeWidth="1.5" fill="none" />
+                                </svg>
+
+                                {/* Center Symbol */}
+                                <div className="arcane-center absolute inset-0 flex items-center justify-center">
+                                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M 30,5 L 35,20 L 50,20 L 38,30 L 42,45 L 30,37 L 18,45 L 22,30 L 10,20 L 25,20 Z" 
+                                              fill="none" 
+                                              stroke="rgba(255, 255, 255, 0.5)" 
+                                              strokeWidth="1" />
+                                        <circle cx="30" cy="30" r="4" fill="rgba(135, 95, 175, 0.6)" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </section>
@@ -856,8 +927,8 @@ const Shop = () => {
                                             key={cat.key}
                                             onClick={() => setFilter(cat.key)}
                                             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${filter === cat.key
-                                                    ? 'bg-primary text-white'
-                                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                                ? 'bg-primary text-white'
+                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
                                                 }`}
                                         >
                                             <span className="material-symbols-outlined text-base">{cat.icon}</span>
