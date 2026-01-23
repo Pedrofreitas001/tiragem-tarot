@@ -139,7 +139,7 @@ const Header = () => {
 
     const isActive = (path: string) => location.pathname === path;
     const itemCount = getItemCount();
-    
+
     const exploreRoute = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
 
     return (
@@ -210,7 +210,7 @@ const Header = () => {
 const Footer = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
-    
+
     const exploreRoute = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
 
     return (
@@ -1739,8 +1739,11 @@ const Checkout = () => {
 };
 
 // Card Details Page
+
 const CardDetails = () => {
-    const { cardId } = useParams();
+    const params = useParams();
+    const cardId = params.cardId;
+    const cardSlug = params.cardSlug;
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
     const [card, setCard] = useState<TarotCard | null>(null);
@@ -1749,12 +1752,19 @@ const CardDetails = () => {
 
     useEffect(() => {
         const deck = generateDeck();
-        // Try to find card by ID first, then by slug
-        let foundCard = deck.find(c => c.id === cardId);
+        let foundCard: TarotCard | undefined;
 
-        if (!foundCard && cardId) {
-            // Try to find by slug in the complete database
-            const cardData = getCardBySlug(cardId);
+        // Prioridade: cardId (explore), depois cardSlug (arquivo-arcano/arcane-archive)
+        if (cardId) {
+            foundCard = deck.find(c => c.id === cardId);
+            if (!foundCard) {
+                const cardData = getCardBySlug(cardId);
+                if (cardData) {
+                    foundCard = deck.find(c => c.id === cardData.id);
+                }
+            }
+        } else if (cardSlug) {
+            const cardData = getCardBySlug(cardSlug);
             if (cardData) {
                 foundCard = deck.find(c => c.id === cardData.id);
             }
@@ -1780,7 +1790,7 @@ const CardDetails = () => {
         } else {
             navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive');
         }
-    }, [cardId, navigate, isPortuguese]);
+    }, [cardId, cardSlug, navigate, isPortuguese]);
 
     if (!card) return null;
 
@@ -3558,19 +3568,19 @@ const App = () => {
                 <Router>
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        
+
                         {/* Rotas em Português */}
                         <Route path="/arquivo-arcano" element={<Explore />} />
                         <Route path="/arquivo-arcano/:cardSlug" element={<CardDetails />} />
-                        
+
                         {/* Rotas em Inglês */}
                         <Route path="/arcane-archive" element={<Explore />} />
                         <Route path="/arcane-archive/:cardSlug" element={<CardDetails />} />
-                        
+
                         {/* Rotas antigas (manter compatibilidade) */}
                         <Route path="/explore" element={<Explore />} />
                         <Route path="/explore/:cardId" element={<CardDetails />} />
-                        
+
                         <Route path="/session" element={<Session />} />
                         <Route path="/result" element={<Result />} />
                         <Route path="/history" element={<History />} />
