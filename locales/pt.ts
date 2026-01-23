@@ -2,6 +2,7 @@ export const pt = {
   // Header
   nav: {
     home: "Início",
+    tarot: "Tarot",
     newReading: "Nova Tiragem",
     history: "Histórico",
     cardMeanings: "Arquivo Arcano",

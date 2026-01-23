@@ -4,6 +4,7 @@ export const en: TranslationKeys = {
   // Header
   nav: {
     home: "Home",
+    tarot: "Tarot",
     newReading: "New Reading",
     history: "History",
     cardMeanings: "Arcane Archive",

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
-import { getGeminiInterpretation } from './services/geminiService';
+import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured } from './services/geminiService';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
 import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
 import { CartProvider, useCart } from './contexts/CartContext';
@@ -163,6 +163,9 @@ const Header = () => {
                             <button onClick={() => navigate('/')} className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.home}
                             </button>
+                            <button onClick={() => { navigate('/'); setTimeout(() => document.getElementById('spreads')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-sm font-medium transition-colors text-gray-400 hover:text-white">
+                                {t.nav.tarot}
+                            </button>
                             <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.cardMeanings}
                             </button>
@@ -204,6 +207,7 @@ const Header = () => {
                     {mobileMenuOpen && (
                         <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
                             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
+                            <button onClick={() => { navigate('/'); setMobileMenuOpen(false); setTimeout(() => document.getElementById('spreads')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
                             <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
@@ -282,8 +286,20 @@ const Footer = () => {
 const Home = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
+    const { checkAccess, readingsRemaining } = usePaywall();
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const { user, incrementReadingCount } = useAuth();
 
-    const handleSelectSpread = (spread: Spread) => {
+    const handleSelectSpread = async (spread: Spread) => {
+        if (!checkAccess('readings')) {
+            setShowPaywall(true);
+            return;
+        }
+        // Increment reading count when starting a new reading
+        if (user) {
+            await incrementReadingCount();
+        }
         navigate('/session', { state: { spread } });
     };
 
@@ -452,7 +468,7 @@ const Home = () => {
             </section>
 
             {/* Spread Selection - Premium Cards Style */}
-            <section className="py-16 md:py-24 px-4 md:px-6">
+            <section id="spreads" className="py-16 md:py-24 px-4 md:px-6">
                 <div className="max-w-[1200px] mx-auto">
                     <div className="text-center md:text-left mb-10 md:mb-14 px-2">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{t.home.chooseReading}</h2>
@@ -1061,6 +1077,20 @@ const Home = () => {
             </section>
 
             <Footer />
+
+            {/* Paywall Modal */}
+            <PaywallModal
+                isOpen={showPaywall}
+                onClose={() => setShowPaywall(false)}
+                feature="readings"
+                onLogin={() => {
+                    setShowPaywall(false);
+                    setShowAuthModal(true);
+                }}
+            />
+
+            {/* Auth Modal */}
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </div >
     );
 };
@@ -3335,6 +3365,7 @@ const Result = () => {
     const state = location.state as any;
 
     const [analysis, setAnalysis] = useState<ReadingAnalysis | null>(null);
+    const [structuredSynthesis, setStructuredSynthesis] = useState<StructuredSynthesis | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -3356,8 +3387,14 @@ const Result = () => {
                 date: new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US')
             };
 
-            const result = await getGeminiInterpretation(session);
+            // Fetch both interpretations in parallel
+            const [result, synthesis] = await Promise.all([
+                getGeminiInterpretation(session),
+                isGeminiConfigured() ? getStructuredSynthesis(session, isPortuguese) : Promise.resolve(null)
+            ]);
+
             setAnalysis(result);
+            setStructuredSynthesis(synthesis);
             setIsLoading(false);
 
             // Save to history
@@ -3474,10 +3511,70 @@ const Result = () => {
                                         <div className="h-4 bg-white/10 rounded w-4/5"></div>
                                         <p className="text-primary text-xs mt-4">{t.result.loading}</p>
                                     </div>
+                                ) : structuredSynthesis ? (
+                                    <>
+                                        {/* Tema Central Badge */}
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                                structuredSynthesis.energia_geral === 'positiva' ? 'bg-green-500/20 text-green-400' :
+                                                structuredSynthesis.energia_geral === 'desafiadora' ? 'bg-orange-500/20 text-orange-400' :
+                                                'bg-blue-500/20 text-blue-400'
+                                            }`}>
+                                                {structuredSynthesis.energia_geral === 'positiva' ? (isPortuguese ? '✨ Energia Positiva' : '✨ Positive Energy') :
+                                                 structuredSynthesis.energia_geral === 'desafiadora' ? (isPortuguese ? '🔥 Energia Desafiadora' : '🔥 Challenging Energy') :
+                                                 (isPortuguese ? '⚖️ Energia Neutra' : '⚖️ Neutral Energy')}
+                                            </span>
+                                        </div>
+
+                                        {/* Tema Central */}
+                                        <div className="mb-4 p-3 rounded-lg bg-white/5 border border-white/10">
+                                            <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Tema Central' : 'Central Theme'}</span>
+                                            <p className="text-white font-medium mt-1">{structuredSynthesis.tema_central}</p>
+                                        </div>
+
+                                        {/* Síntese Principal */}
+                                        <p className="text-gray-200 leading-relaxed text-base mb-4">
+                                            {structuredSynthesis.sintese}
+                                        </p>
+
+                                        {/* Conexões */}
+                                        {structuredSynthesis.conexoes && structuredSynthesis.conexoes.length > 0 && (
+                                            <div className="mb-4">
+                                                <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Conexões entre as Cartas' : 'Card Connections'}</span>
+                                                <ul className="mt-2 space-y-1">
+                                                    {structuredSynthesis.conexoes.map((conexao, i) => (
+                                                        <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                                            <span className="text-[#875faf] mt-0.5">•</span>
+                                                            {conexao}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+
+                                        {/* Elementos em Destaque */}
+                                        {structuredSynthesis.elementos_destaque && structuredSynthesis.elementos_destaque.length > 0 && (
+                                            <div className="flex flex-wrap gap-2 mb-4">
+                                                {structuredSynthesis.elementos_destaque.map((elemento, i) => (
+                                                    <span key={i} className="px-2 py-1 rounded-md bg-[#875faf]/20 text-[#a77fd4] text-xs">
+                                                        {elemento}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Pergunta Reflexiva */}
+                                        <div className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/20">
+                                            <p className="text-primary text-sm font-medium flex items-start gap-2">
+                                                <span className="material-symbols-outlined text-lg mt-0.5">lightbulb</span>
+                                                {structuredSynthesis.pergunta_reflexiva}
+                                            </p>
+                                        </div>
+                                    </>
                                 ) : (
                                     <>
                                         <p className="text-gray-200 leading-relaxed text-base mb-4">
-                                            {analysis?.synthesis}
+                                            {analysis?.synthesis || (isPortuguese ? 'Configure a chave da API Gemini para obter sínteses personalizadas.' : 'Configure the Gemini API key to get personalized syntheses.')}
                                         </p>
                                         {analysis?.advice && (
                                             <div className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/20">
