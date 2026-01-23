@@ -11,6 +11,7 @@ import { AuthModal } from './components/AuthModal';
 import { UserMenu } from './components/UserMenu';
 import { PaywallModal, usePaywall } from './components/PaywallModal';
 import { JourneySection } from './components/journey';
+import { DailyCard } from './components/DailyCard';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import { getCardName, getCardBySlug } from './tarotData';
@@ -167,6 +168,9 @@ const Header = () => {
                             <button onClick={() => { navigate('/'); setTimeout(() => document.getElementById('spreads')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-sm font-medium transition-colors text-gray-400 hover:text-white">
                                 {t.nav.tarot}
                             </button>
+                            <button onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')} className={`text-sm font-medium transition-colors ${(isActive('/carta-do-dia') || isActive('/daily-card')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
+                            </button>
                             <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.cardMeanings}
                             </button>
@@ -209,6 +213,7 @@ const Header = () => {
                         <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
                             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
                             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); setTimeout(() => document.getElementById('spreads')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
+                            <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
                             <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
@@ -532,169 +537,6 @@ const Home = () => {
             {/* Journey Section - Espiral do Louco */}
             <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} />
 
-            {/* Pricing Comparison Section */}
-            <section className="relative z-10 py-16 md:py-24 px-4 md:px-6 overflow-x-hidden">
-                <div className="max-w-[1100px] mx-auto">
-                    <div className="text-center mb-12 md:mb-16">
-                        <h2 className="text-3xl md:text-5xl font-normal text-white mb-4 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Escolha sua jornada' : 'Choose your journey'}
-                        </h2>
-                        <p className="text-gray-300 text-base md:text-lg font-light max-w-2xl mx-auto">
-                            {isPortuguese
-                                ? 'Comece gratuitamente ou aprofunde-se com acesso completo ao arquivo arcano.'
-                                : 'Start for free or deepen your practice with full access to the arcane archive.'}
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto w-full">
-
-                        {/* Free Plan */}
-                        <div className="relative bg-[#1a1320]/40 backdrop-blur-sm border border-white/5 rounded-lg p-8 md:p-10">
-                            <div className="mb-8">
-                                <h3 className="text-2xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                    {isPortuguese ? 'Exploração Livre' : 'Free Exploration'}
-                                </h3>
-                                <div className="text-gray-400 text-sm font-light">
-                                    {isPortuguese ? 'Para começar sua prática' : 'To begin your practice'}
-                                </div>
-                                <div className="mt-6">
-                                    <span className="text-4xl font-light text-white">R$ 0</span>
-                                    <span className="text-gray-500 text-sm ml-2">{isPortuguese ? '/sempre' : '/forever'}</span>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
-                                    <div>
-                                        <div className="text-white text-sm font-light">{isPortuguese ? '3 tiragens por dia' : '3 readings per day'}</div>
-                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Acesso básico às cartas' : 'Basic card access'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
-                                    <div>
-                                        <div className="text-white text-sm font-light">{isPortuguese ? 'Interpretação simples' : 'Simple interpretation'}</div>
-                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Sem análise de IA' : 'No AI analysis'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
-                                    <div>
-                                        <div className="text-white text-sm font-light">{isPortuguese ? 'Histórico limitado' : 'Limited history'}</div>
-                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Últimas 7 tiragens' : 'Last 7 readings'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
-                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Análise de padrões' : 'Pattern analysis'}</div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
-                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Conteúdo exclusivo' : 'Exclusive content'}</div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
-                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Relatórios detalhados' : 'Detailed reports'}</div>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={() => handleSelectSpread(SPREADS[0])}
-                                className="w-full mt-8 px-6 py-3.5 bg-white/5 border border-white/10 text-gray-300 text-sm font-light tracking-wide rounded-sm hover:bg-white/8 transition-all duration-300"
-                                style={{ fontFamily: "'Inter', sans-serif" }}
-                            >
-                                {isPortuguese ? 'Começar Agora' : 'Start Now'}
-                            </button>
-                        </div>
-
-                        {/* Premium Plan */}
-                        <div className="relative bg-gradient-to-br from-[#1a0d14] to-[#1a0f1e] border-2 border-[#875faf]/40 rounded-lg p-8 md:p-10 shadow-2xl shadow-purple-900/20">
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-xs font-medium uppercase tracking-wider rounded-full">
-                                {isPortuguese ? 'Recomendado' : 'Recommended'}
-                            </div>
-
-                            <div className="mb-8">
-                                <h3 className="text-2xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                    {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
-                                </h3>
-                                <div className="text-gray-300 text-sm font-light">
-                                    {isPortuguese ? 'Para praticantes dedicados' : 'For dedicated practitioners'}
-                                </div>
-                                <div className="mt-6">
-                                    <span className="text-4xl font-light text-white">R$ 19</span>
-                                    <span className="text-gray-400 text-sm ml-2">{isPortuguese ? '/mês' : '/month'}</span>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Consulte quantas vezes quiser' : 'Consult as many times as you want'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Síntese com IA' : 'AI synthesis'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Interpretação profunda personalizada' : 'Deep personalized interpretation'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Histórico completo' : 'Complete history'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Todas as suas tiragens salvas' : 'All your readings saved'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern analysis'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Identifique tendências na sua jornada' : 'Identify trends in your journey'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Conteúdo exclusivo' : 'Exclusive content'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Spreads e guias especiais' : 'Special spreads and guides'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Relatórios detalhados' : 'Detailed reports'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Exportação em PDF' : 'PDF export'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Sem anúncios' : 'Ad-free'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Experiência pura e focada' : 'Pure and focused experience'}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button
-                                className="w-full mt-8 px-6 py-3.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-sm font-medium tracking-wide rounded-sm hover:shadow-lg hover:shadow-purple-900/40 transition-all duration-300"
-                                style={{ fontFamily: "'Inter', sans-serif" }}
-                            >
-                                {isPortuguese ? 'Acessar Arquivo Arcano' : 'Access Arcane Archive'}
-                            </button>
-
-                            <div className="mt-4 text-center text-xs text-gray-500 font-light">
-                                {isPortuguese ? 'Cancele quando quiser • Sem compromisso' : 'Cancel anytime • No commitment'}
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </section>
-
             {/* Cosmic Mandala Animation Section */}
             <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark">
                 <div className="max-w-[1200px] mx-auto">
@@ -920,159 +762,164 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Newsletter / Card of the Day Subscription - Final CTA */}
-            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6">
-                {/* Subtle background element */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1f1432]/30 to-transparent" />
+            {/* Pricing Comparison Section */}
+            <section className="relative z-10 py-16 md:py-24 px-4 md:px-6 overflow-x-hidden">
+                <div className="max-w-[1100px] mx-auto">
+                    <div className="text-center mb-12 md:mb-16">
+                        <h2 className="text-3xl md:text-5xl font-normal text-white mb-4 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Escolha sua jornada' : 'Choose your journey'}
+                        </h2>
+                        <p className="text-gray-300 text-base md:text-lg font-light max-w-2xl mx-auto">
+                            {isPortuguese
+                                ? 'Comece gratuitamente ou aprofunde-se com acesso completo ao arquivo arcano.'
+                                : 'Start for free or deepen your practice with full access to the arcane archive.'}
+                        </p>
+                    </div>
 
-                <div className="relative max-w-[900px] mx-auto">
-                    <div className="bg-gradient-to-br from-[#1f1230]/70 to-[#1a0f1e]/70 backdrop-blur-sm border border-[#a77fd4]/25 rounded-2xl p-8 md:p-12 shadow-2xl shadow-purple-900/10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto w-full">
 
-                        <div className="text-center mb-10">
-                            <div className="inline-block mb-4">
-                                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="24" cy="24" r="20" stroke="rgba(167, 127, 212, 0.35)" strokeWidth="1.5" fill="none" />
-                                    <circle cx="24" cy="24" r="14" stroke="rgba(167, 127, 212, 0.28)" strokeWidth="1" fill="none" />
-                                    <circle cx="24" cy="24" r="3" fill="rgba(167, 127, 212, 0.6)" />
-                                </svg>
-                            </div>
-                            <h2 className="text-3xl md:text-4xl font-normal text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Receba sua carta do dia' : 'Receive your daily card'}
-                            </h2>
-                            <p className="text-gray-300 text-base font-light max-w-xl mx-auto leading-relaxed">
-                                {isPortuguese
-                                    ? 'Uma mensagem simbólica todas as manhãs. Orientação semanal. Insights mensais sobre sua jornada.'
-                                    : 'A symbolic message every morning. Weekly guidance. Monthly insights about your journey.'}
-                            </p>
-                        </div>
-
-                        <form className="space-y-5 max-w-2xl mx-auto">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label className="block text-gray-300 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                        {isPortuguese ? 'Nome' : 'Name'}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={isPortuguese ? 'Seu nome' : 'Your name'}
-                                        className="w-full px-4 py-3 bg-black/40 border border-white/15 rounded-sm text-white text-sm font-light placeholder-gray-500 focus:border-[#a77fd4]/50 focus:outline-none transition-colors"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    />
+                        {/* Free Plan */}
+                        <div className="relative bg-[#1a1320]/40 backdrop-blur-sm border border-white/5 rounded-lg p-8 md:p-10">
+                            <div className="mb-8">
+                                <h3 className="text-2xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    {isPortuguese ? 'Exploração Livre' : 'Free Exploration'}
+                                </h3>
+                                <div className="text-gray-400 text-sm font-light">
+                                    {isPortuguese ? 'Para começar sua prática' : 'To begin your practice'}
                                 </div>
-
-                                <div>
-                                    <label className="block text-gray-300 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                        {isPortuguese ? 'Idade' : 'Age'}
-                                    </label>
-                                    <input
-                                        type="number"
-                                        placeholder={isPortuguese ? 'Sua idade' : 'Your age'}
-                                        className="w-full px-4 py-3 bg-black/40 border border-white/15 rounded-sm text-white text-sm font-light placeholder-gray-500 focus:border-[#a77fd4]/50 focus:outline-none transition-colors"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    />
+                                <div className="mt-6">
+                                    <span className="text-4xl font-light text-white">R$ 0</span>
+                                    <span className="text-gray-500 text-sm ml-2">{isPortuguese ? '/sempre' : '/forever'}</span>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label className="block text-gray-300 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                        {isPortuguese ? 'País' : 'Country'}
-                                    </label>
-                                    <select
-                                        className="w-full px-4 py-3 bg-black/40 border border-white/15 rounded-sm text-white text-sm font-light focus:border-[#a77fd4]/50 focus:outline-none transition-colors appearance-none cursor-pointer"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    >
-                                        <option value="" className="bg-[#1a1320]">{isPortuguese ? 'Selecione seu país' : 'Select your country'}</option>
-                                        <option value="BR" className="bg-[#1a1320]">Brasil</option>
-                                        <option value="PT" className="bg-[#1a1320]">Portugal</option>
-                                        <option value="US" className="bg-[#1a1320]">United States</option>
-                                        <option value="UK" className="bg-[#1a1320]">United Kingdom</option>
-                                        <option value="ES" className="bg-[#1a1320]">España</option>
-                                        <option value="FR" className="bg-[#1a1320]">France</option>
-                                        <option value="IT" className="bg-[#1a1320]">Italia</option>
-                                        <option value="DE" className="bg-[#1a1320]">Deutschland</option>
-                                        <option value="MX" className="bg-[#1a1320]">México</option>
-                                        <option value="AR" className="bg-[#1a1320]">Argentina</option>
-                                        <option value="OTHER" className="bg-[#1a1320]">{isPortuguese ? 'Outro' : 'Other'}</option>
-                                    </select>
+                            <div className="space-y-4">
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
+                                    <div>
+                                        <div className="text-white text-sm font-light">{isPortuguese ? '3 tiragens por dia' : '3 readings per day'}</div>
+                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Acesso básico às cartas' : 'Basic card access'}</div>
+                                    </div>
                                 </div>
-
-                                <div>
-                                    <label className="block text-gray-300 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                        {isPortuguese ? 'Cidade' : 'City'}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={isPortuguese ? 'Sua cidade' : 'Your city'}
-                                        className="w-full px-4 py-3 bg-black/40 border border-white/15 rounded-sm text-white text-sm font-light placeholder-gray-500 focus:border-[#a77fd4]/50 focus:outline-none transition-colors"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    />
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
+                                    <div>
+                                        <div className="text-white text-sm font-light">{isPortuguese ? 'Interpretação simples' : 'Simple interpretation'}</div>
+                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Sem análise de IA' : 'No AI analysis'}</div>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-gray-300 text-xs font-light mb-3 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese ? 'E-mail' : 'Email'}
-                                </label>
-                                <input
-                                    type="email"
-                                    placeholder={isPortuguese ? 'seu@email.com' : 'your@email.com'}
-                                    className="w-full px-4 py-3 bg-black/40 border border-white/15 rounded-sm text-white text-sm font-light placeholder-gray-500 focus:border-[#a77fd4]/50 focus:outline-none transition-colors"
-                                    style={{ fontFamily: "'Inter', sans-serif" }}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-gray-300 text-xs font-light mb-3 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese ? 'Frequência' : 'Frequency'}
-                                </label>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/30 border border-white/15 rounded-sm cursor-pointer hover:border-[#a77fd4]/50 transition-all duration-300 group has-[:checked]:bg-[#a77fd4]/20 has-[:checked]:border-[#a77fd4]/70 has-[:checked]:shadow-[0_0_15px_rgba(167,127,212,0.2)]">
-                                        <input type="radio" name="frequency" value="daily" className="sr-only peer" />
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded-full border-2 border-gray-500 peer-checked:border-[#a77fd4] peer-checked:bg-[#a77fd4] transition-all duration-300 peer-checked:shadow-[0_0_8px_rgba(167,127,212,0.6)]" />
-                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white peer-checked:font-medium transition-all duration-300" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {isPortuguese ? 'Diário' : 'Daily'}
-                                            </span>
-                                        </div>
-                                    </label>
-
-                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/30 border border-white/15 rounded-sm cursor-pointer hover:border-[#a77fd4]/50 transition-all duration-300 group has-[:checked]:bg-[#a77fd4]/20 has-[:checked]:border-[#a77fd4]/70 has-[:checked]:shadow-[0_0_15px_rgba(167,127,212,0.2)]">
-                                        <input type="radio" name="frequency" value="weekly" className="sr-only peer" defaultChecked />
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded-full border-2 border-gray-500 peer-checked:border-[#a77fd4] peer-checked:bg-[#a77fd4] transition-all duration-300 peer-checked:shadow-[0_0_8px_rgba(167,127,212,0.6)]" />
-                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white peer-checked:font-medium transition-all duration-300" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {isPortuguese ? 'Semanal' : 'Weekly'}
-                                            </span>
-                                        </div>
-                                    </label>
-
-                                    <label className="relative flex items-center justify-center px-4 py-3 bg-black/30 border border-white/15 rounded-sm cursor-pointer hover:border-[#a77fd4]/50 transition-all duration-300 group has-[:checked]:bg-[#a77fd4]/20 has-[:checked]:border-[#a77fd4]/70 has-[:checked]:shadow-[0_0_15px_rgba(167,127,212,0.2)]">
-                                        <input type="radio" name="frequency" value="monthly" className="sr-only peer" />
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded-full border-2 border-gray-500 peer-checked:border-[#a77fd4] peer-checked:bg-[#a77fd4] transition-all duration-300 peer-checked:shadow-[0_0_8px_rgba(167,127,212,0.6)]" />
-                                            <span className="text-sm font-light text-gray-300 peer-checked:text-white peer-checked:font-medium transition-all duration-300" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {isPortuguese ? 'Mensal' : 'Monthly'}
-                                            </span>
-                                        </div>
-                                    </label>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
+                                    <div>
+                                        <div className="text-white text-sm font-light">{isPortuguese ? 'Histórico limitado' : 'Limited history'}</div>
+                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Últimas 7 tiragens' : 'Last 7 readings'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
+                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Análise de padrões' : 'Pattern analysis'}</div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
+                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Conteúdo exclusivo' : 'Exclusive content'}</div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
+                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Relatórios detalhados' : 'Detailed reports'}</div>
                                 </div>
                             </div>
 
                             <button
-                                type="submit"
-                                className="w-full px-8 py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-sm font-medium tracking-wide rounded-sm hover:shadow-lg hover:shadow-purple-900/40 transition-all duration-300"
+                                onClick={() => handleSelectSpread(SPREADS[0])}
+                                className="w-full mt-8 px-6 py-3.5 bg-white/5 border border-white/10 text-gray-300 text-sm font-light tracking-wide rounded-sm hover:bg-white/8 transition-all duration-300"
                                 style={{ fontFamily: "'Inter', sans-serif" }}
                             >
-                                {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
+                                {isPortuguese ? 'Começar Agora' : 'Start Now'}
+                            </button>
+                        </div>
+
+                        {/* Premium Plan */}
+                        <div className="relative bg-gradient-to-br from-[#1a0d14] to-[#1a0f1e] border-2 border-[#875faf]/40 rounded-lg p-8 md:p-10 shadow-2xl shadow-purple-900/20">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-xs font-medium uppercase tracking-wider rounded-full">
+                                {isPortuguese ? 'Recomendado' : 'Recommended'}
+                            </div>
+
+                            <div className="mb-8">
+                                <h3 className="text-2xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
+                                </h3>
+                                <div className="text-gray-300 text-sm font-light">
+                                    {isPortuguese ? 'Para praticantes dedicados' : 'For dedicated practitioners'}
+                                </div>
+                                <div className="mt-6">
+                                    <span className="text-4xl font-light text-white">R$ 19</span>
+                                    <span className="text-gray-400 text-sm ml-2">{isPortuguese ? '/mês' : '/month'}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Consulte quantas vezes quiser' : 'Consult as many times as you want'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Síntese com IA' : 'AI synthesis'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Interpretação profunda personalizada' : 'Deep personalized interpretation'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Histórico completo' : 'Complete history'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Todas as suas tiragens salvas' : 'All your readings saved'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern analysis'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Identifique tendências na sua jornada' : 'Identify trends in your journey'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Conteúdo exclusivo' : 'Exclusive content'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Spreads e guias especiais' : 'Special spreads and guides'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Relatórios detalhados' : 'Detailed reports'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Exportação em PDF' : 'PDF export'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
+                                    <div>
+                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Sem anúncios' : 'Ad-free'}</div>
+                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Experiência pura e focada' : 'Pure and focused experience'}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                className="w-full mt-8 px-6 py-3.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-sm font-medium tracking-wide rounded-sm hover:shadow-lg hover:shadow-purple-900/40 transition-all duration-300"
+                                style={{ fontFamily: "'Inter', sans-serif" }}
+                            >
+                                {isPortuguese ? 'Acessar Arquivo Arcano' : 'Access Arcane Archive'}
                             </button>
 
-                            <p className="text-center text-xs text-gray-500 font-light mt-4">
-                                {isPortuguese
-                                    ? 'Sem spam. Cancele quando quiser. Suas informações são privadas.'
-                                    : 'No spam. Cancel anytime. Your information is private.'}
-                            </p>
-                        </form>
+                            <div className="mt-4 text-center text-xs text-gray-500 font-light">
+                                {isPortuguese ? 'Cancele quando quiser • Sem compromisso' : 'Cancel anytime • No commitment'}
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -3622,7 +3469,8 @@ const Result = () => {
                 <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
             </div>
 
-            <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
+            {/* Hide content when paywall is shown */}
+            <main className={`relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 ${showPaywall ? 'blur-sm opacity-60 pointer-events-none' : ''}`}>
                 {/* Page Heading & Actions */}
                 <div className="flex flex-col md:flex-row flex-wrap justify-between gap-6 mb-10 items-start md:items-end">
                     <div className="flex flex-col gap-2 max-w-2xl">
@@ -3914,6 +3762,8 @@ const App = () => {
                             <Route path="/history" element={<History />} />
                             <Route path="/numerology" element={<Numerology />} />
                             <Route path="/cosmic" element={<CosmicCalendar />} />
+                            <Route path="/carta-do-dia" element={<DailyCard />} />
+                            <Route path="/daily-card" element={<DailyCard />} />
                             <Route path="/shop" element={<Shop />} />
                             <Route path="/shop/:slug" element={<ProductDetail />} />
                             <Route path="/checkout" element={<Checkout />} />
