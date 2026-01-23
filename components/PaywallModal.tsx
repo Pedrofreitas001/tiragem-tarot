@@ -5,7 +5,7 @@ import { useAuth, FREE_TIER_LIMITS, PREMIUM_TIER_LIMITS } from '../contexts/Auth
 interface PaywallModalProps {
   isOpen: boolean;
   onClose: () => void;
-  feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive';
+  feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'ranking';
   onLogin?: () => void;
 }
 
@@ -34,6 +34,10 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     guestArchiveDesc: isPortuguese
       ? 'Crie uma conta gratuita para explorar o significado das cartas.'
       : 'Create a free account to explore card meanings.',
+    guestRankingTitle: isPortuguese ? 'Ranking Premium' : 'Premium Ranking',
+    guestRankingDesc: isPortuguese
+      ? 'Crie uma conta gratuita para ver seu ranking pessoal de energias.'
+      : 'Create a free account to see your personal energy ranking.',
 
     // Títulos para free tier (logados)
     title: isPortuguese ? 'Limite Atingido' : 'Limit Reached',
@@ -43,6 +47,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     exportTitle: isPortuguese ? 'Exportar PDF é Premium' : 'PDF Export is Premium',
     patternsTitle: isPortuguese ? 'Análise de Padrões é Premium' : 'Pattern Analysis is Premium',
     archiveTitle: isPortuguese ? 'Arquivo Completo é Premium' : 'Full Archive is Premium',
+    rankingTitle: isPortuguese ? 'Top 3 Energias é Premium' : 'Top 3 Energies is Premium',
 
     readingsDesc: isPortuguese
       ? `Você já fez ${readingsToday} de ${FREE_TIER_LIMITS.readingsPerDay} tiragens gratuitas hoje. Volte amanhã ou faça upgrade para tiragens ilimitadas.`
@@ -62,6 +67,9 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     archiveDesc: isPortuguese
       ? `No plano gratuito, você tem acesso a ${FREE_TIER_LIMITS.maxArchiveCards} cartas. Faça upgrade para acesso completo às 78 cartas.`
       : `On the free plan, you have access to ${FREE_TIER_LIMITS.maxArchiveCards} cards. Upgrade for full access to all 78 cards.`,
+    rankingDesc: isPortuguese
+      ? 'Veja seu Top 3 de energias que guiam sua jornada espiritual. Recurso exclusivo Premium.'
+      : 'See your Top 3 energies that guide your spiritual journey. Exclusive Premium feature.',
 
     upgrade: isPortuguese ? 'Fazer Upgrade' : 'Upgrade Now',
     createAccount: isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account',
@@ -92,6 +100,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         case 'readings': return t.guestReadingsTitle;
         case 'history': return t.guestHistoryTitle;
         case 'archive': return t.guestArchiveTitle;
+        case 'ranking': return t.guestRankingTitle;
         default: return t.guestReadingsTitle;
       }
     }
@@ -102,6 +111,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       case 'export': return t.exportTitle;
       case 'patterns': return t.patternsTitle;
       case 'archive': return t.archiveTitle;
+      case 'ranking': return t.rankingTitle;
       default: return t.title;
     }
   };
@@ -112,6 +122,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         case 'readings': return t.guestReadingsDesc;
         case 'history': return t.guestHistoryDesc;
         case 'archive': return t.guestArchiveDesc;
+        case 'ranking': return t.guestRankingDesc;
         default: return t.guestReadingsDesc;
       }
     }
@@ -122,6 +133,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       case 'export': return t.exportDesc;
       case 'patterns': return t.patternsDesc;
       case 'archive': return t.archiveDesc;
+      case 'ranking': return t.rankingDesc;
       default: return '';
     }
   };
@@ -134,6 +146,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       case 'export': return 'picture_as_pdf';
       case 'patterns': return 'insights';
       case 'archive': return 'collections_bookmark';
+      case 'ranking': return 'emoji_events';
       default: return 'lock';
     }
   };

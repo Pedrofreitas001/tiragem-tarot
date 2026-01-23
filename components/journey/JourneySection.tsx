@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ArcanaNode from './ArcanaNode';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { PaywallModal } from '../PaywallModal';
 import { TAROT_CARDS } from '../../tarotData';
 
 /**
@@ -19,6 +20,7 @@ const JourneySection: React.FC = () => {
   // UI state
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Access level logic
@@ -360,19 +362,27 @@ const JourneySection: React.FC = () => {
 
                 {/* Premium Paywall Banner */}
                 {!hasAccessToTop3 && (
-                  <div className="mb-6 p-4 bg-gradient-to-r from-[#a77fd4]/10 via-[#ffd700]/5 to-[#a77fd4]/10 border-l-4 border-[#ffd700] rounded-lg flex items-start gap-3">
-                    <span className="material-symbols-outlined text-[#ffd700] flex-shrink-0 text-xl">lock</span>
-                    <div>
-                      <p className="text-sm font-semibold text-white mb-1">
-                        {isPortuguese ? 'Acesso Premium' : 'Premium Access'}
-                      </p>
-                      <p className="text-xs text-gray-300">
-                        {isGuestUser
-                          ? (isPortuguese ? 'Crie uma conta para acessar seu ranking pessoal' : 'Create an account to access your ranking')
-                          : (isPortuguese ? 'Assine para desbloquear análises completas' : 'Subscribe to unlock full insights')
-                        }
-                      </p>
+                  <div className="mb-6 p-4 bg-gradient-to-r from-[#a77fd4]/10 via-[#ffd700]/5 to-[#a77fd4]/10 border-l-4 border-[#ffd700] rounded-lg flex items-start gap-3 justify-between">
+                    <div className="flex items-start gap-3 flex-1">
+                      <span className="material-symbols-outlined text-[#ffd700] flex-shrink-0 text-xl">lock</span>
+                      <div>
+                        <p className="text-sm font-semibold text-white mb-1">
+                          {isPortuguese ? 'Acesso Premium' : 'Premium Access'}
+                        </p>
+                        <p className="text-xs text-gray-300">
+                          {isGuestUser
+                            ? (isPortuguese ? 'Crie uma conta para acessar seu ranking pessoal' : 'Create an account to access your ranking')
+                            : (isPortuguese ? 'Assine para desbloquear seu ranking' : 'Subscribe to unlock your ranking')
+                          }
+                        </p>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => setShowPaywall(true)}
+                      className="flex-shrink-0 ml-4 px-3 py-1 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#a77fd4] hover:to-[#c9a9e3] text-white text-xs font-semibold rounded-lg transition-all duration-300 whitespace-nowrap"
+                    >
+                      {isPortuguese ? 'Desbloquear' : 'Unlock'}
+                    </button>
                   </div>
                 )}
 
@@ -428,6 +438,9 @@ const JourneySection: React.FC = () => {
           }
         }
       `}</style>
+
+      {/* Premium Ranking Paywall */}
+      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} feature="ranking" />
     </section>
   );
 };
