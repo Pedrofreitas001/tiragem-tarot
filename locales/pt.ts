@@ -6,6 +6,7 @@ export const pt = {
     newReading: "Nova Tiragem",
     history: "Histórico",
     cardMeanings: "Arquivo Arcano",
+    dailyCard: "Carta do Dia",
     shop: "Loja Mística",
     login: "Entrar",
     logout: "Sair",

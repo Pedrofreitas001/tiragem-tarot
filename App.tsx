@@ -3133,19 +3133,17 @@ const Explore = () => {
                             <div
                                 key={card.id}
                                 onClick={() => handleCardClick(card, index)}
-                                className={`group relative aspect-[2/3.4] rounded-lg overflow-hidden border bg-surface-dark transition-all cursor-pointer shadow-lg ${
-                                    isLocked || isGuestLocked
-                                        ? 'border-white/5 opacity-60 hover:opacity-80'
-                                        : 'border-white/5 hover:border-primary/50 hover:-translate-y-2 hover:shadow-primary/20'
-                                }`}
+                                className={`group relative aspect-[2/3.4] rounded-lg overflow-hidden border bg-surface-dark transition-all cursor-pointer shadow-lg ${isLocked || isGuestLocked
+                                    ? 'border-white/5 opacity-60 hover:opacity-80'
+                                    : 'border-white/5 hover:border-primary/50 hover:-translate-y-2 hover:shadow-primary/20'
+                                    }`}
                             >
                                 <img
                                     src={card.imageUrl}
                                     alt={card.name}
                                     onError={handleImageError}
-                                    className={`w-full h-full object-cover transition-opacity ${
-                                        isLocked || isGuestLocked ? 'opacity-70 blur-[1px]' : 'opacity-80 group-hover:opacity-100'
-                                    }`}
+                                    className={`w-full h-full object-cover transition-opacity ${isLocked || isGuestLocked ? 'opacity-70 blur-[1px]' : 'opacity-80 group-hover:opacity-100'
+                                        }`}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
 
@@ -3518,11 +3516,14 @@ const Result = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
+    const { checkAccess } = usePaywall();
     const state = location.state as any;
 
     const [analysis, setAnalysis] = useState<ReadingAnalysis | null>(null);
     const [structuredSynthesis, setStructuredSynthesis] = useState<StructuredSynthesis | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     useEffect(() => {
         if (!state?.spread || !state?.cards) {
@@ -3552,6 +3553,11 @@ const Result = () => {
             setAnalysis(result);
             setStructuredSynthesis(synthesis);
             setIsLoading(false);
+
+            // Verificar se o usuário atingiu o limite de tiragens
+            if (!checkAccess('readings')) {
+                setShowPaywall(true);
+            }
 
             // Save to history
             try {
@@ -3671,14 +3677,13 @@ const Result = () => {
                                     <>
                                         {/* Tema Central Badge */}
                                         <div className="flex items-center gap-2 mb-4">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                                structuredSynthesis.energia_geral === 'positiva' ? 'bg-green-500/20 text-green-400' :
+                                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${structuredSynthesis.energia_geral === 'positiva' ? 'bg-green-500/20 text-green-400' :
                                                 structuredSynthesis.energia_geral === 'desafiadora' ? 'bg-orange-500/20 text-orange-400' :
-                                                'bg-blue-500/20 text-blue-400'
-                                            }`}>
+                                                    'bg-blue-500/20 text-blue-400'
+                                                }`}>
                                                 {structuredSynthesis.energia_geral === 'positiva' ? (isPortuguese ? '✨ Energia Positiva' : '✨ Positive Energy') :
-                                                 structuredSynthesis.energia_geral === 'desafiadora' ? (isPortuguese ? '🔥 Energia Desafiadora' : '🔥 Challenging Energy') :
-                                                 (isPortuguese ? '⚖️ Energia Neutra' : '⚖️ Neutral Energy')}
+                                                    structuredSynthesis.energia_geral === 'desafiadora' ? (isPortuguese ? '🔥 Energia Desafiadora' : '🔥 Challenging Energy') :
+                                                        (isPortuguese ? '⚖️ Energia Neutra' : '⚖️ Neutral Energy')}
                                             </span>
                                         </div>
 
@@ -3755,14 +3760,27 @@ const Result = () => {
                                     const position = spread.positions[idx];
                                     return (
                                         <div key={card.id} className="relative group cursor-pointer overflow-hidden rounded-lg border border-white/10 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-primary/20 aspect-[2/3]">
-                                            <div
-                                                className="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-105"
-                                                style={{ backgroundImage: `url("${card.imageUrl}")` }}
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2 md:p-3">
-                                                <span className="text-[10px] text-primary font-bold uppercase truncate">{idx + 1}. {position?.name}</span>
-                                                <span className="text-white font-bold text-xs md:text-sm truncate">{getCardName(card.id, isPortuguese)}</span>
-                                            </div>
+                                            {showPaywall ? (
+                                                // Placeholder when paywall is active
+                                                <div className="w-full h-full bg-gradient-to-br from-[#1f1230] to-[#1a0f1e] flex items-center justify-center border border-[#a77fd4]/20">
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <span className="material-symbols-outlined text-[#a77fd4]/60 text-4xl">lock</span>
+                                                        <span className="text-[#a77fd4]/40 text-xs font-bold uppercase text-center px-2">{idx + 1}</span>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                // Show card image when paywall is not active
+                                                <>
+                                                    <div
+                                                        className="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-105"
+                                                        style={{ backgroundImage: `url("${card.imageUrl}")` }}
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2 md:p-3">
+                                                        <span className="text-[10px] text-primary font-bold uppercase truncate">{idx + 1}. {position?.name}</span>
+                                                        <span className="text-white font-bold text-xs md:text-sm truncate">{getCardName(card.id, isPortuguese)}</span>
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                     );
                                 })}
@@ -3845,6 +3863,26 @@ const Result = () => {
                 </div>
             </main>
 
+            {/* Paywall Overlay & Modal */}
+            {showPaywall && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" />
+            )}
+
+            <PaywallModal
+                isOpen={showPaywall}
+                onClose={() => navigate('/')}
+                feature="readings"
+                onLogin={() => {
+                    setShowPaywall(false);
+                    setShowAuthModal(true);
+                }}
+            />
+
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+
+            {/* Apply overflow hidden when paywall is open */}
+            {showPaywall && <style>{`body { overflow: hidden; }`}</style>}
+
             <Footer />
         </div>
     );
@@ -3857,28 +3895,28 @@ const App = () => {
                 <CartProvider>
                     <Router>
                         <Routes>
-                        <Route path="/" element={<Home />} />
+                            <Route path="/" element={<Home />} />
 
-                        {/* Rotas em Português */}
-                        <Route path="/arquivo-arcano" element={<Explore />} />
-                        <Route path="/arquivo-arcano/:cardSlug" element={<CardDetails />} />
+                            {/* Rotas em Português */}
+                            <Route path="/arquivo-arcano" element={<Explore />} />
+                            <Route path="/arquivo-arcano/:cardSlug" element={<CardDetails />} />
 
-                        {/* Rotas em Inglês */}
-                        <Route path="/arcane-archive" element={<Explore />} />
-                        <Route path="/arcane-archive/:cardSlug" element={<CardDetails />} />
+                            {/* Rotas em Inglês */}
+                            <Route path="/arcane-archive" element={<Explore />} />
+                            <Route path="/arcane-archive/:cardSlug" element={<CardDetails />} />
 
-                        {/* Rotas antigas (manter compatibilidade) */}
-                        <Route path="/explore" element={<Explore />} />
-                        <Route path="/explore/:cardId" element={<CardDetails />} />
+                            {/* Rotas antigas (manter compatibilidade) */}
+                            <Route path="/explore" element={<Explore />} />
+                            <Route path="/explore/:cardId" element={<CardDetails />} />
 
-                        <Route path="/session" element={<Session />} />
-                        <Route path="/result" element={<Result />} />
-                        <Route path="/history" element={<History />} />
-                        <Route path="/numerology" element={<Numerology />} />
-                        <Route path="/cosmic" element={<CosmicCalendar />} />
-                        <Route path="/shop" element={<Shop />} />
-                        <Route path="/shop/:slug" element={<ProductDetail />} />
-                        <Route path="/checkout" element={<Checkout />} />
+                            <Route path="/session" element={<Session />} />
+                            <Route path="/result" element={<Result />} />
+                            <Route path="/history" element={<History />} />
+                            <Route path="/numerology" element={<Numerology />} />
+                            <Route path="/cosmic" element={<CosmicCalendar />} />
+                            <Route path="/shop" element={<Shop />} />
+                            <Route path="/shop/:slug" element={<ProductDetail />} />
+                            <Route path="/checkout" element={<Checkout />} />
                         </Routes>
                     </Router>
                 </CartProvider>
