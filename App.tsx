@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AuthModal } from './components/AuthModal';
 import { UserMenu } from './components/UserMenu';
 import { PaywallModal, usePaywall } from './components/PaywallModal';
+import { JourneySection } from './components/journey';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import { getCardName, getCardBySlug } from './tarotData';
@@ -527,6 +528,9 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Journey Section - Espiral do Louco */}
+            <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} />
 
             {/* Pricing Comparison Section */}
             <section className="relative z-10 py-16 md:py-24 px-4 md:px-6 overflow-x-hidden">
