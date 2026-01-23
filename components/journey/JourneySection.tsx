@@ -34,6 +34,39 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   const [cardFrequency, setCardFrequency] = useState<Record<string, number>>({});
   const [top3CardIds, setTop3CardIds] = useState<string[]>([]);
 
+  // Helper function to convert Supabase reading to localStorage format
+  const convertSupabaseReadingToLocalFormat = (reading: any): any => {
+    // Determine spread type from spread_type string
+    const cardCount = reading.cards?.length || 0;
+    let typeBadge = 'SINCRONIZADO';
+    let typeColor = 'text-purple-400 bg-purple-500/10';
+
+    if (cardCount === 3) {
+      typeBadge = isPortuguese ? 'RÁPIDA' : 'QUICK';
+      typeColor = 'text-primary bg-primary/10';
+    } else if (cardCount === 10) {
+      typeBadge = isPortuguese ? 'COMPLETA' : 'FULL';
+      typeColor = 'text-blue-400 bg-blue-500/10';
+    } else if (cardCount === 3 && reading.spread_type?.includes('amor')) {
+      typeBadge = isPortuguese ? 'AMOR' : 'LOVE';
+      typeColor = 'text-pink-400 bg-pink-500/10';
+    }
+
+    return {
+      id: reading.id || reading.created_at?.getTime?.() || Date.now(),
+      date: reading.created_at || new Date().toLocaleString(isPortuguese ? 'pt-BR' : 'en-US'),
+      spreadName: reading.spread_type?.split('-')?.map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))?.join(' ') || 'Leitura',
+      typeBadge,
+      typeColor,
+      previewCards: reading.cards?.map((c: any) => c.imageUrl) || [],
+      cardNames: reading.cards?.map((c: any) => c.name) || [],
+      positions: reading.cards?.map((c: any, idx: number) => `Posição ${idx + 1}`) || [],
+      notes: reading.synthesis || '',
+      comment: reading.notes || '',
+      rating: reading.rating || 0
+    };
+  };
+
   // Sync Supabase readings to localStorage when user logs in
   useEffect(() => {
     if (!user) return; // Only sync when user is logged in
@@ -48,22 +81,10 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
           // Create a set of existing reading IDs to avoid duplicates
           const existingIds = new Set(localHistory.map((r: any) => r.id));
 
-          // Convert Supabase readings to localStorage format and merge
+          // Convert Supabase readings to localStorage format using helper
           const convertedReadings = supabaseReadings
             .filter((reading: any) => !existingIds.has(reading.id)) // Skip duplicates
-            .map((reading: any) => ({
-              id: reading.id,
-              date: reading.created_at || new Date().toLocaleString(),
-              spreadName: reading.spread_type || 'Leitura',
-              typeBadge: 'SINCRONIZADO',
-              typeColor: 'text-purple-400 bg-purple-500/10',
-              previewCards: reading.cards?.map((c: any) => c.imageUrl) || [],
-              cardNames: reading.cards?.map((c: any) => c.name) || [],
-              positions: [],
-              notes: reading.synthesis || '',
-              comment: reading.notes || '',
-              rating: reading.rating || 0
-            }));
+            .map(convertSupabaseReadingToLocalFormat);
 
           // Merge with existing history
           const merged = [...convertedReadings, ...localHistory].slice(0, 20);
@@ -75,7 +96,7 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
     };
 
     syncSupabaseToLocalStorage();
-  }, [user?.id]); // Only run when user ID changes (login/logout)
+  }, [user?.id, isPortuguese]); // Rerun if language changes too
 
   // Load reading history and calculate frequency
   useEffect(() => {
@@ -83,7 +104,7 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
       try {
         const frequency: Record<string, number> = {};
 
-        // Load from localStorage
+        // Load from localStorage (which now includes synced Supabase data)
         const localHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
         localHistory.forEach((reading: any) => {
           // From localStorage, cards are saved as cardNames (array of strings)
@@ -96,23 +117,6 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
             }
           });
         });
-
-        // Load from Supabase if user is logged in
-        if (user) {
-          try {
-            const supabaseReadings = await fetchReadingsFromSupabase(user.id, 100);
-            supabaseReadings.forEach((reading: any) => {
-              if (reading.cards && Array.isArray(reading.cards)) {
-                reading.cards.forEach((card: any) => {
-                  const cardKey = String(card.id);
-                  frequency[cardKey] = (frequency[cardKey] || 0) + 1;
-                });
-              }
-            });
-          } catch (e) {
-            console.log('Could not load Supabase readings');
-          }
-        }
 
         // Calculate top 3 by frequency
         const sorted = Object.entries(frequency)
@@ -128,7 +132,7 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
     };
 
     loadHistoryAndCalculateFrequency();
-  }, [user]);
+  }, [user?.id]); // Recalculate when user logs in/out
 
   // Access level logic - based on authentication tier
   const isGuest = !user;
