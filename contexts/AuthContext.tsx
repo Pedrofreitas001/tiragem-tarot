@@ -277,6 +277,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (supabase) {
       await supabase.auth.signOut();
     }
+    // Clear all auth state to ensure logout works even without Supabase
+    setUser(null);
+    setSession(null);
     setProfile(null);
   };
 
