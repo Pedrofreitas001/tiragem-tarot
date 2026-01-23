@@ -296,10 +296,8 @@ const Home = () => {
             setShowPaywall(true);
             return;
         }
-        // Increment reading count when starting a new reading
-        if (user) {
-            await incrementReadingCount();
-        }
+        // Increment reading count when starting a new reading (works for both guests and logged in users)
+        await incrementReadingCount();
         navigate('/session', { state: { spread } });
     };
 
@@ -393,7 +391,7 @@ const Home = () => {
                         {/* Left Column - Content */}
                         <div className="space-y-8 lg:pr-8">
                             <h1 className="text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-white" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Observe o que se revela.' : 'Observe what reveals itself.'}
+                                {isPortuguese ? 'Observe o que se revela no Tarot' : 'Observe what reveals itself in Tarot'}
                             </h1>
 
                             <p className="text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
@@ -3142,15 +3140,15 @@ const Explore = () => {
                                     alt={card.name}
                                     onError={handleImageError}
                                     className={`w-full h-full object-cover transition-opacity ${
-                                        isLocked || isGuestLocked ? 'opacity-40 blur-[2px]' : 'opacity-80 group-hover:opacity-100'
+                                        isLocked || isGuestLocked ? 'opacity-70 blur-[1px]' : 'opacity-80 group-hover:opacity-100'
                                     }`}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
 
                                 {/* Lock overlay for locked cards */}
                                 {(isLocked || isGuestLocked) && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                                        <div className="w-12 h-12 rounded-full bg-[#875faf]/30 flex items-center justify-center">
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                        <div className="w-12 h-12 rounded-full bg-[#875faf]/40 flex items-center justify-center backdrop-blur-sm">
                                             <span className="material-symbols-outlined text-2xl text-[#a77fd4]">lock</span>
                                         </div>
                                     </div>

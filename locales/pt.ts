@@ -15,7 +15,7 @@ export const pt = {
   home: {
     heroTitle: "Revele Seu Destino",
     heroSubtitle: "Desvende a sabedoria ancestral das cartas e descubra os segredos que o universo guarda para você",
-    heroTagline: "Observe o que se revela.",
+    heroTagline: "Observe o que se revela no Tarot",
     startReading: "Iniciar Abertura",
     learnMore: "Saiba Mais",
     exploreCards: "Explorar Cartas",
