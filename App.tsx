@@ -2950,10 +2950,7 @@ const Explore = () => {
 
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                     {filteredDeck.map(card => {
-                        // Get card data to access slugs
-                        const cardData = getCardBySlug(card.id) || getCardBySlug(card.name);
-                        const cardSlug = cardData ? (isPortuguese ? cardData.slug_pt : cardData.slug) : card.id;
-
+                        const cardSlug = isPortuguese ? card.slug_pt : card.slug;
                         return (
                             <div
                                 key={card.id}
