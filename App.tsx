@@ -3411,8 +3411,6 @@ const Result = () => {
 
             // Save to history (both localStorage and Supabase if logged in)
             try {
-                const { user } = useAuth(); // Get user from context
-
                 const historyItem = {
                     id: Date.now(),
                     date: new Date().toLocaleString(isPortuguese ? 'pt-BR' : 'en-US', {
