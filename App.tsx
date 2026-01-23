@@ -1983,6 +1983,7 @@ const History = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
     const { checkAccess, getHistoryLimit, isGuest, isPremium } = usePaywall();
+    const { user } = useAuth();
     const [selectedReading, setSelectedReading] = useState<any | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -1995,6 +1996,18 @@ const History = () => {
             return [];
         }
     });
+
+    // Recarregar histórico quando usuário faz login/logout
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem('tarot-history');
+            const readings = saved ? JSON.parse(saved) : [];
+            setSavedReadings(readings);
+        } catch (e) {
+            console.error('Error loading history:', e);
+            setSavedReadings([]);
+        }
+    }, [user]); // Recarrega quando user muda (login/logout)
 
     // Limitar leituras visíveis baseado no tier
     const historyLimit = getHistoryLimit();
