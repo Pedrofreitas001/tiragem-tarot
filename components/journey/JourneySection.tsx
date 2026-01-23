@@ -171,13 +171,30 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
 
   // Manual refresh function for Top 3
   const refreshTop3 = async () => {
+    if (!user) return;
+
     setIsLoadingTop3(true);
     try {
-      const frequency: Record<string, number> = {};
+      // Step 1: Force sync from Supabase first
+      const supabaseReadings = await fetchReadingsFromSupabase(user.id, 100);
+      if (supabaseReadings && supabaseReadings.length > 0) {
+        // Convert and merge with localStorage
+        const localHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
+        const existingIds = new Set(localHistory.map((r: any) => r.id));
 
-      // Load from localStorage
-      const localHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
-      localHistory.forEach((reading: any) => {
+        const convertedReadings = supabaseReadings
+          .filter((reading: any) => !existingIds.has(reading.id))
+          .map(convertSupabaseReadingToLocalFormat);
+
+        const merged = [...convertedReadings, ...localHistory].slice(0, 20);
+        localStorage.setItem('tarot-history', JSON.stringify(merged));
+      }
+
+      // Step 2: Calculate frequency from updated localStorage
+      const frequency: Record<string, number> = {};
+      const finalHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
+
+      finalHistory.forEach((reading: any) => {
         reading.cardNames?.forEach((cardName: string) => {
           const foundCard = TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName);
           if (foundCard) {
@@ -187,7 +204,7 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
         });
       });
 
-      // Calculate top 3 by frequency
+      // Step 3: Calculate top 3 by frequency
       const sorted = Object.entries(frequency)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 3)
@@ -195,10 +212,12 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
 
       setCardFrequency(frequency);
       setTop3CardIds(sorted);
+
+      console.log('Top 3 refreshed successfully:', sorted, 'from', Object.keys(frequency).length, 'unique cards');
     } catch (e) {
       console.error('Error refreshing Top 3:', e);
     } finally {
-      setTimeout(() => setIsLoadingTop3(false), 500); // Small delay for UX
+      setTimeout(() => setIsLoadingTop3(false), 800); // Delay for sync to complete
     }
   };
 
