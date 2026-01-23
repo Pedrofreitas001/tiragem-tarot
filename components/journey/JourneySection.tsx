@@ -171,6 +171,8 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
     try {
       // Step 1: Force sync from Supabase first
       const supabaseReadings = await fetchReadingsFromSupabase(user.id, 100);
+      console.log('Fetched from Supabase:', supabaseReadings?.length || 0, 'readings');
+
       if (supabaseReadings && supabaseReadings.length > 0) {
         // Convert and merge with localStorage
         const localHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
@@ -182,11 +184,13 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
 
         const merged = [...convertedReadings, ...localHistory].slice(0, 20);
         localStorage.setItem('tarot-history', JSON.stringify(merged));
+        console.log('Synced to localStorage:', merged.length, 'total readings');
       }
 
       // Step 2: Calculate frequency from updated localStorage
       const frequency: Record<string, number> = {};
       const finalHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
+      console.log('Calculating from history:', finalHistory.length, 'readings');
 
       finalHistory.forEach((reading: any) => {
         reading.cardNames?.forEach((cardName: string) => {
@@ -198,19 +202,23 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
         });
       });
 
+      console.log('Frequency calculated:', Object.keys(frequency).length, 'unique cards', frequency);
+
       // Step 3: Calculate top 3 by frequency
       const sorted = Object.entries(frequency)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 3)
         .map(([cardId]) => cardId);
 
+      console.log('Top 3 sorted IDs:', sorted);
+
       setCardFrequency(frequency);
       setTop3CardIds(sorted);
       setHasLoadedTop3(true);
 
-      console.log('Top 3 refreshed successfully:', sorted, 'from', Object.keys(frequency).length, 'unique cards');
+      console.log('✅ Top 3 refreshed successfully:', sorted);
     } catch (e) {
-      console.error('Error refreshing Top 3:', e);
+      console.error('❌ Error refreshing Top 3:', e);
     } finally {
       setTimeout(() => setIsLoadingTop3(false), 800); // Delay for sync to complete
     }
@@ -236,8 +244,17 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   // Top 3 cards logic - show real data if premium, demo data otherwise
   let top3: string[] = [];
   if (hasAccessToTop3) {
-    // Premium users see real top 3 from history
-    top3 = top3CardIds.length > 0 ? top3CardIds : arcanaList.slice(0, 3).map(card => String(card.id));
+    // Premium users see real top 3 from history (after loading or if already calculated)
+    if (hasLoadedTop3 && top3CardIds.length > 0) {
+      // Use the loaded top 3 data
+      top3 = top3CardIds;
+    } else if (top3CardIds.length > 0) {
+      // Use calculated data if available
+      top3 = top3CardIds;
+    } else {
+      // Fallback: show first 3 arcanas while waiting for load
+      top3 = arcanaList.slice(0, 3).map(card => String(card.id));
+    }
   } else {
     // Demo data for guests/free users - show random cards
     const shuffled = [...arcanaList].sort(() => 0.5 - Math.random());
