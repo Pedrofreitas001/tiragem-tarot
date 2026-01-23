@@ -90,6 +90,12 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
       id: reading.id || reading.created_at?.getTime?.() || Date.now(),
       date: formattedDate,
       spreadName,
+      typeBadge,
+      typeColor,
+      previewCards: reading.cards?.map((c: any) => c.imageUrl) || [],
+      cardNames: reading.cards?.map((c: any) => c.name) || [],
+      positions: reading.cards?.map((c: any, idx: number) => `Posição ${idx + 1}`) || [],
+      notes: reading.synthesis || '',
       comment: reading.notes || '',
       rating: reading.rating || 0
     };
