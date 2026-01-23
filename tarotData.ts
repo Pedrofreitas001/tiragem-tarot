@@ -9,6 +9,7 @@ export interface TarotCardData {
   arcana: 'major' | 'minor';
   suit?: string;
   element?: string;
+  element_pt?: string;
   keywords: string[];
   keywords_pt: string[];
   meaning_up: string;
@@ -16,9 +17,13 @@ export interface TarotCardData {
   meaning_rev: string;
   meaning_rev_pt: string;
   description: string;
+  description_pt: string;
   love: string;
+  love_pt: string;
   career: string;
+  career_pt: string;
   advice: string;
+  advice_pt: string;
   imageUrl: string;
 }
 
@@ -41,6 +46,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     number: 0,
     arcana: "major",
     element: "Air",
+    element_pt: "Ar",
     keywords: ["Freedom", "Faith", "Innocence", "New Beginnings"],
     keywords_pt: ["Liberdade", "Fé", "Inocência", "Novos Começos"],
     meaning_up: "New beginnings, innocence, spontaneity, a free spirit. Taking a leap of faith into the unknown with optimism and trust.",
@@ -48,9 +54,13 @@ export const TAROT_CARDS: TarotCardData[] = [
     meaning_rev: "Holding back, recklessness, risk-taking without thought. Naivety leading to poor decisions.",
     meaning_rev_pt: "Hesitação, imprudência, assumir riscos sem pensar. Ingenuidade levando a decisões ruins.",
     description: "A young man stands at the edge of a cliff, about to step into the unknown. He carries a small bag and a white rose, symbolizing purity. A small dog at his feet represents loyalty and protection.",
+    description_pt: "Um jovem está à beira de um penhasco, prestes a dar um passo no desconhecido. Ele carrega uma pequena bolsa e uma rosa branca, simbolizando pureza. Um pequeno cão a seus pés representa lealdade e proteção.",
     love: "A new romance is on the horizon. Be open to unexpected connections. If in a relationship, bring back spontaneity and adventure.",
+    love_pt: "Um novo romance está no horizonte. Esteja aberto a conexões inesperadas. Se estiver em um relacionamento, traga de volta a espontaneidade e aventura.",
     career: "Time for a new career path or project. Don't overthink - trust your instincts and take that leap.",
+    career_pt: "Hora de uma nova carreira ou projeto. Não pense demais - confie em seus instintos e dê esse salto.",
     advice: "Embrace the unknown with an open heart. Sometimes the best adventures begin with a single step into uncertainty.",
+    advice_pt: "Abrace o desconhecido de coração aberto. Às vezes as melhores aventuras começam com um único passo na incerteza.",
     imageUrl: `${IMG_BASE}/ar00.jpg`
   },
   {
@@ -60,6 +70,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     number: 1,
     arcana: "major",
     element: "Air",
+    element_pt: "Ar",
     keywords: ["Manifestation", "Power", "Action", "Resourcefulness"],
     keywords_pt: ["Manifestação", "Poder", "Ação", "Desenvoltura"],
     meaning_up: "Skill, diplomacy, willpower, self-confidence. You have all the tools you need to manifest your desires. Take action now.",
@@ -67,9 +78,13 @@ export const TAROT_CARDS: TarotCardData[] = [
     meaning_rev: "Manipulation, poor planning, untapped talents. Using skills for deception or not using them at all.",
     meaning_rev_pt: "Manipulação, planejamento ruim, talentos não utilizados. Usar habilidades para enganar ou não usá-las.",
     description: "A figure stands with one hand pointing to the sky and one to the earth, channeling divine energy. On his table are the symbols of all four suits - representing mastery over all elements.",
+    description_pt: "Uma figura está com uma mão apontando para o céu e outra para a terra, canalizando energia divina. Em sua mesa estão os símbolos dos quatro naipes - representando domínio sobre todos os elementos.",
     love: "Take initiative in love. You have the charm and ability to attract what you desire. Be authentic.",
+    love_pt: "Tome a iniciativa no amor. Você tem o charme e a capacidade de atrair o que deseja. Seja autêntico.",
     career: "You have everything needed for success. Use your skills and willpower to achieve your goals. Great potential ahead.",
+    career_pt: "Você tem tudo necessário para o sucesso. Use suas habilidades e força de vontade para alcançar seus objetivos. Grande potencial à frente.",
     advice: "You have the resources you need. Channel your energy and act now with confidence.",
+    advice_pt: "Você tem os recursos necessários. Canalize sua energia e aja agora com confiança.",
     imageUrl: `${IMG_BASE}/ar01.jpg`
   },
   {
@@ -79,6 +94,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     number: 2,
     arcana: "major",
     element: "Water",
+    element_pt: "Água",
     keywords: ["Intuition", "Mystery", "Inner Knowledge", "Subconscious"],
     keywords_pt: ["Intuição", "Mistério", "Conhecimento Interior", "Subconsciente"],
     meaning_up: "Secrets, mystery, intuition, wisdom. The answers you seek are within. Trust your inner voice and look beyond the surface.",
@@ -86,9 +102,13 @@ export const TAROT_CARDS: TarotCardData[] = [
     meaning_rev: "Secrets revealed, disconnection from intuition, superficial knowledge. Ignoring your inner wisdom.",
     meaning_rev_pt: "Segredos revelados, desconexão da intuição, conhecimento superficial. Ignorar sua sabedoria interior.",
     description: "A serene woman sits between two pillars - one black, one white - representing duality. She holds a scroll of esoteric knowledge, partially hidden by her cloak.",
+    description_pt: "Uma mulher serena senta entre dois pilares - um preto, um branco - representando dualidade. Ela segura um pergaminho de conhecimento esotérico, parcialmente escondido por seu manto.",
     love: "Listen to your intuition about relationships. There may be hidden aspects to explore. Trust your gut feelings.",
+    love_pt: "Ouça sua intuição sobre relacionamentos. Pode haver aspectos ocultos a explorar. Confie em seus instintos.",
     career: "Hidden information may come to light. Use your intuition in decisions. Research and reflect before acting.",
+    career_pt: "Informações ocultas podem vir à luz. Use sua intuição nas decisões. Pesquise e reflita antes de agir.",
     advice: "Be still and listen to your inner voice. The answers are already within you - you just need to quiet the noise to hear them.",
+    advice_pt: "Fique quieto e ouça sua voz interior. As respostas já estão dentro de você - você só precisa silenciar o ruído para ouvi-las.",
     imageUrl: `${IMG_BASE}/ar02.jpg`
   },
   {
@@ -98,6 +118,7 @@ export const TAROT_CARDS: TarotCardData[] = [
     number: 3,
     arcana: "major",
     element: "Earth",
+    element_pt: "Terra",
     keywords: ["Fertility", "Abundance", "Nature", "Nurturing"],
     keywords_pt: ["Fertilidade", "Abundância", "Natureza", "Nutrição"],
     meaning_up: "Fruitfulness, action, abundance, creativity. A time of growth, nurturing, and bringing ideas to fruition.",
@@ -105,9 +126,13 @@ export const TAROT_CARDS: TarotCardData[] = [
     meaning_rev: "Creative block, dependence on others, neglecting self-care. Smothering or being smothered.",
     meaning_rev_pt: "Bloqueio criativo, dependência dos outros, negligência do autocuidado. Sufocar ou ser sufocado.",
     description: "A regal woman sits in a lush garden, surrounded by nature's bounty. She wears a crown of stars and holds a scepter, representing her connection to earth and sky.",
+    description_pt: "Uma mulher régia senta em um jardim exuberante, cercada pela abundância da natureza. Ela usa uma coroa de estrelas e segura um cetro, representando sua conexão com a terra e o céu.",
     love: "Love flourishes. Fertility, sensuality, and deep emotional connection. A nurturing relationship.",
+    love_pt: "O amor floresce. Fertilidade, sensualidade e conexão emocional profunda. Um relacionamento nutritivo.",
     career: "Creative projects thrive. Abundance in work. Good time to start businesses or grow existing ones.",
+    career_pt: "Projetos criativos prosperam. Abundância no trabalho. Bom momento para iniciar negócios ou expandir os existentes.",
     advice: "Connect with nature and your creative side. Nurture yourself and your projects - abundance will follow.",
+    advice_pt: "Conecte-se com a natureza e seu lado criativo. Nutra a si mesmo e seus projetos - a abundância virá.",
     imageUrl: `${IMG_BASE}/ar03.jpg`
   },
   {
