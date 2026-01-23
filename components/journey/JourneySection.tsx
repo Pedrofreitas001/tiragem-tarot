@@ -1,408 +1,354 @@
+import React, { useRef, useState } from 'react';
+import ArcanaNode from './ArcanaNode';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { TAROT_CARDS } from '../../tarotData';
+
 /**
  * JourneySection - A Espiral do Louco (Versão Imersiva)
  *
  * Uma experiência visual e narrativa que conta a história do Louco
  * atravessando os 22 Arcanos Maiores. Cada carta é um capítulo,
- * cada clique revela a narrativa profunda.
  */
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useNavigate } from 'react-router-dom';
-import { useJourneyProgress, ArcanaMarker } from '../../hooks/useJourneyProgress';
-import ArcanaNode from './ArcanaNode';
 
-interface JourneySectionProps {
-  onStartReading?: () => void;
-}
+const JourneySection: React.FC = () => {
+  // Example hooks and state (replace with actual logic as needed)
 
-export const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
-  const { isPortuguese } = useLanguage();
-  const navigate = useNavigate();
-  const journey = useJourneyProgress();
-  const [selectedMarker, setSelectedMarker] = useState<ArcanaMarker | null>(null);
+  // Translation (replace with your translation logic)
+  const t = {} as any;
+  // Use real tarot data for major arcana (0-21)
+  const arcanaList = TAROT_CARDS.filter(card => card.arcana === 'major').sort((a, b) => a.number - b.number);
+
+  // User context (mocked for this logic)
+  // You should replace this with your real user context/provider
+  const { isPortuguese, userType, readingsCount, arcanaCounts } = useLanguage() as any;
+  // userType: 'guest' | 'registered' | 'subscriber'
+  // readingsCount: number (for registered)
+  // arcanaCounts: { [arcanaId: number]: number } (for registered/subscriber)
+  let top3: string[] = [];
+  // UI state
+  const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [moved, setMoved] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
 
-  // Textos localizados
-  const t = {
-    title: isPortuguese ? 'A Jornada do Louco' : "The Fool's Journey",
-    subtitle: isPortuguese
-      ? 'Cada tiragem é um passo na espiral. Cada carta, um espelho do seu caminho.'
-      : 'Each reading is a step in the spiral. Each card, a mirror of your path.',
-
-    yourPosition: isPortuguese ? 'Sua Posição' : 'Your Position',
-    arcanasCrossed: isPortuguese ? 'arcanos atravessados' : 'arcana crossed',
-    nextThreshold: isPortuguese ? 'Próximo limiar' : 'Next threshold',
-    readingsAway: isPortuguese ? 'leituras' : 'readings',
-
-    clickToExplore: isPortuguese ? 'Clique em uma carta para explorar sua história' : 'Click a card to explore its story',
-
-    narrativeTitle: isPortuguese ? 'A História' : 'The Story',
-    lessonTitle: isPortuguese ? 'A Lição' : 'The Lesson',
-
-    close: isPortuguese ? 'Fechar' : 'Close',
-    continueJourney: isPortuguese ? 'Continuar a Jornada' : 'Continue the Journey',
-    beginJourney: isPortuguese ? 'Iniciar a Jornada' : 'Begin the Journey',
-
-    lockedMessage: isPortuguese
-      ? 'Este arcano ainda aguarda ser revelado através de suas tiragens.'
-      : 'This arcana still awaits to be revealed through your readings.',
-
-    theFool: isPortuguese ? 'O Louco' : 'The Fool',
-    theWorld: isPortuguese ? 'O Mundo' : 'The World',
-  };
-
-  // Determinar estado do nó
-  const getNodeState = (index: number): 'unlocked' | 'current' | 'next' | 'locked' => {
-    if (index < journey.currentMarkerIndex) return 'unlocked';
-    if (index === journey.currentMarkerIndex) return 'current';
-    if (index === journey.currentMarkerIndex + 1) return 'next';
-    return 'locked';
-  };
-
-  // Abrir detalhes
-  const handleMarkerClick = (marker: ArcanaMarker) => {
-    if (!isDragging) {
-      setSelectedMarker(marker);
-      setIsDetailOpen(true);
+  // Freeze scroll when modal is open
+  React.useEffect(() => {
+    if (isDetailOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
     }
-  };
+  }, [isDetailOpen]);
 
-  // Fechar detalhes
-  const handleCloseDetail = () => {
-    setIsDetailOpen(false);
-    setTimeout(() => setSelectedMarker(null), 300);
-  };
+  // Widget logic
+  let cardCount = 0;
+  let showPaywall = false;
 
-  // Scroll handlers para drag fluido
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!scrollRef.current) return;
-    setIsDragging(true);
-    setStartX(e.pageX - scrollRef.current.offsetLeft);
-    setScrollLeft(scrollRef.current.scrollLeft);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !scrollRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    scrollRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleMouseUp = () => {
-    setTimeout(() => setIsDragging(false), 10);
-  };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
-
-  // Touch handlers para mobile
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!scrollRef.current) return;
-    setStartX(e.touches[0].pageX - scrollRef.current.offsetLeft);
-    setScrollLeft(scrollRef.current.scrollLeft);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!scrollRef.current) return;
-    const x = e.touches[0].pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    scrollRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  // Scroll para o marcador atual no load
-  useEffect(() => {
-    if (scrollRef.current && journey.currentMarkerIndex >= 0) {
-      const cardWidth = 140;
-      const scrollPosition = journey.currentMarkerIndex * cardWidth - (scrollRef.current.offsetWidth / 2) + cardWidth / 2;
-      setTimeout(() => {
-        scrollRef.current?.scrollTo({ left: Math.max(0, scrollPosition), behavior: 'smooth' });
-      }, 300);
+  if (userType === 'guest') {
+    // Always show demo Top 3 layout for guests (randomized)
+    cardCount = 0;
+    // Pick 3 random unique cards
+    const shuffled = [...arcanaList].sort(() => 0.5 - Math.random());
+    top3 = shuffled.slice(0, 3).map(card => String(card.id));
+    showPaywall = true;
+  } else if (userType === 'registered') {
+    // Free user: limit widgets if over 3 readings
+    if (readingsCount >= 3) {
+      showPaywall = true;
+      // Show demo data for paywalled state (randomized)
+      const shuffled = [...arcanaList].sort(() => 0.5 - Math.random());
+      top3 = shuffled.slice(0, 3).map(card => String(card.id));
+    } else {
+      // Show real data (mocked)
+      if (selectedMarker && arcanaCounts) {
+        cardCount = arcanaCounts[selectedMarker.id] || 0;
+      }
+      // Top 3 most frequent arcana (mocked)
+      if (arcanaCounts) {
+        top3 = Object.entries(arcanaCounts)
+          .sort((a, b) => (Number(b[1]) - Number(a[1])))
+          .slice(0, 3)
+          .map(([id]) => String(id));
+      }
     }
-  }, [journey.currentMarkerIndex]);
+  } else if (userType === 'subscriber') {
+    // Subscriber: always show real data
+    if (selectedMarker && arcanaCounts) {
+      cardCount = arcanaCounts[selectedMarker.id] || 0;
+    }
+    if (arcanaCounts) {
+      top3 = Object.entries(arcanaCounts)
+        .sort((a, b) => (Number(b[1]) - Number(a[1])))
+        .slice(0, 3)
+        .map(([id]) => String(id));
+    }
+    showPaywall = false;
+  }
 
-  // Verificar se o marker selecionado está desbloqueado
-  const isSelectedUnlocked = selectedMarker
-    ? journey.allMarkers.findIndex(m => m.id === selectedMarker.id) <= journey.currentMarkerIndex
-    : false;
+  // Fallback: always show 3 cards in Top 3 widget
+  if (top3.length < 3) {
+    const used = new Set(top3);
+    const fill = arcanaList.filter(card => !used.has(card.id)).slice(0, 3 - top3.length).map(card => String(card.id));
+    top3 = [...top3, ...fill];
+  }
+
+  // Dummy getNodeState and handlers
+  const getNodeState = (index: number) => 'default';
+  // Selecionar carta (apenas destaca)
+  const handleSelectMarker = (marker: any) => {
+    setSelectedMarker(marker);
+  };
+  // Abrir modal de detalhes
+  const handleOpenDetails = (marker: any) => {
+    setSelectedMarker(marker);
+    setIsDetailOpen(true);
+  };
+  const handleCloseDetail = () => setIsDetailOpen(false);
+  // Drag/scroll handlers (replace with actual logic)
+  const handleMouseDown = () => { };
+  const handleMouseMove = () => { };
+  const handleMouseUp = () => { };
+  const handleMouseLeave = () => { };
+  const handleTouchStart = () => { };
+  const handleTouchMove = () => { };
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden">
+    <section className="relative pt-20 md:pt-28 pb-10 md:pb-16 overflow-hidden">
       {/* Background decorativo */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#875faf]/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#a77fd4]/5 rounded-full blur-3xl" />
       </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-10">
-          <p
-            className="text-[#875faf] text-xs uppercase tracking-[0.3em] mb-3"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {t.yourPosition}: {journey.unlockedMarkers.length} {t.arcanasCrossed}
-          </p>
-
-          <h2
-            className="text-3xl md:text-5xl text-white font-normal mb-4"
-            style={{ fontFamily: "'Crimson Text', serif" }}
-          >
-            {t.title}
-          </h2>
-
-          <p
-            className="text-gray-400 text-base font-light max-w-xl mx-auto mb-6"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-normal leading-[1.1] tracking-tight text-white mb-2 mt-0" style={{ fontFamily: "'Crimson Text', serif" }}>
+            {t.title || 'Sua jornada no Tarot'}
+          </h1>
+          <p className="text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-xl mx-auto mb-2" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
             {t.subtitle}
           </p>
-
-          {/* Barra de progresso simplificada */}
-          <div className="max-w-md mx-auto mb-6">
-            <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-[#875faf] via-[#a77fd4] to-[#875faf] transition-all duration-1000 ease-out relative"
-                style={{ width: `${journey.totalProgress}%` }}
-              >
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-lg shadow-[#a77fd4]" />
-              </div>
+          <p className="text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-xl mx-auto mb-6" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
+            Acompanhe sua evolução e descubra quais energias mais aparecem nas suas tiragens de Tarot.
+          </p>
+          {/* Barra de progresso simplificada: só Louco e Mundo */}
+          <div className="max-w-md mx-auto mb-8">
+            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-[#875faf] via-[#a77fd4] to-[#875faf] transition-all duration-1000 ease-out relative" style={{ width: `0%` }} />
             </div>
             <div className="flex justify-between mt-2 text-xs text-gray-500" style={{ fontFamily: "'Crimson Text', serif" }}>
-              <span>{t.theFool}</span>
-              <span>{t.theWorld}</span>
+              <span>O Louco</span>
+              <span>O Mundo</span>
             </div>
           </div>
         </div>
-
         {/* Carrossel de cartas */}
-        <div className="relative mb-10">
-          {/* Gradientes de fade nas bordas */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#0d0a14] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0d0a14] to-transparent z-10 pointer-events-none" />
-
+        <div className="relative mb-20 flex flex-col items-center">
           {/* Scroll container com drag */}
-          <div
-            ref={scrollRef}
-            className="flex gap-4 md:gap-5 overflow-x-auto pb-4 px-10 cursor-grab active:cursor-grabbing select-none"
-            style={{
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              WebkitOverflowScrolling: 'touch',
-              scrollBehavior: 'smooth',
-            }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseLeave}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-          >
-            {journey.allMarkers.map((marker, index) => (
-              <div key={marker.id} className="flex-shrink-0 pt-4">
-                <ArcanaNode
-                  marker={marker}
-                  state={getNodeState(index)}
-                  isPortuguese={isPortuguese}
-                  onClick={() => handleMarkerClick(marker)}
-                  size="large"
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Instrução */}
-          <p
-            className="text-center text-gray-500 text-sm mt-4"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {t.clickToExplore}
-          </p>
-        </div>
-
-        {/* Mensagem contextual */}
-        <div className="text-center mb-8">
-          <p
-            className="text-gray-300 text-lg md:text-xl italic max-w-2xl mx-auto"
-            style={{ fontFamily: "'Crimson Text', serif", lineHeight: 1.8 }}
-          >
-            "{isPortuguese ? journey.contextMessage : journey.contextMessageEn}"
-          </p>
-        </div>
-
-        {/* Próximo marco */}
-        {journey.nextMarker && (
-          <div className="flex justify-center mb-8">
-            <div className="inline-flex items-center gap-4 px-6 py-3 bg-[#1a1628]/80 border border-[#875faf]/30 rounded-full">
-              <span className="text-gray-400 text-sm">
-                {t.nextThreshold}:
-              </span>
-              <span
-                className="text-white font-medium"
-                style={{ fontFamily: "'Crimson Text', serif" }}
-              >
-                {isPortuguese ? journey.nextMarker.name : journey.nextMarker.nameEn}
-              </span>
-              <span className="text-[#a77fd4] text-sm">
-                {journey.readingsToNext} {t.readingsAway}
-              </span>
+          <div className="relative w-full flex items-center justify-center">
+            <button type="button" aria-label="Scroll left" className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-12 h-12 flex items-center justify-center rounded-full bg-[#1a1628]/80 border border-[#875faf]/40 hover:border-[#a77fd4]/80 hover:bg-[#1a1628] transition-all duration-300 group shadow-xl" style={{ outline: 'none' }} onClick={() => { if (scrollRef.current) scrollRef.current.scrollBy({ left: -250, behavior: 'smooth' }); }}>
+              <span className="material-symbols-outlined text-white/80 group-hover:text-white text-2xl">chevron_left</span>
+            </button>
+            <div
+              ref={scrollRef}
+              className="flex gap-3 md:gap-4 overflow-x-auto pb-8 px-6 cursor-grab active:cursor-grabbing select-none justify-center items-center"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                WebkitOverflowScrolling: 'touch',
+                scrollBehavior: 'smooth',
+                minHeight: 'clamp(220px, 28vw, 320px)', // aumentei o minHeight e o pb
+                paddingBottom: '2.5rem' // padding extra para cartas destacadas
+              }}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeave}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+            >
+              {arcanaList.map((marker, index) => (
+                <div
+                  key={marker.id}
+                  className="flex-shrink-0 pt-4 flex items-center justify-center"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleSelectMarker(marker)}
+                >
+                  <ArcanaNode
+                    marker={marker}
+                    state={getNodeState(index)}
+                    isPortuguese={isPortuguese}
+                    onDetailsClick={() => handleOpenDetails(marker)}
+                    size="large"
+                    guestMode={userType === 'guest'}
+                    selected={selectedMarker?.id === marker.id}
+                  />
+                </div>
+              ))}
             </div>
+            <button type="button" aria-label="Scroll right" className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-12 h-12 flex items-center justify-center rounded-full bg-[#1a1628]/80 border border-[#875faf]/40 hover:border-[#a77fd4]/80 hover:bg-[#1a1628] transition-all duration-300 group shadow-xl" style={{ outline: 'none' }} onClick={() => { if (scrollRef.current) scrollRef.current.scrollBy({ left: 250, behavior: 'smooth' }); }}>
+              <span className="material-symbols-outlined text-white/80 group-hover:text-white text-2xl">chevron_right</span>
+            </button>
           </div>
-        )}
-
-        {/* CTA */}
-        <div className="flex justify-center">
-          <button
-            onClick={onStartReading || (() => navigate('/'))}
-            className="group px-8 py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-lg text-white text-sm font-medium tracking-wide transition-all duration-300 shadow-lg shadow-[#875faf]/30"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            <span className="flex items-center gap-2">
-              {journey.totalReadings === 0 ? t.beginJourney : t.continueJourney}
-              <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">
-                arrow_forward
-              </span>
+        </div>
+        {/* Instrução */}
+        <p className="text-center text-gray-500 text-sm mt-4" style={{ fontFamily: "'Inter', sans-serif" }}>{t.clickToExplore}</p>
+      </div>
+      {/* Widgets: contagem da carta clicada + ranking top3 */}
+      <div className="mt-24 grid grid-cols-1 md:grid-cols-2 gap-y-16 gap-x-12 max-w-4xl mx-auto">
+        {/* Contagem da carta selecionada */}
+        <div className="relative bg-gradient-to-br from-[#1a1628]/80 to-[#2a1a38]/70 border border-[#a77fd4]/30 rounded-xl px-10 py-1 min-h-[90px] max-w-xl w-full overflow-hidden shadow-lg flex flex-col items-center justify-center">
+          {/* Header always at top */}
+          <div className="w-full flex flex-col items-center justify-center mb-1 absolute left-0 top-0 pt-2">
+            <h5 className="text-lg md:text-xl text-[#ffd700] font-extrabold tracking-tight text-center drop-shadow-sm" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.04em' }}>
+              {isPortuguese ? 'Contagem desta carta' : 'This card count'}
+            </h5>
+            <span className="text-xs text-gray-300 mt-1 text-center" style={{ fontFamily: "'Inter', sans-serif" }} title={isPortuguese ? 'Quantas vezes esta carta apareceu nas suas tiragens' : 'How many times this card appeared in your readings'}>
+              {isPortuguese ? 'Seu histórico' : 'Your history'}
             </span>
-          </button>
+            <div className="w-12 h-1 bg-gradient-to-r from-[#a77fd4] to-[#ffd700] rounded-full mt-2 mb-1 opacity-70" />
+          </div>
+          <div className={showPaywall ? 'filter blur-sm pointer-events-none select-none w-full' : 'w-full'}>
+            {selectedMarker ? (
+              <div className="flex flex-col items-center justify-center w-full mt-12">
+                <img src={selectedMarker.imageUrl} alt={isPortuguese ? selectedMarker.name : selectedMarker.nameEn} className="w-16 h-20 md:w-20 md:h-28 rounded-lg mb-2 shadow-lg border-2 border-[#a77fd4]/40 mt-8" />
+                <div className="text-white font-medium text-center" style={{ fontFamily: "'Crimson Text', serif" }}>{isPortuguese ? selectedMarker.name : selectedMarker.nameEn}</div>
+                <div className="text-gray-400 text-sm mt-1 text-center">{isPortuguese ? selectedMarker.essence : selectedMarker.essenceEn}</div>
+                <div className="text-3xl font-extrabold text-[#ffd700] mt-4 mb-1 drop-shadow" style={{ fontFamily: "'Crimson Text', serif" }}>{cardCount}</div>
+                <div className="text-gray-500 text-xs text-center">{isPortuguese ? 'vezes aparecida' : 'times appeared'}</div>
+              </div>
+            ) : (
+              <div className="text-gray-400 text-center mt-12">{isPortuguese ? 'Clique em uma carta para ver quantas vezes ela apareceu.' : 'Click a card to see how many times it appeared.'}</div>
+            )}
+          </div>
+          {showPaywall && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+              <div className="flex flex-col items-center">
+                <span className="material-symbols-outlined text-4xl text-white/80 mb-2" style={{ filter: 'drop-shadow(0 2px 8px #0008)' }}>lock</span>
+                <div className="text-center text-white">
+                  <div className="text-lg font-semibold mb-1">{isPortuguese ? 'Desbloqueie com assinatura' : 'Unlock with subscription'}</div>
+                  <div className="text-sm text-gray-300">{isPortuguese ? 'Assine para ver a contagem desta carta.' : 'Subscribe to see this card count.'}</div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        {/* Ranking top3 - visível, mas bloqueado para convidados */}
+        <div className="relative bg-gradient-to-br from-[#1a1628]/80 to-[#2a1a38]/70 border border-[#a77fd4]/30 rounded-xl px-16 py-2 min-h-[120px] max-w-2xl w-full overflow-hidden shadow-lg flex flex-col items-center justify-center">
+          {/* Header always at top */}
+          <div className="w-full flex flex-col items-center justify-center mb-1 absolute left-0 top-0 pt-2">
+            <h5 className="text-lg md:text-xl text-[#ffd700] font-extrabold tracking-tight text-center drop-shadow-sm" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.04em' }}>
+              {isPortuguese ? 'Top 3 Energias' : 'Top 3 Energies'}
+            </h5>
+            <span className="text-xs text-gray-300 mt-1 text-center" style={{ fontFamily: "'Inter', sans-serif" }} title={isPortuguese ? 'Baseado nas cartas que mais aparecem nas suas tiragens' : 'Based on the cards that most appear in your readings'}>
+              {isPortuguese ? 'Ranking pessoal' : 'Personal ranking'}
+            </span>
+            <div className="w-12 h-1 bg-gradient-to-r from-[#a77fd4] to-[#ffd700] rounded-full mt-2 mb-1 opacity-70" />
+          </div>
+          <div className={showPaywall ? 'filter blur-sm pointer-events-none select-none' : ''}>
+            <ol className="flex justify-center items-center gap-4 md:gap-7 mt-8">
+              {top3.map((idx, i) => {
+                const m = arcanaList.find(a => a.id === idx);
+                if (!m) return null;
+                return (
+                  <li key={m.id} className={`flex flex-col items-center ${i === 0 ? 'z-10' : 'z-0'}`}
+                    style={{ transform: i === 0 ? 'scale(1.15) translateY(-10px)' : 'scale(1)', filter: i === 0 ? 'drop-shadow(0 4px 16px #a77fd4aa)' : 'none' }}>
+                    <span className={`text-base font-bold ${i === 0 ? 'text-[#ffd700]' : i === 1 ? 'text-[#a77fd4]' : 'text-[#875faf]'}`}>{i + 1}</span>
+                    <img
+                      src={m.imageUrl}
+                      alt={m.name}
+                      className={`w-14 h-20 md:w-16 md:h-24 rounded-lg shadow-lg mt-1 border-2 ${i === 0 ? 'border-[#ffd700]' : i === 1 ? 'border-[#a77fd4]' : 'border-[#875faf]'} ${showPaywall ? 'grayscale opacity-70' : ''}`}
+                    />
+                    <span className="text-xs text-white mt-2 text-center max-w-[70px] truncate" style={{ fontFamily: "'Crimson Text', serif" }}>{isPortuguese ? m.name_pt : m.name}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+          {showPaywall && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+              <span className="material-symbols-outlined text-4xl text-white/80 mb-2" style={{ filter: 'drop-shadow(0 2px 8px #0008)' }}>lock</span>
+              <div className="text-center text-white">
+                <div className="text-lg font-semibold mb-1">{isPortuguese ? 'Desbloqueie com assinatura' : 'Unlock with subscription'}</div>
+                <div className="text-sm text-gray-300">{isPortuguese ? 'Assine para ver seu top 3 de energias.' : 'Subscribe to see your top 3 energies.'}</div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
       {/* Modal de detalhes do Arcano */}
-      {selectedMarker && (
+      {selectedMarker && isDetailOpen && (
         <>
-          {/* Backdrop */}
-          <div
-            className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-50 transition-opacity duration-300 ${
-              isDetailOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-            onClick={handleCloseDetail}
-          />
-
-          {/* Painel de detalhes com miniatura */}
-          <div
-            className={`fixed inset-x-4 bottom-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:bottom-8 md:w-[550px] max-h-[85vh] overflow-y-auto bg-gradient-to-b from-[#1a1628] to-[#0d0a14] border border-[#875faf]/40 rounded-2xl z-50 transition-all duration-500 ${
-              isDetailOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'
-            }`}
-          >
-            {/* Header com miniatura da carta */}
-            <div className="p-6 pb-4">
-              <div className="flex gap-5">
-                {/* Miniatura da carta */}
-                <div className="flex-shrink-0">
-                  <div className={`w-24 h-36 md:w-28 md:h-44 rounded-lg overflow-hidden border-2 ${isSelectedUnlocked ? 'border-[#875faf]/50' : 'border-white/20'} shadow-lg`}>
+          {/* Backdrop escuro */}
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40" />
+          {/* Modal centralizado */}
+          <div className={`fixed inset-0 z-50 flex items-center justify-center p-4`}>
+            <div className={`w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-[#1a1628] to-[#0d0a14] border border-[#875faf]/40 rounded-2xl shadow-2xl transition-transform duration-300 transform opacity-100 scale-100`}>
+              {/* Header com miniatura da carta */}
+              <div className="p-6 pb-4">
+                <div className="flex gap-5 items-start">
+                  {/* Miniatura da carta */}
+                  <div className="flex-shrink-0">
                     <img
-                      src={selectedMarker.imageUrl}
+                      src={selectedMarker?.imageUrl}
                       alt={isPortuguese ? selectedMarker.name : selectedMarker.nameEn}
-                      className={`w-full h-full object-cover ${!isSelectedUnlocked ? 'grayscale blur-[1px]' : ''}`}
+                      className="block w-28 h-40 md:w-36 md:h-52 object-contain rounded-lg shadow-lg"
+                      style={{ margin: 0 }}
                     />
                   </div>
-                </div>
-
-                {/* Info ao lado da miniatura */}
-                <div className="flex-1 pt-1">
-                  <p
-                    className="text-[#a77fd4] text-xs uppercase tracking-wider mb-1"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    {isPortuguese ? selectedMarker.essence : selectedMarker.essenceEn}
-                  </p>
-                  <h3
-                    className="text-white text-2xl md:text-3xl font-normal mb-3"
-                    style={{ fontFamily: "'Crimson Text', serif" }}
-                  >
-                    {selectedMarker.symbol} · {isPortuguese ? selectedMarker.name : selectedMarker.nameEn}
-                  </h3>
-
-                  {!isSelectedUnlocked && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-full">
-                      <span className="material-symbols-outlined text-white/60 text-sm">lock</span>
-                      <span className="text-white/60 text-xs uppercase tracking-wider">
-                        {isPortuguese ? 'Bloqueado' : 'Locked'}
-                      </span>
+                  {/* Info ao lado da miniatura */}
+                  <div className="flex-1 pt-1">
+                    <p className="text-[#a77fd4] text-xs uppercase tracking-wider mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>{isPortuguese ? selectedMarker.essence : selectedMarker.essenceEn}</p>
+                    <h3 className="text-white text-2xl md:text-3xl font-normal mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>
+                      {selectedMarker.symbol ? `${selectedMarker.symbol} · ` : ''}
+                      {isPortuguese
+                        ? (selectedMarker.name_pt || selectedMarker.name)
+                        : (selectedMarker.name || selectedMarker.nameEn)}
+                    </h3>
+                    <div className="text-white/80 text-sm">
+                      <div className="font-medium">{isPortuguese ? 'Quantidade' : 'Count'}: <span className="font-bold">{cardCount}</span></div>
+                      <div className="text-gray-400 text-xs mt-1">{isPortuguese ? 'À partir do seu histórico' : 'From your history'}</div>
                     </div>
-                  )}
+                  </div>
+                  {/* Botão fechar */}
+                  <button onClick={handleCloseDetail} className="flex-shrink-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors border border-[#a77fd4]/40">
+                    <span className="material-symbols-outlined text-white/80">close</span>
+                  </button>
                 </div>
-
-                {/* Botão fechar */}
-                <button
-                  onClick={handleCloseDetail}
-                  className="flex-shrink-0 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
-                >
-                  <span className="material-symbols-outlined text-white/70">close</span>
-                </button>
+              </div>
+              {/* Divider */}
+              <div className="mx-6 h-px bg-gradient-to-r from-transparent via-[#875faf]/30 to-transparent" />
+              {/* Conteúdo: Jornada e descrição */}
+              <div className="p-6 pt-4">
+                <div className="mb-6">
+                  <h4 className="text-[#a77fd4] text-xs uppercase tracking-wider mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    {isPortuguese ? 'Jornada do Louco' : 'Fool’s Journey'}
+                  </h4>
+                  <p className="text-gray-300 text-base leading-relaxed mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
+                    {isPortuguese ? selectedMarker.narrative : selectedMarker.narrativeEn}
+                  </p>
+                  <h4 className="text-[#a77fd4] text-xs uppercase tracking-wider mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    {isPortuguese ? 'Descrição da Carta' : 'Card Description'}
+                  </h4>
+                  <p className="text-white text-base leading-relaxed" style={{ fontFamily: "'Crimson Text', serif" }}>
+                    {isPortuguese ? selectedMarker.description_pt : selectedMarker.description}
+                  </p>
+                </div>
+                <div className="p-4 bg-[#875faf]/10 border border-[#875faf]/20 rounded-lg">
+                  <h4 className="text-[#a77fd4] text-xs uppercase tracking-wider mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>{t.lessonTitle}</h4>
+                  <p className="text-white text-lg" style={{ fontFamily: "'Crimson Text', serif" }}>
+                    "{isPortuguese ? selectedMarker.lesson : selectedMarker.lessonEn}"
+                  </p>
+                </div>
               </div>
             </div>
-
-            {/* Divider */}
-            <div className="mx-6 h-px bg-gradient-to-r from-transparent via-[#875faf]/30 to-transparent" />
-
-            {/* Conteúdo */}
-            <div className="p-6 pt-4">
-              {isSelectedUnlocked ? (
-                <>
-                  {/* Narrativa */}
-                  <div className="mb-5">
-                    <h4
-                      className="text-[#a77fd4] text-xs uppercase tracking-wider mb-3"
-                      style={{ fontFamily: "'Inter', sans-serif" }}
-                    >
-                      {t.narrativeTitle}
-                    </h4>
-                    <p
-                      className="text-gray-300 text-base leading-relaxed"
-                      style={{ fontFamily: "'Crimson Text', serif" }}
-                    >
-                      {isPortuguese ? selectedMarker.narrative : selectedMarker.narrativeEn}
-                    </p>
-                  </div>
-
-                  {/* Lição */}
-                  <div className="p-4 bg-[#875faf]/10 border border-[#875faf]/20 rounded-lg">
-                    <h4
-                      className="text-[#a77fd4] text-xs uppercase tracking-wider mb-2"
-                      style={{ fontFamily: "'Inter', sans-serif" }}
-                    >
-                      {t.lessonTitle}
-                    </h4>
-                    <p
-                      className="text-white text-lg"
-                      style={{ fontFamily: "'Crimson Text', serif" }}
-                    >
-                      "{isPortuguese ? selectedMarker.lesson : selectedMarker.lessonEn}"
-                    </p>
-                  </div>
-                </>
-              ) : (
-                /* Mensagem de bloqueado */
-                <div className="text-center py-6">
-                  <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[#875faf]/20 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-2xl text-[#875faf]">hourglass_empty</span>
-                  </div>
-                  <p
-                    className="text-gray-400 text-base max-w-sm mx-auto"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    {t.lockedMessage}
-                  </p>
-                  <p
-                    className="text-gray-500 text-sm mt-3 italic"
-                    style={{ fontFamily: "'Crimson Text', serif" }}
-                  >
-                    "{isPortuguese ? selectedMarker.latentMessage : selectedMarker.latentMessageEn}"
-                  </p>
-                </div>
-              )}
-            </div>
           </div>
+
         </>
       )}
-
       {/* CSS para esconder scrollbar e melhorar scroll */}
       <style>{`
         div::-webkit-scrollbar {
@@ -411,6 +357,6 @@ export const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }
       `}</style>
     </section>
   );
-};
+}
 
 export default JourneySection;

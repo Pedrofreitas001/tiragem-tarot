@@ -11,7 +11,7 @@
  * - Estados visuais: unlocked, current, next, locked
  */
 
-export { JourneySection } from './JourneySection';
+export { default as JourneySection } from './JourneySection';
 export { ArcanaNode } from './ArcanaNode';
 export { useJourneyProgress, ARCANA_JOURNEY } from '../../hooks/useJourneyProgress';
 export type { ArcanaMarker, JourneyProgress } from '../../hooks/useJourneyProgress';

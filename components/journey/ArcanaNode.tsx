@@ -11,22 +11,28 @@
 import React, { useState } from 'react';
 import { ArcanaMarker } from '../../hooks/useJourneyProgress';
 
-type NodeState = 'unlocked' | 'current' | 'next' | 'locked';
+type NodeState = 'current' | 'history' | 'future' | 'guest' | 'top';
 
 interface ArcanaNodeProps {
   marker: ArcanaMarker;
   state: NodeState;
   isPortuguese: boolean;
-  onClick?: () => void;
+  onDetailsClick?: () => void;
   size?: 'small' | 'medium' | 'large';
+  guestMode?: boolean;
+  selected?: boolean;
+  count?: number;
 }
 
 export const ArcanaNode: React.FC<ArcanaNodeProps> = ({
   marker,
   state,
   isPortuguese,
-  onClick,
-  size = 'medium',
+  onDetailsClick,
+  size = 'large', // Força sempre grande
+  guestMode,
+  selected = false,
+  count,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -34,43 +40,51 @@ export const ArcanaNode: React.FC<ArcanaNodeProps> = ({
 
   // Tamanhos baseados na prop size
   const sizeClasses = {
-    small: 'w-16 h-24 md:w-20 md:h-28',
-    medium: 'w-20 h-28 md:w-24 md:h-36',
-    large: 'w-28 h-40 md:w-32 md:h-48',
+    small: 'w-20 h-28 md:w-24 md:h-36',
+    medium: 'w-28 h-40 md:w-32 md:h-48',
+    large: 'w-36 h-52 md:w-40 md:h-60',
   };
 
-  // Classes baseadas no estado
+  // Classes baseadas no novo estado
   const getContainerClasses = () => {
-    const base = `relative ${sizeClasses[size]} rounded-lg overflow-hidden cursor-pointer transition-all duration-500 ease-out group`;
-
-    switch (state) {
-      case 'unlocked':
-        return `${base} ring-2 ring-[#875faf]/50 hover:ring-[#a77fd4] hover:scale-105`;
-      case 'current':
-        return `${base} ring-2 ring-[#a77fd4] scale-105 shadow-xl shadow-[#875faf]/40`;
-      case 'next':
-        return `${base} ring-2 ring-dashed ring-[#875faf]/40 hover:ring-[#875faf]/60 hover:scale-102`;
-      case 'locked':
-        return `${base} ring-1 ring-white/10 opacity-50 hover:opacity-60`;
-      default:
-        return base;
+    const base = `relative ${sizeClasses[size]} rounded-lg overflow-hidden transition-all duration-500 ease-out group`;
+    const animatedBorder = 'before:content-[""] before:absolute before:inset-0 before:rounded-lg before:border-2 before:border-gradient-to-r before:from-[#a77fd4] before:to-[#875faf] before:animate-borderPulse before:pointer-events-none';
+    let highlight = '';
+    if (selected) {
+      highlight = 'ring-4 ring-[#ffe066] scale-110 shadow-2xl shadow-[#ffe066]/30 z-20 grayscale-0 brightness-100';
+    } else {
+      highlight = 'grayscale brightness-75';
     }
+    if (state === 'guest') {
+      return `${base} ring-2 ring-[#22223a] hover:ring-[#a77fd4] scale-105 ${animatedBorder} ${highlight}`;
+    }
+    if (state === 'top') {
+      return `${base} ring-4 ring-[#a77fd4] bg-[#a77fd4]/10 scale-110 shadow-xl shadow-[#a77fd4]/30 ${animatedBorder} ${highlight}`;
+    }
+    if (state === 'current') {
+      return `${base} ring-2 ring-[#a77fd4] scale-105 shadow-xl shadow-[#875faf]/40 ${animatedBorder} ${highlight}`;
+    }
+    if (state === 'history') {
+      return `${base} ring-2 ring-[#875faf] opacity-90 ${animatedBorder} ${highlight}`;
+    }
+    if (state === 'future') {
+      return `${base} ring-1 ring-white/10 opacity-60 ${animatedBorder} ${highlight}`;
+    }
+    return base + ' ' + highlight;
   };
 
-  // Overlay baseado no estado
+  // Overlay baseado no novo estado
   const getOverlay = () => {
-    switch (state) {
-      case 'unlocked':
-        return 'bg-gradient-to-t from-black/80 via-black/20 to-transparent';
-      case 'current':
-        return 'bg-gradient-to-t from-[#875faf]/90 via-[#875faf]/30 to-transparent';
-      case 'next':
-        return 'bg-gradient-to-t from-black/90 via-black/50 to-black/30';
-      case 'locked':
-        return 'bg-black/60 backdrop-blur-[2px]';
-      default:
-        return '';
+    if (state === 'current') {
+      return 'bg-gradient-to-t from-[#a77fd4]/80 via-[#a77fd4]/20 to-transparent';
     }
+    if (state === 'history') {
+      return 'bg-gradient-to-t from-[#875faf]/60 via-[#875faf]/10 to-transparent';
+    }
+    if (state === 'future') {
+      return 'bg-black/40';
+    }
+    return '';
   };
 
   const name = isPortuguese ? marker.name : marker.nameEn;
@@ -81,24 +95,21 @@ export const ArcanaNode: React.FC<ArcanaNodeProps> = ({
       className={getContainerClasses()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
       aria-label={`${name} - ${essence}`}
+      style={{ minWidth: '128px', minHeight: '180px', maxWidth: '148px', maxHeight: '220px' }}
     >
       {/* Imagem da carta */}
-      {!imageError ? (
+      {!imageError && marker.imageUrl ? (
         <img
           src={marker.imageUrl}
           alt={name}
-          className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
-            imageLoaded ? 'opacity-100' : 'opacity-0'
-          } ${state === 'locked' ? 'grayscale' : ''}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'
+            } ${state === 'future' ? 'grayscale' : ''}`}
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageError(true)}
         />
       ) : (
-        // Fallback se imagem não carregar
+        // Fallback se imagem não carregar ou não houver imagem
         <div className="absolute inset-0 bg-gradient-to-br from-[#1a1628] to-[#0d0a14] flex items-center justify-center">
           <span
             className="text-[#875faf] text-2xl font-serif"
@@ -126,12 +137,10 @@ export const ArcanaNode: React.FC<ArcanaNodeProps> = ({
         </div>
       )}
 
-      {/* Informações no rodapé */}
-      <div className="absolute bottom-0 left-0 right-0 p-2 text-center">
+      {/* Informações no rodapé + botão mais detalhes */}
+      <div className="absolute bottom-0 left-0 right-0 p-2 text-center flex flex-col items-center gap-1">
         <p
-          className={`text-xs font-medium uppercase tracking-wider mb-0.5 transition-colors ${
-            state === 'current' ? 'text-white' : 'text-[#a77fd4]'
-          }`}
+          className={`text-xs font-medium uppercase tracking-wider mb-0.5 transition-colors ${state === 'current' ? 'text-white' : 'text-[#a77fd4]'} ${selected ? 'text-[#ffe066]' : ''}`}
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
           {marker.symbol}
@@ -144,6 +153,22 @@ export const ArcanaNode: React.FC<ArcanaNodeProps> = ({
             {name}
           </p>
         )}
+        {/* Contagem */}
+        {typeof count === 'number' && (
+          <span className="text-[#ffe066] text-xs font-bold mt-0.5">{count}</span>
+        )}
+        {/* Botão mais detalhes */}
+        <button
+          className="mt-1 px-2 py-0.5 flex items-center gap-1 text-[11px] text-white bg-[#a77fd4] hover:bg-[#875faf] rounded-full transition-all font-semibold shadow-md border border-[#a77fd4]/60 hover:border-[#875faf]/80 drop-shadow-lg"
+          style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.04em', minWidth: 100 }}
+          onClick={e => {
+            e.stopPropagation();
+            if (typeof onDetailsClick === 'function') onDetailsClick();
+          }}
+        >
+          <span className="material-symbols-outlined text-xs align-middle">info</span>
+          {isPortuguese ? 'mais detalhes' : 'more details'}
+        </button>
       </div>
 
       {/* Badge de "Você está aqui" para current */}
