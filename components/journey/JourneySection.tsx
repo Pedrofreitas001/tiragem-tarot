@@ -1,10 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ArcanaNode from './ArcanaNode';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { PaywallModal } from '../PaywallModal';
 import { TAROT_CARDS } from '../../tarotData';
+import { fetchReadingsFromSupabase } from '../../services/readingsService';
 
 /**
  * JourneySection - A Espiral do Louco (Versão Premium)
@@ -29,6 +30,63 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   const [showPaywall, setShowPaywall] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Card frequency tracking
+  const [cardFrequency, setCardFrequency] = useState<Record<string, number>>({});
+  const [top3CardIds, setTop3CardIds] = useState<string[]>([]);
+
+  // Load reading history and calculate frequency
+  useEffect(() => {
+    const loadHistoryAndCalculateFrequency = async () => {
+      try {
+        const frequency: Record<string, number> = {};
+
+        // Load from localStorage
+        const localHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
+        localHistory.forEach((reading: any) => {
+          // From localStorage, cards are saved as cardNames (array of strings)
+          // Need to find the card ID from the name
+          reading.cardNames?.forEach((cardName: string) => {
+            const foundCard = TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName);
+            if (foundCard) {
+              const cardKey = String(foundCard.id);
+              frequency[cardKey] = (frequency[cardKey] || 0) + 1;
+            }
+          });
+        });
+
+        // Load from Supabase if user is logged in
+        if (user) {
+          try {
+            const supabaseReadings = await fetchReadingsFromSupabase(user.id, 100);
+            supabaseReadings.forEach((reading: any) => {
+              if (reading.cards && Array.isArray(reading.cards)) {
+                reading.cards.forEach((card: any) => {
+                  const cardKey = String(card.id);
+                  frequency[cardKey] = (frequency[cardKey] || 0) + 1;
+                });
+              }
+            });
+          } catch (e) {
+            console.log('Could not load Supabase readings');
+          }
+        }
+
+        // Calculate top 3 by frequency
+        const sorted = Object.entries(frequency)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([cardId]) => cardId);
+
+        setCardFrequency(frequency);
+        setTop3CardIds(sorted);
+      } catch (e) {
+        console.error('Error loading reading history:', e);
+      }
+    };
+
+    loadHistoryAndCalculateFrequency();
+  }, [user]);
+
   // Access level logic - based on authentication tier
   const isGuest = !user;
   const isRegistered = user && tier === 'free';
@@ -41,16 +99,16 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   // Card count for selected card
   let cardCount = 0;
   if (selectedMarker && hasAccessToCount) {
-    // For now, just show demo data - in future could fetch from readings
-    cardCount = Math.floor(Math.random() * 10) + 1;
+    // Get count from calculated frequency
+    const count = cardFrequency[String(selectedMarker.id)] || 0;
+    cardCount = count;
   }
 
   // Top 3 cards logic - show real data if premium, demo data otherwise
   let top3: string[] = [];
   if (hasAccessToTop3) {
-    // Premium users see real top 3 (would come from actual readings data)
-    // For now, show first 3 major arcana
-    top3 = arcanaList.slice(0, 3).map(card => String(card.id));
+    // Premium users see real top 3 from history
+    top3 = top3CardIds.length > 0 ? top3CardIds : arcanaList.slice(0, 3).map(card => String(card.id));
   } else {
     // Demo data for guests/free users - show random cards
     const shuffled = [...arcanaList].sort(() => 0.5 - Math.random());
@@ -60,7 +118,7 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   // Fallback: always show 3 cards
   if (top3.length < 3) {
     const used = new Set(top3);
-    const fill = arcanaList.filter(card => !used.has(card.id)).slice(0, 3 - top3.length).map(card => String(card.id));
+    const fill = arcanaList.filter(card => !used.has(String(card.id))).slice(0, 3 - top3.length).map(card => String(card.id));
     top3 = [...top3, ...fill];
   }
 
@@ -396,8 +454,10 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
 
                 {/* Top 3 Cards Grid */}
                 <div className={`grid grid-cols-3 gap-3 ${!hasAccessToTop3 ? 'opacity-60 blur-sm pointer-events-none' : ''}`}>
-                  {top3.map((idx, position) => {
-                    const card = arcanaList.find(a => a.id === idx);
+                  {top3.map((cardId, position) => {
+                    // Convert string ID to number for comparison
+                    const numericId = typeof cardId === 'string' ? parseInt(cardId, 10) : cardId;
+                    const card = arcanaList.find(a => a.id === numericId);
                     if (!card) return null;
 
                     const medals = ['🥇', '🥈', '🥉'];
