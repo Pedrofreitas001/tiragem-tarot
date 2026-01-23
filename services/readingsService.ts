@@ -25,7 +25,7 @@ export const saveReadingToSupabase = async (
     rating?: number,
     notes?: string
 ): Promise<boolean> => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured()) {
         console.log('Supabase not configured, skipping database save');
         return false;
     }
@@ -68,7 +68,7 @@ export const saveReadingToSupabase = async (
  * Busca histórico de leituras do Supabase
  */
 export const fetchReadingsFromSupabase = async (userId: string, limit: number = 20) => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured()) {
         console.log('Supabase not configured, skipping fetch');
         return [];
     }
@@ -100,7 +100,7 @@ export const updateReadingInSupabase = async (
     readingId: string,
     updates: Partial<SavedReading>
 ): Promise<boolean> => {
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured()) {
         console.log('Supabase not configured, skipping update');
         return false;
     }
