@@ -2892,12 +2892,13 @@ const CosmicCalendar = () => {
 const Explore = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
-    const [deck] = useState<TarotCard[]>(generateDeck());
     const [filter, setFilter] = useState<'ALL' | 'MAJOR' | Suit>('ALL');
+    // Use TAROT_CARDS diretamente para garantir dados completos
+    const deck = TAROT_CARDS;
 
     const filteredDeck = deck.filter(card => {
         if (filter === 'ALL') return true;
-        if (filter === 'MAJOR') return card.arcana === ArcanaType.MAJOR;
+        if (filter === 'MAJOR') return card.arcana === 'major';
         return card.suit === filter;
     });
 
