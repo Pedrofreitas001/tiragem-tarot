@@ -33,6 +33,7 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   // Card frequency tracking
   const [cardFrequency, setCardFrequency] = useState<Record<string, number>>({});
   const [top3CardIds, setTop3CardIds] = useState<string[]>([]);
+  const [isLoadingTop3, setIsLoadingTop3] = useState(false);
 
   // Helper function to convert Supabase reading to localStorage format
   const convertSupabaseReadingToLocalFormat = (reading: any): any => {
@@ -167,6 +168,39 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
 
     loadHistoryAndCalculateFrequency();
   }, [user?.id]); // Recalculate when user logs in/out
+
+  // Manual refresh function for Top 3
+  const refreshTop3 = async () => {
+    setIsLoadingTop3(true);
+    try {
+      const frequency: Record<string, number> = {};
+
+      // Load from localStorage
+      const localHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
+      localHistory.forEach((reading: any) => {
+        reading.cardNames?.forEach((cardName: string) => {
+          const foundCard = TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName);
+          if (foundCard) {
+            const cardKey = String(foundCard.id);
+            frequency[cardKey] = (frequency[cardKey] || 0) + 1;
+          }
+        });
+      });
+
+      // Calculate top 3 by frequency
+      const sorted = Object.entries(frequency)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([cardId]) => cardId);
+
+      setCardFrequency(frequency);
+      setTop3CardIds(sorted);
+    } catch (e) {
+      console.error('Error refreshing Top 3:', e);
+    } finally {
+      setTimeout(() => setIsLoadingTop3(false), 500); // Small delay for UX
+    }
+  };
 
   // Access level logic - based on authentication tier
   const isGuest = !user;
@@ -500,8 +534,23 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
                         {isPortuguese ? 'Seu ranking pessoal' : 'Your personal ranking'}
                       </p>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#a77fd4]/30 to-[#875faf]/20 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[#ffd700] text-2xl">emoji_events</span>
+                    <div className="flex items-center gap-2">
+                      {/* Refresh button - shows when user has access and enough data */}
+                      {hasAccessToTop3 && top3CardIds.length >= 1 && (
+                        <button
+                          onClick={refreshTop3}
+                          disabled={isLoadingTop3}
+                          className="w-10 h-10 rounded-full bg-gradient-to-br from-[#a77fd4]/30 to-[#875faf]/20 hover:from-[#a77fd4]/40 hover:to-[#875faf]/30 flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                          title={isPortuguese ? 'Atualizar ranking' : 'Refresh ranking'}
+                        >
+                          <span className={`material-symbols-outlined text-[#ffd700] text-xl ${isLoadingTop3 ? 'animate-spin' : ''}`}>
+                            {isLoadingTop3 ? 'progress_activity' : 'refresh'}
+                          </span>
+                        </button>
+                      )}
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#a77fd4]/30 to-[#875faf]/20 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[#ffd700] text-2xl">emoji_events</span>
+                      </div>
                     </div>
                   </div>
                   <div className="h-1 w-16 bg-gradient-to-r from-[#a77fd4] to-[#ffd700] rounded-full" />
