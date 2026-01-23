@@ -9,7 +9,6 @@ import { CartProvider, useCart } from './contexts/CartContext';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import { getCardName, getCardBySlug } from './tarotData';
-import { getCardName } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 import { TAROT_CARDS } from './tarotData';
@@ -1343,7 +1342,9 @@ const Shop = () => {
                         {/* Products Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                             {filteredProducts.map(product => (
-                                <ProductCard key={product.id} product={product} />
+                                <div key={product.id}>
+                                    <ProductCard product={product} />
+                                </div>
                             ))}
                         </div>
 
@@ -1985,11 +1986,12 @@ const ReadingModal = ({
                     {reading.notes && (
                         <div>
                             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
-                            {isPortuguese ? 'Síntese da Leitura' : 'Reading Synthesis'}
-                        </h3>
-                        <p className="text-gray-300 text-sm leading-relaxed bg-surface-dark p-4 rounded-xl">
-                            {reading.notes}
-                        </p>
+                                {isPortuguese ? 'Síntese da Leitura' : 'Reading Synthesis'}
+                            </h3>
+                            <p className="text-gray-300 text-sm leading-relaxed bg-surface-dark p-4 rounded-xl">
+                                {reading.notes}
+                            </p>
+                        </div>
                     )}
 
                     {/* Rating */}
@@ -2004,8 +2006,7 @@ const ReadingModal = ({
                                     onClick={() => setRating(star)}
                                     className="p-1 transition-transform hover:scale-110"
                                 >
-                                    <span className={`material-symbols-outlined text-3xl ${star <= rating ? 'text-yellow-400' : 'text-gray-600'
-                                        }`}>
+                                    <span className={`material-symbols-outlined text-3xl ${star <= rating ? 'text-yellow-400' : 'text-gray-600'}`}>
                                         {star <= rating ? 'star' : 'star_outline'}
                                     </span>
                                 </button>
@@ -2860,18 +2861,8 @@ const CosmicCalendar = () => {
                                             key={day.getDate()}
                                             className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-colors cursor-pointer hover:bg-white/5 ${isToday ? 'bg-primary text-white ring-2 ring-primary ring-offset-2 ring-offset-card-dark' : 'text-gray-400'
                                                 }`}
-                                            style={{
-                                                left: `${xPos}%`,
-                                                top: `${yPos}%`,
-                                                transform: isSelected ? undefined : `translate(-50%, -50%) rotate(${rotation}deg)`,
-                                                zIndex: isSelected ? -1 : index,
-                                                '--card-rotation': `${rotation}deg`,
-                                                animation: isSpreadingCards
-                                                    ? `cardSpread 0.5s ease-out ${index * 0.01}s both`
-                                                    : isShuffling
-                                                        ? `cardShuffle 0.3s ease-in-out infinite`
-                                                        : 'none',
-                                            } as React.CSSProperties}
+                                            // Removed invalid style properties using undefined variables
+                                            style={{} as React.CSSProperties}
                                         >
                                             <div className="absolute inset-0 rounded-lg overflow-hidden bg-gradient-to-br from-[#2a1d34] to-[#1a0f1e] flex items-center justify-center">
                                                 <span className="material-symbols-outlined text-[#a77fd4]/70 text-xs md:text-lg drop-shadow-lg">style</span>
@@ -2979,7 +2970,7 @@ const Explore = () => {
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
                                 <div className="absolute bottom-0 left-0 p-3">
-                                    <p className="text-xs text-primary font-bold uppercase mb-0.5">{card.arcana === ArcanaType.MAJOR ? (isPortuguese ? 'Maior' : 'Major') : card.suit}</p>
+                                    <p className="text-xs text-primary font-bold uppercase mb-0.5">{card.arcana === 'major' ? (isPortuguese ? 'Maior' : 'Major') : card.suit}</p>
                                     <p className="text-white font-bold text-lg leading-tight">{getCardName(card.id, isPortuguese)}</p>
                                 </div>
                             </div>
