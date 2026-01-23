@@ -82,6 +82,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Buscar perfil do usuário
   const fetchProfile = async (userId: string) => {
+    if (!supabase) return;
+
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -143,7 +145,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Inicializar autenticação
   useEffect(() => {
-    if (!isConfigured) {
+    if (!isConfigured || !supabase) {
       setLoading(false);
       return;
     }
@@ -179,6 +181,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Cadastro
   const signUp = async (email: string, password: string, fullName?: string) => {
+    if (!supabase) {
+      return { error: { message: 'Supabase not configured' } as AuthError };
+    }
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -193,6 +198,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Login
   const signIn = async (email: string, password: string) => {
+    if (!supabase) {
+      return { error: { message: 'Supabase not configured' } as AuthError };
+    }
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -202,6 +210,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Login com Google
   const signInWithGoogle = async () => {
+    if (!supabase) {
+      return { error: { message: 'Supabase not configured' } as AuthError };
+    }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -213,12 +224,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Logout
   const signOut = async () => {
-    await supabase.auth.signOut();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
     setProfile(null);
   };
 
   // Reset de senha
   const resetPassword = async (email: string) => {
+    if (!supabase) {
+      return { error: { message: 'Supabase not configured' } as AuthError };
+    }
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
@@ -228,6 +244,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Atualizar perfil
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) return { error: new Error('Not authenticated') };
+    if (!supabase) return { error: new Error('Supabase not configured') };
 
     try {
       const { error } = await supabase
@@ -247,7 +264,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Incrementar contador de leituras
   const incrementReadingCount = async () => {
-    if (!user || !profile) return;
+    if (!user || !profile || !supabase) return;
 
     const today = new Date().toISOString().split('T')[0];
     const newCount = isNewDay(profile.last_reading_date) ? 1 : profile.readings_today + 1;
