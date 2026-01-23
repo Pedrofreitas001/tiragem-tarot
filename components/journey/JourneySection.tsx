@@ -34,6 +34,8 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   const [cardFrequency, setCardFrequency] = useState<Record<string, number>>({});
   const [top3CardIds, setTop3CardIds] = useState<string[]>([]);
   const [isLoadingTop3, setIsLoadingTop3] = useState(false);
+  const [totalReadingsCount, setTotalReadingsCount] = useState(0);
+  const [hasLoadedTop3, setHasLoadedTop3] = useState(false);
 
   // Helper function to convert Supabase reading to localStorage format
   const convertSupabaseReadingToLocalFormat = (reading: any): any => {
@@ -133,41 +135,33 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
     syncSupabaseToLocalStorage();
   }, [user?.id, isPortuguese]); // Rerun if language changes too
 
-  // Load reading history and calculate frequency
+  // Count total readings from history (to determine if "Load" button should show)
   useEffect(() => {
-    const loadHistoryAndCalculateFrequency = async () => {
+    const countReadings = async () => {
       try {
-        const frequency: Record<string, number> = {};
-
-        // Load from localStorage (which now includes synced Supabase data)
+        // First check localStorage
         const localHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
-        localHistory.forEach((reading: any) => {
-          // From localStorage, cards are saved as cardNames (array of strings)
-          // Need to find the card ID from the name
-          reading.cardNames?.forEach((cardName: string) => {
-            const foundCard = TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName);
-            if (foundCard) {
-              const cardKey = String(foundCard.id);
-              frequency[cardKey] = (frequency[cardKey] || 0) + 1;
-            }
-          });
-        });
+        let count = localHistory.length;
 
-        // Calculate top 3 by frequency
-        const sorted = Object.entries(frequency)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 3)
-          .map(([cardId]) => cardId);
+        // If user is logged in, also check Supabase for more accurate count
+        if (user) {
+          try {
+            const supabaseReadings = await fetchReadingsFromSupabase(user.id, 100);
+            // Use the higher count
+            count = Math.max(count, supabaseReadings?.length || 0);
+          } catch (e) {
+            console.log('Could not fetch Supabase count');
+          }
+        }
 
-        setCardFrequency(frequency);
-        setTop3CardIds(sorted);
+        setTotalReadingsCount(count);
       } catch (e) {
-        console.error('Error loading reading history:', e);
+        console.error('Error counting readings:', e);
       }
     };
 
-    loadHistoryAndCalculateFrequency();
-  }, [user?.id]); // Recalculate when user logs in/out
+    countReadings();
+  }, [user?.id]);
 
   // Manual refresh function for Top 3
   const refreshTop3 = async () => {
@@ -212,6 +206,7 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
 
       setCardFrequency(frequency);
       setTop3CardIds(sorted);
+      setHasLoadedTop3(true);
 
       console.log('Top 3 refreshed successfully:', sorted, 'from', Object.keys(frequency).length, 'unique cards');
     } catch (e) {
@@ -602,30 +597,30 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
                 )}
 
                 {/* Top 3 Cards Grid or Empty State */}
-                {top3CardIds.length < 3 && hasAccessToTop3 ? (
-                  // Not enough data yet
+                {hasAccessToTop3 && totalReadingsCount < 3 ? (
+                  // Less than 3 readings - show "need more readings" message
                   <div className="p-8 bg-gradient-to-r from-[#a77fd4]/10 via-[#ffd700]/5 to-[#a77fd4]/10 border border-[#a77fd4]/30 rounded-lg flex flex-col items-center gap-4 text-center">
                     <span className="material-symbols-outlined text-[#ffd700] text-5xl">star_rate</span>
                     <div>
                       <p className="text-sm font-semibold text-white mb-2">
                         {isPortuguese ? (
-                          top3CardIds.length === 0
+                          totalReadingsCount === 0
                             ? 'Comece com sua primeira leitura'
-                            : top3CardIds.length === 1
-                              ? 'Faltam 2 cartas'
-                              : 'Falta 1 carta'
+                            : totalReadingsCount === 1
+                              ? 'Faltam 2 leituras'
+                              : 'Falta 1 leitura'
                         ) : (
-                          top3CardIds.length === 0
+                          totalReadingsCount === 0
                             ? 'Start with your first reading'
-                            : top3CardIds.length === 1
-                              ? '2 cards missing'
-                              : '1 card missing'
+                            : totalReadingsCount === 1
+                              ? '2 readings missing'
+                              : '1 reading missing'
                         )}
                       </p>
                       <p className="text-xs text-gray-300 mb-4">
                         {isPortuguese
-                          ? `Complete mais ${3 - top3CardIds.length} ${3 - top3CardIds.length === 1 ? 'leitura' : 'leituras'} para ver seu Top 3 Energias`
-                          : `Complete ${3 - top3CardIds.length} more ${3 - top3CardIds.length === 1 ? 'reading' : 'readings'} to see your Top 3 Energies`
+                          ? `Complete mais ${3 - totalReadingsCount} ${3 - totalReadingsCount === 1 ? 'leitura' : 'leituras'} para ver seu Top 3 Energias`
+                          : `Complete ${3 - totalReadingsCount} more ${3 - totalReadingsCount === 1 ? 'reading' : 'readings'} to see your Top 3 Energies`
                         }
                       </p>
                     </div>
@@ -635,6 +630,39 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
                     >
                       {isPortuguese ? 'Começar Leitura' : 'Start Reading'}
                     </Link>
+                  </div>
+                ) : hasAccessToTop3 && totalReadingsCount >= 3 && !hasLoadedTop3 ? (
+                  // 3+ readings available but not loaded yet - show "Load" button
+                  <div className="p-8 bg-gradient-to-r from-[#a77fd4]/10 via-[#ffd700]/5 to-[#a77fd4]/10 border border-[#a77fd4]/30 rounded-lg flex flex-col items-center gap-4 text-center">
+                    <span className="material-symbols-outlined text-[#ffd700] text-5xl">insights</span>
+                    <div>
+                      <p className="text-sm font-semibold text-white mb-2">
+                        {isPortuguese ? 'Ranking Disponível!' : 'Ranking Available!'}
+                      </p>
+                      <p className="text-xs text-gray-300 mb-4">
+                        {isPortuguese
+                          ? `Você tem ${totalReadingsCount} leituras no histórico. Carregue para ver seu Top 3 Energias!`
+                          : `You have ${totalReadingsCount} readings in history. Load to see your Top 3 Energies!`
+                        }
+                      </p>
+                    </div>
+                    <button
+                      onClick={refreshTop3}
+                      disabled={isLoadingTop3}
+                      className="mt-2 px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#a77fd4] hover:to-[#c9a9e3] text-white text-sm font-semibold rounded-lg transition-all duration-300 flex items-center gap-2 disabled:opacity-50"
+                    >
+                      {isLoadingTop3 ? (
+                        <>
+                          <span className="material-symbols-outlined animate-spin text-lg">progress_activity</span>
+                          {isPortuguese ? 'Carregando...' : 'Loading...'}
+                        </>
+                      ) : (
+                        <>
+                          <span className="material-symbols-outlined text-lg">download</span>
+                          {isPortuguese ? 'Carregar Ranking' : 'Load Ranking'}
+                        </>
+                      )}
+                    </button>
                   </div>
                 ) : (
                   // Show Top 3 Cards Grid
