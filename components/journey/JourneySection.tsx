@@ -34,6 +34,49 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   const [cardFrequency, setCardFrequency] = useState<Record<string, number>>({});
   const [top3CardIds, setTop3CardIds] = useState<string[]>([]);
 
+  // Sync Supabase readings to localStorage when user logs in
+  useEffect(() => {
+    if (!user) return; // Only sync when user is logged in
+
+    const syncSupabaseToLocalStorage = async () => {
+      try {
+        const supabaseReadings = await fetchReadingsFromSupabase(user.id, 100);
+        if (supabaseReadings && supabaseReadings.length > 0) {
+          // Convert Supabase readings to localStorage format
+          const localHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
+
+          // Create a set of existing reading IDs to avoid duplicates
+          const existingIds = new Set(localHistory.map((r: any) => r.id));
+
+          // Convert Supabase readings to localStorage format and merge
+          const convertedReadings = supabaseReadings
+            .filter((reading: any) => !existingIds.has(reading.id)) // Skip duplicates
+            .map((reading: any) => ({
+              id: reading.id,
+              date: reading.created_at || new Date().toLocaleString(),
+              spreadName: reading.spread_type || 'Leitura',
+              typeBadge: 'SINCRONIZADO',
+              typeColor: 'text-purple-400 bg-purple-500/10',
+              previewCards: reading.cards?.map((c: any) => c.imageUrl) || [],
+              cardNames: reading.cards?.map((c: any) => c.name) || [],
+              positions: [],
+              notes: reading.synthesis || '',
+              comment: reading.notes || '',
+              rating: reading.rating || 0
+            }));
+
+          // Merge with existing history
+          const merged = [...convertedReadings, ...localHistory].slice(0, 20);
+          localStorage.setItem('tarot-history', JSON.stringify(merged));
+        }
+      } catch (e) {
+        console.log('Could not sync Supabase readings to localStorage');
+      }
+    };
+
+    syncSupabaseToLocalStorage();
+  }, [user?.id]); // Only run when user ID changes (login/logout)
+
   // Load reading history and calculate frequency
   useEffect(() => {
     const loadHistoryAndCalculateFrequency = async () => {
@@ -459,12 +502,24 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
                     <span className="material-symbols-outlined text-[#ffd700] text-5xl">star_rate</span>
                     <div>
                       <p className="text-sm font-semibold text-white mb-2">
-                        {isPortuguese ? 'Mais dados necessários' : 'More data needed'}
+                        {isPortuguese ? (
+                          top3CardIds.length === 0
+                            ? 'Comece com sua primeira leitura'
+                            : top3CardIds.length === 1
+                              ? 'Faltam 2 cartas'
+                              : 'Falta 1 carta'
+                        ) : (
+                          top3CardIds.length === 0
+                            ? 'Start with your first reading'
+                            : top3CardIds.length === 1
+                              ? '2 cards missing'
+                              : '1 card missing'
+                        )}
                       </p>
                       <p className="text-xs text-gray-300 mb-4">
                         {isPortuguese
-                          ? `Faça pelo menos ${3 - top3CardIds.length} tiragens para ver seu ranking pessoal`
-                          : `Complete at least ${3 - top3CardIds.length} readings to see your personal ranking`
+                          ? `Complete mais ${3 - top3CardIds.length} ${3 - top3CardIds.length === 1 ? 'leitura' : 'leituras'} para ver seu Top 3 Energias`
+                          : `Complete ${3 - top3CardIds.length} more ${3 - top3CardIds.length === 1 ? 'reading' : 'readings'} to see your Top 3 Energies`
                         }
                       </p>
                     </div>
