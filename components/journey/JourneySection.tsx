@@ -38,30 +38,58 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   const convertSupabaseReadingToLocalFormat = (reading: any): any => {
     // Determine spread type from spread_type string
     const cardCount = reading.cards?.length || 0;
+    const spreadType = reading.spread_type || '';
+
+    // Map spread_type to proper display name
+    const spreadNameMap: Record<string, string> = {
+      'card_of_day': isPortuguese ? 'Carta do Dia' : 'Card of the Day',
+      'three_card': isPortuguese ? 'Três Cartas' : 'Three Cards',
+      'celtic_cross': isPortuguese ? 'Cruz Celta' : 'Celtic Cross',
+      'amor': isPortuguese ? 'Spread do Amor' : 'Love Spread',
+      'love': isPortuguese ? 'Spread do Amor' : 'Love Spread'
+    };
+
+    let spreadName = spreadNameMap[spreadType] ||
+      spreadType?.split('_')?.map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))?.join(' ') ||
+      (isPortuguese ? 'Leitura' : 'Reading');
+
     let typeBadge = 'SINCRONIZADO';
     let typeColor = 'text-purple-400 bg-purple-500/10';
 
-    if (cardCount === 3) {
+    if (cardCount === 1) {
+      typeBadge = isPortuguese ? 'DIÁRIA' : 'DAILY';
+      typeColor = 'text-yellow-400 bg-yellow-500/10';
+    } else if (cardCount === 3) {
       typeBadge = isPortuguese ? 'RÁPIDA' : 'QUICK';
       typeColor = 'text-primary bg-primary/10';
     } else if (cardCount === 10) {
       typeBadge = isPortuguese ? 'COMPLETA' : 'FULL';
       typeColor = 'text-blue-400 bg-blue-500/10';
-    } else if (cardCount === 3 && reading.spread_type?.includes('amor')) {
-      typeBadge = isPortuguese ? 'AMOR' : 'LOVE';
-      typeColor = 'text-pink-400 bg-pink-500/10';
+    }
+
+    // Format date properly
+    let formattedDate = reading.created_at;
+    try {
+      const dateObj = typeof reading.created_at === 'string'
+        ? new Date(reading.created_at)
+        : reading.created_at;
+
+      if (dateObj instanceof Date && !isNaN(dateObj.getTime())) {
+        formattedDate = dateObj.toLocaleString(isPortuguese ? 'pt-BR' : 'en-US', {
+          day: '2-digit',
+          month: 'short',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+    } catch (e) {
+      formattedDate = new Date().toLocaleString(isPortuguese ? 'pt-BR' : 'en-US');
     }
 
     return {
       id: reading.id || reading.created_at?.getTime?.() || Date.now(),
-      date: reading.created_at || new Date().toLocaleString(isPortuguese ? 'pt-BR' : 'en-US'),
-      spreadName: reading.spread_type?.split('-')?.map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))?.join(' ') || 'Leitura',
-      typeBadge,
-      typeColor,
-      previewCards: reading.cards?.map((c: any) => c.imageUrl) || [],
-      cardNames: reading.cards?.map((c: any) => c.name) || [],
-      positions: reading.cards?.map((c: any, idx: number) => `Posição ${idx + 1}`) || [],
-      notes: reading.synthesis || '',
+      date: formattedDate,
+      spreadName,
       comment: reading.notes || '',
       rating: reading.rating || 0
     };
