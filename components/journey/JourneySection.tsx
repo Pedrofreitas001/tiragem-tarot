@@ -1,33 +1,23 @@
 /**
- * JourneySection - Seção principal da Jornada Arquetípica
+ * JourneySection - A Espiral do Louco (Versão Imersiva)
  *
- * CONCEITO: "A Espiral do Louco"
+ * Uma experiência visual e narrativa que conta a história do Louco
+ * atravessando os 22 Arcanos Maiores. Cada carta é um capítulo,
+ * cada clique revela a narrativa profunda.
  *
- * Esta seção é o coração emocional do app. Seu objetivo não é vender,
- * mas criar vínculo. Quando o usuário vê sua jornada mapeada, ele sente:
- *
- * 1. "Eu já comecei algo aqui" → Sunk cost emocional
- * 2. "Há um caminho à frente" → Antecipação sem ansiedade
- * 3. "O app me conhece" → Personalização simbólica
- * 4. "Isso é diferente" → Distinção de apps genéricos
- *
- * A seção NÃO menciona preços, planos ou upgrade. Ela apenas revela
- * que existe profundidade - e que o usuário está nela.
- *
- * ESTRUTURA:
- * - Header ritualístico (frase + contexto)
- * - Mapa visual da jornada (espiral de arcanos)
- * - Indicadores de progresso (sutis, não gamificados)
- * - Microcopy emocional (frases que ressoam)
- * - CTA contemplativo (não comercial)
+ * Features:
+ * - Carrossel horizontal de cartas com imagens grandes
+ * - Painel de detalhes expandido ao clicar
+ * - Narrativa completa da jornada
+ * - Animações suaves e imersivas
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useJourneyProgress, ArcanaMarker } from '../../hooks/useJourneyProgress';
-import JourneyMap from './JourneyMap';
+import ArcanaNode from './ArcanaNode';
 
 interface JourneySectionProps {
   onStartReading?: () => void;
@@ -35,213 +25,89 @@ interface JourneySectionProps {
 
 export const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   const { isPortuguese } = useLanguage();
-  const { isGuest, tier } = useAuth();
   const navigate = useNavigate();
   const journey = useJourneyProgress();
   const [selectedMarker, setSelectedMarker] = useState<ArcanaMarker | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Textos localizados
   const t = {
-    // Header
-    title: isPortuguese ? 'Sua Travessia' : 'Your Crossing',
+    title: isPortuguese ? 'A Jornada do Louco' : "The Fool's Journey",
     subtitle: isPortuguese
-      ? 'Cada tiragem é um passo. Cada carta, um espelho.'
-      : 'Each reading is a step. Each card, a mirror.',
+      ? 'Cada tiragem é um passo na espiral. Cada carta, um espelho do seu caminho.'
+      : 'Each reading is a step in the spiral. Each card, a mirror of your path.',
 
-    // Status da jornada
-    journeyStarted: isPortuguese ? 'Jornada Iniciada' : 'Journey Initiated',
-    journeyAwaits: isPortuguese ? 'A Jornada Aguarda' : 'The Journey Awaits',
-
-    // Contadores
+    yourPosition: isPortuguese ? 'Sua Posição' : 'Your Position',
     arcanasCrossed: isPortuguese ? 'arcanos atravessados' : 'arcana crossed',
-    readingsTotal: isPortuguese ? 'revelações' : 'revelations',
-    daysOnPath: isPortuguese ? 'dias no caminho' : 'days on the path',
-
-    // Próximo marco
     nextThreshold: isPortuguese ? 'Próximo limiar' : 'Next threshold',
-    readingsAway: isPortuguese ? 'revelações distante' : 'revelations away',
+    readingsAway: isPortuguese ? 'leituras' : 'readings',
 
-    // Microcopy baseado em estado
-    emptyState: isPortuguese
-      ? 'O Louco aguarda no precipício. Um passo, e a jornada começa.'
-      : 'The Fool awaits at the precipice. One step, and the journey begins.',
-    earlyJourney: isPortuguese
-      ? 'Os primeiros símbolos começam a tomar forma.'
-      : 'The first symbols begin to take shape.',
-    midJourney: isPortuguese
-      ? 'Você está tecendo uma tapeçaria de significados.'
-      : 'You are weaving a tapestry of meanings.',
-    deepJourney: isPortuguese
-      ? 'Os arcanos mais profundos reconhecem sua presença.'
-      : 'The deeper arcana recognize your presence.',
+    clickToExplore: isPortuguese ? 'Clique em uma carta para explorar sua história' : 'Click a card to explore its story',
 
-    // CTAs (não comerciais)
-    beginCrossing: isPortuguese ? 'Iniciar a Travessia' : 'Begin the Crossing',
+    narrativeTitle: isPortuguese ? 'A História' : 'The Story',
+    lessonTitle: isPortuguese ? 'A Lição' : 'The Lesson',
+    revelationTitle: isPortuguese ? 'Sua Revelação' : 'Your Revelation',
+
+    close: isPortuguese ? 'Fechar' : 'Close',
     continueJourney: isPortuguese ? 'Continuar a Jornada' : 'Continue the Journey',
-    deeperPath: isPortuguese ? 'Aprofundar o Caminho' : 'Deepen the Path',
-    exploreArchive: isPortuguese ? 'Explorar o Arquivo Arcano' : 'Explore the Arcane Archive',
+    beginJourney: isPortuguese ? 'Iniciar a Jornada' : 'Begin the Journey',
 
-    // Padrões
-    patternsEmerging: isPortuguese ? 'Padrões emergindo' : 'Patterns emerging',
-    noPatterns: isPortuguese ? 'Padrões ainda não revelados' : 'Patterns not yet revealed',
+    lockedMessage: isPortuguese
+      ? 'Este arcano ainda aguarda ser revelado através de suas tiragens.'
+      : 'This arcana still awaits to be revealed through your readings.',
   };
 
-  // Mensagem dinâmica baseada no progresso
-  const getDynamicMessage = () => {
-    if (journey.totalReadings === 0) return t.emptyState;
-    if (journey.totalReadings < 5) return t.earlyJourney;
-    if (journey.totalReadings < 20) return t.midJourney;
-    return t.deepJourney;
+  // Determinar estado do nó
+  const getNodeState = (index: number): 'unlocked' | 'current' | 'next' | 'locked' => {
+    if (index < journey.currentMarkerIndex) return 'unlocked';
+    if (index === journey.currentMarkerIndex) return 'current';
+    if (index === journey.currentMarkerIndex + 1) return 'next';
+    return 'locked';
   };
 
-  // CTA dinâmico
-  const getCTAText = () => {
-    if (journey.totalReadings === 0) return t.beginCrossing;
-    if (journey.totalReadings < 10) return t.continueJourney;
-    return t.deeperPath;
+  // Abrir detalhes
+  const handleMarkerClick = (marker: ArcanaMarker, index: number) => {
+    setSelectedMarker(marker);
+    setIsDetailOpen(true);
   };
 
-  // Handler do CTA
-  const handleCTAClick = () => {
-    if (onStartReading) {
-      onStartReading();
-    } else {
-      navigate('/');
+  // Fechar detalhes
+  const handleCloseDetail = () => {
+    setIsDetailOpen(false);
+    setTimeout(() => setSelectedMarker(null), 300);
+  };
+
+  // Scroll para o marcador atual
+  useEffect(() => {
+    if (scrollRef.current && journey.currentMarkerIndex >= 0) {
+      const cardWidth = 120; // Largura aproximada de cada card
+      const scrollPosition = journey.currentMarkerIndex * cardWidth - (scrollRef.current.offsetWidth / 2) + cardWidth / 2;
+      scrollRef.current.scrollTo({ left: Math.max(0, scrollPosition), behavior: 'smooth' });
     }
-  };
+  }, [journey.currentMarkerIndex]);
 
-  // Renderizar indicador do marco atual
-  const renderCurrentMarker = () => {
-    const current = journey.unlockedMarkers[journey.currentMarkerIndex];
-    if (!current) return null;
-
-    return (
-      <div className="text-center mb-8">
-        <p
-          className="text-[#a77fd4] text-xs uppercase tracking-[0.2em] mb-2"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
-          {isPortuguese ? 'Você está em' : "You are at"}
-        </p>
-        <h3
-          className="text-white text-xl md:text-2xl font-normal mb-1"
-          style={{ fontFamily: "'Crimson Text', serif" }}
-        >
-          {isPortuguese ? current.name : current.nameEn}
-        </h3>
-        <p
-          className="text-gray-400 text-sm italic"
-          style={{ fontFamily: "'Crimson Text', serif" }}
-        >
-          {isPortuguese ? current.essence : current.essenceEn}
-        </p>
-      </div>
-    );
-  };
-
-  // Renderizar estatísticas sutis
-  const renderStats = () => {
-    if (journey.totalReadings === 0) return null;
-
-    return (
-      <div className="flex justify-center gap-8 md:gap-12 mb-8">
-        <div className="text-center">
-          <p
-            className="text-2xl md:text-3xl text-white font-light"
-            style={{ fontFamily: "'Crimson Text', serif" }}
-          >
-            {journey.unlockedMarkers.length}
-          </p>
-          <p
-            className="text-gray-500 text-xs uppercase tracking-wider"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {t.arcanasCrossed}
-          </p>
-        </div>
-
-        <div className="w-px bg-gradient-to-b from-transparent via-[#875faf]/30 to-transparent" />
-
-        <div className="text-center">
-          <p
-            className="text-2xl md:text-3xl text-white font-light"
-            style={{ fontFamily: "'Crimson Text', serif" }}
-          >
-            {journey.totalReadings}
-          </p>
-          <p
-            className="text-gray-500 text-xs uppercase tracking-wider"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {t.readingsTotal}
-          </p>
-        </div>
-
-        {journey.daysSinceStart > 0 && (
-          <>
-            <div className="w-px bg-gradient-to-b from-transparent via-[#875faf]/30 to-transparent" />
-
-            <div className="text-center">
-              <p
-                className="text-2xl md:text-3xl text-white font-light"
-                style={{ fontFamily: "'Crimson Text', serif" }}
-              >
-                {journey.daysSinceStart}
-              </p>
-              <p
-                className="text-gray-500 text-xs uppercase tracking-wider"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                {t.daysOnPath}
-              </p>
-            </div>
-          </>
-        )}
-      </div>
-    );
-  };
-
-  // Renderizar próximo marco
-  const renderNextMarker = () => {
-    if (!journey.nextMarker) return null;
-
-    return (
-      <div className="mt-8 text-center">
-        <div className="inline-flex items-center gap-3 px-4 py-2 bg-[#875faf]/10 border border-[#875faf]/20 rounded-full">
-          <span className="text-[#a77fd4] text-xs uppercase tracking-wider">
-            {t.nextThreshold}:
-          </span>
-          <span
-            className="text-white text-sm"
-            style={{ fontFamily: "'Crimson Text', serif" }}
-          >
-            {isPortuguese ? journey.nextMarker.name : journey.nextMarker.nameEn}
-          </span>
-          <span className="text-gray-500 text-xs">
-            ({journey.readingsToNext} {t.readingsAway})
-          </span>
-        </div>
-      </div>
-    );
-  };
+  // Verificar se o marker selecionado está desbloqueado
+  const isSelectedUnlocked = selectedMarker
+    ? journey.allMarkers.findIndex(m => m.id === selectedMarker.id) <= journey.currentMarkerIndex
+    : false;
 
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden">
-      {/* Background sutil */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d0a14] to-transparent" />
+    <section className="relative py-16 md:py-24 overflow-hidden">
+      {/* Background decorativo */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#875faf]/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#a77fd4]/5 rounded-full blur-3xl" />
+      </div>
 
-      {/* Elementos decorativos */}
-      <div className="absolute top-1/4 left-0 w-64 h-64 bg-[#875faf]/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-[#a77fd4]/5 rounded-full blur-3xl" />
-
-      <div className="relative z-10 max-w-4xl mx-auto px-6">
-        {/* Header ritualístico */}
-        <div className="text-center mb-12 md:mb-16">
+      <div className="relative z-10 max-w-7xl mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-10">
           <p
-            className="text-[#875faf] text-xs uppercase tracking-[0.3em] mb-4"
+            className="text-[#875faf] text-xs uppercase tracking-[0.3em] mb-3"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            {journey.totalReadings > 0 ? t.journeyStarted : t.journeyAwaits}
+            {t.yourPosition}: {journey.unlockedMarkers.length} {t.arcanasCrossed}
           </p>
 
           <h2
@@ -252,33 +118,70 @@ export const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }
           </h2>
 
           <p
-            className="text-gray-400 text-base md:text-lg font-light max-w-md mx-auto"
+            className="text-gray-400 text-base font-light max-w-xl mx-auto mb-6"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             {t.subtitle}
           </p>
+
+          {/* Barra de progresso elegante */}
+          <div className="max-w-md mx-auto mb-6">
+            <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-[#875faf] via-[#a77fd4] to-[#875faf] transition-all duration-1000 ease-out relative"
+                style={{ width: `${journey.totalProgress}%` }}
+              >
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-lg shadow-[#a77fd4]" />
+              </div>
+            </div>
+            <div className="flex justify-between mt-2 text-xs text-gray-500">
+              <span>0</span>
+              <span>{isPortuguese ? 'O Louco' : 'The Fool'}</span>
+              <span>{Math.round(journey.totalProgress)}%</span>
+              <span>{isPortuguese ? 'O Mundo' : 'The World'}</span>
+              <span>XXI</span>
+            </div>
+          </div>
         </div>
 
-        {/* Marco atual (se existir) */}
-        {journey.totalReadings > 0 && renderCurrentMarker()}
+        {/* Carrossel de cartas */}
+        <div className="relative mb-10">
+          {/* Gradientes de fade nas bordas */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0d0a14] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0d0a14] to-transparent z-10 pointer-events-none" />
 
-        {/* Mapa da jornada */}
-        <div className="mb-12">
-          <JourneyMap
-            markers={journey.allMarkers}
-            currentIndex={journey.currentMarkerIndex}
-            isPortuguese={isPortuguese}
-            onMarkerClick={setSelectedMarker}
-          />
+          {/* Scroll container */}
+          <div
+            ref={scrollRef}
+            className="flex gap-3 md:gap-4 overflow-x-auto pb-4 px-8 scrollbar-hide scroll-smooth"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {journey.allMarkers.map((marker, index) => (
+              <div key={marker.id} className="flex-shrink-0 pt-4">
+                <ArcanaNode
+                  marker={marker}
+                  state={getNodeState(index)}
+                  isPortuguese={isPortuguese}
+                  onClick={() => handleMarkerClick(marker, index)}
+                  size="large"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Instrução */}
+          <p
+            className="text-center text-gray-500 text-sm mt-4"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {t.clickToExplore}
+          </p>
         </div>
-
-        {/* Estatísticas */}
-        {renderStats()}
 
         {/* Mensagem contextual */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <p
-            className="text-gray-300 text-sm md:text-base font-light italic max-w-lg mx-auto"
+            className="text-gray-300 text-lg md:text-xl italic max-w-2xl mx-auto"
             style={{ fontFamily: "'Crimson Text', serif", lineHeight: 1.8 }}
           >
             "{isPortuguese ? journey.contextMessage : journey.contextMessageEn}"
@@ -286,48 +189,193 @@ export const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }
         </div>
 
         {/* Próximo marco */}
-        {journey.totalReadings > 0 && renderNextMarker()}
+        {journey.nextMarker && (
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex items-center gap-4 px-6 py-3 bg-[#1a1628]/80 border border-[#875faf]/30 rounded-full">
+              <span className="text-gray-400 text-sm">
+                {t.nextThreshold}:
+              </span>
+              <span
+                className="text-white font-medium"
+                style={{ fontFamily: "'Crimson Text', serif" }}
+              >
+                {isPortuguese ? journey.nextMarker.name : journey.nextMarker.nameEn}
+              </span>
+              <span className="text-[#a77fd4] text-sm">
+                {journey.readingsToNext} {t.readingsAway}
+              </span>
+            </div>
+          </div>
+        )}
 
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
+        {/* CTA */}
+        <div className="flex justify-center">
           <button
-            onClick={handleCTAClick}
-            className="group px-8 py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-sm text-white text-sm font-medium tracking-wide transition-all duration-300 shadow-lg shadow-[#875faf]/20"
+            onClick={onStartReading || (() => navigate('/'))}
+            className="group px-8 py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-lg text-white text-sm font-medium tracking-wide transition-all duration-300 shadow-lg shadow-[#875faf]/30"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             <span className="flex items-center gap-2">
-              {getCTAText()}
+              {journey.totalReadings === 0 ? t.beginJourney : t.continueJourney}
               <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">
                 arrow_forward
               </span>
             </span>
           </button>
-
-          <button
-            onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
-            className="px-8 py-4 bg-transparent border border-white/10 hover:border-[#875faf]/40 rounded-sm text-gray-400 hover:text-white text-sm font-light tracking-wide transition-all duration-300"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {t.exploreArchive}
-          </button>
-        </div>
-
-        {/* Barra de progresso minimalista (fundo da seção) */}
-        <div className="mt-16 max-w-xs mx-auto">
-          <div className="h-px bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-[#875faf] to-[#a77fd4] transition-all duration-1000 ease-out"
-              style={{ width: `${journey.totalProgress}%` }}
-            />
-          </div>
-          <p
-            className="text-center text-gray-600 text-xs mt-2 uppercase tracking-wider"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {isPortuguese ? 'Espiral' : 'Spiral'} {Math.round(journey.totalProgress)}%
-          </p>
         </div>
       </div>
+
+      {/* Modal de detalhes do Arcano */}
+      {selectedMarker && (
+        <>
+          {/* Backdrop */}
+          <div
+            className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-50 transition-opacity duration-300 ${
+              isDetailOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            onClick={handleCloseDetail}
+          />
+
+          {/* Painel de detalhes */}
+          <div
+            className={`fixed inset-x-4 bottom-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:bottom-8 md:w-[600px] max-h-[80vh] overflow-y-auto bg-gradient-to-b from-[#1a1628] to-[#0d0a14] border border-[#875faf]/40 rounded-2xl z-50 transition-all duration-500 ${
+              isDetailOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'
+            }`}
+          >
+            {/* Header com imagem */}
+            <div className="relative h-64 md:h-80 overflow-hidden rounded-t-2xl">
+              <img
+                src={selectedMarker.imageUrl}
+                alt={isPortuguese ? selectedMarker.name : selectedMarker.nameEn}
+                className={`w-full h-full object-cover ${!isSelectedUnlocked ? 'grayscale blur-sm' : ''}`}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a1628] via-[#1a1628]/50 to-transparent" />
+
+              {/* Info overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p
+                      className="text-[#a77fd4] text-xs uppercase tracking-wider mb-1"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {isPortuguese ? selectedMarker.essence : selectedMarker.essenceEn}
+                    </p>
+                    <h3
+                      className="text-white text-3xl font-normal"
+                      style={{ fontFamily: "'Crimson Text', serif" }}
+                    >
+                      {selectedMarker.symbol} · {isPortuguese ? selectedMarker.name : selectedMarker.nameEn}
+                    </h3>
+                  </div>
+
+                  {!isSelectedUnlocked && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-black/50 rounded-full">
+                      <span className="material-symbols-outlined text-white/60 text-sm">lock</span>
+                      <span className="text-white/60 text-xs uppercase tracking-wider">
+                        {isPortuguese ? 'Bloqueado' : 'Locked'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Botão fechar */}
+              <button
+                onClick={handleCloseDetail}
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors"
+              >
+                <span className="material-symbols-outlined text-white">close</span>
+              </button>
+            </div>
+
+            {/* Conteúdo */}
+            <div className="p-6">
+              {isSelectedUnlocked ? (
+                <>
+                  {/* Narrativa */}
+                  <div className="mb-6">
+                    <h4
+                      className="text-[#a77fd4] text-xs uppercase tracking-wider mb-3"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {t.narrativeTitle}
+                    </h4>
+                    <p
+                      className="text-gray-300 text-base leading-relaxed"
+                      style={{ fontFamily: "'Crimson Text', serif" }}
+                    >
+                      {isPortuguese ? selectedMarker.narrative : selectedMarker.narrativeEn}
+                    </p>
+                  </div>
+
+                  {/* Lição */}
+                  <div className="mb-6 p-4 bg-[#875faf]/10 border border-[#875faf]/20 rounded-lg">
+                    <h4
+                      className="text-[#a77fd4] text-xs uppercase tracking-wider mb-2"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {t.lessonTitle}
+                    </h4>
+                    <p
+                      className="text-white text-lg"
+                      style={{ fontFamily: "'Crimson Text', serif" }}
+                    >
+                      "{isPortuguese ? selectedMarker.lesson : selectedMarker.lessonEn}"
+                    </p>
+                  </div>
+
+                  {/* Revelação pessoal */}
+                  <div className="p-4 bg-gradient-to-r from-[#875faf]/20 to-transparent border-l-2 border-[#a77fd4] rounded-r-lg">
+                    <h4
+                      className="text-[#a77fd4] text-xs uppercase tracking-wider mb-2"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {t.revelationTitle}
+                    </h4>
+                    <p
+                      className="text-white text-base italic"
+                      style={{ fontFamily: "'Crimson Text', serif" }}
+                    >
+                      {isPortuguese ? selectedMarker.revelation : selectedMarker.revelationEn}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                /* Mensagem de bloqueado */
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#875faf]/20 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-3xl text-[#875faf]">hourglass_empty</span>
+                  </div>
+                  <p
+                    className="text-gray-400 text-base max-w-sm mx-auto"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {t.lockedMessage}
+                  </p>
+                  <p
+                    className="text-gray-500 text-sm mt-4"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {isPortuguese ? selectedMarker.latentMessage : selectedMarker.latentMessageEn}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* CSS para esconder scrollbar */}
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </section>
   );
 };

@@ -1,14 +1,11 @@
 /**
- * ArcanaNode - Componente de nó individual na espiral da jornada
+ * ArcanaNode - Cartão visual de um Arcano na jornada
  *
- * Cada nó representa um Arcano Maior e seu estado na jornada do usuário:
- * - UNLOCKED: O usuário atravessou este arquétipo (brilhante, revelado)
- * - CURRENT: O marco atual do usuário (pulsante, destaque)
- * - NEXT: O próximo marco a ser desbloqueado (semi-revelado, convidativo)
- * - LOCKED: Ainda não alcançado (velado, misterioso)
- *
- * O design evita gamificação óbvia. É contemplativo, não competitivo.
- * O objetivo é criar sensação de profundidade, não de conquista.
+ * Agora com:
+ * - Imagem da carta em destaque
+ * - Círculos maiores e mais impactantes
+ * - Hover com preview da narrativa
+ * - Estados visuais distintos (unlocked/current/next/locked)
  */
 
 import React, { useState } from 'react';
@@ -19,121 +16,154 @@ type NodeState = 'unlocked' | 'current' | 'next' | 'locked';
 interface ArcanaNodeProps {
   marker: ArcanaMarker;
   state: NodeState;
-  index: number;
-  totalNodes: number;
   isPortuguese: boolean;
   onClick?: () => void;
+  size?: 'small' | 'medium' | 'large';
 }
 
 export const ArcanaNode: React.FC<ArcanaNodeProps> = ({
   marker,
   state,
-  index,
-  totalNodes,
   isPortuguese,
   onClick,
+  size = 'medium',
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  // Tamanhos baseados na prop size
+  const sizeClasses = {
+    small: 'w-16 h-24 md:w-20 md:h-28',
+    medium: 'w-20 h-28 md:w-24 md:h-36',
+    large: 'w-28 h-40 md:w-32 md:h-48',
+  };
 
   // Classes baseadas no estado
-  const getNodeClasses = () => {
-    const base = 'relative flex items-center justify-center transition-all duration-500 ease-out';
+  const getContainerClasses = () => {
+    const base = `relative ${sizeClasses[size]} rounded-lg overflow-hidden cursor-pointer transition-all duration-500 ease-out group`;
 
     switch (state) {
       case 'unlocked':
-        return `${base} opacity-100`;
+        return `${base} ring-2 ring-[#875faf]/50 hover:ring-[#a77fd4] hover:scale-105`;
       case 'current':
-        return `${base} opacity-100 scale-110`;
+        return `${base} ring-2 ring-[#a77fd4] scale-105 shadow-xl shadow-[#875faf]/40`;
       case 'next':
-        return `${base} opacity-70 hover:opacity-90`;
+        return `${base} ring-2 ring-dashed ring-[#875faf]/40 hover:ring-[#875faf]/60 hover:scale-102`;
       case 'locked':
-        return `${base} opacity-30 hover:opacity-40`;
+        return `${base} ring-1 ring-white/10 opacity-50 hover:opacity-60`;
       default:
         return base;
     }
   };
 
-  // Estilos do círculo interno
-  const getCircleStyles = () => {
+  // Overlay baseado no estado
+  const getOverlay = () => {
     switch (state) {
       case 'unlocked':
-        return 'bg-gradient-to-br from-[#875faf]/30 to-[#a77fd4]/20 border-[#a77fd4]/60';
+        return 'bg-gradient-to-t from-black/80 via-black/20 to-transparent';
       case 'current':
-        return 'bg-gradient-to-br from-[#875faf]/40 to-[#a77fd4]/30 border-[#a77fd4] shadow-lg shadow-[#875faf]/30';
+        return 'bg-gradient-to-t from-[#875faf]/90 via-[#875faf]/30 to-transparent';
       case 'next':
-        return 'bg-gradient-to-br from-[#875faf]/20 to-transparent border-[#875faf]/40 border-dashed';
+        return 'bg-gradient-to-t from-black/90 via-black/50 to-black/30';
       case 'locked':
-        return 'bg-[#1a1628]/50 border-white/10';
+        return 'bg-black/60 backdrop-blur-[2px]';
       default:
         return '';
     }
   };
 
-  // Glow effect para estados ativos
-  const getGlowEffect = () => {
-    if (state === 'current') {
-      return (
-        <div className="absolute inset-0 rounded-full bg-[#875faf]/20 blur-xl animate-pulse" />
-      );
-    }
-    if (state === 'unlocked' && isHovered) {
-      return (
-        <div className="absolute inset-0 rounded-full bg-[#875faf]/10 blur-lg transition-opacity duration-300" />
-      );
-    }
-    return null;
-  };
+  const name = isPortuguese ? marker.name : marker.nameEn;
+  const essence = isPortuguese ? marker.essence : marker.essenceEn;
 
-  // Símbolo ou ícone
-  const renderSymbol = () => {
-    if (state === 'locked') {
-      return (
-        <span className="text-white/20 text-xs font-light tracking-widest">
+  return (
+    <div
+      className={getContainerClasses()}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      aria-label={`${name} - ${essence}`}
+    >
+      {/* Imagem da carta */}
+      {!imageError ? (
+        <img
+          src={marker.imageUrl}
+          alt={name}
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
+            imageLoaded ? 'opacity-100' : 'opacity-0'
+          } ${state === 'locked' ? 'grayscale' : ''}`}
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        // Fallback se imagem não carregar
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1628] to-[#0d0a14] flex items-center justify-center">
+          <span
+            className="text-[#875faf] text-2xl font-serif"
+            style={{ fontFamily: "'Crimson Text', serif" }}
+          >
+            {marker.symbol}
+          </span>
+        </div>
+      )}
+
+      {/* Overlay */}
+      <div className={`absolute inset-0 ${getOverlay()} transition-all duration-300`} />
+
+      {/* Glow pulsante para current */}
+      {state === 'current' && (
+        <div className="absolute inset-0 rounded-lg ring-2 ring-[#a77fd4] animate-pulse opacity-50" />
+      )}
+
+      {/* Lock icon para locked */}
+      {state === 'locked' && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-black/50 flex items-center justify-center backdrop-blur-sm">
+            <span className="material-symbols-outlined text-white/40 text-xl">lock</span>
+          </div>
+        </div>
+      )}
+
+      {/* Informações no rodapé */}
+      <div className="absolute bottom-0 left-0 right-0 p-2 text-center">
+        <p
+          className={`text-xs font-medium uppercase tracking-wider mb-0.5 transition-colors ${
+            state === 'current' ? 'text-white' : 'text-[#a77fd4]'
+          }`}
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
           {marker.symbol}
-        </span>
-      );
-    }
+        </p>
+        {state !== 'locked' && (
+          <p
+            className="text-white text-xs font-medium leading-tight truncate"
+            style={{ fontFamily: "'Crimson Text', serif" }}
+          >
+            {name}
+          </p>
+        )}
+      </div>
 
-    return (
-      <span
-        className={`font-serif tracking-wider transition-all duration-300 ${
-          state === 'current'
-            ? 'text-white text-base'
-            : state === 'unlocked'
-            ? 'text-[#a77fd4] text-sm'
-            : 'text-[#875faf]/60 text-xs'
-        }`}
-        style={{ fontFamily: "'Crimson Text', serif" }}
-      >
-        {marker.symbol}
-      </span>
-    );
-  };
+      {/* Badge de "Você está aqui" para current */}
+      {state === 'current' && (
+        <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-[#a77fd4] rounded-full">
+          <span
+            className="text-white text-[10px] uppercase tracking-wider font-medium"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {isPortuguese ? 'Atual' : 'Current'}
+          </span>
+        </div>
+      )}
 
-  // Tooltip com informações
-  const renderTooltip = () => {
-    if (!isHovered) return null;
-
-    const name = isPortuguese ? marker.name : marker.nameEn;
-    const essence = isPortuguese ? marker.essence : marker.essenceEn;
-    const message =
-      state === 'unlocked' || state === 'current'
-        ? isPortuguese
-          ? marker.revelation
-          : marker.revelationEn
-        : isPortuguese
-        ? marker.latentMessage
-        : marker.latentMessageEn;
-
-    return (
-      <div
-        className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-3 w-48 pointer-events-none"
-        style={{ opacity: isHovered ? 1 : 0, transition: 'opacity 0.3s ease' }}
-      >
-        <div className="bg-[#1a1628]/95 backdrop-blur-sm border border-[#875faf]/30 rounded-lg p-3 shadow-xl">
-          <div className="text-center">
+      {/* Tooltip expandido no hover */}
+      {isHovered && state !== 'locked' && (
+        <div className="absolute z-50 left-1/2 -translate-x-1/2 bottom-full mb-3 w-56 pointer-events-none animate-fade-in">
+          <div className="bg-[#1a1628]/95 backdrop-blur-md border border-[#875faf]/40 rounded-xl p-4 shadow-2xl">
             <p
-              className="text-[#a77fd4] text-xs font-medium uppercase tracking-wider mb-1"
+              className="text-[#a77fd4] text-xs uppercase tracking-wider mb-1"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               {essence}
@@ -145,71 +175,19 @@ export const ArcanaNode: React.FC<ArcanaNodeProps> = ({
               {name}
             </p>
             <p
-              className="text-gray-400 text-xs font-light leading-relaxed"
+              className="text-gray-400 text-xs leading-relaxed"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              {message}
+              {isPortuguese ? marker.lesson : marker.lessonEn}
             </p>
-          </div>
 
-          {/* Seta do tooltip */}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px">
-            <div className="border-8 border-transparent border-t-[#875faf]/30" />
+            {/* Seta do tooltip */}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px">
+              <div className="border-8 border-transparent border-t-[#875faf]/40" />
+            </div>
           </div>
         </div>
-      </div>
-    );
-  };
-
-  // Linha conectora para o próximo nó
-  const renderConnector = () => {
-    if (index >= totalNodes - 1) return null;
-
-    const isActive = state === 'unlocked' || state === 'current';
-
-    return (
-      <div
-        className={`absolute w-8 h-px top-1/2 -right-8 transition-all duration-500 ${
-          isActive
-            ? 'bg-gradient-to-r from-[#875faf]/60 to-[#875faf]/20'
-            : 'bg-gradient-to-r from-white/10 to-transparent'
-        }`}
-      />
-    );
-  };
-
-  return (
-    <div
-      className={getNodeClasses()}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      aria-label={`${isPortuguese ? marker.name : marker.nameEn} - ${
-        isPortuguese ? marker.essence : marker.essenceEn
-      }`}
-    >
-      {/* Glow effect */}
-      {getGlowEffect()}
-
-      {/* Círculo principal */}
-      <div
-        className={`relative w-10 h-10 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all duration-300 ${getCircleStyles()}`}
-      >
-        {renderSymbol()}
-
-        {/* Indicador de "current" */}
-        {state === 'current' && (
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#a77fd4] animate-pulse" />
-        )}
-      </div>
-
-      {/* Tooltip */}
-      {renderTooltip()}
-
-      {/* Conector */}
-      {renderConnector()}
+      )}
     </div>
   );
 };
