@@ -2132,7 +2132,10 @@ const ReadingModal = ({
 const History = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
+    const { checkAccess, getHistoryLimit, isGuest, isPremium } = usePaywall();
     const [selectedReading, setSelectedReading] = useState<any | null>(null);
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     const [savedReadings, setSavedReadings] = useState<any[]>(() => {
         try {
@@ -2142,6 +2145,11 @@ const History = () => {
             return [];
         }
     });
+
+    // Limitar leituras visíveis baseado no tier
+    const historyLimit = getHistoryLimit();
+    const visibleReadings = isPremium ? savedReadings : savedReadings.slice(0, historyLimit);
+    const hasMoreReadings = savedReadings.length > historyLimit && !isPremium;
 
     const deleteReading = (id: number, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -2221,7 +2229,24 @@ const History = () => {
                         </div>
                     </div>
 
-                    {savedReadings.length === 0 ? (
+                    {/* Bloquear visitantes */}
+                    {isGuest ? (
+                        <div className="flex flex-col items-center justify-center py-20 text-center">
+                            <span className="material-symbols-outlined text-6xl text-[#875faf] mb-4">lock</span>
+                            <h3 className="text-xl font-bold text-white mb-2">
+                                {isPortuguese ? 'Histórico Requer Conta' : 'History Requires Account'}
+                            </h3>
+                            <p className="text-gray-400 mb-6">
+                                {isPortuguese ? 'Crie uma conta gratuita para salvar e visualizar seu histórico de tiragens.' : 'Create a free account to save and view your reading history.'}
+                            </p>
+                            <button
+                                onClick={() => setShowAuthModal(true)}
+                                className="px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
+                            >
+                                {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
+                            </button>
+                        </div>
+                    ) : savedReadings.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20 text-center">
                             <span className="material-symbols-outlined text-6xl text-gray-600 mb-4">history</span>
                             <h3 className="text-xl font-bold text-white mb-2">{t.history.noHistory}</h3>
@@ -2235,7 +2260,7 @@ const History = () => {
                         </div>
                     ) : (
                         <div className="space-y-4">
-                            {savedReadings.map((item) => (
+                            {visibleReadings.map((item) => (
                                 <div
                                     key={item.id}
                                     className="bg-card-dark rounded-xl border border-border-dark hover:border-primary/30 transition-all overflow-hidden"
@@ -2310,11 +2335,42 @@ const History = () => {
                                     </div>
                                 </div>
                             ))}
+
+                            {/* Mostrar prompt de upgrade se houver mais leituras */}
+                            {hasMoreReadings && (
+                                <div className="mt-6 p-6 bg-gradient-to-r from-[#875faf]/20 to-[#1a1628] border border-[#875faf]/30 rounded-xl text-center">
+                                    <span className="material-symbols-outlined text-4xl text-[#a77fd4] mb-3">lock</span>
+                                    <h3 className="text-white font-bold text-lg mb-2">
+                                        {isPortuguese ? `+${savedReadings.length - historyLimit} tiragens bloqueadas` : `+${savedReadings.length - historyLimit} readings locked`}
+                                    </h3>
+                                    <p className="text-gray-400 text-sm mb-4">
+                                        {isPortuguese ? 'Faça upgrade para Premium para acessar todo o seu histórico.' : 'Upgrade to Premium to access your full history.'}
+                                    </p>
+                                    <button
+                                        onClick={() => setShowPaywall(true)}
+                                        className="px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
+                                    >
+                                        {isPortuguese ? 'Fazer Upgrade' : 'Upgrade Now'}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
             </main>
             <Footer />
+
+            {/* Modals */}
+            <PaywallModal
+                isOpen={showPaywall}
+                onClose={() => setShowPaywall(false)}
+                feature="history"
+                onLogin={() => {
+                    setShowPaywall(false);
+                    setShowAuthModal(true);
+                }}
+            />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </div>
     );
 };
@@ -2960,7 +3016,10 @@ const CosmicCalendar = () => {
 const Explore = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
+    const { getArchiveLimit, isGuest, isPremium } = usePaywall();
     const [filter, setFilter] = useState<'ALL' | 'MAJOR' | Suit>('ALL');
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
     // Use TAROT_CARDS diretamente para garantir dados completos
     const deck = TAROT_CARDS;
 
@@ -2969,6 +3028,26 @@ const Explore = () => {
         if (filter === 'MAJOR') return card.arcana === 'major';
         return card.suit === filter;
     });
+
+    // Limitar cartas visíveis baseado no tier
+    const archiveLimit = getArchiveLimit();
+    const visibleCards = isPremium ? filteredDeck : filteredDeck.slice(0, archiveLimit);
+    const lockedCards = isPremium ? [] : filteredDeck.slice(archiveLimit);
+
+    const handleCardClick = (card: TarotCard, index: number) => {
+        // Visitantes não podem ver nenhuma carta
+        if (isGuest) {
+            setShowPaywall(true);
+            return;
+        }
+        // Free tier pode ver apenas as primeiras 7
+        if (!isPremium && index >= archiveLimit) {
+            setShowPaywall(true);
+            return;
+        }
+        const cardSlug = isPortuguese ? card.slug_pt : card.slug;
+        navigate(`/${isPortuguese ? 'arquivo-arcano' : 'arcane-archive'}/${cardSlug}`);
+    };
 
     const filterLabels: Record<string, string> = {
         'ALL': t.explore.filters.all,
@@ -3015,24 +3094,68 @@ const Explore = () => {
                     ))}
                 </div>
 
-                <p className="text-gray-500 text-sm mb-6">{filteredDeck.length} {t.explore.cards}</p>
+                <p className="text-gray-500 text-sm mb-6">
+                    {isPremium ? filteredDeck.length : `${Math.min(archiveLimit, filteredDeck.length)} ${isPortuguese ? 'de' : 'of'} ${filteredDeck.length}`} {t.explore.cards}
+                    {!isPremium && !isGuest && (
+                        <span className="text-[#a77fd4] ml-2">
+                            ({isPortuguese ? `${filteredDeck.length - Math.min(archiveLimit, filteredDeck.length)} bloqueadas` : `${filteredDeck.length - Math.min(archiveLimit, filteredDeck.length)} locked`})
+                        </span>
+                    )}
+                </p>
+
+                {/* Visitante - mostrar aviso de bloqueio */}
+                {isGuest && (
+                    <div className="mb-8 p-6 bg-gradient-to-r from-[#875faf]/20 to-[#1a1628] border border-[#875faf]/30 rounded-xl text-center">
+                        <span className="material-symbols-outlined text-4xl text-[#a77fd4] mb-3">lock</span>
+                        <h3 className="text-white font-bold text-lg mb-2">
+                            {isPortuguese ? 'Arquivo Arcano Requer Conta' : 'Arcane Archive Requires Account'}
+                        </h3>
+                        <p className="text-gray-400 text-sm mb-4">
+                            {isPortuguese ? 'Crie uma conta gratuita para explorar os significados das cartas.' : 'Create a free account to explore card meanings.'}
+                        </p>
+                        <button
+                            onClick={() => setShowAuthModal(true)}
+                            className="px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
+                        >
+                            {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
+                        </button>
+                    </div>
+                )}
 
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                    {filteredDeck.map(card => {
-                        const cardSlug = isPortuguese ? card.slug_pt : card.slug;
+                    {filteredDeck.map((card, index) => {
+                        const isLocked = !isPremium && index >= archiveLimit;
+                        const isGuestLocked = isGuest;
+
                         return (
                             <div
                                 key={card.id}
-                                onClick={() => navigate(`/${isPortuguese ? 'arquivo-arcano' : 'arcane-archive'}/${cardSlug}`)}
-                                className="group relative aspect-[2/3.4] rounded-lg overflow-hidden border border-white/5 bg-surface-dark hover:border-primary/50 transition-all hover:-translate-y-2 cursor-pointer shadow-lg hover:shadow-primary/20"
+                                onClick={() => handleCardClick(card, index)}
+                                className={`group relative aspect-[2/3.4] rounded-lg overflow-hidden border bg-surface-dark transition-all cursor-pointer shadow-lg ${
+                                    isLocked || isGuestLocked
+                                        ? 'border-white/5 opacity-60 hover:opacity-80'
+                                        : 'border-white/5 hover:border-primary/50 hover:-translate-y-2 hover:shadow-primary/20'
+                                }`}
                             >
                                 <img
                                     src={card.imageUrl}
                                     alt={card.name}
                                     onError={handleImageError}
-                                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                    className={`w-full h-full object-cover transition-opacity ${
+                                        isLocked || isGuestLocked ? 'opacity-40 blur-[2px]' : 'opacity-80 group-hover:opacity-100'
+                                    }`}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+
+                                {/* Lock overlay for locked cards */}
+                                {(isLocked || isGuestLocked) && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                                        <div className="w-12 h-12 rounded-full bg-[#875faf]/30 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-2xl text-[#a77fd4]">lock</span>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="absolute bottom-0 left-0 p-3">
                                     <p className="text-xs text-primary font-bold uppercase mb-0.5">{card.arcana === 'major' ? (isPortuguese ? 'Maior' : 'Major') : card.suit}</p>
                                     <p className="text-white font-bold text-lg leading-tight">{getCardName(card.id, isPortuguese)}</p>
@@ -3041,8 +3164,39 @@ const Explore = () => {
                         );
                     })}
                 </div>
+
+                {/* Upgrade prompt */}
+                {!isPremium && !isGuest && lockedCards.length > 0 && (
+                    <div className="mt-8 p-6 bg-gradient-to-r from-[#875faf]/20 to-[#1a1628] border border-[#875faf]/30 rounded-xl text-center">
+                        <span className="material-symbols-outlined text-4xl text-[#a77fd4] mb-3">auto_awesome</span>
+                        <h3 className="text-white font-bold text-lg mb-2">
+                            {isPortuguese ? `Desbloqueie +${lockedCards.length} cartas` : `Unlock +${lockedCards.length} cards`}
+                        </h3>
+                        <p className="text-gray-400 text-sm mb-4">
+                            {isPortuguese ? 'Faça upgrade para Premium para acessar todas as 78 cartas do Tarot.' : 'Upgrade to Premium to access all 78 Tarot cards.'}
+                        </p>
+                        <button
+                            onClick={() => setShowPaywall(true)}
+                            className="px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
+                        >
+                            {isPortuguese ? 'Fazer Upgrade' : 'Upgrade Now'}
+                        </button>
+                    </div>
+                )}
             </main>
             <Footer />
+
+            {/* Modals */}
+            <PaywallModal
+                isOpen={showPaywall}
+                onClose={() => setShowPaywall(false)}
+                feature="archive"
+                onLogin={() => {
+                    setShowPaywall(false);
+                    setShowAuthModal(true);
+                }}
+            />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </div>
     );
 };

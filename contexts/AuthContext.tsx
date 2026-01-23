@@ -3,11 +3,24 @@ import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Profile, SubscriptionTier } from '../types/database';
 
-// Limites do plano gratuito
+// Limites para visitantes (não logados)
+export const GUEST_LIMITS = {
+  readingsPerDay: 1,
+  historyDays: 0,
+  maxHistoryItems: 0,
+  maxArchiveCards: 0,
+  hasAISynthesis: false,
+  hasPatternAnalysis: false,
+  hasPDFExport: false,
+  hasAds: true,
+};
+
+// Limites do plano gratuito (logado)
 export const FREE_TIER_LIMITS = {
   readingsPerDay: 3,
   historyDays: 7,
-  maxHistoryItems: 7,
+  maxHistoryItems: 3,
+  maxArchiveCards: 7,
   hasAISynthesis: false,
   hasPatternAnalysis: false,
   hasPDFExport: false,
@@ -19,6 +32,7 @@ export const PREMIUM_TIER_LIMITS = {
   readingsPerDay: Infinity,
   historyDays: Infinity,
   maxHistoryItems: Infinity,
+  maxArchiveCards: Infinity,
   hasAISynthesis: true,
   hasPatternAnalysis: true,
   hasPDFExport: true,
@@ -31,10 +45,11 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   isConfigured: boolean;
-  tier: SubscriptionTier;
+  tier: SubscriptionTier | 'guest';
   limits: typeof FREE_TIER_LIMITS;
   readingsToday: number;
   canDoReading: boolean;
+  isGuest: boolean;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: AuthError | null }>;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signInWithGoogle: () => Promise<{ error: AuthError | null }>;
@@ -59,16 +74,50 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// Helper para gerenciar leituras de visitantes no localStorage
+const GUEST_STORAGE_KEY = 'tarot-guest-readings';
+
+const getGuestReadings = (): { count: number; date: string } => {
+  try {
+    const stored = localStorage.getItem(GUEST_STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      const today = new Date().toISOString().split('T')[0];
+      // Reset se for um novo dia
+      if (data.date !== today) {
+        return { count: 0, date: today };
+      }
+      return data;
+    }
+  } catch (e) {
+    console.error('Error reading guest storage:', e);
+  }
+  return { count: 0, date: new Date().toISOString().split('T')[0] };
+};
+
+const setGuestReadings = (count: number) => {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    localStorage.setItem(GUEST_STORAGE_KEY, JSON.stringify({ count, date: today }));
+  } catch (e) {
+    console.error('Error saving guest storage:', e);
+  }
+};
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [guestReadings, setGuestReadingsState] = useState<number>(() => getGuestReadings().count);
   const isConfigured = isSupabaseConfigured();
 
-  // Derivar tier e limites do profile
-  const tier: SubscriptionTier = profile?.subscription_tier || 'free';
-  const limits = tier === 'premium' ? PREMIUM_TIER_LIMITS : FREE_TIER_LIMITS;
+  // Determinar se é visitante (não logado)
+  const isGuest = !user;
+
+  // Derivar tier e limites
+  const tier: SubscriptionTier | 'guest' = isGuest ? 'guest' : (profile?.subscription_tier || 'free');
+  const limits = tier === 'premium' ? PREMIUM_TIER_LIMITS : (tier === 'guest' ? GUEST_LIMITS : FREE_TIER_LIMITS);
 
   // Verificar se é um novo dia para resetar contador
   const isNewDay = (lastDate: string | null): boolean => {
@@ -77,7 +126,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return lastDate !== today;
   };
 
-  const readingsToday = profile?.readings_today || 0;
+  // Contar leituras de hoje (visitante usa localStorage, logado usa profile)
+  const readingsToday = isGuest ? guestReadings : (profile?.readings_today || 0);
   const canDoReading = tier === 'premium' || readingsToday < limits.readingsPerDay;
 
   // Buscar perfil do usuário
@@ -262,8 +312,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Incrementar contador de leituras
+  // Incrementar contador de leituras (funciona para visitantes e logados)
   const incrementReadingCount = async () => {
+    // Para visitantes: salvar no localStorage
+    if (isGuest) {
+      const newCount = guestReadings + 1;
+      setGuestReadings(newCount);
+      setGuestReadingsState(newCount);
+      return;
+    }
+
+    // Para usuários logados: salvar no Supabase
     if (!user || !profile || !supabase) return;
 
     const today = new Date().toISOString().split('T')[0];
@@ -301,6 +360,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     limits,
     readingsToday,
     canDoReading,
+    isGuest,
     signUp,
     signIn,
     signInWithGoogle,
