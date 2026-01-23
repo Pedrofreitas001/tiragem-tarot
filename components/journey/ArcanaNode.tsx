@@ -140,14 +140,14 @@ export const ArcanaNode: React.FC<ArcanaNodeProps> = ({
       {/* Botão ver detalhes - roxo suave com branco */}
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
         <button
-          className="px-3 py-1.5 flex items-center gap-1.5 text-xs text-white bg-[#9b7bb5]/80 hover:bg-[#a77fd4] rounded-lg transition-all font-medium shadow-lg backdrop-blur-sm border border-white/20"
+          className="px-2 py-1 flex items-center gap-1 text-[10px] text-white bg-[#9b7bb5]/80 hover:bg-[#a77fd4] rounded-lg transition-all font-medium shadow-lg backdrop-blur-sm border border-white/20 whitespace-nowrap"
           style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.03em' }}
           onClick={e => {
             e.stopPropagation();
             if (typeof onDetailsClick === 'function') onDetailsClick();
           }}
         >
-          <span className="material-symbols-outlined text-sm">visibility</span>
+          <span className="material-symbols-outlined text-xs">visibility</span>
           {isPortuguese ? 'Ver Detalhes' : 'View Details'}
         </button>
       </div>
