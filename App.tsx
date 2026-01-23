@@ -4,6 +4,7 @@ import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
 import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured } from './services/geminiService';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
+import { saveReadingToSupabase } from './services/readingsService';
 import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
 import { CartProvider, useCart } from './contexts/CartContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -2102,7 +2103,8 @@ const History = () => {
                             <p className="text-gray-400 mb-6">{t.history.startFirst}</p>
                             <button
                                 onClick={() => navigate('/')}
-                                className="px-6 py-3 bg-primary hover:bg-primary-hover rounded-xl text-white font-bold transition-colors"
+                                className="px-8 py-4 bg-[#875faf] text-white text-sm font-medium tracking-wide rounded-sm hover:bg-[#a77fd4] transition-colors"
+                                style={{ fontFamily: "'Inter', sans-serif" }}
                             >
                                 {t.home.startReading}
                             </button>
@@ -3364,6 +3366,7 @@ const Result = () => {
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
     const { checkAccess } = usePaywall();
+    const { user } = useAuth();
     const state = location.state as any;
 
     const [analysis, setAnalysis] = useState<ReadingAnalysis | null>(null);
@@ -3406,8 +3409,10 @@ const Result = () => {
                 setShowPaywall(true);
             }
 
-            // Save to history
+            // Save to history (both localStorage and Supabase if logged in)
             try {
+                const { user } = useAuth(); // Get user from context
+
                 const historyItem = {
                     id: Date.now(),
                     date: new Date().toLocaleString(isPortuguese ? 'pt-BR' : 'en-US', {
@@ -3431,9 +3436,23 @@ const Result = () => {
                     rating: 0
                 };
 
+                // Save to localStorage (always)
                 const existing = JSON.parse(localStorage.getItem('tarot-history') || '[]');
                 const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
                 localStorage.setItem('tarot-history', JSON.stringify(updated));
+
+                // Save to Supabase if user is logged in
+                if (user) {
+                    await saveReadingToSupabase(
+                        user.id,
+                        state.spread.id,
+                        state.cards,
+                        state.question,
+                        result?.synthesis || '',
+                        0,
+                        ''
+                    );
+                }
             } catch (e) {
                 console.error('Failed to save to history:', e);
             }

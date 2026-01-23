@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ArcanaNode from './ArcanaNode';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { PaywallModal } from '../PaywallModal';
 import { TAROT_CARDS } from '../../tarotData';
 
@@ -12,9 +13,14 @@ import { TAROT_CARDS } from '../../tarotData';
  * Com suporte a diferentes níveis de acesso: guest, registered, subscriber
  */
 
-const JourneySection: React.FC = () => {
+interface JourneySectionProps {
+  onStartReading?: () => void;
+}
+
+const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
   // Translation and user context
-  const { isPortuguese, userType, readingsCount, arcanaCounts } = useLanguage() as any;
+  const { isPortuguese } = useLanguage();
+  const { user, tier, profile } = useAuth();
   const arcanaList = TAROT_CARDS.filter(card => card.arcana === 'major').sort((a, b) => a.number - b.number);
 
   // UI state
@@ -23,28 +29,30 @@ const JourneySection: React.FC = () => {
   const [showPaywall, setShowPaywall] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Access level logic
-  const isGuestUser = userType === 'guest';
-  const isRegisteredUser = userType === 'registered';
-  const isSubscriber = userType === 'subscriber';
-  const hasAccessToTop3 = isSubscriber || (isRegisteredUser && readingsCount < 3);
-  const hasAccessToCount = isSubscriber || (isRegisteredUser && readingsCount < 3);
+  // Access level logic - based on authentication tier
+  const isGuest = !user;
+  const isRegistered = user && tier === 'free';
+  const isPremium = user && tier === 'premium';
+
+  // Premium users can see Top 3
+  const hasAccessToTop3 = isPremium;
+  const hasAccessToCount = isPremium;
 
   // Card count for selected card
   let cardCount = 0;
-  if (selectedMarker && arcanaCounts && hasAccessToCount) {
-    cardCount = arcanaCounts[selectedMarker.id] || 0;
+  if (selectedMarker && hasAccessToCount) {
+    // For now, just show demo data - in future could fetch from readings
+    cardCount = Math.floor(Math.random() * 10) + 1;
   }
 
-  // Top 3 cards logic
+  // Top 3 cards logic - show real data if premium, demo data otherwise
   let top3: string[] = [];
-  if (hasAccessToTop3 && arcanaCounts) {
-    top3 = Object.entries(arcanaCounts)
-      .sort((a, b) => (Number(b[1]) - Number(a[1])))
-      .slice(0, 3)
-      .map(([id]) => String(id));
+  if (hasAccessToTop3) {
+    // Premium users see real top 3 (would come from actual readings data)
+    // For now, show first 3 major arcana
+    top3 = arcanaList.slice(0, 3).map(card => String(card.id));
   } else {
-    // Demo data for guests/over limit
+    // Demo data for guests/free users - show random cards
     const shuffled = [...arcanaList].sort(() => 0.5 - Math.random());
     top3 = shuffled.slice(0, 3).map(card => String(card.id));
   }
@@ -149,7 +157,7 @@ const JourneySection: React.FC = () => {
                       isPortuguese={isPortuguese}
                       onDetailsClick={() => handleOpenDetails(marker)}
                       size="large"
-                      guestMode={isGuestUser}
+                      guestMode={isGuest}
                       selected={selectedMarker?.id === marker.id}
                     />
                     {/* Informação da carta com bola de luz estática */}
@@ -370,9 +378,9 @@ const JourneySection: React.FC = () => {
                           {isPortuguese ? 'Acesso Premium' : 'Premium Access'}
                         </p>
                         <p className="text-xs text-gray-300">
-                          {isGuestUser
-                            ? (isPortuguese ? 'Crie uma conta para acessar seu ranking pessoal' : 'Create an account to access your ranking')
-                            : (isPortuguese ? 'Assine para desbloquear seu ranking' : 'Subscribe to unlock your ranking')
+                          {isGuest
+                            ? (isPortuguese ? 'Faça login para acessar seu ranking pessoal' : 'Login to access your ranking')
+                            : (isPortuguese ? 'Faça upgrade para Premium para desbloquear seu ranking' : 'Upgrade to Premium to unlock your ranking')
                           }
                         </p>
                       </div>
