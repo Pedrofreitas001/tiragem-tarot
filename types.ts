@@ -64,6 +64,7 @@ export interface CardLore {
   career: string;
   advice: string;
   reversed: string;
+  description?: string;
 }
 
 export interface HistoryItem {

@@ -1797,44 +1797,68 @@ const CardDetails = () => {
     if (!card) return null;
 
     return (
-        <div className="flex flex-col min-h-screen bg-background-dark text-white">
+        <div className="relative flex flex-col min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
             <Header />
             <CartDrawer />
-            <main className="flex-1 w-full max-w-6xl mx-auto px-6 py-12">
+
+            {/* Minimal Stars Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
+                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
+                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
+            </div>
+
+            <main className="relative z-10 flex-1 w-full max-w-[1200px] mx-auto px-6 py-12">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <span onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')} className="cursor-pointer hover:text-primary">{t.explore.title}</span>
+                        <span onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')} className="cursor-pointer hover:text-[#875faf] transition-colors">{t.explore.title}</span>
                         <span>/</span>
                         <span className="text-white font-bold">{getCardName(card.id, isPortuguese)}</span>
                     </div>
-                    <button onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-dark hover:bg-white/5 transition-colors text-sm font-medium">
+                    <button onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-[#875faf]/20 border border-white/10 hover:border-[#875faf]/30 transition-all text-sm font-medium text-gray-300 hover:text-white">
                         <span className="material-symbols-outlined text-base">arrow_back</span> {t.cardDetails.back}
                     </button>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     <div className="lg:col-span-4 flex flex-col items-center">
-                        <div className="relative w-full max-w-[350px] aspect-[2/3.4] rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
-                            <img src={card.imageUrl} alt={getCardName(card.id, isPortuguese)} onError={handleImageError} className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+                        <div className="relative w-full max-w-[350px] aspect-[2/3.4] rounded-2xl overflow-hidden shadow-2xl shadow-[#875faf]/20 border border-[#875faf]/30 group hover:border-[#875faf]/50 transition-all">
+                            <img src={card.imageUrl} alt={getCardName(card.id, isPortuguese)} onError={handleImageError} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d14] via-transparent to-transparent opacity-60 pointer-events-none"></div>
                         </div>
+
+                        {/* Description Section - below the card image */}
+                        {lore?.description && (
+                            <div className="mt-6 w-full max-w-[350px] p-5 bg-[#1a1320]/60 backdrop-blur-sm border border-[#875faf]/20 rounded-xl">
+                                <h4 className="text-[#a77fd4] font-bold text-xs mb-2 uppercase tracking-wider flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-sm">image</span>
+                                    {isPortuguese ? 'Descrição Visual' : 'Visual Description'}
+                                </h4>
+                                <p className="text-gray-400 text-sm leading-relaxed italic">{lore.description}</p>
+                            </div>
+                        )}
                     </div>
 
                     <div className="lg:col-span-8 space-y-8">
                         <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
-                                    {card.arcana} {card.suit !== Suit.NONE && `• ${card.suit}`}
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="px-3 py-1.5 rounded-md bg-gradient-to-r from-[#875faf]/20 to-[#a77fd4]/20 text-[#a77fd4] text-[11px] font-bold uppercase tracking-wider border border-[#875faf]/30">
+                                    {card.arcana === ArcanaType.MAJOR ? (isPortuguese ? 'Arcano Maior' : 'Major Arcana') : (isPortuguese ? 'Arcano Menor' : 'Minor Arcana')} {card.suit !== Suit.NONE && `• ${isPortuguese ? (card.suit === 'Wands' ? 'Paus' : card.suit === 'Cups' ? 'Copas' : card.suit === 'Swords' ? 'Espadas' : 'Ouros') : card.suit}`}
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-black leading-tight text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{getCardName(card.id, isPortuguese)}</h1>
+                            <h1 className="text-4xl md:text-5xl font-normal leading-tight text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{getCardName(card.id, isPortuguese)}</h1>
                         </div>
 
                         {lore && (
                             <>
                                 <div className="flex flex-wrap gap-2">
                                     {lore.keywords.map((kw, i) => (
-                                        <div key={i} className="px-4 py-2 rounded-lg bg-surface-dark border border-white/5 text-sm font-medium text-gray-300 hover:border-primary/30 transition-colors">
+                                        <div key={i} className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium text-gray-300 hover:border-[#875faf]/40 hover:text-white transition-all">
                                             {kw}
                                         </div>
                                     ))}
@@ -1843,29 +1867,29 @@ const CardDetails = () => {
                                 <div className="space-y-6">
                                     <div className="prose prose-invert max-w-none">
                                         <h3 className="text-xl font-bold flex items-center gap-2 text-white mb-3">
-                                            <span className="material-symbols-outlined text-primary">auto_awesome</span>
+                                            <span className="material-symbols-outlined text-[#875faf]">auto_awesome</span>
                                             {t.cardDetails.upright}
                                         </h3>
-                                        <p className="text-gray-300 leading-relaxed text-lg bg-surface-dark/50 p-6 rounded-2xl border border-white/5">{lore.generalMeaning}</p>
+                                        <p className="text-gray-300 leading-relaxed text-lg bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#875faf]/20">{lore.generalMeaning}</p>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="bg-surface-dark p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
-                                            <div className="size-10 rounded-full bg-pink-500/10 text-pink-400 flex items-center justify-center mb-4">
+                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-pink-500/20 hover:border-pink-500/40 transition-all group">
+                                            <div className="size-10 rounded-full bg-pink-500/10 text-pink-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                                 <span className="material-symbols-outlined">favorite</span>
                                             </div>
                                             <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.love}</h4>
                                             <p className="text-gray-400 text-sm leading-relaxed">{lore.love}</p>
                                         </div>
-                                        <div className="bg-surface-dark p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
-                                            <div className="size-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4">
+                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-blue-500/20 hover:border-blue-500/40 transition-all group">
+                                            <div className="size-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                                 <span className="material-symbols-outlined">work</span>
                                             </div>
                                             <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.career}</h4>
                                             <p className="text-gray-400 text-sm leading-relaxed">{lore.career}</p>
                                         </div>
-                                        <div className="bg-surface-dark p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-colors md:col-span-2">
-                                            <div className="size-10 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-4">
+                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#875faf]/20 hover:border-[#875faf]/40 transition-all md:col-span-2 group">
+                                            <div className="size-10 rounded-full bg-[#875faf]/10 text-[#a77fd4] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                                 <span className="material-symbols-outlined">lightbulb</span>
                                             </div>
                                             <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.advice}</h4>
@@ -1873,24 +1897,24 @@ const CardDetails = () => {
                                         </div>
                                     </div>
 
-                                    <div className="p-5 bg-red-500/5 border border-red-500/10 rounded-2xl">
+                                    <div className="p-5 bg-red-500/5 border border-red-500/20 rounded-xl">
                                         <h4 className="text-red-400 font-bold text-sm mb-2 uppercase tracking-wide flex items-center gap-2">
                                             <span className="material-symbols-outlined text-lg">rotate_right</span>
                                             {t.cardDetails.reversed}
                                         </h4>
-                                        <p className="text-gray-400 text-sm">{lore.apiMeaningRev || lore.reversed}</p>
+                                        <p className="text-gray-400 text-sm leading-relaxed">{lore.apiMeaningRev || lore.reversed}</p>
                                     </div>
 
                                     {lore.apiDescription ? (
-                                        <div className="p-6 bg-gradient-to-br from-primary/5 to-transparent border border-primary/10 rounded-2xl">
-                                            <h4 className="text-primary font-bold text-sm mb-3 uppercase tracking-wide flex items-center gap-2">
+                                        <div className="p-6 bg-gradient-to-br from-[#875faf]/10 to-transparent border border-[#875faf]/20 rounded-xl">
+                                            <h4 className="text-[#a77fd4] font-bold text-sm mb-3 uppercase tracking-wide flex items-center gap-2">
                                                 <span className="material-symbols-outlined text-lg">menu_book</span>
                                                 {t.cardDetails.historicalSymbolism}
                                             </h4>
                                             <p className="text-gray-300 text-sm leading-relaxed italic">{lore.apiDescription}</p>
                                         </div>
                                     ) : isLoadingApi ? (
-                                        <div className="p-6 bg-surface-dark/50 border border-white/5 rounded-2xl animate-pulse">
+                                        <div className="p-6 bg-[#1a1320]/40 border border-white/5 rounded-xl animate-pulse">
                                             <div className="h-4 bg-white/10 rounded w-1/3 mb-3"></div>
                                             <div className="h-3 bg-white/10 rounded w-full mb-2"></div>
                                             <div className="h-3 bg-white/10 rounded w-5/6"></div>

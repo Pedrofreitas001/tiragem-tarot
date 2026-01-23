@@ -124,10 +124,11 @@ export const getStaticLore = (card: TarotCard, isPortuguese: boolean = true): Ca
     return {
       keywords: isPortuguese ? cardData.keywords_pt : cardData.keywords,
       generalMeaning: isPortuguese ? cardData.meaning_up_pt : cardData.meaning_up,
-      love: cardData.love,
-      career: cardData.career,
-      advice: cardData.advice,
-      reversed: isPortuguese ? cardData.meaning_rev_pt : cardData.meaning_rev
+      love: isPortuguese ? (cardData.love_pt || cardData.love) : cardData.love,
+      career: isPortuguese ? (cardData.career_pt || cardData.career) : cardData.career,
+      advice: isPortuguese ? (cardData.advice_pt || cardData.advice) : cardData.advice,
+      reversed: isPortuguese ? cardData.meaning_rev_pt : cardData.meaning_rev,
+      description: isPortuguese ? (cardData.description_pt || cardData.description) : cardData.description
     };
   }
 

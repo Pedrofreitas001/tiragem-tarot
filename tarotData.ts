@@ -18,9 +18,13 @@ export interface TarotCardData {
   meaning_rev: string;
   meaning_rev_pt: string;
   description: string;
+  description_pt: string;
   love: string;
+  love_pt: string;
   career: string;
+  career_pt: string;
   advice: string;
+  advice_pt: string;
   imageUrl: string;
 }
 
@@ -55,6 +59,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "A new romance is on the horizon. Be open to unexpected connections. If in a relationship, bring back spontaneity and adventure.",
     career: "Time for a new career path or project. Don't overthink - trust your instincts and take that leap.",
     advice: "Embrace the unknown with an open heart. Sometimes the best adventures begin with a single step into uncertainty.",
+    description_pt: "Um jovem está à beira de um penhasco, prestes a dar um passo no desconhecido. Ele carrega uma pequena bolsa e uma rosa branca, simbolizando pureza. Um pequeno cão a seus pés representa lealdade e proteção.",
+    love_pt: "Um novo romance está no horizonte. Esteja aberto a conexões inesperadas. Se em um relacionamento, traga de volta a espontaneidade e aventura.",
+    career_pt: "Hora de um novo caminho ou projeto profissional. Não pense demais - confie em seus instintos e dê o salto.",
+    advice_pt: "Abrace o desconhecido com o coração aberto. Às vezes as melhores aventuras começam com um único passo na incerteza.",
     imageUrl: `${IMG_BASE}/ar00.jpg`
   },
   {
@@ -76,6 +84,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Take initiative in love. You have the charm and ability to attract what you desire. Be authentic.",
     career: "You have everything needed for success. Use your skills and willpower to achieve your goals. Great potential ahead.",
     advice: "You have the resources you need. Channel your energy and act now with confidence.",
+    description_pt: "Uma figura está com uma mão apontando para o céu e outra para a terra, canalizando energia divina. Em sua mesa estão os símbolos dos quatro naipes - representando domínio sobre todos os elementos.",
+    love_pt: "Tome iniciativa no amor. Você tem o charme e a habilidade para atrair o que deseja. Seja autêntico.",
+    career_pt: "Você tem tudo necessário para o sucesso. Use suas habilidades e força de vontade para alcançar seus objetivos. Grande potencial à frente.",
+    advice_pt: "Você tem os recursos que precisa. Canalize sua energia e aja agora com confiança.",
     imageUrl: `${IMG_BASE}/ar01.jpg`
   },
   {
@@ -97,6 +109,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Listen to your intuition about relationships. There may be hidden aspects to explore. Trust your gut feelings.",
     career: "Hidden information may come to light. Use your intuition in decisions. Research and reflect before acting.",
     advice: "Be still and listen to your inner voice. The answers are already within you - you just need to quiet the noise to hear them.",
+    description_pt: "Uma mulher serena senta entre dois pilares - um preto, um branco - representando dualidade. Ela segura um pergaminho de conhecimento esotérico, parcialmente escondido por seu manto.",
+    love_pt: "Ouça sua intuição sobre relacionamentos. Pode haver aspectos ocultos a explorar. Confie em seus pressentimentos.",
+    career_pt: "Informações ocultas podem vir à luz. Use sua intuição nas decisões. Pesquise e reflita antes de agir.",
+    advice_pt: "Fique quieto e ouça sua voz interior. As respostas já estão dentro de você - você só precisa silenciar o ruído para ouvi-las.",
     imageUrl: `${IMG_BASE}/ar02.jpg`
   },
   {
@@ -118,6 +134,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Love flourishes. Fertility, sensuality, and deep emotional connection. A nurturing relationship.",
     career: "Creative projects thrive. Abundance in work. Good time to start businesses or grow existing ones.",
     advice: "Connect with nature and your creative side. Nurture yourself and your projects - abundance will follow.",
+    description_pt: "Uma mulher majestosa senta em um jardim exuberante, cercada pela abundância da natureza. Ela usa uma coroa de estrelas e segura um cetro, representando sua conexão com a terra e o céu.",
+    love_pt: "O amor floresce. Fertilidade, sensualidade e conexão emocional profunda. Um relacionamento nutritivo.",
+    career_pt: "Projetos criativos prosperam. Abundância no trabalho. Bom momento para iniciar negócios ou expandir os existentes.",
+    advice_pt: "Conecte-se com a natureza e seu lado criativo. Nutra a si mesmo e seus projetos - a abundância seguirá.",
     imageUrl: `${IMG_BASE}/ar03.jpg`
   },
   {
@@ -139,6 +159,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "A stable, committed relationship. May indicate a protective partner. Balance authority with compassion.",
     career: "Leadership opportunities. Time to establish structure and take charge. Success through discipline.",
     advice: "Create order from chaos. Set clear boundaries and stick to them. Lead with wisdom, not just power.",
+    description_pt: "Um governante poderoso senta em um trono de pedra adornado com cabeças de carneiro, simbolizando Áries. Ele segura um cetro ankh e um orbe, representando vida e poder mundano.",
+    love_pt: "Um relacionamento estável e comprometido. Pode indicar um parceiro protetor. Equilibre autoridade com compaixão.",
+    career_pt: "Oportunidades de liderança. Hora de estabelecer estrutura e assumir o comando. Sucesso através da disciplina.",
+    advice_pt: "Crie ordem a partir do caos. Estabeleça limites claros e mantenha-os. Lidere com sabedoria, não apenas com poder.",
     imageUrl: `${IMG_BASE}/ar04.jpg`
   },
   {
@@ -160,6 +184,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Traditional relationship values. May indicate marriage or commitment. Shared beliefs strengthen bonds.",
     career: "Following established paths leads to success. Seek mentorship. Education and credentials matter.",
     advice: "Consider what traditions serve you and which hold you back. Seek wisdom from teachers, but form your own beliefs.",
+    description_pt: "Uma figura religiosa senta entre dois pilares, abençoando dois seguidores. Ele usa uma coroa tripla e segura uma cruz papal, representando sua autoridade espiritual.",
+    love_pt: "Valores tradicionais de relacionamento. Pode indicar casamento ou compromisso. Crenças compartilhadas fortalecem laços.",
+    career_pt: "Seguir caminhos estabelecidos leva ao sucesso. Busque mentoria. Educação e credenciais importam.",
+    advice_pt: "Considere quais tradições te servem e quais te prendem. Busque sabedoria de professores, mas forme suas próprias crenças.",
     imageUrl: `${IMG_BASE}/ar05.jpg`
   },
   {
@@ -181,6 +209,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Deep soul connection. True love and partnership. A significant relationship choice may arise.",
     career: "Partnerships and collaborations thrive. Choose work that aligns with your values.",
     advice: "Follow your heart but use your head. Make choices that honor both your desires and your integrity.",
+    description_pt: "Um homem e uma mulher estão sob um anjo, representando bênção divina. A Árvore do Conhecimento e a Árvore da Vida aparecem atrás deles, simbolizando a escolha entre tentação e paraíso.",
+    love_pt: "Conexão profunda de almas. Amor verdadeiro e parceria. Uma escolha significativa de relacionamento pode surgir.",
+    career_pt: "Parcerias e colaborações prosperam. Escolha trabalhos que se alinhem com seus valores.",
+    advice_pt: "Siga seu coração, mas use sua cabeça. Faça escolhas que honrem tanto seus desejos quanto sua integridade.",
     imageUrl: `${IMG_BASE}/ar06.jpg`
   },
   {
@@ -202,6 +234,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Take charge of your love life. Pursue what you want with confidence. Balance emotions with action.",
     career: "Victory through determination. Stay focused on goals despite obstacles. Success is within reach.",
     advice: "Harness your inner strength and focus your will. You can overcome any obstacle with determination and balance.",
+    description_pt: "Um guerreiro está em uma carruagem puxada por duas esfinges - uma preta, uma branca. Ele usa armadura decorada com luas e estrelas, usando força de vontade em vez de rédeas para guiar seu caminho.",
+    love_pt: "Assuma o controle da sua vida amorosa. Persiga o que você quer com confiança. Equilibre emoções com ação.",
+    career_pt: "Vitória através da determinação. Mantenha-se focado nos objetivos apesar dos obstáculos. O sucesso está ao alcance.",
+    advice_pt: "Aproveite sua força interior e concentre sua vontade. Você pode superar qualquer obstáculo com determinação e equilíbrio.",
     imageUrl: `${IMG_BASE}/ar07.jpg`
   },
   {
@@ -223,6 +259,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Patience and compassion strengthen relationships. Face challenges with gentle strength.",
     career: "Perseverance leads to success. Handle difficult situations with grace and confidence.",
     advice: "True strength comes from within - from patience, compassion, and self-mastery. Face your fears with a gentle heart.",
+    description_pt: "Uma mulher gentilmente mantém aberta a mandíbula de um leão, mostrando domínio sobre forças primitivas através do amor em vez da violência. O símbolo do infinito paira sobre sua cabeça.",
+    love_pt: "Paciência e compaixão fortalecem relacionamentos. Enfrente desafios com força gentil.",
+    career_pt: "Perseverança leva ao sucesso. Lide com situações difíceis com graça e confiança.",
+    advice_pt: "A verdadeira força vem de dentro - da paciência, compaixão e autodomínio. Enfrente seus medos com um coração gentil.",
     imageUrl: `${IMG_BASE}/ar08.jpg`
   },
   {
@@ -244,6 +284,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Time for self-reflection about what you truly want in love. Solitude can bring clarity.",
     career: "Step back and assess your path. Seek wise counsel. Sometimes withdrawal leads to breakthrough.",
     advice: "Take time for solitude and reflection. The light of wisdom shines brightest in the quiet of your own soul.",
+    description_pt: "Um velho está sozinho no pico de uma montanha, segurando uma lanterna com uma estrela de seis pontas. Seu cajado representa conhecimento adquirido através da experiência.",
+    love_pt: "Tempo para autorreflexão sobre o que você realmente quer no amor. A solidão pode trazer clareza.",
+    career_pt: "Recue e avalie seu caminho. Busque conselhos sábios. Às vezes o afastamento leva ao avanço.",
+    advice_pt: "Reserve tempo para solidão e reflexão. A luz da sabedoria brilha mais forte no silêncio da sua própria alma.",
     imageUrl: `${IMG_BASE}/ar09.jpg`
   },
   {
@@ -265,6 +309,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "A turning point in love. Fate may bring unexpected connections or changes.",
     career: "Change is coming - likely positive. Ride the wave of opportunity. Luck favors the prepared.",
     advice: "Life moves in cycles. Accept that change is constant and position yourself to benefit from the turning wheel.",
+    description_pt: "Uma grande roda gira, com criaturas míticas subindo e descendo. A esfinge senta no topo, representando sabedoria em meio à mudança constante.",
+    love_pt: "Um ponto de virada no amor. O destino pode trazer conexões ou mudanças inesperadas.",
+    career_pt: "Mudança está chegando - provavelmente positiva. Surfe na onda da oportunidade. A sorte favorece os preparados.",
+    advice_pt: "A vida se move em ciclos. Aceite que a mudança é constante e posicione-se para se beneficiar da roda girando.",
     imageUrl: `${IMG_BASE}/ar10.jpg`
   },
   {
@@ -286,6 +334,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Fairness in relationships. Karma plays a role - treat others as you wish to be treated.",
     career: "Legal matters may arise. Act with integrity. Fair dealing leads to success.",
     advice: "Be honest with yourself and others. Take responsibility for your actions, for every cause has its effect.",
+    description_pt: "Uma figura senta entre pilares, segurando balanças em uma mão e uma espada na outra, representando julgamento equilibrado e ação rápida.",
+    love_pt: "Justiça nos relacionamentos. O karma desempenha um papel - trate os outros como deseja ser tratado.",
+    career_pt: "Questões legais podem surgir. Aja com integridade. Negociações justas levam ao sucesso.",
+    advice_pt: "Seja honesto consigo mesmo e com os outros. Assuma responsabilidade por suas ações, pois toda causa tem seu efeito.",
     imageUrl: `${IMG_BASE}/ar11.jpg`
   },
   {
@@ -307,6 +359,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Let go of expectations. A new perspective on relationships brings clarity.",
     career: "Pause and reassess. Sacrifice may be needed for future gains. Don't force progress.",
     advice: "Sometimes the best action is inaction. Surrender your need for control and see your situation from a new angle.",
+    description_pt: "Um homem pendurado de cabeça para baixo em uma cruz em forma de T, seu rosto sereno apesar de sua posição. Uma auréola circunda sua cabeça, sugerindo iluminação através da rendição.",
+    love_pt: "Deixe ir as expectativas. Uma nova perspectiva sobre relacionamentos traz clareza.",
+    career_pt: "Pause e reavalie. Sacrifício pode ser necessário para ganhos futuros. Não force o progresso.",
+    advice_pt: "Às vezes a melhor ação é a inação. Renda sua necessidade de controle e veja sua situação de um novo ângulo.",
     imageUrl: `${IMG_BASE}/ar12.jpg`
   },
   {
@@ -328,6 +384,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "End of a relationship phase - not necessarily the relationship itself. Transformation brings renewal.",
     career: "Major career change or ending. Don't resist - transformation leads to new opportunities.",
     advice: "Embrace endings as necessary for new beginnings. What dies makes room for what's being born.",
+    description_pt: "Uma figura esquelética a cavalo carrega uma bandeira preta com uma flor branca. Pessoas de todas as classes - rei, donzela, criança - caem diante dele, mostrando que a transformação não poupa ninguém.",
+    love_pt: "Fim de uma fase do relacionamento - não necessariamente do relacionamento em si. A transformação traz renovação.",
+    career_pt: "Grande mudança ou fim de carreira. Não resista - a transformação leva a novas oportunidades.",
+    advice_pt: "Abrace os finais como necessários para novos começos. O que morre abre espaço para o que está nascendo.",
     imageUrl: `${IMG_BASE}/ar13.jpg`
   },
   {
@@ -349,6 +409,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Balance in relationships. Patience and moderation lead to harmony. Blend differences with grace.",
     career: "Find balance in work-life. Take a measured approach. Patience brings lasting success.",
     advice: "Practice moderation in all things. Blend opposing forces within you to find your true path.",
+    description_pt: "Um anjo derrama água entre dois cálices, representando o fluxo entre consciente e subconsciente. Um pé repousa na terra, outro na água, mostrando equilíbrio entre os reinos.",
+    love_pt: "Equilíbrio nos relacionamentos. Paciência e moderação levam à harmonia. Misture diferenças com graça.",
+    career_pt: "Equilíbrio trabalho-vida é fundamental. Resultados estáveis vêm da moderação e paciência.",
+    advice_pt: "Encontre o meio-termo em todas as coisas. Misture os opostos em harmonia e deixe a paciência guiar suas ações.",
     imageUrl: `${IMG_BASE}/ar14.jpg`
   },
   {
@@ -370,6 +434,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Unhealthy attachments or patterns in love. Face your shadows to find freedom.",
     career: "Feeling trapped or enslaved to work. Examine what truly binds you.",
     advice: "Recognize the chains you've placed on yourself. You have more freedom than you believe - if you choose to take it.",
+    description_pt: "Uma figura demoníaca senta em um trono, com um homem e uma mulher acorrentados abaixo. Olhe de perto - as correntes estão frouxas e podem ser removidas.",
+    love_pt: "Examine padrões de dependência em relacionamentos. Libertação é possível se você escolher.",
+    career_pt: "Sentindo-se preso no trabalho? Reconheça o que realmente o prende e você pode se libertar.",
+    advice_pt: "Suas correntes são mais frouxas do que parecem. Reconheça os apegos que o prendem para encontrar verdadeira liberdade.",
     imageUrl: `${IMG_BASE}/ar15.jpg`
   },
   {
@@ -391,6 +459,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Sudden revelation or upheaval in relationships. What wasn't working becomes clear.",
     career: "Unexpected disruption at work. Though shocking, it clears the way for rebuilding better.",
     advice: "Sometimes things must fall apart before they can come together correctly. Trust that destruction leads to liberation.",
+    description_pt: "Um raio atinge uma torre, enviando coroas e figuras caindo. Chamas irrompem das janelas enquanto estruturas construídas sobre bases falsas desmoronam.",
+    love_pt: "Revelações podem abalar a base do relacionamento. A verdade liberta, mesmo quando dói.",
+    career_pt: "Ruptura repentina. Estruturas desmoronando podem abrir espaço para bases mais fortes.",
+    advice_pt: "Às vezes a destruição é necessária para reconstruir corretamente. Deixe o que não serve cair.",
     imageUrl: `${IMG_BASE}/ar16.jpg`
   },
   {
@@ -412,6 +484,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Renewed hope in love. Healing from past hurts. Soul connections and spiritual love.",
     career: "Follow your star - your true calling. Inspiration leads the way. Creative success.",
     advice: "Have faith. After hardship comes renewal. You are guided by a light that never goes out.",
+    description_pt: "Uma mulher nua se ajoelha junto à água, derramando água de duas jarras. Acima dela, oito estrelas brilham - uma grande estrela central e sete menores.",
+    love_pt: "Esperança renovada no amor. Cura de feridas passadas. Abertura para novas possibilidades.",
+    career_pt: "Após dificuldades, a esperança retorna. Inspiração e oportunidades estão florescendo.",
+    advice_pt: "Tenha fé. Após a tempestade vem a calma. A esperança é sua estrela guia através da escuridão.",
     imageUrl: `${IMG_BASE}/ar17.jpg`
   },
   {
@@ -433,6 +509,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Confusion or deception in love. Trust your instincts. All is not as it appears.",
     career: "Uncertainty and illusion at work. Look beneath the surface before making decisions.",
     advice: "In times of uncertainty, trust your intuition over your fears. The path through darkness requires inner light.",
+    description_pt: "Uma lua cheia olha para baixo com expressão inquietante. Um lagostim emerge de uma piscina, enquanto um cão e um lobo uivam. Duas torres guardam o caminho adiante.",
+    love_pt: "Emoções podem obscurecer a realidade. Medos e inseguranças precisam ser confrontados.",
+    career_pt: "Confusão ou engano no trabalho. Confie em sua intuição para navegar pela incerteza.",
+    advice_pt: "Nem tudo é o que parece. Caminhe com cuidado através das ilusões e confie em sua orientação interior.",
     imageUrl: `${IMG_BASE}/ar18.jpg`
   },
   {
@@ -454,6 +534,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Joy and happiness in love. Warmth, vitality, and positive energy in relationships.",
     career: "Success and recognition at work. Your efforts bear fruit. Shine brightly.",
     advice: "Embrace the light and warmth available to you. Joy is your birthright - let yourself shine.",
+    description_pt: "Um sol radiante brilha sobre uma criança feliz montada em um cavalo branco. Girassóis florescem atrás de um muro, virando-se para a luz.",
+    love_pt: "Alegria e felicidade em relacionamentos. Sucesso no amor. Celebração e calor.",
+    career_pt: "Sucesso, reconhecimento e realização. Sua energia positiva atrai oportunidades.",
+    advice_pt: "Deixe sua luz brilhar. Sucesso e felicidade estão aqui - aproveite o momento com gratidão.",
     imageUrl: `${IMG_BASE}/ar19.jpg`
   },
   {
@@ -475,6 +559,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Reevaluate your relationships. A call to deeper commitment or necessary endings.",
     career: "A calling to your true vocation. Career transformation through self-reflection.",
     advice: "Answer the call to become who you're meant to be. It's time to rise up and embrace your purpose.",
+    description_pt: "Um anjo toca trombeta enquanto figuras se levantam de túmulos, braços erguidos em direção ao céu. Montanhas ao fundo representam os limites absolutos.",
+    love_pt: "Um chamado para renovar relacionamentos. Julgamento claro sobre questões do coração.",
+    career_pt: "Hora de avaliação honesta. Seu chamado verdadeiro está se revelando.",
+    advice_pt: "Atenda ao chamado. É hora de avaliar sua vida honestamente e abraçar seu propósito maior.",
     imageUrl: `${IMG_BASE}/ar20.jpg`
   },
   {
@@ -496,6 +584,10 @@ export const TAROT_CARDS: TarotCardData[] = [
     love: "Fulfillment in love. A complete and whole relationship. Celebration of union.",
     career: "Achievement and success. Goals reached. Time to celebrate before the next cycle.",
     advice: "Celebrate your accomplishments - you've come full circle. Honor the completion before beginning anew.",
+    description_pt: "Uma figura dançante, envolta em um lenço flutuante, está dentro de uma guirlanda de louros. Nos quatro cantos estão os símbolos dos evangelistas - leão, touro, águia e anjo.",
+    love_pt: "Completude e união. Relacionamentos alcançam um estado de harmonia e realização.",
+    career_pt: "Conquistas máximas. Conclusão bem-sucedida de ciclos. Integração de todas as lições.",
+    advice_pt: "Você completou um ciclo importante. Celebre suas conquistas enquanto se prepara para a próxima jornada.",
     imageUrl: `${IMG_BASE}/ar21.jpg`
   },
 
