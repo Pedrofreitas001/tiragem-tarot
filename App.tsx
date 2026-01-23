@@ -12,6 +12,7 @@ import { getCardName, getCardBySlug } from './tarotData';
 import { getCardName } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
+import { TAROT_CARDS } from './tarotData';
 
 // Extended CardLore with API description
 interface ExtendedCardLore extends CardLore {
@@ -983,7 +984,7 @@ const Home = () => {
                             </div>
 
                             <div>
-                                <label className="block text-gray-300 text-xs font-light mb-2 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                <label className="block text-gray-300 text-xs font-light mb-3 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
                                     {isPortuguese ? 'E-mail' : 'Email'}
                                 </label>
                                 <input
@@ -1714,7 +1715,7 @@ const Checkout = () => {
                             <button
                                 type="submit"
                                 disabled={isProcessing}
-                                className="w-full mt-6 py-4 bg-primary hover:bg-primary-hover disabled:bg-gray-700 rounded-xl text-white font-bold transition-colors flex items-center justify-center gap-2"
+                                className="w-full mt-6 py-4 bg-primary hover:bg-primary-hover disabled:bg-gray-700 disabled:cursor-not-allowed rounded-xl text-white font-bold transition-colors flex items-center justify-center gap-2"
                             >
                                 {isProcessing ? (
                                     <>
@@ -1938,7 +1939,7 @@ const ReadingModal = ({
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-border-dark">
                     <div>
-                        <div className={`inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide mb-2 ${reading.typeColor}`}>
+                        <div className={`inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider mb-2 ${reading.typeColor}`}>
                             {reading.typeBadge}
                         </div>
                         <h2 className="text-xl font-bold text-white">{reading.spreadName}</h2>
@@ -1984,12 +1985,11 @@ const ReadingModal = ({
                     {reading.notes && (
                         <div>
                             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
-                                {isPortuguese ? 'Síntese da Leitura' : 'Reading Synthesis'}
-                            </h3>
-                            <p className="text-gray-300 text-sm leading-relaxed bg-surface-dark p-4 rounded-xl">
-                                {reading.notes}
-                            </p>
-                        </div>
+                            {isPortuguese ? 'Síntese da Leitura' : 'Reading Synthesis'}
+                        </h3>
+                        <p className="text-gray-300 text-sm leading-relaxed bg-surface-dark p-4 rounded-xl">
+                            {reading.notes}
+                        </p>
                     )}
 
                     {/* Rating */}
@@ -2203,7 +2203,7 @@ const History = () => {
                                         <div className="flex-1 p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4">
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-3 mb-2">
-                                                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide ${item.typeColor}`}>
+                                                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${item.typeColor}`}>
                                                         {item.typeBadge}
                                                     </span>
                                                     <span className="text-gray-500 text-xs">{item.date}</span>
@@ -2310,7 +2310,7 @@ const Numerology = () => {
 
                     {/* Title & Description */}
                     <div className="text-center mb-4">
-                        <div className="flex items-center justify-center gap-2 mb-2">
+                        <div className="flex items-center gap-2 mb-2">
                             <span className={`material-symbols-outlined ${isMaster ? 'text-yellow-400' : 'text-primary'}`}>{icon}</span>
                             <h3 className="text-lg font-bold text-white">{title}</h3>
                         </div>
@@ -2663,7 +2663,7 @@ const CosmicCalendar = () => {
             <main className="flex-1 w-full max-w-[1200px] mx-auto px-3 md:px-10 py-8 md:py-12">
                 {/* Hero */}
                 <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-bold mb-6">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-bold mb-6 backdrop-blur-sm">
                         <span className="material-symbols-outlined text-lg">calendar_month</span>
                         {t.cosmic.title}
                     </div>
@@ -2860,9 +2860,22 @@ const CosmicCalendar = () => {
                                             key={day.getDate()}
                                             className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-colors cursor-pointer hover:bg-white/5 ${isToday ? 'bg-primary text-white ring-2 ring-primary ring-offset-2 ring-offset-card-dark' : 'text-gray-400'
                                                 }`}
+                                            style={{
+                                                left: `${xPos}%`,
+                                                top: `${yPos}%`,
+                                                transform: isSelected ? undefined : `translate(-50%, -50%) rotate(${rotation}deg)`,
+                                                zIndex: isSelected ? -1 : index,
+                                                '--card-rotation': `${rotation}deg`,
+                                                animation: isSpreadingCards
+                                                    ? `cardSpread 0.5s ease-out ${index * 0.01}s both`
+                                                    : isShuffling
+                                                        ? `cardShuffle 0.3s ease-in-out infinite`
+                                                        : 'none',
+                                            } as React.CSSProperties}
                                         >
-                                            <span className="font-medium">{day.getDate()}</span>
-                                            <span className="material-symbols-outlined text-[10px] opacity-50">{dayMoon.icon}</span>
+                                            <div className="absolute inset-0 rounded-lg overflow-hidden bg-gradient-to-br from-[#2a1d34] to-[#1a0f1e] flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-[#a77fd4]/70 text-xs md:text-lg drop-shadow-lg">style</span>
+                                            </div>
                                         </div>
                                     );
                                 })}
@@ -2967,7 +2980,7 @@ const Explore = () => {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
                                 <div className="absolute bottom-0 left-0 p-3">
                                     <p className="text-xs text-primary font-bold uppercase mb-0.5">{card.arcana === ArcanaType.MAJOR ? (isPortuguese ? 'Maior' : 'Major') : card.suit}</p>
-                                    <p className="text-white text-sm font-bold leading-tight">{getCardName(card.id, isPortuguese)}</p>
+                                    <p className="text-white font-bold text-lg leading-tight">{getCardName(card.id, isPortuguese)}</p>
                                 </div>
                             </div>
                         );
