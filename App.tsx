@@ -6,6 +6,10 @@ import { getGeminiInterpretation } from './services/geminiService';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
 import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
 import { CartProvider, useCart } from './contexts/CartContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthModal } from './components/AuthModal';
+import { UserMenu } from './components/UserMenu';
+import { PaywallModal, usePaywall } from './components/PaywallModal';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import { getCardName, getCardBySlug } from './tarotData';
@@ -136,6 +140,7 @@ const Header = () => {
     const { t, isPortuguese } = useLanguage();
     const { toggleCart, getItemCount } = useCart();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
     const itemCount = getItemCount();
@@ -143,66 +148,71 @@ const Header = () => {
     const exploreRoute = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
 
     return (
-        <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
-            <div className="flex flex-col w-full max-w-[1200px]">
-                <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
-                    <div className="flex items-center gap-3 text-white cursor-pointer" onClick={() => navigate('/')}>
-                        <div className="size-9 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/30">
-                            <span className="material-symbols-outlined text-[22px] text-white">auto_awesome</span>
+        <>
+            <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
+                <div className="flex flex-col w-full max-w-[1200px]">
+                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
+                        <div className="flex items-center gap-3 text-white cursor-pointer" onClick={() => navigate('/')}>
+                            <div className="size-9 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/30">
+                                <span className="material-symbols-outlined text-[22px] text-white">auto_awesome</span>
+                            </div>
+                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight hidden sm:block">Mystic Tarot</h2>
                         </div>
-                        <h2 className="text-white text-lg font-bold leading-tight tracking-tight hidden sm:block">Mystic Tarot</h2>
+
+                        <nav className="hidden md:flex items-center gap-8">
+                            <button onClick={() => navigate('/')} className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {t.nav.home}
+                            </button>
+                            <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {t.nav.cardMeanings}
+                            </button>
+                            <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {t.nav.history}
+                            </button>
+                            <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {t.nav.shop}
+                            </button>
+                        </nav>
+
+                        <div className="flex items-center gap-3">
+                            <LanguageToggle />
+
+                            <button
+                                onClick={() => toggleCart(true)}
+                                className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-gray-300 hover:text-white">shopping_bag</span>
+                                {itemCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full text-[10px] font-bold text-white flex items-center justify-center">
+                                        {itemCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            <UserMenu onLoginClick={() => setShowAuthModal(true)} />
+
+                            <button
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                className="md:hidden p-2 rounded-lg hover:bg-white/5"
+                            >
+                                <span className="material-symbols-outlined text-white">{mobileMenuOpen ? 'close' : 'menu'}</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <nav className="hidden md:flex items-center gap-8">
-                        <button onClick={() => navigate('/')} className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                            {t.nav.home}
-                        </button>
-                        <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                            {t.nav.cardMeanings}
-                        </button>
-                        <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                            {t.nav.history}
-                        </button>
-                        <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                            {t.nav.shop}
-                        </button>
-                    </nav>
-
-                    <div className="flex items-center gap-3">
-                        <LanguageToggle />
-
-                        <button
-                            onClick={() => toggleCart(true)}
-                            className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
-                        >
-                            <span className="material-symbols-outlined text-gray-300 hover:text-white">shopping_bag</span>
-                            {itemCount > 0 && (
-                                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full text-[10px] font-bold text-white flex items-center justify-center">
-                                    {itemCount}
-                                </span>
-                            )}
-                        </button>
-
-                        <button
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="md:hidden p-2 rounded-lg hover:bg-white/5"
-                        >
-                            <span className="material-symbols-outlined text-white">{mobileMenuOpen ? 'close' : 'menu'}</span>
-                        </button>
-                    </div>
+                    {/* Mobile Menu */}
+                    {mobileMenuOpen && (
+                        <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
+                            <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
+                            <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
+                            <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
+                            <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
+                        </nav>
+                    )}
                 </div>
-
-                {/* Mobile Menu */}
-                {mobileMenuOpen && (
-                    <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
-                        <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
-                        <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
-                        <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
-                        <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
-                    </nav>
-                )}
-            </div>
-        </header>
+            </header>
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+        </>
     );
 };
 
@@ -3590,9 +3600,10 @@ const Result = () => {
 const App = () => {
     return (
         <LanguageProvider>
-            <CartProvider>
-                <Router>
-                    <Routes>
+            <AuthProvider>
+                <CartProvider>
+                    <Router>
+                        <Routes>
                         <Route path="/" element={<Home />} />
 
                         {/* Rotas em Português */}
@@ -3615,9 +3626,10 @@ const App = () => {
                         <Route path="/shop" element={<Shop />} />
                         <Route path="/shop/:slug" element={<ProductDetail />} />
                         <Route path="/checkout" element={<Checkout />} />
-                    </Routes>
-                </Router>
-            </CartProvider>
+                        </Routes>
+                    </Router>
+                </CartProvider>
+            </AuthProvider>
         </LanguageProvider>
     );
 };
