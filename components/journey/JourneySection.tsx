@@ -147,7 +147,7 @@ const JourneySection: React.FC = () => {
               {arcanaList.map((marker) => (
                 <div
                   key={marker.id}
-                  className="flex-shrink-0 transition-all duration-300 hover:scale-110 flex flex-col items-center gap-2 group"
+                  className="flex-shrink-0 transition-all duration-300 hover:scale-105 flex flex-col items-center gap-3 group"
                   onClick={() => handleSelectMarker(marker)}
                 >
                   <ArcanaNode
@@ -159,11 +159,11 @@ const JourneySection: React.FC = () => {
                     guestMode={isGuestUser}
                     selected={selectedMarker?.id === marker.id}
                   />
-                  <div className="text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <p className="text-xs font-bold text-[#a77fd4] uppercase tracking-wide" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  <div className="text-center transition-all duration-300 bg-gradient-to-b from-[#1a1628]/80 to-[#0d0a14]/60 backdrop-blur-sm border border-[#a77fd4]/30 rounded-lg px-3 py-2 min-w-[120px]">
+                    <p className="text-sm font-bold text-[#a77fd4] uppercase tracking-widest mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
                       {marker.number}
                     </p>
-                    <p className="text-xs text-white mt-1 max-w-[60px]" style={{ fontFamily: "'Crimson Text', serif" }}>
+                    <p className="text-sm text-white font-medium leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                       {isPortuguese ? (marker.name_pt || marker.name) : marker.name}
                     </p>
                   </div>
@@ -331,23 +331,23 @@ const JourneySection: React.FC = () => {
         <>
           <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 transition-opacity duration-300" onClick={handleCloseDetail} />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
-            <div className="w-full max-w-2xl bg-gradient-to-br from-[#0d0a14] via-[#1a1628] to-[#0d0a14] border border-[#a77fd4]/40 rounded-2xl shadow-2xl"
+            <div className="w-full max-w-2xl bg-gradient-to-br from-[#0d0a14] via-[#1a1628] to-[#0d0a14] border border-[#a77fd4]/20 rounded-2xl shadow-2xl"
               style={{
-                boxShadow: '0 25px 50px -12px rgba(167, 127, 212, 0.25), 0 0 100px rgba(167, 127, 212, 0.1)'
+                boxShadow: '0 20px 40px -10px rgba(167, 127, 212, 0.15), 0 0 60px rgba(167, 127, 212, 0.05)'
               }}>
 
               {/* Compact Header */}
               <div className="relative overflow-hidden p-6 md:p-8">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#a77fd4]/10 via-transparent to-transparent" />
-                <div className="absolute -top-16 right-0 w-32 h-32 bg-[#a77fd4]/10 rounded-full blur-3xl" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#a77fd4]/5 via-transparent to-transparent" />
+                <div className="absolute -top-16 right-0 w-32 h-32 bg-[#a77fd4]/5 rounded-full blur-3xl" />
 
                 <div className="relative flex gap-6 items-start">
-                  {/* Imagem compacta */}
+                  {/* Imagem maior sem borda */}
                   <div className="flex-shrink-0">
                     <img
                       src={selectedMarker?.imageUrl}
                       alt={isPortuguese ? selectedMarker.name_pt : selectedMarker.name}
-                      className="w-24 h-32 object-contain rounded-lg shadow-lg border-2 border-[#a77fd4]/50"
+                      className="w-32 h-48 md:w-36 md:h-52 object-contain rounded-lg"
                     />
                   </div>
 
@@ -375,14 +375,14 @@ const JourneySection: React.FC = () => {
               </div>
 
               {/* Divider */}
-              <div className="h-px bg-gradient-to-r from-transparent via-[#a77fd4]/50 to-transparent mx-6" />
+              <div className="h-px bg-gradient-to-r from-transparent via-[#a77fd4]/30 to-transparent mx-6" />
 
               {/* Conteúdo Compacto */}
               <div className="p-6 md:p-8 space-y-5">
 
                 {/* Espaço para Jornada do Louco */}
                 <div>
-                  <h3 className="text-[#a77fd4] text-xs uppercase tracking-widest font-bold mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  <h3 className="text-[#a77fd4]/90 text-xs uppercase tracking-widest font-bold mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>
                     ✦ {isPortuguese ? 'Jornada do Louco' : 'Fool\'s Journey'}
                   </h3>
                   <p className="text-gray-300 text-sm leading-relaxed" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -392,8 +392,8 @@ const JourneySection: React.FC = () => {
 
                 {/* Significados lado a lado */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-[#a77fd4]/10 border border-[#a77fd4]/30 rounded-lg p-4">
-                    <h4 className="text-[#ffd700] text-xs uppercase tracking-widest font-bold mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  <div className="bg-[#a77fd4]/5 border border-[#a77fd4]/20 rounded-lg p-4">
+                    <h4 className="text-[#ffd700]/90 text-xs uppercase tracking-widest font-bold mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>
                       ↑ {isPortuguese ? 'Significado Positivo' : 'Upright'}
                     </h4>
                     <p className="text-gray-200 text-sm leading-relaxed" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -401,8 +401,8 @@ const JourneySection: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="bg-[#875faf]/10 border border-[#875faf]/30 rounded-lg p-4">
-                    <h4 className="text-[#c9a9e3] text-xs uppercase tracking-widest font-bold mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  <div className="bg-[#875faf]/5 border border-[#875faf]/20 rounded-lg p-4">
+                    <h4 className="text-[#c9a9e3]/90 text-xs uppercase tracking-widest font-bold mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>
                       ↓ {isPortuguese ? 'Significado Invertido' : 'Reversed'}
                     </h4>
                     <p className="text-gray-200 text-sm leading-relaxed" style={{ fontFamily: "'Crimson Text', serif" }}>

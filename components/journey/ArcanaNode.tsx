@@ -137,37 +137,18 @@ export const ArcanaNode: React.FC<ArcanaNodeProps> = ({
         </div>
       )}
 
-      {/* Informações no rodapé + botão mais detalhes */}
-      <div className="absolute bottom-0 left-0 right-0 p-2 text-center flex flex-col items-center gap-1">
-        <p
-          className={`text-xs font-medium uppercase tracking-wider mb-0.5 transition-colors ${state === 'current' ? 'text-white' : 'text-[#a77fd4]'} ${selected ? 'text-[#ffe066]' : ''}`}
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
-          {marker.symbol}
-        </p>
-        {state !== 'locked' && (
-          <p
-            className="text-white text-xs font-medium leading-tight truncate"
-            style={{ fontFamily: "'Crimson Text', serif" }}
-          >
-            {name}
-          </p>
-        )}
-        {/* Contagem */}
-        {typeof count === 'number' && (
-          <span className="text-[#ffe066] text-xs font-bold mt-0.5">{count}</span>
-        )}
-        {/* Botão mais detalhes */}
+      {/* Botão ver detalhes - roxo suave com branco */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
         <button
-          className="mt-1 px-2 py-0.5 flex items-center gap-1 text-[11px] text-white bg-[#a77fd4] hover:bg-[#875faf] rounded-full transition-all font-semibold shadow-md border border-[#a77fd4]/60 hover:border-[#875faf]/80 drop-shadow-lg"
-          style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.04em', minWidth: 100 }}
+          className="px-3 py-1.5 flex items-center gap-1.5 text-xs text-white bg-[#9b7bb5]/80 hover:bg-[#a77fd4] rounded-lg transition-all font-medium shadow-lg backdrop-blur-sm border border-white/20"
+          style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.03em' }}
           onClick={e => {
             e.stopPropagation();
             if (typeof onDetailsClick === 'function') onDetailsClick();
           }}
         >
-          <span className="material-symbols-outlined text-xs align-middle">info</span>
-          {isPortuguese ? 'mais detalhes' : 'more details'}
+          <span className="material-symbols-outlined text-sm">visibility</span>
+          {isPortuguese ? 'Ver Detalhes' : 'View Details'}
         </button>
       </div>
 
