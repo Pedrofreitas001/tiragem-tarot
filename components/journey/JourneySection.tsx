@@ -452,36 +452,61 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
                   </div>
                 )}
 
-                {/* Top 3 Cards Grid */}
-                <div className={`grid grid-cols-3 gap-3 ${!hasAccessToTop3 ? 'opacity-60 blur-sm pointer-events-none' : ''}`}>
-                  {top3.map((cardId, position) => {
-                    // Convert string ID to number for comparison
-                    const numericId = typeof cardId === 'string' ? parseInt(cardId, 10) : cardId;
-                    const card = arcanaList.find(a => a.id === numericId);
-                    if (!card) return null;
+                {/* Top 3 Cards Grid or Empty State */}
+                {top3CardIds.length < 3 && hasAccessToTop3 ? (
+                  // Not enough data yet
+                  <div className="p-8 bg-gradient-to-r from-[#a77fd4]/10 via-[#ffd700]/5 to-[#a77fd4]/10 border border-[#a77fd4]/30 rounded-lg flex flex-col items-center gap-4 text-center">
+                    <span className="material-symbols-outlined text-[#ffd700] text-5xl">star_rate</span>
+                    <div>
+                      <p className="text-sm font-semibold text-white mb-2">
+                        {isPortuguese ? 'Mais dados necessários' : 'More data needed'}
+                      </p>
+                      <p className="text-xs text-gray-300 mb-4">
+                        {isPortuguese
+                          ? `Faça pelo menos ${3 - top3CardIds.length} tiragens para ver seu ranking pessoal`
+                          : `Complete at least ${3 - top3CardIds.length} readings to see your personal ranking`
+                        }
+                      </p>
+                    </div>
+                    <Link
+                      to="/spread"
+                      className="mt-2 px-4 py-2 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#a77fd4] hover:to-[#c9a9e3] text-white text-xs font-semibold rounded-lg transition-all duration-300"
+                    >
+                      {isPortuguese ? 'Começar Leitura' : 'Start Reading'}
+                    </Link>
+                  </div>
+                ) : (
+                  // Show Top 3 Cards Grid
+                  <div className={`grid grid-cols-3 gap-3 ${!hasAccessToTop3 ? 'opacity-60 blur-sm pointer-events-none' : ''}`}>
+                    {top3.map((cardId, position) => {
+                      // Convert string ID to number for comparison
+                      const numericId = typeof cardId === 'string' ? parseInt(cardId, 10) : cardId;
+                      const card = arcanaList.find(a => a.id === numericId);
+                      if (!card) return null;
 
-                    const medals = ['🥇', '🥈', '🥉'];
+                      const medals = ['🥇', '🥈', '🥉'];
 
-                    return (
-                      <div key={card.id} className="flex flex-col items-center">
-                        <div className="relative mb-2">
-                          <img
-                            src={card.imageUrl}
-                            alt={card.name}
-                            className={`w-16 h-24 rounded-lg shadow-lg border-2 object-cover transition-all ${position === 0 ? 'border-[#ffd700] scale-110' : 'border-[#a77fd4]/30'
-                              }`}
-                          />
-                          <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-xl">
-                            {medals[position]}
+                      return (
+                        <div key={card.id} className="flex flex-col items-center">
+                          <div className="relative mb-2">
+                            <img
+                              src={card.imageUrl}
+                              alt={card.name}
+                              className={`w-16 h-24 rounded-lg shadow-lg border-2 object-cover transition-all ${position === 0 ? 'border-[#ffd700] scale-110' : 'border-[#a77fd4]/30'
+                                }`}
+                            />
+                            <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-xl">
+                              {medals[position]}
+                            </div>
                           </div>
+                          <p className="text-xs text-center text-gray-300 truncate max-w-[70px]" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? card.name_pt || card.name : card.name}
+                          </p>
                         </div>
-                        <p className="text-xs text-center text-gray-300 truncate max-w-[70px]" style={{ fontFamily: "'Crimson Text', serif" }}>
-                          {isPortuguese ? card.name_pt || card.name : card.name}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           </div>
