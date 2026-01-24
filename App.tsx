@@ -408,7 +408,7 @@ const Home = () => {
 
                         {/* Left Column - Content (Mobile: appears after orbit) */}
                         <div className="space-y-8 lg:pr-8 order-2 lg:order-1 text-center lg:text-left">
-                            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
                             </h1>
 
@@ -443,7 +443,7 @@ const Home = () => {
 
                         {/* Right Column - Arcane Symbol (Mobile: appears first) */}
                         <div className="flex items-center justify-center lg:justify-end order-1 lg:order-2">
-                            <div className="relative w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
+                            <div className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
                                 {/* Outer Ring */}
                                 <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.25)" strokeWidth="1" fill="none" />
@@ -722,7 +722,7 @@ const Home = () => {
                                         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[75vw] max-w-[420px] aspect-square border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
 
                                         {/* The Mandala Body - Responsive */}
-                                        <div className="relative w-80 h-80 sm:w-96 sm:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
+                                        <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
                                             {/* SVG Mandala Detail */}
                                             <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
                                                 <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
