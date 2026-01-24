@@ -259,6 +259,7 @@ export const en: TranslationKeys = {
     shipping: "Shipping",
     shippingInfo: "We ship throughout Brazil. Free shipping on orders over R$ 150",
     selectVariant: "Select",
+    viewDetails: "View Details",
     quantity: "Quantity",
     addToCart: "Add to Cart",
     buyNow: "Buy Now",

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
 import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured } from './services/geminiService';
 import StarsBackground from './components/StarsBackground';
+import { MinimalStarsBackground } from './components/MinimalStarsBackground';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
 import { saveReadingToSupabase, deleteReadingFromSupabase } from './services/readingsService';
 import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
@@ -18,6 +19,7 @@ import { HistoryFiltered } from './components/HistoryFiltered';
 import { SideBySideExample } from './components/Charts/SideBySideExample';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
+import Spreads from './pages/Spreads';
 import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
@@ -158,18 +160,15 @@ const Header = () => {
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
                 <div className="flex flex-col w-full max-w-[1200px]">
                     <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
-                        <div className="flex items-center gap-3 text-white cursor-pointer" onClick={() => navigate('/')}>
-                            <div className="size-9 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/30">
-                                <span className="material-symbols-outlined text-[22px] text-white">auto_awesome</span>
-                            </div>
-                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight hidden sm:block">Mystic Tarot</h2>
+                        <div className="flex items-center text-white cursor-pointer" onClick={() => navigate('/')}>
+                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Mystic Tarot</h2>
                         </div>
 
                         <nav className="hidden md:flex items-center gap-8">
                             <button onClick={() => navigate('/')} className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.home}
                             </button>
-                            <button onClick={() => { navigate('/'); setTimeout(() => document.getElementById('spreads')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-sm font-medium transition-colors text-gray-400 hover:text-white">
+                            <button onClick={() => navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads')} className="text-sm font-medium transition-colors text-gray-400 hover:text-white">
                                 {t.nav.tarot}
                             </button>
                             <button onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')} className={`text-sm font-medium transition-colors ${(isActive('/carta-do-dia') || isActive('/daily-card')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
@@ -216,7 +215,7 @@ const Header = () => {
                     {mobileMenuOpen && (
                         <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
                             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
-                            <button onClick={() => { navigate('/'); setMobileMenuOpen(false); setTimeout(() => document.getElementById('spreads')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
+                            <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
@@ -338,17 +337,7 @@ const Home = () => {
             <Header />
             <CartDrawer />
 
-            {/* Minimal Stars Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
-                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
-            </div>
+            <MinimalStarsBackground />
 
             {/* Hero Section - Editorial Premium */}
             <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden py-16">
@@ -366,6 +355,16 @@ const Home = () => {
                         0%, 100% { opacity: 0.4; }
                         50% { opacity: 0.6; }
                     }
+                    @keyframes fadeIn {
+                        from {
+                            opacity: 0;
+                            transform: translateY(20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
                     .arcane-ring-outer {
                         animation: rotate-slow 30s linear infinite;
                     }
@@ -377,6 +376,9 @@ const Home = () => {
                     }
                     .arcane-center {
                         animation: pulse-subtle 4s ease-in-out infinite;
+                    }
+                    .animate-fadeIn {
+                        animation: fadeIn 0.6s ease-out forwards;
                     }
                     .hero-cta-primary {
                         transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -398,13 +400,13 @@ const Home = () => {
                 <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-12 w-full">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
-                        {/* Left Column - Content */}
-                        <div className="space-y-8 lg:pr-8">
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-white" style={{ fontFamily: "'Crimson Text', serif" }}>
+                        {/* Left Column - Content (Mobile: appears after orbit) */}
+                        <div className="space-y-8 lg:pr-8 order-2 lg:order-1">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-white" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 {isPortuguese ? 'Observe o que se revela no Tarot' : 'Observe what reveals itself in Tarot'}
                             </h1>
 
-                            <p className="text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
+                            <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
                                 {isPortuguese
                                     ? 'Um Tarot digital para registrar padrões, refletir escolhas e acompanhar sua jornada simbólica.'
                                     : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
@@ -413,14 +415,14 @@ const Home = () => {
                             <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="hero-cta-primary px-8 py-4 bg-[#875faf] text-white text-sm font-medium tracking-wide rounded-sm"
+                                    className="hero-cta-primary px-6 sm:px-8 py-3 sm:py-4 bg-[#875faf] text-white text-sm font-medium tracking-wide rounded-sm"
                                     style={{ fontFamily: "'Inter', sans-serif" }}
                                 >
                                     {isPortuguese ? 'Iniciar Abertura' : 'Begin Opening'}
                                 </button>
                                 <button
                                     onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
-                                    className="hero-cta-secondary px-8 py-4 bg-transparent border border-white/10 text-gray-300 text-sm font-light tracking-wide rounded-sm"
+                                    className="hero-cta-secondary px-6 sm:px-8 py-3 sm:py-4 bg-transparent border border-white/10 text-gray-300 text-sm font-light tracking-wide rounded-sm"
                                     style={{ fontFamily: "'Inter', sans-serif" }}
                                 >
                                     {isPortuguese ? 'Explorar o Arquivo Arcano' : 'Explore the Arcane Archive'}
@@ -428,9 +430,9 @@ const Home = () => {
                             </div>
                         </div>
 
-                        {/* Right Column - Arcane Symbol */}
-                        <div className="flex items-center justify-center lg:justify-end">
-                            <div className="relative w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] md:w-[440px] md:h-[440px]">
+                        {/* Right Column - Arcane Symbol (Mobile: appears first) */}
+                        <div className="flex items-center justify-center lg:justify-end order-1 lg:order-2">
+                            <div className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
                                 {/* Outer Ring */}
                                 <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.25)" strokeWidth="1" fill="none" />
@@ -953,68 +955,115 @@ const ProductCard = ({ product }: { product: Product }) => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
     const { addItem } = useCart();
+    const [isHovered, setIsHovered] = React.useState(false);
 
     const name = isPortuguese ? product.name : product.name_en;
     const shortDesc = isPortuguese ? product.shortDescription : product.shortDescription_en;
 
     return (
-        <div className="group bg-card-dark rounded-xl overflow-hidden border border-border-dark hover:border-primary/30 transition-all hover:shadow-[0_0_20px_rgba(147,17,212,0.1)]">
-            <div
-                className="relative aspect-square overflow-hidden cursor-pointer"
-                onClick={() => navigate(`/shop/${product.slug}`)}
-            >
-                <img
-                    src={product.images[0]}
-                    alt={name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                {product.tags.length > 0 && (
-                    <div className="absolute top-3 left-3 flex gap-2">
-                        {product.tags.includes('bestseller') && (
-                            <span className="px-2 py-1 bg-primary text-white text-[10px] font-bold rounded-md uppercase">{t.shop.bestseller}</span>
-                        )}
-                        {product.tags.includes('new') && (
-                            <span className="px-2 py-1 bg-green-500 text-white text-[10px] font-bold rounded-md uppercase">{t.shop.new}</span>
-                        )}
-                        {product.tags.includes('sale') && (
-                            <span className="px-2 py-1 bg-red-500 text-white text-[10px] font-bold rounded-md uppercase">{t.shop.sale}</span>
-                        )}
-                    </div>
-                )}
-            </div>
+        <div
+            className="group relative h-full"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            {/* Card Background with Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-white/2 to-white/0 rounded-2xl border border-white/10 transition-all duration-300"
+                style={{
+                    boxShadow: isHovered ? '0 20px 50px rgba(167, 127, 212, 0.2), 0 0 40px rgba(135, 95, 175, 0.1)' : '0 10px 30px rgba(0, 0, 0, 0.3)'
+                }}
+            />
 
-            <div className="p-4">
-                <h3
-                    className="text-white font-bold text-sm mb-1 truncate cursor-pointer hover:text-primary transition-colors"
+            <div className="relative h-full overflow-hidden rounded-2xl flex flex-col">
+                {/* Image Section */}
+                <div
+                    className="relative aspect-square overflow-hidden cursor-pointer bg-gradient-to-b from-white/10 to-transparent"
                     onClick={() => navigate(`/shop/${product.slug}`)}
                 >
-                    {name}
-                </h3>
-                <p className="text-gray-500 text-xs mb-3 line-clamp-2">{shortDesc}</p>
+                    {/* Image with overlay */}
+                    <img
+                        src={product.images[0]}
+                        alt={name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                    />
 
-                <div className="flex items-center justify-between">
-                    <div className="flex items-baseline gap-2">
-                        <span className="text-white font-bold">{formatPrice(product.price, t.common.currency)}</span>
-                        {product.compareAtPrice && (
-                            <span className="text-gray-500 text-xs line-through">{formatPrice(product.compareAtPrice, t.common.currency)}</span>
-                        )}
+                    {/* Gradient overlay on hover */}
+                    <div className={`absolute inset-0 bg-gradient-to-t from-[#1a1628]/80 via-transparent to-transparent transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
+
+                    {/* Floating badges */}
+                    {product.tags.length > 0 && (
+                        <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                            {product.tags.includes('bestseller') && (
+                                <div className="px-3 py-1.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-[11px] font-bold rounded-full uppercase tracking-wider shadow-lg backdrop-blur-sm border border-white/20">
+                                    ⭐ {t.shop.bestseller}
+                                </div>
+                            )}
+                            {product.tags.includes('new') && (
+                                <div className="px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[11px] font-bold rounded-full uppercase tracking-wider shadow-lg backdrop-blur-sm border border-white/20">
+                                    ✨ {t.shop.new}
+                                </div>
+                            )}
+                            {product.tags.includes('sale') && (
+                                <div className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-rose-500 text-white text-[11px] font-bold rounded-full uppercase tracking-wider shadow-lg backdrop-blur-sm border border-white/20">
+                                    🔥 {t.shop.sale}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Floating action on hover */}
+                    {isHovered && (
+                        <div className="absolute inset-0 flex items-center justify-center animate-fadeIn">
+                            <button
+                                onClick={() => navigate(`/shop/${product.slug}`)}
+                                className="px-6 py-2.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white font-bold rounded-lg shadow-2xl hover:shadow-purple-900/50 transition-all hover:scale-105"
+                            >
+                                {t.product.viewDetails}
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Content Section */}
+                <div className="flex-1 p-5 flex flex-col justify-between">
+                    {/* Title and Description */}
+                    <div>
+                        <h3
+                            className="text-white font-bold text-sm mb-2 cursor-pointer hover:text-[#a77fd4] transition-colors line-clamp-2"
+                            onClick={() => navigate(`/shop/${product.slug}`)}
+                        >
+                            {name}
+                        </h3>
+                        <p className="text-gray-400 text-xs mb-4 line-clamp-2 leading-relaxed">{shortDesc}</p>
                     </div>
 
-                    {!product.variants ? (
-                        <button
-                            onClick={() => addItem(product)}
-                            className="p-2 rounded-lg bg-primary/10 hover:bg-primary text-primary hover:text-white transition-colors"
-                        >
-                            <span className="material-symbols-outlined text-lg">add_shopping_cart</span>
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => navigate(`/shop/${product.slug}`)}
-                            className="text-primary text-xs font-bold hover:underline"
-                        >
-                            {t.product.selectVariant}
-                        </button>
-                    )}
+                    {/* Divider */}
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-4" />
+
+                    {/* Footer with Price and Action */}
+                    <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-white font-bold text-base">{formatPrice(product.price, t.common.currency)}</span>
+                            {product.compareAtPrice && (
+                                <span className="text-gray-500 text-xs line-through">{formatPrice(product.compareAtPrice, t.common.currency)}</span>
+                            )}
+                        </div>
+
+                        {!product.variants ? (
+                            <button
+                                onClick={() => addItem(product)}
+                                className="p-2.5 rounded-lg bg-gradient-to-r from-[#875faf]/20 to-[#a77fd4]/20 hover:from-[#875faf] hover:to-[#a77fd4] text-[#a77fd4] hover:text-white transition-all border border-[#875faf]/30 hover:border-[#a77fd4] shadow-lg hover:shadow-purple-900/30"
+                            >
+                                <span className="material-symbols-outlined text-lg">shopping_bag</span>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => navigate(`/shop/${product.slug}`)}
+                                className="text-[#a77fd4] text-xs font-bold hover:text-[#875faf] transition-colors group-hover:underline"
+                            >
+                                {t.product.selectVariant}
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -1085,37 +1134,36 @@ const Shop = () => {
             <Header />
             <CartDrawer />
 
-            {/* Minimal Stars Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
-                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
-            </div>
+            <MinimalStarsBackground />
 
-            <main className="relative z-10 flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-6 py-8 md:py-12">
-                {/* Header */}
-                <div className="mb-8">
-                    <h1 className="text-3xl md:text-4xl font-black text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{t.shop.title}</h1>
-                    <p className="text-gray-400">{t.shop.subtitle}</p>
+            <main className="relative z-10 flex-1 w-full px-4 md:px-8 py-8 md:py-12">
+                {/* Header Section */}
+                <div className="max-w-[1600px] mx-auto mb-12">
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#875faf]/20 via-[#1a1628] to-[#2d1b3d] border border-[#875faf]/30 p-6 md:p-8">
+                        {/* Decorative elements */}
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-[#875faf]/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+                        <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#a77fd4]/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+
+                        <div className="relative z-10">
+                            <p className="text-[#a77fd4] text-sm font-bold uppercase tracking-widest mb-2">✨ {isPortuguese ? 'Coleção Mística' : 'Mystic Collection'}</p>
+                            <h1 className="text-3xl md:text-4xl font-black text-white mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>{t.shop.title}</h1>
+                            <p className="text-gray-300 text-base max-w-2xl">{t.shop.subtitle}</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex gap-8">
                     {/* Mobile Filter Toggle */}
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="lg:hidden fixed bottom-6 right-6 z-50 p-4 bg-primary text-white rounded-full shadow-2xl"
+                        className="lg:hidden fixed bottom-6 right-6 z-50 p-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white rounded-full shadow-2xl hover:shadow-purple-900/40 transition-all"
                     >
                         <span className="material-symbols-outlined">tune</span>
                     </button>
 
                     {/* Sidebar Filters */}
                     <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                        } lg:translate-x-0 fixed lg:relative top-0 left-0 h-full lg:h-auto w-72 lg:w-64 bg-surface-dark lg:bg-transparent border-r border-border-dark lg:border-0 p-6 lg:p-0 transition-transform duration-300 z-40 overflow-y-auto`}>
+                        } lg:translate-x-0 fixed lg:relative top-0 left-0 h-full lg:h-auto w-72 lg:w-72 bg-[#1a1628] lg:bg-transparent border-r border-border-dark lg:border-0 p-6 lg:p-0 transition-transform duration-300 z-40 overflow-y-auto lg:sticky lg:top-0`}>
 
                         {/* Close button mobile */}
                         <button
@@ -1125,19 +1173,23 @@ const Shop = () => {
                             <span className="material-symbols-outlined">close</span>
                         </button>
 
-                        <div className="space-y-6">
+                        <div className="space-y-6 mt-8 lg:mt-0">
                             {/* Categories */}
-                            <div className="bg-surface-dark lg:bg-surface-dark p-4 rounded-xl border border-border-dark">
-                                <h3 className="text-white font-bold text-sm mb-3 uppercase tracking-wider">
+                            <div className="bg-gradient-to-br from-white/5 to-white/2 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+                                <h3 className="text-white font-bold text-sm mb-4 uppercase tracking-wider flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-base text-[#a77fd4]">category</span>
                                     {isPortuguese ? 'Categorias' : 'Categories'}
                                 </h3>
                                 <div className="space-y-2">
                                     {categories.map(cat => (
                                         <button
                                             key={cat.key}
-                                            onClick={() => setFilter(cat.key)}
-                                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${filter === cat.key
-                                                ? 'bg-primary text-white'
+                                            onClick={() => {
+                                                setFilter(cat.key);
+                                                setSidebarOpen(false);
+                                            }}
+                                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${filter === cat.key
+                                                ? 'bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white shadow-lg'
                                                 : 'text-gray-400 hover:text-white hover:bg-white/5'
                                                 }`}
                                         >
@@ -1149,15 +1201,16 @@ const Shop = () => {
                             </div>
 
                             {/* Price Range */}
-                            <div className="bg-surface-dark p-4 rounded-xl border border-border-dark">
-                                <h3 className="text-white font-bold text-sm mb-3 uppercase tracking-wider">
+                            <div className="bg-gradient-to-br from-white/5 to-white/2 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+                                <h3 className="text-white font-bold text-sm mb-4 uppercase tracking-wider flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-base text-[#a77fd4]">attach_money</span>
                                     {isPortuguese ? 'Faixa de Preço' : 'Price Range'}
                                 </h3>
-                                <div className="space-y-3">
-                                    <div className="flex items-center gap-2 text-sm text-gray-400">
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between text-sm text-gray-300 bg-white/5 p-2 rounded">
                                         <span>{formatPrice(priceRange[0], t.common.currency)}</span>
-                                        <span>-</span>
-                                        <span>{formatPrice(priceRange[1], t.common.currency)}</span>
+                                        <span className="text-gray-500">—</span>
+                                        <span className="font-semibold">{formatPrice(priceRange[1], t.common.currency)}</span>
                                     </div>
                                     <input
                                         type="range"
@@ -1166,17 +1219,18 @@ const Shop = () => {
                                         step="10"
                                         value={priceRange[1]}
                                         onChange={(e) => setPriceRange([0, Number(e.target.value)])}
-                                        className="w-full accent-primary"
+                                        className="w-full accent-[#875faf] h-2"
                                     />
                                 </div>
                             </div>
 
                             {/* Tags */}
-                            <div className="bg-surface-dark p-4 rounded-xl border border-border-dark">
-                                <h3 className="text-white font-bold text-sm mb-3 uppercase tracking-wider">
+                            <div className="bg-gradient-to-br from-white/5 to-white/2 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+                                <h3 className="text-white font-bold text-sm mb-4 uppercase tracking-wider flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-base text-[#a77fd4]">local_offer</span>
                                     {isPortuguese ? 'Filtros' : 'Filters'}
                                 </h3>
-                                <div className="space-y-2">
+                                <div className="space-y-3">
                                     {availableTags.map(tag => (
                                         <label
                                             key={tag.key}
@@ -1186,9 +1240,9 @@ const Shop = () => {
                                                 type="checkbox"
                                                 checked={selectedTags.includes(tag.key)}
                                                 onChange={() => toggleTag(tag.key)}
-                                                className="w-4 h-4 accent-primary"
+                                                className="w-4 h-4 accent-[#875faf]"
                                             />
-                                            <span className={`text-sm font-medium ${selectedTags.includes(tag.key) ? tag.color : 'text-gray-400 group-hover:text-white'}`}>
+                                            <span className={`text-sm font-medium transition-colors ${selectedTags.includes(tag.key) ? tag.color + ' font-semibold' : 'text-gray-400 group-hover:text-white'}`}>
                                                 {tag.label}
                                             </span>
                                         </label>
@@ -1197,12 +1251,14 @@ const Shop = () => {
                             </div>
 
                             {/* Reset Filters */}
-                            <button
-                                onClick={resetFilters}
-                                className="w-full py-2 px-4 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-sm font-medium rounded-lg transition-colors border border-border-dark"
-                            >
-                                {isPortuguese ? 'Limpar Filtros' : 'Reset Filters'}
-                            </button>
+                            {(filter !== 'all' || selectedTags.length > 0) && (
+                                <button
+                                    onClick={resetFilters}
+                                    className="w-full py-2.5 px-4 bg-white/10 hover:bg-white/15 text-gray-300 hover:text-white text-sm font-medium rounded-lg transition-colors border border-white/20"
+                                >
+                                    {isPortuguese ? 'Limpar Filtros' : 'Reset Filters'}
+                                </button>
+                            )}
                         </div>
                     </aside>
 
@@ -1217,14 +1273,19 @@ const Shop = () => {
                     {/* Main Content */}
                     <div className="flex-1">
                         {/* Sort and Results Count */}
-                        <div className="flex items-center justify-between mb-6">
-                            <p className="text-gray-400 text-sm">
-                                {filteredProducts.length} {isPortuguese ? 'produtos' : 'products'}
-                            </p>
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <p className="text-white font-bold text-lg mb-1">
+                                    {isPortuguese ? 'Produtos em Destaque' : 'Featured Products'}
+                                </p>
+                                <p className="text-gray-400 text-sm">
+                                    {filteredProducts.length} {isPortuguese ? 'itens disponíveis' : 'items available'}
+                                </p>
+                            </div>
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value as any)}
-                                className="px-4 py-2 rounded-lg bg-surface-dark text-gray-300 border border-border-dark text-sm"
+                                className="px-4 py-2.5 rounded-lg bg-gradient-to-r from-white/5 to-white/2 text-gray-300 border border-white/10 text-sm font-medium hover:border-white/20 transition-colors"
                             >
                                 <option value="featured">{t.shop.sortOptions.featured}</option>
                                 <option value="price_low">{t.shop.sortOptions.priceLow}</option>
@@ -1232,19 +1293,20 @@ const Shop = () => {
                             </select>
                         </div>
 
-                        {/* Products Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                            {filteredProducts.map(product => (
-                                <div key={product.id}>
+                        {/* Products Grid - 4 columns on desktop */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {filteredProducts.map((product, index) => (
+                                <div key={product.id} style={{ animationDelay: `${index * 50}ms` }} className="animate-fadeIn">
                                     <ProductCard product={product} />
                                 </div>
                             ))}
                         </div>
 
                         {filteredProducts.length === 0 && (
-                            <div className="text-center py-20">
-                                <span className="material-symbols-outlined text-6xl text-gray-600 mb-4">inventory_2</span>
-                                <p className="text-gray-400">{isPortuguese ? 'Nenhum produto encontrado' : 'No products found'}</p>
+                            <div className="text-center py-32">
+                                <span className="material-symbols-outlined text-8xl text-gray-600 mb-6">inventory_2</span>
+                                <p className="text-gray-400 text-lg font-medium">{isPortuguese ? 'Nenhum produto encontrado' : 'No products found'}</p>
+                                <p className="text-gray-500 text-sm mt-2">{isPortuguese ? 'Tente ajustar seus filtros' : 'Try adjusting your filters'}</p>
                             </div>
                         )}
                     </div>
@@ -1694,18 +1756,6 @@ const CardDetails = () => {
             <Header />
             <CartDrawer />
 
-            {/* Minimal Stars Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
-                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
-            </div>
-
             <main className="relative z-10 flex-1 w-full max-w-[1200px] mx-auto px-6 py-12">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div className="flex items-center gap-2 text-sm text-gray-400">
@@ -2058,17 +2108,7 @@ const History = () => {
             <Header />
             <CartDrawer />
 
-            {/* Minimal Stars Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
-                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
-            </div>
+            <MinimalStarsBackground />
 
             {/* Modal */}
             {selectedReading && (
@@ -2954,18 +2994,6 @@ const Explore = () => {
             <Header />
             <CartDrawer />
 
-            {/* Minimal Stars Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
-                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
-            </div>
-
             <main className="relative z-10 flex-1 w-full max-w-[1200px] mx-auto px-6 py-12">
                 <div className="mb-10">
                     <button onClick={() => navigate('/')} className="text-gray-400 hover:text-white flex items-center gap-2 text-sm mb-4 transition-colors">
@@ -3208,8 +3236,6 @@ const Session = () => {
             <Header />
             <CartDrawer />
 
-            <StarsBackground />
-
             <div className="relative z-10 flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
                 <div className="flex flex-wrap justify-between items-end gap-4 mb-6 max-w-[1200px] mx-auto">
                     <div className="flex flex-col gap-2 max-w-2xl">
@@ -3398,6 +3424,7 @@ const Result = () => {
     const { checkAccess } = usePaywall();
     const { user } = useAuth();
     const state = location.state as any;
+    const hasSavedRef = useRef(false);
 
     const [analysis, setAnalysis] = useState<ReadingAnalysis | null>(null);
     const [structuredSynthesis, setStructuredSynthesis] = useState<StructuredSynthesis | null>(null);
@@ -3441,6 +3468,16 @@ const Result = () => {
 
             // Save to history (both localStorage and Supabase if logged in)
             try {
+                // Traduzir nome do spread para português
+                const spreadNameMap: Record<string, string> = {
+                    'three_card': isPortuguese ? 'Três Cartas' : 'Three Card Spread',
+                    'celtic_cross': isPortuguese ? 'Cruz Celta' : 'Celtic Cross',
+                    'love_check': isPortuguese ? 'Amor & Relacionamento' : 'Love & Relationship',
+                    'yes_no': isPortuguese ? 'Sim ou Não' : 'Yes or No',
+                    'card_of_day': isPortuguese ? 'Carta do Dia' : 'Card of the Day',
+                };
+                const translatedSpreadName = spreadNameMap[state.spread.id] || state.spread.name;
+
                 const historyItem = {
                     id: Date.now(),
                     date: new Date().toLocaleString(isPortuguese ? 'pt-BR' : 'en-US', {
@@ -3449,7 +3486,7 @@ const Result = () => {
                         hour: '2-digit',
                         minute: '2-digit'
                     }),
-                    spreadName: state.spread.name,
+                    spreadName: translatedSpreadName,
                     typeBadge: state.spread.cardCount === 3 ? (isPortuguese ? 'RÁPIDA' : 'QUICK') :
                         state.spread.cardCount === 10 ? (isPortuguese ? 'COMPLETA' : 'FULL') :
                             (isPortuguese ? 'AMOR' : 'LOVE'),
@@ -3464,22 +3501,25 @@ const Result = () => {
                     rating: 0
                 };
 
-                // Save to localStorage (always)
-                const existing = JSON.parse(localStorage.getItem('tarot-history') || '[]');
-                const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
-                localStorage.setItem('tarot-history', JSON.stringify(updated));
+                // Save to localStorage (always) - Only if not already saved
+                if (!hasSavedRef.current) {
+                    hasSavedRef.current = true;
+                    const existing = JSON.parse(localStorage.getItem('tarot-history') || '[]');
+                    const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
+                    localStorage.setItem('tarot-history', JSON.stringify(updated));
 
-                // Save to Supabase if user is logged in
-                if (user) {
-                    await saveReadingToSupabase(
-                        user.id,
-                        state.spread.id,
-                        state.cards,
-                        state.question,
-                        result?.synthesis || '',
-                        0,
-                        ''
-                    );
+                    // Save to Supabase if user is logged in
+                    if (user) {
+                        await saveReadingToSupabase(
+                            user.id,
+                            state.spread.id,
+                            state.cards,
+                            state.question,
+                            result?.synthesis || '',
+                            0,
+                            ''
+                        );
+                    }
                 }
             } catch (e) {
                 console.error('Failed to save to history:', e);
@@ -3503,18 +3543,6 @@ const Result = () => {
         <div className="relative flex flex-col min-h-screen text-white overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
             <Header />
             <CartDrawer />
-
-            {/* Minimal Stars Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
-                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
-            </div>
 
             {/* Hide content when paywall is shown */}
             <main className={`relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 ${showPaywall ? 'blur-sm opacity-60 pointer-events-none' : ''}`}>
@@ -3791,6 +3819,10 @@ const App = () => {
                     <Router>
                         <Routes>
                             <Route path="/" element={<Home />} />
+
+                            {/* Spreads Page - Available in both languages */}
+                            <Route path="/spreads" element={<Spreads />} />
+                            <Route path="/jogos-de-tarot" element={<Spreads />} />
 
                             {/* Rotas em Português */}
                             <Route path="/arquivo-arcano" element={<Explore />} />

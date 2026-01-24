@@ -259,6 +259,7 @@ export const pt = {
     shipping: "Envio",
     shippingInfo: "Enviamos para todo o Brasil. Frete grátis em compras acima de R$ 150",
     selectVariant: "Selecione",
+    viewDetails: "Ver Detalhes",
     quantity: "Quantidade",
     addToCart: "Adicionar ao Carrinho",
     buyNow: "Comprar Agora",

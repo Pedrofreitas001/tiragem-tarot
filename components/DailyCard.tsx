@@ -27,18 +27,15 @@ const Header = () => {
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
                 <div className="flex flex-col w-full max-w-[1200px]">
                     <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
-                        <div className="flex items-center gap-3 text-white cursor-pointer" onClick={() => navigate('/')}>
-                            <div className="size-9 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/30">
-                                <span className="material-symbols-outlined text-[22px] text-white">auto_awesome</span>
-                            </div>
-                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight hidden sm:block">Mystic Tarot</h2>
+                        <div className="flex items-center text-white cursor-pointer" onClick={() => navigate('/')}>
+                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Mystic Tarot</h2>
                         </div>
 
                         <nav className="hidden md:flex items-center gap-8">
                             <button onClick={() => navigate('/')} className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.home}
                             </button>
-                            <button onClick={() => { navigate('/'); setTimeout(() => document.getElementById('spreads')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-sm font-medium transition-colors text-gray-400 hover:text-white">
+                            <button onClick={() => navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads')} className="text-sm font-medium transition-colors text-gray-400 hover:text-white">
                                 {t.nav.tarot}
                             </button>
                             <button onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')} className={`text-sm font-medium transition-colors ${(isActive('/carta-do-dia') || isActive('/daily-card')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
@@ -257,7 +254,7 @@ export const DailyCard = () => {
                                 </div>
                             </div>
 
-                            {/* Right Column - Card with Orbit Circles Behind and Info Below */}
+                            {/* Right Column - Card with Orbit Ellipses Behind and Info Below */}
                             <div className="flex flex-col items-center justify-center lg:justify-center gap-6 mt-12">
                                 {/* Planetary orbit element container */}
                                 <div className="relative w-56 aspect-[2/3]">
@@ -266,46 +263,36 @@ export const DailyCard = () => {
                                         <span className="material-symbols-outlined text-white/70 text-2xl">auto_awesome</span>
                                     </div>
 
-                                    {/* Orbit circles - STATIC behind the card */}
+                                    {/* Orbit ellipses - STATIC behind the card */}
                                     <div className="absolute inset-0 -z-10 flex items-center justify-center">
-                                        {/* Outer orbit circle */}
+                                        {/* Middle orbit ellipse */}
+                                        <div
+                                            className="absolute rounded-full border border-dotted"
+                                            style={{
+                                                width: '190%',
+                                                height: '140%',
+                                                borderColor: 'rgba(139, 92, 246, 0.28)',
+                                                borderWidth: '1.5px',
+                                            }}
+                                        />
+                                        {/* Inner orbit ellipse */}
                                         <div
                                             className="absolute rounded-full border border-dashed"
                                             style={{
                                                 width: '140%',
-                                                height: '180%',
-                                                borderColor: 'rgba(167, 127, 212, 0.25)',
-                                                borderWidth: '1.5px',
+                                                height: '110%',
+                                                borderColor: 'rgba(167, 127, 212, 0.22)',
+                                                borderWidth: '1.25px',
                                             }}
                                         />
-                                        {/* Middle orbit circle */}
+                                        {/* Center decorative ellipse */}
                                         <div
                                             className="absolute rounded-full border border-dotted"
                                             style={{
-                                                width: '115%',
-                                                height: '150%',
-                                                borderColor: 'rgba(139, 92, 246, 0.2)',
+                                                width: '95%',
+                                                height: '80%',
+                                                borderColor: 'rgba(124, 58, 237, 0.18)',
                                                 borderWidth: '1px',
-                                            }}
-                                        />
-                                        {/* Inner orbit circle */}
-                                        <div
-                                            className="absolute rounded-full border border-dashed"
-                                            style={{
-                                                width: '90%',
-                                                height: '120%',
-                                                borderColor: 'rgba(167, 127, 212, 0.18)',
-                                                borderWidth: '1px',
-                                            }}
-                                        />
-                                        {/* Center decorative circle */}
-                                        <div
-                                            className="absolute rounded-full border border-dotted"
-                                            style={{
-                                                width: '60%',
-                                                height: '90%',
-                                                borderColor: 'rgba(124, 58, 237, 0.12)',
-                                                borderWidth: '0.75px',
                                             }}
                                         />
                                     </div>
