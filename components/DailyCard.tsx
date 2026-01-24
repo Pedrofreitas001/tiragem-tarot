@@ -164,6 +164,29 @@ export const DailyCard = () => {
     const navigate = useNavigate();
     const [showPaywall, setShowPaywall] = useState(false);
 
+    // CSS para órbitas planetárias - estáticas e estilos dos botões
+    const orbitStyles = `
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .hero-cta-primary {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hero-cta-primary:hover {
+            transform: translateY(-2px);
+            background-color: rgba(135, 95, 175, 0.95);
+        }
+        .hero-cta-secondary {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hero-cta-secondary:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+    `;
+
     // Carta do dia coletiva - mesma para todos no dia
     const getDailyCard = () => {
         const today = new Date();
@@ -184,6 +207,7 @@ export const DailyCard = () => {
             backgroundColor: '#1a1628',
             backgroundAttachment: 'fixed'
         }}>
+            <style>{orbitStyles}</style>
             <Header />
 
             {/* Minimal Stars Background */}
@@ -200,48 +224,32 @@ export const DailyCard = () => {
 
             <main className="relative z-10 flex-1 w-full">
                 {/* Hero Section - Two Column Layout */}
-                <section className="relative py-16 md:py-28 px-4 md:px-8">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="grid lg:grid-cols-3 gap-8 lg:gap-10 items-center">
+                <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-16">
+                    <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-12 w-full">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
                             {/* Left Column - Title, Subtitle, Date & Buttons */}
-                            <div className="flex flex-col gap-8 text-center lg:text-left lg:-mt-8 lg:col-span-2 lg:pr-16">
-                                <div className="space-y-6">
-                                    <h1 className="text-6xl md:text-7xl lg:text-8xl font-normal leading-[1.1] tracking-tight text-white" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        {isPortuguese ? 'Carta do Dia' : 'Card of the Day'}
-                                    </h1>
+                            <div className="space-y-8 lg:pr-8">
+                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-white" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    {isPortuguese ? 'Carta do Dia' : 'Card of the Day'}
+                                </h1>
 
-                                    <p className="text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-md" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
-                                        {isPortuguese
-                                            ? 'Uma tiragem diária para toda a comunidade com vibrações energéticas positivas.'
-                                            : 'A daily reading for the entire community with positive energetic vibrations.'}
-                                    </p>
-
-                                    <div className="flex items-center justify-center lg:justify-start">
-                                        <div className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-                                            <p className="text-sm text-gray-300 font-light tracking-wide" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US', {
-                                                    weekday: 'long',
-                                                    day: 'numeric',
-                                                    month: 'long',
-                                                    year: 'numeric'
-                                                })}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <p className="text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
+                                    {isPortuguese
+                                        ? 'Uma tiragem diária para toda a comunidade com vibrações energéticas positivas.'
+                                        : 'A daily reading for the entire community with positive energetic vibrations.'}
+                                </p>
 
                                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                     <button
                                         onClick={() => setShowPaywall(true)}
-                                        className="px-6 py-4 bg-[#875faf] hover:bg-[#9a6ec4] text-white text-sm font-medium tracking-wide rounded-sm transition-all duration-300"
+                                        className="hero-cta-primary px-8 py-4 bg-[#875faf] text-white text-sm font-medium tracking-wide rounded-sm"
                                         style={{ fontFamily: "'Inter', sans-serif" }}
                                     >
                                         {isPortuguese ? 'Acesse o Arquivo Completo' : 'Access Full Archive'}
                                     </button>
-
                                     <button
                                         onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
-                                        className="px-6 py-4 bg-transparent border border-white/10 hover:border-white/20 hover:bg-white/5 text-gray-300 text-sm font-light tracking-wide rounded-sm transition-all duration-300"
+                                        className="hero-cta-secondary px-8 py-4 bg-transparent border border-white/10 text-gray-300 text-sm font-light tracking-wide rounded-sm"
                                         style={{ fontFamily: "'Inter', sans-serif" }}
                                     >
                                         {isPortuguese ? 'Baralho de Tarot Completo' : 'Complete Tarot Deck'}
@@ -249,20 +257,73 @@ export const DailyCard = () => {
                                 </div>
                             </div>
 
-                            {/* Right Column - Card with Name & Arcana Below */}
-                            <div className="flex flex-col items-center gap-6 lg:col-span-1 lg:-ml-8">
-                                <div className="relative w-56 aspect-[2/3] rounded-xl overflow-hidden shadow-2xl shadow-purple-900/30 transform hover:scale-105 transition-transform duration-300">
-                                    <div className="absolute inset-0 bg-primary/15 blur-[80px] -z-10 scale-110" />
-                                    <img
-                                        src={dailyCard.imageUrl}
-                                        alt={cardName}
-                                        className="w-full h-full object-cover"
-                                    />
+                            {/* Right Column - Card with Orbit Circles Behind and Info Below */}
+                            <div className="flex flex-col items-center justify-center lg:justify-center gap-6 mt-12">
+                                {/* Planetary orbit element container */}
+                                <div className="relative w-56 aspect-[2/3]">
+                                    {/* Mystical symbol on top - OUTSIDE the card */}
+                                    <div className="absolute -top-16 left-1/2 -translate-x-1/2 z-10">
+                                        <span className="material-symbols-outlined text-white/70 text-2xl">auto_awesome</span>
+                                    </div>
+
+                                    {/* Orbit circles - STATIC behind the card */}
+                                    <div className="absolute inset-0 -z-10 flex items-center justify-center">
+                                        {/* Outer orbit circle */}
+                                        <div
+                                            className="absolute rounded-full border border-dashed"
+                                            style={{
+                                                width: '140%',
+                                                height: '180%',
+                                                borderColor: 'rgba(167, 127, 212, 0.25)',
+                                                borderWidth: '1.5px',
+                                            }}
+                                        />
+                                        {/* Middle orbit circle */}
+                                        <div
+                                            className="absolute rounded-full border border-dotted"
+                                            style={{
+                                                width: '115%',
+                                                height: '150%',
+                                                borderColor: 'rgba(139, 92, 246, 0.2)',
+                                                borderWidth: '1px',
+                                            }}
+                                        />
+                                        {/* Inner orbit circle */}
+                                        <div
+                                            className="absolute rounded-full border border-dashed"
+                                            style={{
+                                                width: '90%',
+                                                height: '120%',
+                                                borderColor: 'rgba(167, 127, 212, 0.18)',
+                                                borderWidth: '1px',
+                                            }}
+                                        />
+                                        {/* Center decorative circle */}
+                                        <div
+                                            className="absolute rounded-full border border-dotted"
+                                            style={{
+                                                width: '60%',
+                                                height: '90%',
+                                                borderColor: 'rgba(124, 58, 237, 0.12)',
+                                                borderWidth: '0.75px',
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* Card container */}
+                                    <div className="absolute inset-0 rounded-xl overflow-hidden shadow-2xl shadow-purple-900/30 transition-transform duration-300">
+                                        <div className="absolute inset-0 bg-primary/15 blur-[80px] -z-10 scale-110" />
+                                        <img
+                                            src={dailyCard.imageUrl}
+                                            alt={cardName}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="text-center space-y-3">
-                                    <h2 className="text-white text-3xl md:text-3xl font-semibold" style={{ fontFamily: "'Crimson Text', serif" }}>{cardName}</h2>
-                                    <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium uppercase tracking-wider">
+                                    <h2 className="text-white text-xl md:text-2xl font-semibold" style={{ fontFamily: "'Crimson Text', serif" }}>{cardName}</h2>
+                                    <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-xs font-medium uppercase tracking-wider" style={{ color: '#d8b4fe' }}>
                                         {dailyCard.arcana === 'major' ? (isPortuguese ? 'Arcano Maior' : 'Major Arcana') : (isPortuguese ? 'Arcano Menor' : 'Minor Arcana')}
                                     </span>
                                 </div>

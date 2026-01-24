@@ -3,8 +3,9 @@ import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParam
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
 import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured } from './services/geminiService';
+import StarsBackground from './components/StarsBackground';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
-import { saveReadingToSupabase } from './services/readingsService';
+import { saveReadingToSupabase, deleteReadingFromSupabase } from './services/readingsService';
 import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
 import { CartProvider, useCart } from './contexts/CartContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -13,6 +14,8 @@ import { UserMenu } from './components/UserMenu';
 import { PaywallModal, usePaywall } from './components/PaywallModal';
 import { JourneySection } from './components/journey';
 import { DailyCard } from './components/DailyCard';
+import { HistoryFiltered } from './components/HistoryFiltered';
+import { SideBySideExample } from './components/Charts/SideBySideExample';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import { getCardName, getCardBySlug } from './tarotData';
@@ -1987,6 +1990,7 @@ const History = () => {
     const [selectedReading, setSelectedReading] = useState<any | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [filteredReadings, setFilteredReadings] = useState<any[]>([]);
 
     const [savedReadings, setSavedReadings] = useState<any[]>(() => {
         try {
@@ -2003,22 +2007,31 @@ const History = () => {
             const saved = localStorage.getItem('tarot-history');
             const readings = saved ? JSON.parse(saved) : [];
             setSavedReadings(readings);
+            setFilteredReadings(readings);
         } catch (e) {
             console.error('Error loading history:', e);
             setSavedReadings([]);
+            setFilteredReadings([]);
         }
     }, [user]); // Recarrega quando user muda (login/logout)
 
     // Limitar leituras visíveis baseado no tier
     const historyLimit = getHistoryLimit();
-    const visibleReadings = isPremium ? savedReadings : savedReadings.slice(0, historyLimit);
-    const hasMoreReadings = savedReadings.length > historyLimit && !isPremium;
+    const visibleReadings = isPremium ? filteredReadings : filteredReadings.slice(0, historyLimit);
+    const hasMoreReadings = filteredReadings.length > historyLimit && !isPremium;
 
-    const deleteReading = (id: number, e: React.MouseEvent) => {
+    const deleteReading = async (id: number, e: React.MouseEvent) => {
         e.stopPropagation();
         const updated = savedReadings.filter(r => r.id !== id);
         setSavedReadings(updated);
+        const updatedFiltered = filteredReadings.filter(r => r.id !== id);
+        setFilteredReadings(updatedFiltered);
         localStorage.setItem('tarot-history', JSON.stringify(updated));
+
+        // Also delete from Supabase if user is logged in
+        if (user) {
+            await deleteReadingFromSupabase(id);
+        }
     };
 
     const updateReading = (updated: any) => {
@@ -2123,101 +2136,115 @@ const History = () => {
                             </button>
                         </div>
                     ) : (
-                        <div className="space-y-4">
-                            {visibleReadings.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="bg-card-dark rounded-xl border border-border-dark hover:border-primary/30 transition-all overflow-hidden"
-                                >
-                                    <div className="flex flex-col md:flex-row">
-                                        {/* Cards Preview */}
-                                        <div className="flex gap-2 p-4 md:p-5 bg-surface-dark/50 overflow-x-auto">
-                                            {item.previewCards?.slice(0, 5).map((cardUrl: string, idx: number) => (
-                                                <div key={idx} className="flex-shrink-0 w-14 md:w-16">
-                                                    <div className="aspect-[2/3] rounded-lg overflow-hidden border border-white/10 shadow-md">
-                                                        <img
-                                                            src={cardUrl}
-                                                            alt={`Card ${idx + 1}`}
-                                                            className="w-full h-full object-cover"
-                                                            onError={(e) => {
-                                                                e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=?";
-                                                            }}
-                                                        />
+                        <div className="space-y-8">
+                            {/* Filters and Chart Section */}
+                            <div className="bg-white/3 rounded-xl p-6 border border-white/5">
+                                <HistoryFiltered
+                                    readings={savedReadings}
+                                    isPortuguese={isPortuguese}
+                                    onSelect={setSelectedReading}
+                                    onDelete={deleteReading}
+                                    onFilterChange={setFilteredReadings}
+                                />
+                            </div>
+
+                            {/* Readings List */}
+                            <div className="space-y-4">
+                                {visibleReadings.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        className="bg-card-dark rounded-xl border border-border-dark hover:border-primary/30 transition-all overflow-hidden"
+                                    >
+                                        <div className="flex flex-col md:flex-row">
+                                            {/* Cards Preview */}
+                                            <div className="flex gap-2 p-4 md:p-5 bg-surface-dark/50 overflow-x-auto">
+                                                {item.previewCards?.slice(0, 5).map((cardUrl: string, idx: number) => (
+                                                    <div key={idx} className="flex-shrink-0 w-14 md:w-16">
+                                                        <div className="aspect-[2/3] rounded-lg overflow-hidden border border-white/10 shadow-md">
+                                                            <img
+                                                                src={cardUrl}
+                                                                alt={`Card ${idx + 1}`}
+                                                                className="w-full h-full object-cover"
+                                                                onError={(e) => {
+                                                                    e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=?";
+                                                                }}
+                                                            />
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))}
-                                            {(item.previewCards?.length || 0) > 5 && (
-                                                <div className="flex-shrink-0 w-14 md:w-16 flex items-center justify-center">
-                                                    <span className="text-gray-500 text-sm">+{item.previewCards.length - 5}</span>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Info */}
-                                        <div className="flex-1 p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4">
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${item.typeColor}`}>
-                                                        {item.typeBadge}
-                                                    </span>
-                                                    <span className="text-gray-500 text-xs">{item.date}</span>
-                                                </div>
-                                                <h3 className="text-white font-bold text-lg mb-1">{item.spreadName}</h3>
-
-                                                {/* Rating */}
-                                                <div className="mb-2">
-                                                    {renderStars(item.rating)}
-                                                </div>
-
-                                                {/* Comment Preview */}
-                                                {item.comment ? (
-                                                    <p className="text-gray-400 text-sm line-clamp-2 italic">"{item.comment}"</p>
-                                                ) : (
-                                                    <p className="text-gray-600 text-sm italic">
-                                                        {isPortuguese ? 'Sem anotações' : 'No notes'}
-                                                    </p>
+                                                ))}
+                                                {(item.previewCards?.length || 0) > 5 && (
+                                                    <div className="flex-shrink-0 w-14 md:w-16 flex items-center justify-center">
+                                                        <span className="text-gray-500 text-sm">+{item.previewCards.length - 5}</span>
+                                                    </div>
                                                 )}
                                             </div>
 
-                                            {/* Actions */}
-                                            <div className="flex gap-2 md:flex-col">
-                                                <button
-                                                    onClick={() => setSelectedReading(item)}
-                                                    className="flex-1 md:flex-none px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-medium text-sm flex items-center justify-center gap-2 transition-colors"
-                                                >
-                                                    <span className="material-symbols-outlined text-lg">visibility</span>
-                                                    {isPortuguese ? 'Ver' : 'View'}
-                                                </button>
-                                                <button
-                                                    onClick={(e) => deleteReading(item.id, e)}
-                                                    className="px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm flex items-center justify-center gap-1 transition-colors"
-                                                >
-                                                    <span className="material-symbols-outlined text-lg">delete</span>
-                                                </button>
+                                            {/* Info */}
+                                            <div className="flex-1 p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4">
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-3 mb-2">
+                                                        <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${item.typeColor}`}>
+                                                            {item.typeBadge}
+                                                        </span>
+                                                        <span className="text-gray-500 text-xs">{item.date}</span>
+                                                    </div>
+                                                    <h3 className="text-white font-bold text-lg mb-1">{item.spreadName}</h3>
+
+                                                    {/* Rating */}
+                                                    <div className="mb-2">
+                                                        {renderStars(item.rating)}
+                                                    </div>
+
+                                                    {/* Comment Preview */}
+                                                    {item.comment ? (
+                                                        <p className="text-gray-400 text-sm line-clamp-2 italic">"{item.comment}"</p>
+                                                    ) : (
+                                                        <p className="text-gray-600 text-sm italic">
+                                                            {isPortuguese ? 'Sem anotações' : 'No notes'}
+                                                        </p>
+                                                    )}
+                                                </div>
+
+                                                {/* Actions */}
+                                                <div className="flex gap-2 md:flex-col">
+                                                    <button
+                                                        onClick={() => setSelectedReading(item)}
+                                                        className="flex-1 md:flex-none px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-medium text-sm flex items-center justify-center gap-2 transition-colors"
+                                                    >
+                                                        <span className="material-symbols-outlined text-lg">visibility</span>
+                                                        {isPortuguese ? 'Ver' : 'View'}
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => deleteReading(item.id, e)}
+                                                        className="px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm flex items-center justify-center gap-1 transition-colors"
+                                                    >
+                                                        <span className="material-symbols-outlined text-lg">delete</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
 
-                            {/* Mostrar prompt de upgrade se houver mais leituras */}
-                            {hasMoreReadings && (
-                                <div className="mt-6 p-6 bg-gradient-to-r from-[#875faf]/20 to-[#1a1628] border border-[#875faf]/30 rounded-xl text-center">
-                                    <span className="material-symbols-outlined text-4xl text-[#a77fd4] mb-3">lock</span>
-                                    <h3 className="text-white font-bold text-lg mb-2">
-                                        {isPortuguese ? `+${savedReadings.length - historyLimit} tiragens bloqueadas` : `+${savedReadings.length - historyLimit} readings locked`}
-                                    </h3>
-                                    <p className="text-gray-400 text-sm mb-4">
-                                        {isPortuguese ? 'Faça upgrade para Premium para acessar todo o seu histórico.' : 'Upgrade to Premium to access your full history.'}
-                                    </p>
-                                    <button
-                                        onClick={() => setShowPaywall(true)}
-                                        className="px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
-                                    >
-                                        {isPortuguese ? 'Fazer Upgrade' : 'Upgrade Now'}
-                                    </button>
-                                </div>
-                            )}
+                                {/* Mostrar prompt de upgrade se houver mais leituras */}
+                                {hasMoreReadings && (
+                                    <div className="mt-6 p-6 bg-gradient-to-r from-[#875faf]/20 to-[#1a1628] border border-[#875faf]/30 rounded-xl text-center">
+                                        <span className="material-symbols-outlined text-4xl text-[#a77fd4] mb-3">lock</span>
+                                        <h3 className="text-white font-bold text-lg mb-2">
+                                            {isPortuguese ? `+${savedReadings.length - historyLimit} tiragens bloqueadas` : `+${savedReadings.length - historyLimit} readings locked`}
+                                        </h3>
+                                        <p className="text-gray-400 text-sm mb-4">
+                                            {isPortuguese ? 'Faça upgrade para Premium para acessar todo o seu histórico.' : 'Upgrade to Premium to access your full history.'}
+                                        </p>
+                                        <button
+                                            onClick={() => setShowPaywall(true)}
+                                            className="px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
+                                        >
+                                            {isPortuguese ? 'Fazer Upgrade' : 'Upgrade Now'}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -3181,17 +3208,7 @@ const Session = () => {
             <Header />
             <CartDrawer />
 
-            {/* Minimal Stars Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform' }}>
-                <div className="absolute w-0.5 h-0.5 bg-white/40 rounded-full" style={{ top: '12%', left: '15%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/35 rounded-full" style={{ top: '8%', left: '68%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/45 rounded-full" style={{ top: '25%', left: '42%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/30 rounded-full" style={{ top: '35%', left: '82%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/38 rounded-full" style={{ top: '48%', left: '22%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/42 rounded-full" style={{ top: '62%', left: '58%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/32 rounded-full" style={{ top: '75%', left: '35%' }} />
-                <div className="absolute w-0.5 h-0.5 bg-white/36 rounded-full" style={{ top: '88%', left: '72%' }} />
-            </div>
+            <StarsBackground />
 
             <div className="relative z-10 flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
                 <div className="flex flex-wrap justify-between items-end gap-4 mb-6 max-w-[1200px] mx-auto">
@@ -3794,6 +3811,7 @@ const App = () => {
                             <Route path="/cosmic" element={<CosmicCalendar />} />
                             <Route path="/carta-do-dia" element={<DailyCard />} />
                             <Route path="/daily-card" element={<DailyCard />} />
+                            <Route path="/charts-demo" element={<SideBySideExample />} />
                             <Route path="/shop" element={<Shop />} />
                             <Route path="/shop/:slug" element={<ProductDetail />} />
                             <Route path="/checkout" element={<Checkout />} />

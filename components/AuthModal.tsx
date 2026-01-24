@@ -61,13 +61,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setError(null);
     setSuccess(null);
     setLoading(true);
+    console.log('📝 AuthModal: handleSubmit started for mode:', mode);
 
     try {
       if (mode === 'login') {
-        const { error } = await signIn(email, password);
+        console.log('🔐 AuthModal: Login mode - calling signIn...');
+        const { error, profile } = await signIn(email, password);
+        console.log('🔐 AuthModal: signIn returned - error:', error?.message, 'profile tier:', profile?.subscription_tier);
+
         if (error) {
+          console.error('❌ AuthModal: signIn error:', error.message);
           setError(error.message.includes('Invalid') ? t.errorInvalidCredentials : t.errorGeneric);
+          setLoading(false);
         } else {
+          // Login successful - profile já foi carregado
+          console.log('✅ AuthModal: Login successful, closing modal. Tier:', profile?.subscription_tier);
+          setLoading(false);
+          // Fechar modal imediatamente
           onClose();
         }
       } else if (mode === 'register') {
@@ -79,10 +89,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         const { error } = await signUp(email, password, fullName);
         if (error) {
           setError(error.message);
+          setLoading(false);
         } else {
           setSuccess(isPortuguese
             ? 'Conta criada! Verifique seu e-mail para confirmar.'
             : 'Account created! Check your email to confirm.');
+          setLoading(false);
         }
       } else if (mode === 'reset') {
         const { error } = await resetPassword(email);
@@ -91,12 +103,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         } else {
           setSuccess(t.resetSent);
         }
+        setLoading(false);
       }
     } catch (err) {
+      console.error('❌ AuthModal: Exception in handleSubmit:', err);
       setError(t.errorGeneric);
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleGoogleSignIn = async () => {

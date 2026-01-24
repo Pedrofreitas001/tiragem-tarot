@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Profile, SubscriptionTier } from '../types/database';
@@ -51,7 +51,7 @@ interface AuthContextType {
   canDoReading: boolean;
   isGuest: boolean;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: AuthError | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | null; profile?: Profile | null }>;
   signInWithGoogle: () => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
@@ -60,13 +60,33 @@ interface AuthContextType {
   refreshProfile: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Criar um valor padrão seguro para quando o contexto não está disponível
+const defaultAuthValue: AuthContextType = {
+  user: null,
+  session: null,
+  profile: null,
+  loading: true,
+  isConfigured: false,
+  tier: 'guest',
+  limits: GUEST_LIMITS,
+  readingsToday: 0,
+  canDoReading: true,
+  isGuest: true,
+  signUp: async () => ({ error: { message: 'Not initialized' } as any }),
+  signIn: async () => ({ error: { message: 'Not initialized' } as any }),
+  signInWithGoogle: async () => ({ error: { message: 'Not initialized' } as any }),
+  signOut: async () => { },
+  resetPassword: async () => ({ error: { message: 'Not initialized' } as any }),
+  updateProfile: async () => ({ error: new Error('Not initialized') }),
+  incrementReadingCount: async () => { },
+  refreshProfile: async () => { },
+};
+
+const AuthContext = createContext<AuthContextType>(defaultAuthValue);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  // Não lançar erro - retornar valor padrão seguro se contexto não disponível
   return context;
 };
 
@@ -115,8 +135,57 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Determinar se é visitante (não logado)
   const isGuest = !user;
 
-  // Derivar tier e limites
-  const tier: SubscriptionTier | 'guest' = isGuest ? 'guest' : (profile?.subscription_tier || 'free');
+  // Estado para indicar que o profile está sendo carregado
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  // Função para verificar se assinatura expirou
+  const isSubscriptionExpired = (expiresAt: string | null): boolean => {
+    if (!expiresAt) return false; // Se não tem data de expiração, não expirou
+    try {
+      const expirationDate = new Date(expiresAt);
+      const now = new Date();
+      console.log('Checking expiration:', { expiresAt, expirationDate: expirationDate.toISOString(), now: now.toISOString(), isExpired: expirationDate < now });
+      return expirationDate < now;
+    } catch (e) {
+      console.error('Error parsing expiration date:', e);
+      return false; // Em caso de erro, assume não expirado
+    }
+  };
+
+  // Derivar tier e limites com validação de expiração
+  const computeTier = useCallback((): SubscriptionTier | 'guest' => {
+    // Se usuário não está logado, é guest
+    if (isGuest) {
+      console.log('🔓 Tier: isGuest=true → GUEST');
+      return 'guest';
+    }
+    // Se profile ainda não carregou, retornar 'free' temporário (não 'guest'!)
+    if (!profile) {
+      console.log('⏳ Tier: profile=null (loading) → FREE (temporary)');
+      return 'free';
+    }
+
+    const subTier = profile.subscription_tier;
+    const expiresAt = profile.subscription_expires_at;
+
+    console.log('📊 Tier computation:', {
+      email: profile.email,
+      subTier,
+      expiresAt
+    });
+
+    if (subTier === 'premium') {
+      const expired = isSubscriptionExpired(expiresAt);
+      const finalTier = expired ? 'free' : 'premium';
+      console.log(`✨ Premium check: expired=${expired} → ${finalTier}`);
+      return finalTier;
+    }
+
+    console.log(`📌 Tier from profile: ${subTier}`);
+    return (subTier as SubscriptionTier) || 'free';
+  }, [isGuest, profile]);
+
+  const tier = computeTier();
   const limits = tier === 'premium' ? PREMIUM_TIER_LIMITS : (tier === 'guest' ? GUEST_LIMITS : FREE_TIER_LIMITS);
 
   // Verificar se é um novo dia para resetar contador
@@ -130,23 +199,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const readingsToday = isGuest ? guestReadings : (profile?.readings_today || 0);
   const canDoReading = tier === 'premium' || readingsToday < limits.readingsPerDay;
 
-  // Buscar perfil do usuário
-  const fetchProfile = async (userId: string) => {
-    if (!supabase) return;
+  // Buscar perfil do usuário - retorna o perfil ou null
+  const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
+    if (!supabase) {
+      console.warn('⚠️ fetchProfile: Supabase not available');
+      setProfileLoading(false);
+      return null;
+    }
+
+    setProfileLoading(true);
+    console.log('🔄 fetchProfile: Starting for userId:', userId);
 
     try {
-      const { data, error } = await supabase
+      console.log('📡 fetchProfile: Calling supabase query...');
+
+      // Timeout de 5 segundos
+      const timeoutPromise = new Promise<{ data: null; error: any }>((resolve) => {
+        setTimeout(() => {
+          console.error('⏰ fetchProfile: TIMEOUT - query took too long');
+          resolve({ data: null, error: { message: 'Query timeout' } });
+        }, 5000);
+      });
+
+      const queryPromise = supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
 
+      const result = await Promise.race([queryPromise, timeoutPromise]);
+      const { data, error } = result;
+
+      console.log('📡 fetchProfile: Query result received:', {
+        hasError: !!error,
+        errorCode: error?.code,
+        hasTier: !!data?.subscription_tier,
+        tier: data?.subscription_tier
+      });
+
       if (error) {
         // Se o perfil não existe, criar um
         if (error.code === 'PGRST116') {
+          console.log('📝 Profile not found, creating new profile...');
           const newProfile: Profile = {
             id: userId,
-            email: user?.email || null,
+            email: null,
             full_name: null,
             avatar_url: null,
             subscription_tier: 'free',
@@ -157,6 +254,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             updated_at: new Date().toISOString(),
           };
 
+          console.log('📝 Inserting new profile:', newProfile.id);
           const { data: created, error: createError } = await supabase
             .from('profiles')
             .insert(newProfile)
@@ -164,17 +262,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             .single();
 
           if (!createError && created) {
+            console.log('✅ New profile created:', { id: created.id, tier: created.subscription_tier });
             setProfile(created);
+            setProfileLoading(false);
+            return created;
           }
-          return;
+          console.error('❌ Failed to create profile:', createError?.message);
+          setProfileLoading(false);
+          return null;
         }
-        console.error('Error fetching profile:', error);
-        return;
+
+        console.error('❌ Error fetching profile:', error.message, error.code);
+        setProfileLoading(false);
+        return null;
       }
+
+      if (!data) {
+        console.warn('⚠️ fetchProfile: No data returned but no error');
+        setProfileLoading(false);
+        return null;
+      }
+
+      console.log('✅ Profile fetched successfully:', {
+        id: data.id,
+        email: data.email,
+        tier: data.subscription_tier,
+        expires: data.subscription_expires_at
+      });
 
       // Resetar contador se for um novo dia
       if (data && isNewDay(data.last_reading_date)) {
-        const { data: updated } = await supabase
+        console.log('📅 New day detected, resetting readings count');
+        const { data: updated, error: updateError } = await supabase
           .from('profiles')
           .update({
             readings_today: 0,
@@ -184,14 +303,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           .select()
           .single();
 
-        setProfile(updated || data);
+        if (updateError) {
+          console.warn('⚠️ Error updating daily reset:', updateError.message);
+        }
+
+        const finalProfile = updated || data;
+        console.log('📌 Profile ready (after daily reset):', { id: finalProfile.id, tier: finalProfile.subscription_tier });
+        setProfile(finalProfile);
+        setProfileLoading(false);
+        return finalProfile;
       } else {
+        console.log('📌 Profile ready (no daily reset):', { id: data.id, tier: data.subscription_tier });
         setProfile(data);
+        setProfileLoading(false);
+        return data;
       }
-    } catch (err) {
-      console.error('Error in fetchProfile:', err);
+    } catch (err: any) {
+      console.error('❌ fetchProfile catch error:', err?.message || err);
+      setProfileLoading(false);
+      return null;
     }
-  };
+  }, []);
 
   // Inicializar autenticação
   useEffect(() => {
@@ -213,6 +345,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Escutar mudanças de autenticação
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
+
+        if (event === 'SIGNED_OUT') {
+          console.log('SIGNED_OUT event - clearing all state');
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+          setLoading(false);
+          return;
+        }
+
         setSession(session);
         setUser(session?.user ?? null);
 
@@ -227,7 +370,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
 
     return () => subscription.unsubscribe();
-  }, [isConfigured]);
+  }, [isConfigured, fetchProfile]);
 
   // Cadastro
   const signUp = async (email: string, password: string, fullName?: string) => {
@@ -247,15 +390,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // Login
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string): Promise<{ error: AuthError | null; profile?: Profile | null }> => {
     if (!supabase) {
       return { error: { message: 'Supabase not configured' } as AuthError };
     }
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+
+    try {
+      console.log('🔑 signIn: Starting login for', email);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('❌ signIn: Auth error:', error.message);
+        return { error, profile: null };
+      }
+
+      // Se login foi sucesso, carregar perfil
+      if (data?.user) {
+        console.log('✅ signIn: Auth successful, now fetching profile...');
+        setUser(data.user);
+        setSession(data.session);
+
+        // Buscar e aguardar perfil - CRUCIAL aguardar aqui
+        const userProfile = await fetchProfile(data.user.id);
+
+        if (userProfile) {
+          console.log('✅ signIn complete → tier:', userProfile.subscription_tier);
+        } else {
+          console.warn('⚠️ signIn: Profile null after fetch');
+        }
+
+        return { error: null, profile: userProfile };
+      }
+
+      console.warn('⚠️ signIn: No user data returned');
+      return { error: null };
+    } catch (err) {
+      console.error('❌ SignIn catch error:', err);
+      return { error: { message: 'An error occurred during sign in' } as AuthError };
+    }
   };
 
   // Login com Google
@@ -274,13 +449,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Logout
   const signOut = async () => {
-    if (supabase) {
-      await supabase.auth.signOut();
-    }
-    // Clear all auth state to ensure logout works even without Supabase
+    console.log('SignOut: Starting...');
+
+    // Limpar estado local PRIMEIRO para UI responder imediatamente
     setUser(null);
     setSession(null);
     setProfile(null);
+    setLoading(false);
+    console.log('SignOut: Local state cleared');
+
+    // Limpar localStorage
+    try {
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('sb-')) {
+          console.log('SignOut: Removing localStorage key:', key);
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (e) {
+      console.error('SignOut: localStorage error:', e);
+    }
+
+    // Sign out from Supabase (não bloquear se falhar)
+    if (supabase) {
+      try {
+        await supabase.auth.signOut({ scope: 'local' });
+        console.log('SignOut: Supabase signOut completed');
+      } catch (err) {
+        console.error('SignOut: Supabase error (ignored):', err);
+      }
+    }
+
+    console.log('SignOut: Complete');
   };
 
   // Reset de senha

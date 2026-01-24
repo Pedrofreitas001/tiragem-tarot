@@ -91,11 +91,10 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onLoginClick }) => {
 
               {/* Tier Badge */}
               <div className="mt-3 flex items-center justify-between">
-                <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${
-                  tier === 'premium'
-                    ? 'bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white'
-                    : 'bg-white/10 text-gray-400'
-                }`}>
+                <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${tier === 'premium'
+                  ? 'bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white'
+                  : 'bg-white/10 text-gray-400'
+                  }`}>
                   {tier === 'premium' ? t.premium : t.free}
                 </span>
                 <span className="text-gray-500 text-xs">
@@ -135,8 +134,10 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onLoginClick }) => {
               <button
                 onClick={async () => {
                   setIsOpen(false);
+                  console.log('Logout clicked');
                   await signOut();
-                  navigate('/');
+                  // Forçar reload para limpar todo o estado
+                  window.location.href = '/';
                 }}
                 className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors text-sm"
               >

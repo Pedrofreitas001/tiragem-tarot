@@ -123,3 +123,31 @@ export const updateReadingInSupabase = async (
         return false;
     }
 };
+
+/**
+ * Deleta uma leitura do Supabase
+ */
+export const deleteReadingFromSupabase = async (readingId: string | number): Promise<boolean> => {
+    if (!isSupabaseConfigured()) {
+        console.log('Supabase not configured, skipping delete');
+        return false;
+    }
+
+    try {
+        const { error } = await supabase
+            .from('readings')
+            .delete()
+            .eq('id', readingId);
+
+        if (error) {
+            console.error('Error deleting reading from Supabase:', error);
+            return false;
+        }
+
+        console.log('Reading deleted successfully from Supabase');
+        return true;
+    } catch (err) {
+        console.error('Exception deleting reading from Supabase:', err);
+        return false;
+    }
+};
