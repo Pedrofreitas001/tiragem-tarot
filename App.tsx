@@ -160,7 +160,7 @@ const Header = () => {
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
                 <div className="flex flex-col w-full max-w-[1200px]">
                     <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
-                        <div className="flex items-center text-white cursor-pointer" onClick={() => navigate('/')}>
+                        <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
                             <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Mystic Tarot</h2>
                         </div>
 
@@ -409,7 +409,7 @@ const Home = () => {
                         {/* Left Column - Content (Mobile: appears after orbit) */}
                         <div className="space-y-8 lg:pr-8 order-2 lg:order-1">
                             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Observe o que se revela no Tarot' : 'Observe what reveals itself in Tarot'}
+                                {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
                             </h1>
 
                             <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
@@ -421,17 +421,22 @@ const Home = () => {
                             <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="hero-cta-primary px-6 sm:px-8 py-3 sm:py-4 bg-[#875faf] text-white text-sm font-medium tracking-wide rounded-sm"
-                                    style={{ fontFamily: "'Inter', sans-serif" }}
+                                    className="group relative px-6 py-3 bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-sm"
                                 >
-                                    {isPortuguese ? 'Iniciar Abertura' : 'Begin Opening'}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
+                                    <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2">
+                                        {isPortuguese ? 'Iniciar Abertura' : 'Begin Opening'}
+                                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </span>
                                 </button>
                                 <button
                                     onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
-                                    className="hero-cta-secondary px-6 sm:px-8 py-3 sm:py-4 bg-transparent border border-white/10 text-gray-300 text-sm font-light tracking-wide rounded-sm"
-                                    style={{ fontFamily: "'Inter', sans-serif" }}
+                                    className="group px-6 py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-sm"
                                 >
-                                    {isPortuguese ? 'Explorar o Arquivo Arcano' : 'Explore the Arcane Archive'}
+                                    <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400">
+                                        {isPortuguese ? 'Explorar o Arquivo Arcano' : 'Explore the Arcane Archive'}
+                                        <span className="material-symbols-outlined text-sm">style</span>
+                                    </span>
                                 </button>
                             </div>
                         </div>
@@ -2130,7 +2135,15 @@ const History = () => {
                 <div className="w-full max-w-[1200px] mx-auto px-4 md:px-10">
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
                         <div>
-                            <h2 className="text-white text-3xl font-bold" style={{ fontFamily: "'Crimson Text', serif" }}>{t.history.title}</h2>
+                            <style>{`
+                                .text-gradient-gold {
+                                    background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
+                                    -webkit-background-clip: text;
+                                    -webkit-text-fill-color: transparent;
+                                    background-clip: text;
+                                }
+                            `}</style>
+                            <h2 className="text-4xl md:text-5xl font-bold text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>{t.history.title}</h2>
                             <p className="text-gray-400 text-sm mt-1">{t.history.subtitle}</p>
                         </div>
                         <div className="flex gap-3">
@@ -3005,7 +3018,15 @@ const Explore = () => {
                     <button onClick={() => navigate('/')} className="text-gray-400 hover:text-white flex items-center gap-2 text-sm mb-4 transition-colors">
                         <span className="material-symbols-outlined text-base">arrow_back</span> {t.cardDetails.back}
                     </button>
-                    <h1 className="text-4xl font-black text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{t.explore.title}</h1>
+                    <style>{`
+                        .text-gradient-gold {
+                            background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            background-clip: text;
+                        }
+                    `}</style>
+                    <h1 className="text-4xl md:text-5xl font-black text-gradient-gold mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{t.explore.title}</h1>
                     <p className="text-gray-400">{t.explore.subtitle}</p>
                 </div>
 

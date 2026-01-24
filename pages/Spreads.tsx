@@ -301,7 +301,15 @@ const Spreads = () => {
                 <div className="max-w-[1600px] mx-auto">
                     {/* Header */}
                     <div className="mb-12">
-                        <h1 className="text-4xl md:text-5xl font-black text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
+                        <style>{`
+                            .text-gradient-gold {
+                                background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
+                                -webkit-background-clip: text;
+                                -webkit-text-fill-color: transparent;
+                                background-clip: text;
+                            }
+                        `}</style>
+                        <h1 className="text-4xl md:text-5xl font-black text-gradient-gold mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Jogos de Tarot' : 'Tarot Spreads'}
                         </h1>
                         <p className="text-gray-300 text-lg max-w-2xl">
@@ -311,9 +319,138 @@ const Spreads = () => {
                         </p>
                     </div>
 
-                    <div className="flex gap-8">
+                    {/* Mobile Layout - Cards with Inline Details */}
+                    <div className="block md:hidden">
+                        <div className="space-y-6">
+                            {SPREADS.map((spread) => {
+                                const translation = getSpreadTranslation(spread.id);
+                                const isSelected = selectedSpread?.id === spread.id;
+
+                                return (
+                                    <div key={spread.id}>
+                                        {/* Spread Card */}
+                                        <div
+                                            onClick={() => handleSelectSpread(spread)}
+                                            className={`relative p-4 rounded-2xl border-2 cursor-pointer overflow-hidden transition-all ${isSelected
+                                                ? 'border-[#a77fd4] bg-gradient-to-r from-[#875faf]/25 to-[#a77fd4]/15 shadow-lg shadow-purple-900/30'
+                                                : 'border-white/10 bg-white/5 hover:border-white/20'
+                                                }`}
+                                        >
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex-1">
+                                                    <h3 className={`font-bold text-base mb-2 ${isSelected ? 'text-[#a77fd4]' : 'text-white'}`}>
+                                                        {translation.name}
+                                                    </h3>
+                                                    <p className={`text-xs line-clamp-2 mb-3 ${isSelected ? 'text-gray-300' : 'text-gray-400'}`}>
+                                                        {translation.description}
+                                                    </p>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`px-2.5 py-1 rounded-md text-white text-[9px] font-bold uppercase ${isSelected ? 'bg-[#a77fd4]/30 text-[#a77fd4]' : 'bg-white/10'}`}>
+                                                            {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Spread Details - Show Below Selected Card (Mobile Only) */}
+                                        {isSelected && (
+                                            <div className="mt-6 relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/2 border border-white/10 p-6 flex flex-col">
+
+                                                {/* Main Content - Two Column Layout */}
+                                                <div className="relative flex flex-col lg:flex-row gap-8 flex-1">
+                                                    {/* Left Part - Image, Title, Description */}
+                                                    <div className="lg:w-2/5 flex flex-col items-start">
+                                                        {/* Image with Premium Banner */}
+                                                        <div className="mb-8 w-full max-w-[280px] relative group">
+                                                            {/* Premium Background Banner */}
+                                                            <div className="absolute -inset-6 bg-gradient-to-br from-[#2a1a3a] via-[#1e1628] to-[#1a1024] rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                                            <div className="absolute -inset-4 bg-gradient-to-t from-[#a77fd4]/20 to-transparent rounded-2xl"></div>
+
+                                                            <img
+                                                                src={spreadImages[selectedSpread.id]}
+                                                                alt={getSpreadTranslation(selectedSpread.id).name}
+                                                                className="relative w-full aspect-[2/3.2] object-cover rounded-2xl shadow-2xl shadow-purple-900/50 border-2 border-[#a77fd4]/30 group-hover:border-[#a77fd4]/60 transition-all duration-300"
+                                                            />
+
+                                                            {/* Overlay Accent */}
+                                                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-[#1a1024]/40 via-transparent to-transparent pointer-events-none"></div>
+                                                        </div>
+
+                                                        {/* Title and Subtitle */}
+                                                        <h2 className="text-3xl md:text-4xl font-black text-white mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                            {getSpreadTranslation(selectedSpread.id).name}
+                                                        </h2>
+                                                        <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-8">
+                                                            {getSpreadTranslation(selectedSpread.id).description}
+                                                        </p>
+
+                                                        {/* CTA Button */}
+                                                        <button
+                                                            onClick={() => handleStartReading(selectedSpread)}
+                                                            className="w-full px-6 py-3 bg-gradient-to-r from-[#875faf] via-[#9968ba] to-[#a77fd4] text-white font-bold text-base rounded-xl shadow-2xl shadow-purple-900/50 active:scale-95 flex items-center justify-center gap-2 border border-[#a77fd4]/30 transition-all"
+                                                        >
+                                                            <span className="material-symbols-outlined text-lg">stars</span>
+                                                            {isPortuguese ? 'Iniciar Leitura' : 'Start Reading'}
+                                                        </button>
+                                                    </div>
+
+                                                    {/* Right Part - Positions Clean List */}
+                                                    <div className="lg:w-2/5 lg:ml-8 flex flex-col">
+                                                        <h3 className="text-sm font-bold text-[#e0c080] uppercase tracking-widest mb-8 flex items-center gap-2">
+                                                            <span className="w-2 h-2 rounded-full bg-[#e0c080]"></span>
+                                                            {isPortuguese ? 'Jornada das Cartas' : 'Card Journey'}
+                                                        </h3>
+
+                                                        <div className="relative space-y-6 flex-1">
+                                                            {selectedSpread.positions.map((position, idx) => {
+                                                                const posTranslation = getPositionTranslation(
+                                                                    selectedSpread.id,
+                                                                    position.index,
+                                                                    position.name,
+                                                                    position.description
+                                                                );
+                                                                const isLast = idx === selectedSpread.positions.length - 1;
+
+                                                                return (
+                                                                    <div key={position.index} className="relative">
+                                                                        {/* Vertical Line Connector */}
+                                                                        {!isLast && (
+                                                                            <div className="absolute left-5 top-12 w-0.5 h-6 bg-gradient-to-b from-[#a77fd4]/60 to-[#a77fd4]/20"></div>
+                                                                        )}
+
+                                                                        <div className="flex items-start gap-4">
+                                                                            {/* Circle Position Indicator */}
+                                                                            <div className="relative flex-shrink-0 mt-1">
+                                                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#a77fd4] to-[#875faf] flex items-center justify-center shadow-lg border-2 border-[#e0c080]/30 hover:border-[#e0c080] transition-all">
+                                                                                    <span className="text-white font-bold text-sm">{position.index + 1}</span>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            {/* Text Content */}
+                                                                            <div className="flex-1 min-w-0 py-1">
+                                                                                <h4 className="text-white font-bold text-sm mb-1 hover:text-[#e0c080] transition-colors">{posTranslation.name}</h4>
+                                                                                <p className="text-gray-400 text-xs leading-relaxed">{posTranslation.description}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Tablet/Desktop Layout - Sidebar + Content */}
+                    <div className="hidden md:flex gap-8">
                         {/* Left Sidebar - Spread Cards */}
-                        <aside className="w-full md:w-80 lg:w-96 flex-shrink-0">
+                        <aside className="w-80 lg:w-96 flex-shrink-0">
                             <div className="space-y-4 sticky top-24">
                                 {SPREADS.map((spread) => {
                                     const translation = getSpreadTranslation(spread.id);
@@ -323,21 +460,21 @@ const Spreads = () => {
                                         <div
                                             key={spread.id}
                                             onClick={() => handleSelectSpread(spread)}
-                                            className={`relative p-4 md:p-5 rounded-2xl border-2 cursor-pointer overflow-hidden ${isSelected
+                                            className={`relative p-5 rounded-2xl border-2 cursor-pointer overflow-hidden transition-all ${isSelected
                                                 ? 'border-[#a77fd4] bg-gradient-to-r from-[#875faf]/25 to-[#a77fd4]/15 shadow-lg shadow-purple-900/30'
-                                                : 'border-white/10 bg-white/5'
+                                                : 'border-white/10 bg-white/5 hover:border-white/20'
                                                 }`}
                                         >
                                             <div className="flex items-start justify-between">
                                                 <div className="flex-1">
-                                                    <h3 className={`font-bold text-base md:text-lg mb-2 ${isSelected ? 'text-[#a77fd4]' : 'text-white'}`}>
+                                                    <h3 className={`font-bold text-lg mb-2 ${isSelected ? 'text-[#a77fd4]' : 'text-white'}`}>
                                                         {translation.name}
                                                     </h3>
-                                                    <p className={`text-xs md:text-sm line-clamp-2 mb-3 ${isSelected ? 'text-gray-300' : 'text-gray-400'}`}>
+                                                    <p className={`text-sm line-clamp-2 mb-3 ${isSelected ? 'text-gray-300' : 'text-gray-400'}`}>
                                                         {translation.description}
                                                     </p>
                                                     <div className="flex items-center gap-2">
-                                                        <span className={`px-2.5 py-1 rounded-md text-white text-[9px] md:text-[10px] font-bold uppercase ${isSelected ? 'bg-[#a77fd4]/30 text-[#a77fd4]' : 'bg-white/10'}`}>
+                                                        <span className={`px-2.5 py-1 rounded-md text-white text-[10px] font-bold uppercase ${isSelected ? 'bg-[#a77fd4]/30 text-[#a77fd4]' : 'bg-white/10'}`}>
                                                             {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
                                                         </span>
                                                     </div>
@@ -352,40 +489,33 @@ const Spreads = () => {
                         {/* Right Content - Spread Details */}
                         {selectedSpread && (
                             <div className="flex-1 min-h-[500px]">
-                                <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/2 border border-white/10 p-8 md:p-10 flex flex-col">
-                                    {/* Subtle Stars Background */}
-                                    <div className="absolute inset-0 pointer-events-none opacity-20">
-                                        {Array.from({ length: 40 }).map((_, i) => (
-                                            <div
-                                                key={i}
-                                                className="absolute w-1 h-1 bg-white rounded-full"
-                                                style={{
-                                                    left: `${Math.random() * 100}%`,
-                                                    top: `${Math.random() * 100}%`,
-                                                    opacity: Math.random() * 0.6 + 0.2
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
+                                <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/2 border border-white/10 p-10 flex flex-col">
 
                                     {/* Main Content - Two Column Layout */}
                                     <div className="relative flex flex-col lg:flex-row gap-8 flex-1">
                                         {/* Left Part - Image, Title, Description */}
                                         <div className="lg:w-2/5 flex flex-col items-start">
-                                            {/* Image */}
-                                            <div className="mb-6 w-full">
+                                            {/* Image with Premium Banner */}
+                                            <div className="mb-8 w-full max-w-[280px] relative group">
+                                                {/* Premium Background Banner */}
+                                                <div className="absolute -inset-6 bg-gradient-to-br from-[#2a1a3a] via-[#1e1628] to-[#1a1024] rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                                <div className="absolute -inset-4 bg-gradient-to-t from-[#a77fd4]/20 to-transparent rounded-2xl"></div>
+
                                                 <img
                                                     src={spreadImages[selectedSpread.id]}
                                                     alt={getSpreadTranslation(selectedSpread.id).name}
-                                                    className="w-full max-w-[280px] aspect-[2/3.2] object-cover rounded-lg shadow-2xl shadow-purple-900/30 border border-[#a77fd4]/20"
+                                                    className="relative w-full aspect-[2/3.2] object-cover rounded-2xl shadow-2xl shadow-purple-900/50 border-2 border-[#a77fd4]/30 group-hover:border-[#a77fd4]/60 transition-all duration-300"
                                                 />
+
+                                                {/* Overlay Accent */}
+                                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-[#1a1024]/40 via-transparent to-transparent pointer-events-none"></div>
                                             </div>
 
                                             {/* Title and Subtitle */}
-                                            <h2 className="text-3xl md:text-4xl font-black text-white mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                            <h2 className="text-4xl font-black text-white mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>
                                                 {getSpreadTranslation(selectedSpread.id).name}
                                             </h2>
-                                            <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-8">
+                                            <p className="text-gray-300 text-base leading-relaxed mb-8">
                                                 {getSpreadTranslation(selectedSpread.id).description}
                                             </p>
 
@@ -401,29 +531,41 @@ const Spreads = () => {
 
                                         {/* Right Part - Positions Clean List */}
                                         <div className="lg:w-2/5 lg:ml-8 flex flex-col">
-                                            <h3 className="text-sm font-bold text-[#a77fd4] uppercase tracking-widest mb-6">
-                                                {isPortuguese ? 'Posições das Cartas' : 'Card Positions'}
+                                            <h3 className="text-sm font-bold text-[#e0c080] uppercase tracking-widest mb-8 flex items-center gap-2">
+                                                <span className="w-2 h-2 rounded-full bg-[#e0c080]"></span>
+                                                {isPortuguese ? 'Jornada das Cartas' : 'Card Journey'}
                                             </h3>
 
-                                            <div className="space-y-4 flex-1">
-                                                {selectedSpread.positions.map((position) => {
+                                            <div className="relative space-y-6 flex-1">
+                                                {selectedSpread.positions.map((position, idx) => {
                                                     const posTranslation = getPositionTranslation(
                                                         selectedSpread.id,
                                                         position.index,
                                                         position.name,
                                                         position.description
                                                     );
+                                                    const isLast = idx === selectedSpread.positions.length - 1;
+
                                                     return (
-                                                        <div
-                                                            key={position.index}
-                                                            className="relative pl-6 border-l border-[#a77fd4]/30 hover:border-[#a77fd4]/60 transition-colors"
-                                                        >
-                                                            <div className="absolute -left-3 top-1 w-5 h-5 rounded-full bg-gradient-to-br from-[#a77fd4] to-[#875faf] flex items-center justify-center text-xs font-bold text-white">
-                                                                {position.index + 1}
-                                                            </div>
-                                                            <div>
-                                                                <h4 className="text-white font-bold text-sm mb-1">{posTranslation.name}</h4>
-                                                                <p className="text-gray-400 text-xs leading-relaxed">{posTranslation.description}</p>
+                                                        <div key={position.index} className="relative">
+                                                            {/* Vertical Line Connector */}
+                                                            {!isLast && (
+                                                                <div className="absolute left-5 top-12 w-0.5 h-6 bg-gradient-to-b from-[#a77fd4]/60 to-[#a77fd4]/20"></div>
+                                                            )}
+
+                                                            <div className="flex items-start gap-4">
+                                                                {/* Circle Position Indicator */}
+                                                                <div className="relative flex-shrink-0 mt-1">
+                                                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#a77fd4] to-[#875faf] flex items-center justify-center shadow-lg border-2 border-[#e0c080]/30 hover:border-[#e0c080] transition-all">
+                                                                        <span className="text-white font-bold text-sm">{position.index + 1}</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Text Content */}
+                                                                <div className="flex-1 min-w-0 py-1">
+                                                                    <h4 className="text-white font-bold text-sm mb-1 hover:text-[#e0c080] transition-colors">{posTranslation.name}</h4>
+                                                                    <p className="text-gray-400 text-xs leading-relaxed">{posTranslation.description}</p>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     );

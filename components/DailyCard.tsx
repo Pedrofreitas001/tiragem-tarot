@@ -28,7 +28,7 @@ const Header = () => {
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
                 <div className="flex flex-col w-full max-w-[1200px]">
                     <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
-                        <div className="flex items-center text-white cursor-pointer" onClick={() => navigate('/')}>
+                        <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
                             <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Mystic Tarot</h2>
                         </div>
 
@@ -333,7 +333,7 @@ export const DailyCard = () => {
                         <div className="flex flex-col justify-center text-left lg:order-first order-first pt-8 lg:pt-32">
                             {/* Title Section */}
                             <div className="mb-6 relative">
-                                <h1 className="font-serif text-4xl md:text-5xl font-medium tracking-wide text-gradient-gold drop-shadow-lg">
+                                <h1 className="font-serif text-5xl md:text-6xl font-medium tracking-wide text-gradient-gold drop-shadow-lg">
                                     {isPortuguese ? 'Carta do Dia' : 'Card of the Day'}
                                 </h1>
                             </div>
