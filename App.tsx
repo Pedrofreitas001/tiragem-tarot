@@ -395,6 +395,12 @@ const Home = () => {
                         border-color: rgba(255, 255, 255, 0.2);
                         background-color: rgba(255, 255, 255, 0.03);
                     }
+                    .text-gradient-gold {
+                        background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                    }
                 `}} />
 
                 <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-12 w-full">
@@ -402,7 +408,7 @@ const Home = () => {
 
                         {/* Left Column - Content (Mobile: appears after orbit) */}
                         <div className="space-y-8 lg:pr-8 order-2 lg:order-1">
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-white" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 {isPortuguese ? 'Observe o que se revela no Tarot' : 'Observe what reveals itself in Tarot'}
                             </h1>
 
