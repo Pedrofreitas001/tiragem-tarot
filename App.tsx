@@ -407,12 +407,12 @@ const Home = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
                         {/* Left Column - Content (Mobile: appears after orbit) */}
-                        <div className="space-y-8 lg:pr-8 order-2 lg:order-1">
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>
+                        <div className="space-y-8 lg:pr-8 order-2 lg:order-1 text-center lg:text-left">
+                            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
                             </h1>
 
-                            <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
+                            <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
                                 {isPortuguese
                                     ? 'Um Tarot digital para registrar padrões, refletir escolhas e acompanhar sua jornada simbólica.'
                                     : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
@@ -443,7 +443,7 @@ const Home = () => {
 
                         {/* Right Column - Arcane Symbol (Mobile: appears first) */}
                         <div className="flex items-center justify-center lg:justify-end order-1 lg:order-2">
-                            <div className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
+                            <div className="relative w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
                                 {/* Outer Ring */}
                                 <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.25)" strokeWidth="1" fill="none" />
@@ -995,6 +995,10 @@ const ProductCard = ({ product }: { product: Product }) => {
                         src={product.images[0]}
                         alt={name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                        onError={(e) => {
+                            const img = e.target as HTMLImageElement;
+                            img.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22%3E%3Crect fill=%22%23875faf%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2220%22 fill=%22white%22 text-anchor=%22middle%22 dy=%22.3em%22%3EImage%3C/text%3E%3C/svg%3E';
+                        }}
                     />
 
                     {/* Gradient overlay on hover */}
@@ -1393,6 +1397,10 @@ const ProductDetail = () => {
                                 src={product.images[activeImage]}
                                 alt={name}
                                 className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    const img = e.target as HTMLImageElement;
+                                    img.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22%3E%3Crect fill=%22%23875faf%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2220%22 fill=%22white%22 text-anchor=%22middle%22 dy=%22.3em%22%3EImage%3C/text%3E%3C/svg%3E';
+                                }}
                             />
                         </div>
                         {product.images.length > 1 && (
@@ -1404,7 +1412,15 @@ const ProductDetail = () => {
                                         className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${i === activeImage ? 'border-primary' : 'border-transparent opacity-60 hover:opacity-100'
                                             }`}
                                     >
-                                        <img src={img} alt="" className="w-full h-full object-cover" />
+                                        <img
+                                            src={img}
+                                            alt=""
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                const img = e.target as HTMLImageElement;
+                                                img.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 400%22%3E%3Crect fill=%22%23875faf%22 width=%22400%22 height=%22400%22/%3E%3C/svg%3E';
+                                            }}
+                                        />
                                     </button>
                                 ))}
                             </div>
