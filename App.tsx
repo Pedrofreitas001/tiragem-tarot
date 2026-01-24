@@ -446,33 +446,33 @@ const Home = () => {
                             <div className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
                                 {/* Outer Ring */}
                                 <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.25)" strokeWidth="1" fill="none" />
-                                    <circle cx="220" cy="40" r="3" fill="rgba(135, 95, 175, 0.5)" />
-                                    <circle cx="220" cy="400" r="3" fill="rgba(135, 95, 175, 0.5)" />
-                                    <circle cx="40" cy="220" r="3" fill="rgba(135, 95, 175, 0.5)" />
-                                    <circle cx="400" cy="220" r="3" fill="rgba(135, 95, 175, 0.5)" />
-                                    <path d="M 220,20 L 220,50" stroke="rgba(135, 95, 175, 0.4)" strokeWidth="1" />
-                                    <path d="M 220,390 L 220,420" stroke="rgba(135, 95, 175, 0.4)" strokeWidth="1" />
-                                    <path d="M 20,220 L 50,220" stroke="rgba(135, 95, 175, 0.4)" strokeWidth="1" />
-                                    <path d="M 390,220 L 420,220" stroke="rgba(135, 95, 175, 0.4)" strokeWidth="1" />
+                                    <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.45)" strokeWidth="1" fill="none" />
+                                    <circle cx="220" cy="40" r="3" fill="rgba(135, 95, 175, 0.7)" />
+                                    <circle cx="220" cy="400" r="3" fill="rgba(135, 95, 175, 0.7)" />
+                                    <circle cx="40" cy="220" r="3" fill="rgba(135, 95, 175, 0.7)" />
+                                    <circle cx="400" cy="220" r="3" fill="rgba(135, 95, 175, 0.7)" />
+                                    <path d="M 220,20 L 220,50" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
+                                    <path d="M 220,390 L 220,420" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
+                                    <path d="M 20,220 L 50,220" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
+                                    <path d="M 390,220 L 420,220" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
                                 </svg>
 
                                 {/* Middle Ring */}
                                 <svg className="arcane-ring-middle absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="140" stroke="rgba(135, 95, 175, 0.22)" strokeWidth="1" fill="none" />
-                                    <circle cx="220" cy="80" r="2.5" fill="rgba(255, 255, 255, 0.4)" />
-                                    <circle cx="220" cy="360" r="2.5" fill="rgba(255, 255, 255, 0.4)" />
-                                    <circle cx="80" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.4)" />
-                                    <circle cx="360" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.4)" />
-                                    <circle cx="130" cy="130" r="2" fill="rgba(135, 95, 175, 0.35)" />
-                                    <circle cx="310" cy="130" r="2" fill="rgba(135, 95, 175, 0.35)" />
-                                    <circle cx="130" cy="310" r="2" fill="rgba(135, 95, 175, 0.35)" />
-                                    <circle cx="310" cy="310" r="2" fill="rgba(135, 95, 175, 0.35)" />
+                                    <circle cx="220" cy="220" r="140" stroke="rgba(135, 95, 175, 0.38)" strokeWidth="1" fill="none" />
+                                    <circle cx="220" cy="80" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
+                                    <circle cx="220" cy="360" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
+                                    <circle cx="80" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
+                                    <circle cx="360" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
+                                    <circle cx="130" cy="130" r="2" fill="rgba(135, 95, 175, 0.55)" />
+                                    <circle cx="310" cy="130" r="2" fill="rgba(135, 95, 175, 0.55)" />
+                                    <circle cx="130" cy="310" r="2" fill="rgba(135, 95, 175, 0.55)" />
+                                    <circle cx="310" cy="310" r="2" fill="rgba(135, 95, 175, 0.55)" />
                                 </svg>
 
                                 {/* Inner Ring */}
                                 <svg className="arcane-ring-inner absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="80" stroke="rgba(135, 95, 175, 0.3)" strokeWidth="1.5" fill="none" />
+                                    <circle cx="220" cy="220" r="80" stroke="rgba(135, 95, 175, 0.5)" strokeWidth="1.5" fill="none" />
                                 </svg>
 
                                 {/* Center Symbol */}
