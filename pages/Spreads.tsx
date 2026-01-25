@@ -166,7 +166,7 @@ const Spreads = () => {
     const { t, isPortuguese } = useLanguage();
     const { checkAccess } = usePaywall();
     const { incrementReadingCount } = useAuth();
-    const [selectedSpread, setSelectedSpread] = useState<Spread | null>(SPREADS[0]);
+    const [selectedSpread, setSelectedSpread] = useState<Spread | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
 
