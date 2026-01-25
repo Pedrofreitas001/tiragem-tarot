@@ -20,6 +20,7 @@ import { SideBySideExample } from './components/Charts/SideBySideExample';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import Spreads from './pages/Spreads';
+import Checkout from './pages/Checkout';
 import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
@@ -510,7 +511,7 @@ const Home = () => {
                                 <div
                                     key={spread.id}
                                     onClick={() => handleSelectSpread(spread)}
-                                    className="group relative flex flex-col h-[340px] md:h-[380px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
+                                    className="group relative flex flex-col h-[300px] md:h-[340px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
                                 >
                                     {/* Background Image with subtle Zoom */}
                                     <div
@@ -551,8 +552,8 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Journey Section - Espiral do Louco */}
-            <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} />
+            {/* Journey Section - A Jornada do Herói */}
+            <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} onOpenAuthModal={() => setShowAuthModal(true)} />
 
             {/* Cosmic Mandala Animation Section */}
             <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark">
@@ -814,7 +815,7 @@ const Home = () => {
                                 <div className="flex items-start gap-3">
                                     <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
                                     <div>
-                                        <div className="text-white text-sm font-light">{isPortuguese ? '3 tiragens por dia' : '3 readings per day'}</div>
+                                        <div className="text-white text-sm font-light">{isPortuguese ? '1 tirada por dia' : '1 reading per day'}</div>
                                         <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Acesso básico às cartas' : 'Basic card access'}</div>
                                     </div>
                                 </div>
@@ -953,6 +954,7 @@ const Home = () => {
                     setShowPaywall(false);
                     setShowAuthModal(true);
                 }}
+                onCheckout={() => navigate('/checkout')}
             />
 
             {/* Auth Modal */}
@@ -1546,175 +1548,6 @@ const ProductDetail = () => {
                         </div>
                     </div>
                 </div>
-            </main>
-
-            <Footer />
-        </div>
-    );
-};
-
-// Checkout Page
-const Checkout = () => {
-    const navigate = useNavigate();
-    const { t, isPortuguese } = useLanguage();
-    const { items, getSubtotal, clearCart, getItemKey } = useCart();
-    const [isProcessing, setIsProcessing] = useState(false);
-
-    if (items.length === 0) {
-        return (
-            <div className="flex flex-col min-h-screen bg-background-dark">
-                <Header />
-                <div className="flex-1 flex flex-col items-center justify-center p-6">
-                    <span className="material-symbols-outlined text-6xl text-gray-600 mb-4">shopping_cart</span>
-                    <p className="text-gray-400 mb-4">{t.cart.empty}</p>
-                    <button
-                        onClick={() => navigate('/shop')}
-                        className="px-6 py-3 bg-primary hover:bg-primary-hover rounded-lg text-white font-bold"
-                    >
-                        {t.cart.continueShopping}
-                    </button>
-                </div>
-                <Footer />
-            </div>
-        );
-    }
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsProcessing(true);
-
-        // Simulate payment processing
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        clearCart();
-        setIsProcessing(false);
-        alert(isPortuguese ? 'Pedido realizado com sucesso! (Simulação)' : 'Order placed successfully! (Simulation)');
-        navigate('/');
-    };
-
-    return (
-        <div className="flex flex-col min-h-screen bg-background-dark">
-            <Header />
-            <CartDrawer />
-
-            <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-6 py-8 md:py-12">
-                <h1 className="text-3xl font-black text-white mb-8" style={{ fontFamily: "'Crimson Text', serif" }}>{t.checkout.title}</h1>
-
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Form */}
-                    <div className="lg:col-span-2 space-y-6">
-                        {/* Contact */}
-                        <div className="bg-card-dark rounded-xl p-6 border border-border-dark">
-                            <h2 className="text-white font-bold mb-4">{t.checkout.contactInfo}</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="email" required placeholder={t.checkout.email} className="w-full px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
-                                <input type="tel" required placeholder={t.checkout.phone} className="w-full px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
-                            </div>
-                        </div>
-
-                        {/* Address */}
-                        <div className="bg-card-dark rounded-xl p-6 border border-border-dark">
-                            <h2 className="text-white font-bold mb-4">{t.checkout.shippingAddress}</h2>
-                            <div className="space-y-4">
-                                <input type="text" required placeholder={t.checkout.fullName} className="w-full px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
-                                <div className="grid grid-cols-3 gap-4">
-                                    <input type="text" required placeholder={t.checkout.zipCode} className="px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
-                                    <input type="text" required placeholder={t.checkout.address} className="col-span-2 px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
-                                </div>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    <input type="text" required placeholder={t.checkout.number} className="px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
-                                    <input type="text" placeholder={t.checkout.complement} className="px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
-                                    <input type="text" required placeholder={t.checkout.city} className="px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
-                                    <input type="text" required placeholder={t.checkout.state} className="px-4 py-3 rounded-lg bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none" />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Payment */}
-                        <div className="bg-card-dark rounded-xl p-6 border border-border-dark">
-                            <h2 className="text-white font-bold mb-4">{t.checkout.paymentMethod}</h2>
-                            <div className="space-y-3">
-                                <label className="flex items-center gap-3 p-4 rounded-lg bg-surface-dark border border-primary cursor-pointer">
-                                    <input type="radio" name="payment" value="pix" defaultChecked className="w-4 h-4 text-primary" />
-                                    <span className="material-symbols-outlined text-green-400">qr_code_2</span>
-                                    <span className="text-white font-medium">{t.checkout.pix}</span>
-                                    <span className="ml-auto text-green-400 text-xs font-bold">5% OFF</span>
-                                </label>
-                                <label className="flex items-center gap-3 p-4 rounded-lg bg-surface-dark border border-border-dark cursor-pointer hover:border-white/20">
-                                    <input type="radio" name="payment" value="credit" className="w-4 h-4 text-primary" />
-                                    <span className="material-symbols-outlined text-blue-400">credit_card</span>
-                                    <span className="text-white font-medium">{t.checkout.creditCard}</span>
-                                </label>
-                                <label className="flex items-center gap-3 p-4 rounded-lg bg-surface-dark border border-border-dark cursor-pointer hover:border-white/20">
-                                    <input type="radio" name="payment" value="boleto" className="w-4 h-4 text-primary" />
-                                    <span className="material-symbols-outlined text-yellow-400">receipt</span>
-                                    <span className="text-white font-medium">{t.checkout.boleto}</span>
-                                </label>
-                            </div>
-                            <p className="text-gray-500 text-xs mt-4 flex items-center gap-2">
-                                <span className="material-symbols-outlined text-green-500 text-sm">lock</span>
-                                {t.checkout.mercadoPago}
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Order Summary */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-card-dark rounded-xl p-6 border border-border-dark sticky top-24">
-                            <h2 className="text-white font-bold mb-4">{t.checkout.orderSummary}</h2>
-
-                            <div className="space-y-4 mb-6">
-                                {items.map(item => {
-                                    const name = isPortuguese ? item.product.name : item.product.name_en;
-                                    const price = item.variant?.price ?? item.product.price;
-                                    return (
-                                        <div key={getItemKey(item)} className="flex gap-3">
-                                            <img src={item.product.images[0]} alt="" className="w-16 h-16 rounded-lg object-cover" />
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-white text-sm font-medium truncate">{name}</p>
-                                                <p className="text-gray-500 text-xs">Qty: {item.quantity}</p>
-                                                <p className="text-primary font-bold text-sm">{formatPrice(price * item.quantity, t.common.currency)}</p>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-
-                            <div className="border-t border-border-dark pt-4 space-y-3">
-                                <div className="flex justify-between text-gray-400 text-sm">
-                                    <span>{t.cart.subtotal}</span>
-                                    <span>{formatPrice(getSubtotal(), t.common.currency)}</span>
-                                </div>
-                                <div className="flex justify-between text-gray-400 text-sm">
-                                    <span>{t.cart.shipping}</span>
-                                    <span>{t.cart.shippingCalculate}</span>
-                                </div>
-                                <div className="flex justify-between text-white font-bold text-lg pt-2 border-t border-border-dark">
-                                    <span>{t.cart.total}</span>
-                                    <span className="text-primary">{formatPrice(getSubtotal(), t.common.currency)}</span>
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isProcessing}
-                                className="w-full mt-6 py-4 bg-primary hover:bg-primary-hover disabled:bg-gray-700 disabled:cursor-not-allowed rounded-xl text-white font-bold transition-colors flex items-center justify-center gap-2"
-                            >
-                                {isProcessing ? (
-                                    <>
-                                        <span className="material-symbols-outlined animate-spin">progress_activity</span>
-                                        {t.checkout.processing}
-                                    </>
-                                ) : (
-                                    <>
-                                        <span className="material-symbols-outlined">lock</span>
-                                        {t.checkout.placeOrder}
-                                    </>
-                                )}
-                            </button>
-                        </div>
-                    </div>
-                </form>
             </main>
 
             <Footer />
@@ -2335,6 +2168,7 @@ const History = () => {
                     setShowPaywall(false);
                     setShowAuthModal(true);
                 }}
+                onCheckout={() => navigate('/checkout')}
             />
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </div>
@@ -3155,6 +2989,7 @@ const Explore = () => {
                     setShowPaywall(false);
                     setShowAuthModal(true);
                 }}
+                onCheckout={() => navigate('/checkout')}
             />
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </div>
@@ -3173,6 +3008,17 @@ const Session = () => {
     const [question, setQuestion] = useState("");
     const [isShuffling, setIsShuffling] = useState(true);
     const [isSpreadingCards, setIsSpreadingCards] = useState(false);
+
+    const getSpreadTranslation = (spreadId: string) => {
+        switch (spreadId) {
+            case 'three_card': return t.spreads.threeCard;
+            case 'celtic_cross': return t.spreads.celticCross;
+            case 'love_check': return t.spreads.loveRelationship;
+            case 'yes_no': return t.spreads.yesNo;
+            case 'card_of_day': return t.spreads.cardOfDay;
+            default: return { name: '', description: '', difficulty: '' };
+        }
+    };
 
     // Função para embaralhar
     const shuffleDeck = () => {
@@ -3296,18 +3142,22 @@ const Session = () => {
                 </div>
 
                 <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar max-w-[1200px] mx-auto">
-                    {SPREADS.map((s) => (
-                        <button
-                            key={s.id}
-                            onClick={() => navigate('/session', { state: { spread: s } })}
-                            className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full pl-4 pr-4 border transition-colors ${spread.id === s.id
-                                ? 'bg-primary text-white border-primary'
-                                : 'bg-surface-highlight hover:bg-[#3d2b45] border-border-dark text-white/70 hover:text-white'
-                                }`}
-                        >
-                            <p className="text-sm font-medium">{s.name}</p>
-                        </button>
-                    ))}
+                    {SPREADS.map((s) => {
+                        const spreadTranslation = getSpreadTranslation(s.id);
+                        const spreadName = spreadTranslation.name || s.name;
+                        return (
+                            <button
+                                key={s.id}
+                                onClick={() => navigate('/session', { state: { spread: s } })}
+                                className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full pl-4 pr-4 border transition-colors ${spread.id === s.id
+                                    ? 'bg-primary text-white border-primary'
+                                    : 'bg-surface-highlight hover:bg-[#3d2b45] border-border-dark text-white/70 hover:text-white'
+                                    }`}
+                            >
+                                <p className="text-sm font-medium">{spreadName}</p>
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
 
@@ -3349,10 +3199,21 @@ const Session = () => {
                                                 <div className="card-front absolute inset-0 bg-gradient-to-br from-surface-dark to-black flex items-center justify-center">
                                                     <span className="material-symbols-outlined text-primary text-2xl">style</span>
                                                 </div>
-                                                <div className="card-back absolute inset-0">
-                                                    <img src={selected.card.imageUrl} alt={getCardName(selected.card.id, isPortuguese)} onError={handleImageError} className="w-full h-full object-cover" />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                                                    <div className="absolute bottom-3 left-0 right-0 text-center">
+                                                <div className="card-back absolute inset-0 bg-black">
+                                                    {/* Background layout decorativo */}
+                                                    <div className="absolute inset-0 z-0" style={{
+                                                        backgroundImage: `
+                                                            linear-gradient(45deg, #a77fd4 1px, transparent 1px),
+                                                            linear-gradient(-45deg, #a77fd4 1px, transparent 1px)
+                                                        `,
+                                                        backgroundSize: '20px 20px',
+                                                        backgroundPosition: '0 0, 10px 10px',
+                                                        opacity: 0.6,
+                                                        pointerEvents: 'none'
+                                                    }}></div>
+                                                    <img src={selected.card.imageUrl} alt={getCardName(selected.card.id, isPortuguese)} onError={handleImageError} className="relative w-full h-full object-cover z-10" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-20"></div>
+                                                    <div className="absolute bottom-3 left-0 right-0 text-center z-30">
                                                         <h3 className="text-white font-bold text-sm md:text-base">{getCardName(selected.card.id, isPortuguese)}</h3>
                                                     </div>
                                                 </div>
@@ -3399,6 +3260,16 @@ const Session = () => {
                                     transform: translate(-50%, -50%) rotate(calc(var(--card-rotation) + 10deg)) scale(1.05);
                                 }
                             }
+                            @keyframes cardSelected {
+                                0% {
+                                    opacity: 1;
+                                    transform: translate(-50%, -50%) rotate(var(--card-rotation)) scale(1);
+                                }
+                                100% {
+                                    opacity: 0;
+                                    transform: translate(-50%, -50%) rotate(var(--card-rotation)) scale(0.3) translateY(-100px);
+                                }
+                            }
                             `
                         }} />
                         {deck.map((card, index) => {
@@ -3421,21 +3292,28 @@ const Session = () => {
 
                             return (
                                 <div
-                                    key={card.id}
-                                    onClick={() => !isSelected && handleCardClick(card)}
-                                    className={`absolute w-14 sm:w-16 md:w-20 lg:w-24 aspect-[2/3.4] rounded-lg border-2 bg-gradient-to-br from-[#1a0d14] via-[#1a0f1e] to-[#0d0810] shadow-2xl cursor-pointer transition-all duration-300 ease-out origin-center ${isSelected ? 'opacity-0 -translate-y-20 scale-50 pointer-events-none' : 'border-[#875faf]/40 hover:z-[100] hover:-translate-y-6 hover:scale-105 hover:border-[#a77fd4] hover:shadow-[0_0_30px_rgba(147,17,212,0.6)]'
+                                    key={`${card.id}-${index}`}
+                                    data-card-id={card.id}
+                                    onClick={() => {
+                                        if (!isSelected) {
+                                            handleCardClick(card);
+                                        }
+                                    }}
+                                    className={`absolute w-14 sm:w-16 md:w-20 lg:w-24 aspect-[2/3.4] rounded-lg border-2 bg-gradient-to-br from-[#1a0d14] via-[#1a0f1e] to-[#0d0810] shadow-2xl cursor-pointer transition-all duration-300 ease-out origin-center ${isSelected ? 'border-[#a77fd4]/80 shadow-[0_0_40px_rgba(167,127,212,0.8)]' : 'border-[#875faf]/40 hover:z-[100] hover:-translate-y-6 hover:scale-105 hover:border-[#a77fd4] hover:shadow-[0_0_30px_rgba(147,17,212,0.6)]'
                                         }`}
                                     style={{
                                         left: `${xPos}%`,
                                         top: `${yPos}%`,
-                                        transform: isSelected ? undefined : `translate(-50%, -50%) rotate(${rotation}deg)`,
-                                        zIndex: isSelected ? -1 : index,
+                                        zIndex: isSelected ? -10 : index,
+                                        pointerEvents: isSelected ? 'none' : 'auto',
                                         '--card-rotation': `${rotation}deg`,
-                                        animation: isSpreadingCards
-                                            ? `cardSpread 0.5s ease-out ${index * 0.01}s both`
-                                            : isShuffling
-                                                ? `cardShuffle 0.3s ease-in-out infinite`
-                                                : 'none',
+                                        animation: isSelected
+                                            ? `cardSelected 0.6s ease-out forwards`
+                                            : isSpreadingCards
+                                                ? `cardSpread 0.5s ease-out ${index * 0.01}s both`
+                                                : isShuffling
+                                                    ? `cardShuffle 0.3s ease-in-out infinite`
+                                                    : 'none',
                                     } as React.CSSProperties}
                                 >
                                     <div className="absolute inset-0 rounded-lg overflow-hidden bg-gradient-to-br from-[#2a1d34] to-[#1a0f1e] flex items-center justify-center">
@@ -3475,6 +3353,11 @@ const Result = () => {
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
 
+    // Reset hasSavedRef when state changes
+    useEffect(() => {
+        hasSavedRef.current = false;
+    }, [state?.spread?.id, state?.cards]);
+
     useEffect(() => {
         if (!state?.spread || !state?.cards) {
             navigate('/');
@@ -3511,15 +3394,40 @@ const Result = () => {
 
             // Save to history (both localStorage and Supabase if logged in)
             try {
-                // Traduzir nome do spread para português
-                const spreadNameMap: Record<string, string> = {
-                    'three_card': isPortuguese ? 'Três Cartas' : 'Three Card Spread',
-                    'celtic_cross': isPortuguese ? 'Cruz Celta' : 'Celtic Cross',
-                    'love_check': isPortuguese ? 'Amor & Relacionamento' : 'Love & Relationship',
-                    'yes_no': isPortuguese ? 'Sim ou Não' : 'Yes or No',
-                    'card_of_day': isPortuguese ? 'Carta do Dia' : 'Card of the Day',
+                // Mapa correto de spreads com tags certas (5 spreads)
+                const spreadNameMap: Record<string, { name: string; tag: string; color: string }> = {
+                    'card_of_day': {
+                        name: isPortuguese ? 'Carta do Dia' : 'Card of the Day',
+                        tag: isPortuguese ? 'DIÁRIA' : 'DAILY',
+                        color: 'text-yellow-400 bg-yellow-500/10'
+                    },
+                    'yes_no': {
+                        name: isPortuguese ? 'Sim ou Não' : 'Yes or No',
+                        tag: isPortuguese ? 'RÁPIDA' : 'QUICK',
+                        color: 'text-blue-400 bg-blue-500/10'
+                    },
+                    'three_card': {
+                        name: isPortuguese ? 'Três Cartas' : 'Three Cards',
+                        tag: isPortuguese ? 'PADRÃO' : 'STANDARD',
+                        color: 'text-primary bg-primary/10'
+                    },
+                    'love_check': {
+                        name: isPortuguese ? 'Amor e Relacionamento' : 'Love & Relationship',
+                        tag: isPortuguese ? 'AMOR' : 'LOVE',
+                        color: 'text-pink-400 bg-pink-500/10'
+                    },
+                    'celtic_cross': {
+                        name: isPortuguese ? 'Cruz Celta' : 'Celtic Cross',
+                        tag: isPortuguese ? 'COMPLETA' : 'FULL',
+                        color: 'text-green-400 bg-green-500/10'
+                    }
                 };
-                const translatedSpreadName = spreadNameMap[state.spread.id] || state.spread.name;
+
+                const spreadInfo = spreadNameMap[state.spread.id] || {
+                    name: state.spread.name,
+                    tag: isPortuguese ? 'OUTRO' : 'OTHER',
+                    color: 'text-gray-400 bg-gray-500/10'
+                };
 
                 const historyItem = {
                     id: Date.now(),
@@ -3529,13 +3437,10 @@ const Result = () => {
                         hour: '2-digit',
                         minute: '2-digit'
                     }),
-                    spreadName: translatedSpreadName,
-                    typeBadge: state.spread.cardCount === 3 ? (isPortuguese ? 'RÁPIDA' : 'QUICK') :
-                        state.spread.cardCount === 10 ? (isPortuguese ? 'COMPLETA' : 'FULL') :
-                            (isPortuguese ? 'AMOR' : 'LOVE'),
-                    typeColor: state.spread.cardCount === 3 ? 'text-primary bg-primary/10' :
-                        state.spread.cardCount === 10 ? 'text-blue-400 bg-blue-500/10' :
-                            'text-pink-400 bg-pink-500/10',
+                    spreadName: spreadInfo.name,
+                    typeBadge: spreadInfo.tag,
+                    typeColor: spreadInfo.color,
+                    spreadId: state.spread.id,
                     previewCards: state.cards.map((c: TarotCard) => c.imageUrl),
                     cardNames: state.cards.map((c: TarotCard) => c.name),
                     positions: state.spread.positions.map((p: any) => p.name),
@@ -3547,21 +3452,38 @@ const Result = () => {
                 // Save to localStorage (always) - Only if not already saved
                 if (!hasSavedRef.current) {
                     hasSavedRef.current = true;
-                    const existing = JSON.parse(localStorage.getItem('tarot-history') || '[]');
-                    const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
-                    localStorage.setItem('tarot-history', JSON.stringify(updated));
+                    const existing = JSON.parse(localStorage.getItem('tarot-history') || '[]') as any[];
 
-                    // Save to Supabase if user is logged in
-                    if (user) {
-                        await saveReadingToSupabase(
-                            user.id,
-                            state.spread.id,
-                            state.cards,
-                            state.question,
-                            result?.synthesis || '',
-                            0,
-                            ''
-                        );
+                    // Create a unique signature for this reading based on cards
+                    const cardSignature = state.cards.map((c: TarotCard) => c.id).sort().join(',');
+
+                    // Check for duplicates: same cards in last 5 seconds
+                    const isDuplicate = existing.some((item: any) => {
+                        const existingSignature = item.cardNames?.map((name: string) => {
+                            const card = TAROT_CARDS.find(c => c.name === name);
+                            return card?.id;
+                        }).filter(Boolean).sort().join(',');
+
+                        return existingSignature === cardSignature &&
+                            (Date.now() - item.id) < 5000;
+                    });
+
+                    if (!isDuplicate) {
+                        const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
+                        localStorage.setItem('tarot-history', JSON.stringify(updated));
+
+                        // Save to Supabase if user is logged in
+                        if (user) {
+                            await saveReadingToSupabase(
+                                user.id,
+                                state.spread.id,
+                                state.cards,
+                                state.question,
+                                result?.synthesis || '',
+                                0,
+                                ''
+                            );
+                        }
                     }
                 }
             } catch (e) {

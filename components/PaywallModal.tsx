@@ -7,13 +7,15 @@ interface PaywallModalProps {
   onClose: () => void;
   feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'ranking';
   onLogin?: () => void;
+  onCheckout?: () => void;
 }
 
 export const PaywallModal: React.FC<PaywallModalProps> = ({
   isOpen,
   onClose,
   feature = 'readings',
-  onLogin
+  onLogin,
+  onCheckout
 }) => {
   const { isPortuguese } = useLanguage();
   const { user, tier, readingsToday, isGuest } = useAuth();
@@ -24,8 +26,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     // Títulos para visitantes (não logados)
     guestReadingsTitle: isPortuguese ? 'Crie sua Conta Gratuita' : 'Create Your Free Account',
     guestReadingsDesc: isPortuguese
-      ? 'Você usou sua tiragem gratuita de demonstração. Crie uma conta grátis para ter 3 tiragens por dia!'
-      : 'You used your free demo reading. Create a free account to get 3 readings per day!',
+      ? 'Você usou sua tirada gratuita de demonstração. Crie uma conta grátis para ter 1 tirada por dia!'
+      : 'You used your free demo reading. Create a free account to get 1 reading per day!',
     guestHistoryTitle: isPortuguese ? 'Histórico Requer Conta' : 'History Requires Account',
     guestHistoryDesc: isPortuguese
       ? 'Crie uma conta gratuita para salvar e acessar seu histórico de tiragens.'
@@ -77,7 +79,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     maybeLater: isPortuguese ? 'Talvez Depois' : 'Maybe Later',
 
     freeBenefits: isPortuguese ? 'Com conta gratuita você tem' : 'With a free account you get',
-    threeReadings: isPortuguese ? '3 tiragens por dia' : '3 readings per day',
+    threeReadings: isPortuguese ? '1 tirada por dia' : '1 reading per day',
     historyAccess: isPortuguese ? 'Histórico das últimas 3 tiragens' : 'History of last 3 readings',
     sevenCards: isPortuguese ? 'Acesso a 7 cartas do arquivo' : 'Access to 7 archive cards',
 
@@ -160,7 +162,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#875faf]/20 flex items-center justify-center">
             <span className="material-symbols-outlined text-3xl text-[#a77fd4]">{getIcon()}</span>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
+          <h2 className="text-2xl font-bold text-gradient-gold mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
             {getTitle()}
           </h2>
           <p className="text-gray-400 text-sm">
@@ -225,35 +227,44 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           {isGuest ? (
             <>
               <button
-                onClick={onLogin}
+                onClick={() => {
+                  onCheckout?.();
+                  // Fechar modal depois de um pequeno delay para permitir transição
+                  setTimeout(onClose, 100);
+                }}
                 className="w-full py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-xl text-white font-bold transition-all shadow-lg shadow-[#875faf]/30"
               >
                 {t.createAccount}
               </button>
               <button
-                onClick={onLogin}
+                onClick={() => {
+                  onLogin?.();
+                  setTimeout(onClose, 100);
+                }}
                 className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-300 hover:text-white font-medium transition-all"
               >
                 {t.login}
               </button>
             </>
-          ) : (
-            <button
-              onClick={() => {
-                // TODO: Implementar checkout
-                alert(isPortuguese ? 'Checkout em breve!' : 'Checkout coming soon!');
-              }}
-              className="w-full py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-xl text-white font-bold transition-all shadow-lg shadow-[#875faf]/30"
-            >
-              {t.upgrade}
-            </button>
-          )}
-          <button
-            onClick={onClose}
-            className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-400 hover:text-white font-medium transition-all"
-          >
-            {t.maybeLater}
-          </button>
+          ) : tier === 'free' ? (
+            <>
+              <button
+                onClick={() => {
+                  onCheckout?.();
+                  onClose();
+                }}
+                className="w-full py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-xl text-white font-bold transition-all shadow-lg shadow-[#875faf]/30"
+              >
+                {t.upgrade}
+              </button>
+              <button
+                onClick={onClose}
+                className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-400 hover:text-white font-medium transition-all"
+              >
+                {t.maybeLater}
+              </button>
+            </>
+          ) : null}
         </div>
       </div>
     </>

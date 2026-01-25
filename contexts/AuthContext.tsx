@@ -17,7 +17,7 @@ export const GUEST_LIMITS = {
 
 // Limites do plano gratuito (logado)
 export const FREE_TIER_LIMITS = {
-  readingsPerDay: 3,
+  readingsPerDay: 1,
   historyDays: 7,
   maxHistoryItems: 3,
   maxArchiveCards: 7,

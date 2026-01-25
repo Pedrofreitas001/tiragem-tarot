@@ -8,6 +8,7 @@ interface Reading {
     spreadName: string;
     typeBadge: string;
     typeColor: string;
+    spreadId?: string;
     previewCards: string[];
     cardNames: string[];
     positions: string[];
@@ -92,13 +93,13 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
     const [expandFilters, setExpandFilters] = useState<boolean>(false);
     const chartRef = useRef<HTMLDivElement>(null);
 
-    // Spread type options
+    // Spread type options - usando tags para identificação consistente
     const spreadTypeOptions = [
-        { key: 'Carta do Dia', label: isPortuguese ? 'Carta do Dia' : 'Card of the Day', color: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400' },
-        { key: 'Sim/Não', label: isPortuguese ? 'Sim/Não' : 'Yes/No', color: 'bg-blue-500/10 border-blue-500/20 text-blue-400' },
-        { key: 'Três Cartas', label: isPortuguese ? 'Três Cartas' : 'Three Cards', color: 'bg-purple-500/10 border-purple-500/20 text-purple-400' },
-        { key: 'Spread do Amor', label: isPortuguese ? 'Amor' : 'Love', color: 'bg-pink-500/10 border-pink-500/20 text-pink-400' },
-        { key: 'Cruz Celta', label: isPortuguese ? 'Cruz Celta' : 'Celtic Cross', color: 'bg-green-500/10 border-green-500/20 text-green-400' },
+        { key: 'DIÁRIA', label: isPortuguese ? 'Diária (Carta do Dia)' : 'Daily (Card of the Day)', color: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400' },
+        { key: 'RÁPIDA', label: isPortuguese ? 'Rápida (Sim/Não)' : 'Quick (Yes/No)', color: 'bg-blue-500/10 border-blue-500/20 text-blue-400' },
+        { key: 'PADRÃO', label: isPortuguese ? 'Padrão (Três Cartas)' : 'Standard (Three Cards)', color: 'bg-purple-500/10 border-purple-500/20 text-purple-400' },
+        { key: 'AMOR', label: isPortuguese ? 'Amor (Relacionamento)' : 'Love (Relationship)', color: 'bg-pink-500/10 border-pink-500/20 text-pink-400' },
+        { key: 'COMPLETA', label: isPortuguese ? 'Completa (Cruz Celta)' : 'Full (Celtic Cross)', color: 'bg-green-500/10 border-green-500/20 text-green-400' },
     ];
 
     // Toggle filter
@@ -115,8 +116,8 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
     // Filter readings - APPLIED TO ALL READINGS
     const filteredReadings = useMemo(() => {
         return readings.filter((reading) => {
-            // Spread type filter
-            if (selectedSpreadTypes.size > 0 && !selectedSpreadTypes.has(reading.spreadName)) {
+            // Spread type filter - usar typeBadge para comparação consistente
+            if (selectedSpreadTypes.size > 0 && !selectedSpreadTypes.has(reading.typeBadge)) {
                 return false;
             }
 
@@ -166,39 +167,39 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
     }, [filteredReadings, onFilterChange]);
 
     // Calculate frequency data for chart (grouped by day only)
-    // Map all spread name variations to a canonical form for grouping
+    // Map all spread tags to a canonical form for grouping
     const spreadCanonicalMap: Record<string, string> = {
-        // Carta do Dia variations
-        'Carta do Dia': 'Carta do Dia',
-        'Card of the Day': 'Carta do Dia',
-        // Sim/Não variations
-        'Sim/Não': 'Sim/Não',
-        'Yes/No': 'Sim/Não',
-        // Três Cartas variations
-        'Três Cartas': 'Três Cartas',
-        'Three Cards': 'Três Cartas',
-        // Spread do Amor variations
-        'Spread do Amor': 'Spread do Amor',
-        'Love': 'Spread do Amor',
-        // Cruz Celta variations
-        'Cruz Celta': 'Cruz Celta',
-        'Celtic Cross': 'Cruz Celta',
+        // DIÁRIA variations
+        'DIÁRIA': 'DIÁRIA',
+        'DAILY': 'DIÁRIA',
+        // RÁPIDA variations
+        'RÁPIDA': 'RÁPIDA',
+        'QUICK': 'RÁPIDA',
+        // PADRÃO variations
+        'PADRÃO': 'PADRÃO',
+        'STANDARD': 'PADRÃO',
+        // AMOR variations
+        'AMOR': 'AMOR',
+        'LOVE': 'AMOR',
+        // COMPLETA variations
+        'COMPLETA': 'COMPLETA',
+        'FULL': 'COMPLETA',
     };
 
-    // Get display name based on language
-    const getDisplaySpreadName = (canonicalName: string): string => {
+    // Get display tag based on language
+    const getDisplayTag = (canonicalTag: string): string => {
         if (isPortuguese) {
-            return canonicalName; // Already in PT
+            return canonicalTag; // Already in PT
         } else {
             // Translate PT to EN
             const ptToEnMap: Record<string, string> = {
-                'Carta do Dia': 'Card of the Day',
-                'Sim/Não': 'Yes/No',
-                'Três Cartas': 'Three Cards',
-                'Spread do Amor': 'Love',
-                'Cruz Celta': 'Celtic Cross',
+                'DIÁRIA': 'DAILY',
+                'RÁPIDA': 'QUICK',
+                'PADRÃO': 'STANDARD',
+                'AMOR': 'LOVE',
+                'COMPLETA': 'FULL',
             };
-            return ptToEnMap[canonicalName] || canonicalName;
+            return ptToEnMap[canonicalTag] || canonicalTag;
         }
     };
 
@@ -232,8 +233,8 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                     dayMap[dateStr] = {};
                 }
 
-                // Get canonical spread name to group PT and EN variations together
-                const spreadType = spreadCanonicalMap[reading.spreadName || 'Unknown'] || (reading.spreadName || 'Unknown');
+                // Get canonical spread tag to group variations together
+                const spreadType = spreadCanonicalMap[reading.typeBadge || 'Unknown'] || (reading.typeBadge || 'Unknown');
                 if (!dayMap[dateStr][spreadType]) {
                     dayMap[dateStr][spreadType] = 0;
                 }
@@ -262,18 +263,18 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
             }));
     }, [filteredReadings]);
 
-    // Colors for spread types in chart
+    // Colors for spread types in chart (using tags)
     const chartColors: Record<string, string> = {
-        'Carta do Dia': '#fbbf24',
-        'Card of the Day': '#fbbf24',
-        'Sim/Não': '#60a5fa',
-        'Yes/No': '#60a5fa',
-        'Três Cartas': '#c084fc',
-        'Three Cards': '#c084fc',
-        'Spread do Amor': '#f472b6',
-        'Love': '#f472b6',
-        'Cruz Celta': '#4ade80',
-        'Celtic Cross': '#4ade80',
+        'DIÁRIA': '#fbbf24',
+        'DAILY': '#fbbf24',
+        'RÁPIDA': '#60a5fa',
+        'QUICK': '#60a5fa',
+        'PADRÃO': '#c084fc',
+        'STANDARD': '#c084fc',
+        'AMOR': '#f472b6',
+        'LOVE': '#f472b6',
+        'COMPLETA': '#4ade80',
+        'FULL': '#4ade80',
     };
 
     const maxFrequency = Math.max(...frequencyData.map(d => d.total), 1);
@@ -420,16 +421,16 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                             const dreItems = spreadTypeOptions.map((option) => {
                                 const total = frequencyData.reduce((sum, day) => sum + (day.breakdown[option.key] || 0), 0);
                                 const colorMap: Record<string, string> = {
-                                    'Carta do Dia': '#fbbf24',
-                                    'Card of the Day': '#fbbf24',
-                                    'Sim/Não': '#60a5fa',
-                                    'Yes/No': '#60a5fa',
-                                    'Três Cartas': '#c084fc',
-                                    'Three Cards': '#c084fc',
-                                    'Spread do Amor': '#f472b6',
-                                    'Love': '#f472b6',
-                                    'Cruz Celta': '#4ade80',
-                                    'Celtic Cross': '#4ade80',
+                                    'DIÁRIA': '#fbbf24',
+                                    'DAILY': '#fbbf24',
+                                    'RÁPIDA': '#60a5fa',
+                                    'QUICK': '#60a5fa',
+                                    'PADRÃO': '#c084fc',
+                                    'STANDARD': '#c084fc',
+                                    'AMOR': '#f472b6',
+                                    'LOVE': '#f472b6',
+                                    'COMPLETA': '#4ade80',
+                                    'FULL': '#4ade80',
                                 };
                                 return {
                                     label: option.label,

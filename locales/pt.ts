@@ -45,7 +45,7 @@ export const pt = {
     accessArchive: "Acessar Arquivo Arcano",
     cancelAnytime: "Cancele quando quiser • Sem compromisso",
     features: {
-      dailyReadings: "3 tiragens por dia",
+      dailyReadings: "1 tirada por dia",
       basicAccess: "Acesso básico às cartas",
       simpleInterpretation: "Interpretação simples",
       noAI: "Sem análise de IA",

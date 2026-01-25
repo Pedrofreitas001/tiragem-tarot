@@ -645,7 +645,16 @@ export const DailyCard = () => {
             </section>
 
             <Footer />
-            <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} feature="readings" />
+            <PaywallModal
+                isOpen={showPaywall}
+                onClose={() => setShowPaywall(false)}
+                feature="readings"
+                onLogin={() => {
+                    setShowPaywall(false);
+                    setShowAuthModal(true);
+                }}
+                onCheckout={() => navigate('/checkout')}
+            />
         </div>
     );
 };

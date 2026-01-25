@@ -45,7 +45,7 @@ export const en: TranslationKeys = {
     accessArchive: "Access Arcane Archive",
     cancelAnytime: "Cancel anytime • No commitment",
     features: {
-      dailyReadings: "3 readings per day",
+      dailyReadings: "1 reading per day",
       basicAccess: "Basic card access",
       simpleInterpretation: "Simple interpretation",
       noAI: "No AI analysis",

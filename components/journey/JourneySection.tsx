@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ArcanaNode from './ArcanaNode';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -8,7 +8,7 @@ import { TAROT_CARDS } from '../../tarotData';
 import { fetchReadingsFromSupabase } from '../../services/readingsService';
 
 /**
- * JourneySection - A Espiral do Louco (Versão Premium)
+ * JourneySection - A Jornada do Herói (Versão Premium)
  * 
  * Experiência visual premium para explorar a jornada pessoal através dos Arcanos Maiores
  * Com suporte a diferentes níveis de acesso: guest, registered, subscriber
@@ -16,10 +16,12 @@ import { fetchReadingsFromSupabase } from '../../services/readingsService';
 
 interface JourneySectionProps {
   onStartReading?: () => void;
+  onOpenAuthModal?: () => void;
 }
 
-const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
+const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading, onOpenAuthModal }) => {
   // Translation and user context
+  const navigate = useNavigate();
   const { isPortuguese } = useLanguage();
   const { user, tier, profile } = useAuth();
   const arcanaList = TAROT_CARDS.filter(card => card.arcana === 'major').sort((a, b) => a.number - b.number);
@@ -163,6 +165,55 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
     countReadings();
   }, [user?.id]);
 
+  // Calculate Top 3 from localStorage for premium users (fallback if Supabase not available)
+  useEffect(() => {
+    if (!user || tier !== 'premium') return;
+    if (hasLoadedTop3) return; // Don't recalculate if already loaded
+
+    const localHistory = JSON.parse(localStorage.getItem('tarot-history') || '[]');
+    if (localHistory.length < 3) return;
+
+    // Calculate frequency from localStorage
+    const frequency: Record<string, number> = {};
+    localHistory.forEach((reading: any) => {
+      const names = reading.cardNames || (reading.cards?.map((c: any) => c.name || c.name_pt) || []);
+      names.forEach((cardName: string) => {
+        const foundCard = TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName);
+        if (foundCard) {
+          const cardKey = String(foundCard.id);
+          frequency[cardKey] = (frequency[cardKey] || 0) + 1;
+        }
+      });
+    });
+
+    // Get top 3
+    const sorted = Object.entries(frequency)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([cardId]) => cardId);
+
+    if (sorted.length > 0) {
+      console.log('📊 Calculated Top 3 from localStorage:', sorted);
+      setCardFrequency(frequency);
+      setTop3CardIds(sorted);
+      setHasLoadedTop3(true);
+    }
+  }, [user?.id, tier, hasLoadedTop3]);
+
+  // Auto-load Top 3 for premium users with enough readings
+  useEffect(() => {
+    if (!user || tier !== 'premium') return;
+    if (totalReadingsCount < 3) return;
+    if (hasLoadedTop3) return; // Don't reload if already loaded
+
+    // Auto-load top 3 after a short delay
+    const timer = setTimeout(() => {
+      refreshTop3();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [user?.id, tier, totalReadingsCount, hasLoadedTop3]);
+
   // Manual refresh function for Top 3
   const refreshTop3 = async () => {
     if (!user) return;
@@ -193,7 +244,10 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
       console.log('Calculating from history:', finalHistory.length, 'readings');
 
       finalHistory.forEach((reading: any) => {
-        reading.cardNames?.forEach((cardName: string) => {
+        // Try both cardNames and cards
+        const names = reading.cardNames || (reading.cards?.map((c: any) => c.name || c.name_pt) || []);
+
+        names.forEach((cardName: string) => {
           const foundCard = TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName);
           if (foundCard) {
             const cardKey = String(foundCard.id);
@@ -268,6 +322,19 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
     top3 = [...top3, ...fill];
   }
 
+  // Debug: Log top3 state
+  useEffect(() => {
+    console.log('🎴 Top 3 state updated:', {
+      hasAccessToTop3,
+      hasLoadedTop3,
+      top3CardIds,
+      top3: top3.map(id => {
+        const card = TAROT_CARDS.find(a => String(a.id) === String(id));
+        return card?.name || id;
+      })
+    });
+  }, [top3CardIds, hasLoadedTop3, top3, hasAccessToTop3]);
+
   // Handlers
   const handleSelectMarker = (marker: any) => setSelectedMarker(marker);
   const handleOpenDetails = (marker: any) => {
@@ -296,7 +363,7 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
             </div>
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-normal leading-[1.0] tracking-tight text-white mb-6 mt-0" style={{ fontFamily: "'Crimson Text', serif" }}>
-              {isPortuguese ? 'A Espiral do Louco' : 'The Fool\'s Spiral'}
+              {isPortuguese ? 'A Jornada do Herói' : 'The Hero\'s Journey'}
             </h1>
 
             <p className="text-gray-400 text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto mb-6" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -499,7 +566,7 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-2xl md:text-3xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                        {isPortuguese ? 'Frequência da Carta' : 'Card Frequency'}
+                        {isPortuguese ? 'Frequência de aparições' : 'Card Frequency'}
                       </h3>
                       <p className="text-sm text-gray-400" style={{ fontFamily: "'Inter', sans-serif" }}>
                         {isPortuguese ? 'Histórico de suas tiragens' : 'Your reading history'}
@@ -513,27 +580,26 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
                 </div>
 
                 {selectedMarker ? (
-                  <div className="flex gap-6 items-center">
+                  <div className="flex flex-col items-center justify-center gap-6">
                     <div className="flex-shrink-0">
                       <img
                         src={selectedMarker.imageUrl}
                         alt={isPortuguese ? selectedMarker.name_pt || selectedMarker.name : selectedMarker.name}
-                        className="w-20 h-28 rounded-lg shadow-lg border border-[#a77fd4]/30 object-cover"
+                        className="w-20 h-32 rounded-lg shadow-lg border border-[#a77fd4]/30 object-cover"
                       />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 text-center">
                       <h4 className="text-xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
                         {isPortuguese ? selectedMarker.name_pt || selectedMarker.name : selectedMarker.name}
                       </h4>
-                      <p className="text-sm text-gray-400 mb-4">{isPortuguese ? selectedMarker.essence : selectedMarker.essenceEn}</p>
-                      <div className="flex items-end gap-3">
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">{isPortuguese ? 'Aparições' : 'Appearances'}</p>
+                      <p className="text-sm text-gray-400 mb-4 px-4">{isPortuguese ? selectedMarker.essence : selectedMarker.essenceEn}</p>
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500 mb-1 whitespace-nowrap">{isPortuguese ? 'Frequência de aparições' : 'Appearances'}</p>
                           <p className="text-4xl font-normal text-[#ffd700]" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {hasAccessToCount ? cardCount : '-'}
                           </p>
                         </div>
-                        <p className="text-xs text-gray-500 mb-2">{isPortuguese ? 'vezes' : 'times'}</p>
                       </div>
                     </div>
                   </div>
@@ -682,30 +748,28 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
                     </button>
                   </div>
                 ) : (
-                  // Show Top 3 Cards Grid
-                  <div className={`grid grid-cols-3 gap-3 ${!hasAccessToTop3 ? 'opacity-60 blur-sm pointer-events-none' : ''}`}>
+                  // Show Top 3 Cards in Podium Style
+                  <div className={`flex items-center justify-center gap-8 ${!hasAccessToTop3 ? 'opacity-60 blur-sm pointer-events-none' : ''}`}>
                     {top3.map((cardId, position) => {
-                      // Convert string ID to number for comparison
-                      const numericId = typeof cardId === 'string' ? parseInt(cardId, 10) : cardId;
-                      const card = arcanaList.find(a => a.id === numericId);
+                      // Find card by string ID in all TAROT_CARDS
+                      const card = TAROT_CARDS.find(a => String(a.id) === String(cardId));
                       if (!card) return null;
 
                       const medals = ['🥇', '🥈', '🥉'];
 
                       return (
                         <div key={card.id} className="flex flex-col items-center">
-                          <div className="relative mb-2">
+                          <div className="relative mb-3">
                             <img
                               src={card.imageUrl}
                               alt={card.name}
-                              className={`w-16 h-24 rounded-lg shadow-lg border-2 object-cover transition-all ${position === 0 ? 'border-[#ffd700] scale-110' : 'border-[#a77fd4]/30'
-                                }`}
+                              className="w-18 h-40 rounded-lg shadow-2xl border-2 border-[#a77fd4]/30 object-cover transition-all"
                             />
-                            <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-xl">
+                            <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full flex items-center justify-center text-2xl bg-white/10 backdrop-blur border border-white/20">
                               {medals[position]}
                             </div>
                           </div>
-                          <p className="text-xs text-center text-gray-300 truncate max-w-[70px]" style={{ fontFamily: "'Crimson Text', serif" }}>
+                          <p className="text-sm text-center text-gray-300 font-semibold max-w-[120px]" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? card.name_pt || card.name : card.name}
                           </p>
                         </div>
@@ -739,7 +803,16 @@ const JourneySection: React.FC<JourneySectionProps> = ({ onStartReading }) => {
       `}</style>
 
       {/* Premium Ranking Paywall */}
-      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} feature="ranking" />
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="ranking"
+        onLogin={() => {
+          setShowPaywall(false);
+          onOpenAuthModal?.();
+        }}
+        onCheckout={() => navigate('/checkout')}
+      />
     </section>
   );
 };

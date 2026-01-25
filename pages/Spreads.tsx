@@ -591,6 +591,7 @@ const Spreads = () => {
                     setShowPaywall(false);
                     setShowAuthModal(true);
                 }}
+                onCheckout={() => navigate('/checkout')}
             />
 
             {/* Auth Modal */}

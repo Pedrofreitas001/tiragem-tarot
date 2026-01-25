@@ -91,10 +91,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           setError(error.message);
           setLoading(false);
         } else {
+          // Conta criada com sucesso! Ir para login
           setSuccess(isPortuguese
-            ? 'Conta criada! Verifique seu e-mail para confirmar.'
-            : 'Account created! Check your email to confirm.');
+            ? 'Conta criada com sucesso! Faça login agora.'
+            : 'Account created successfully! Log in now.');
           setLoading(false);
+          // Trocar para login mode após 1 segundo
+          setTimeout(() => {
+            setMode('login');
+            setEmail('');
+            setPassword('');
+            setFullName('');
+            setSuccess(null);
+          }, 1000);
         }
       } else if (mode === 'reset') {
         const { error } = await resetPassword(email);
