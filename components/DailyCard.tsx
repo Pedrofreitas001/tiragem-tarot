@@ -242,14 +242,28 @@ export const DailyCard = () => {
             box-shadow: 0 0 20px rgba(224, 192, 128, 0.3), inset 0 0 15px rgba(224, 192, 128, 0.15);
             animation: spin-slow 40s linear infinite;
         }
+        .ring-5 {
+            width: 320px; height: 320px;
+            border: 1px solid rgba(224, 192, 128, 0.35);
+            border-top-color: rgba(224, 192, 128, 0.7);
+            border-bottom-color: rgba(224, 192, 128, 0.7);
+            box-shadow: 0 0 15px rgba(224, 192, 128, 0.25), inset 0 0 10px rgba(224, 192, 128, 0.1);
+            animation: spin-reverse 30s linear infinite;
+        }
         @media (max-width: 768px) {
             .ring-4 {
                 width: 360px; height: 360px;
+            }
+            .ring-5 {
+                width: 260px; height: 260px;
             }
         }
         @media (max-width: 640px) {
             .ring-4 {
                 width: 330px; height: 330px;
+            }
+            .ring-5 {
+                width: 240px; height: 240px;
             }
         }
         .constellation-glow {
@@ -378,6 +392,9 @@ export const DailyCard = () => {
 
                                     {/* Circle Behind */}
                                     <div className="ring-absolute ring-4 z-10" style={{ top: '5%', left: '6%' }}></div>
+
+                                    {/* Inner Circle */}
+                                    <div className="ring-absolute ring-5 z-10" style={{ top: '5%', left: '6%' }}></div>
 
                                     {/* Card Image */}
                                     <div className="relative md:w-[200px] md:h-[310px] w-[152px] h-[236px] z-20 card-float transition-transform duration-700 ease-out group-hover:scale-105 group-hover:rotate-1">

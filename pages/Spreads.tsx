@@ -9,7 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { AuthModal } from '../components/AuthModal';
 
 // Inline components since they're in App.tsx
-const Header = () => {
+const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
@@ -55,7 +55,7 @@ const Header = () => {
                                 <span className="material-symbols-outlined text-gray-300">shopping_bag</span>
                             </button>
 
-                            <UserMenu onLoginClick={() => setShowAuthModal(true)} />
+                            <UserMenu onLoginClick={onLoginClick} />
 
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -189,39 +189,54 @@ const Spreads = () => {
     };
 
     const getSpreadTranslation = (spreadId: string) => {
-        const translationMap: Record<string, { name: string; description: string }> = {
+        const translationMap: Record<string, { name: string; description: string; spiritual: string }> = {
             'three_card': {
                 name: isPortuguese ? 'Três Cartas' : 'Three Card Spread',
                 description: isPortuguese
                     ? 'Passado, Presente e Futuro. Uma leitura clássica para insights rápidos.'
                     : 'Past, Present, and Future. A classic spread for quick insights.',
+                spiritual: isPortuguese
+                    ? 'Esta tiragem ancestral revela a tríade temporal da existência. O passado como raiz do presente, o presente como semente do futuro. Cada carta desenha um arco narrativo da sua jornada, conectando o que foi, o que é, e o que virá a ser.'
+                    : 'This ancestral spread reveals the temporal triad of existence. The past as the root of the present, the present as the seed of the future. Each card draws a narrative arc of your journey, connecting what was, what is, and what will be.'
             },
             'celtic_cross': {
                 name: isPortuguese ? 'Cruz Celta' : 'Celtic Cross',
                 description: isPortuguese
                     ? 'Uma análise profunda de uma situação específica, cobrindo influências internas e externas.'
                     : 'A deep dive into a specific situation, covering internal and external influences.',
+                spiritual: isPortuguese
+                    ? 'A Cruz Celta é um portal dimensional que desvenda camadas ocultas da realidade. Cada posição mapeia um aspecto da consciência, revelando não apenas eventos, mas as forças invisíveis que moldam seu destino — das raízes do subconsciente às manifestações externas.'
+                    : 'The Celtic Cross is a dimensional portal that unveils hidden layers of reality. Each position maps an aspect of consciousness, revealing not just events, but the invisible forces shaping your destiny — from subconscious roots to external manifestations.'
             },
             'love_check': {
                 name: isPortuguese ? 'Amor & Relacionamento' : 'Love & Relationship',
                 description: isPortuguese
                     ? 'Compreenda a dinâmica entre você e um parceiro.'
                     : 'Understand the dynamics between you and a partner.',
+                spiritual: isPortuguese
+                    ? 'O amor é um espelho da alma. Esta leitura ilumina a dança energética entre dois seres, revelando padrões ocultos, bloqueios emocionais e o potencial alquímico da união. Explore as correntes invisíveis que conectam corações além do tempo e espaço.'
+                    : 'Love is a mirror of the soul. This reading illuminates the energetic dance between two beings, revealing hidden patterns, emotional blocks, and the alchemical potential of union. Explore the invisible currents that connect hearts beyond time and space.'
             },
             'yes_no': {
                 name: isPortuguese ? 'Sim ou Não' : 'Yes or No',
                 description: isPortuguese
                     ? 'Obtenha uma resposta direta para sua pergunta com uma única carta.'
                     : 'Get a direct answer to your question with a single card.',
+                spiritual: isPortuguese
+                    ? 'Na simplicidade reside a clareza. Uma única carta, um único momento de verdade. Esta tiragem corta ilusões e vai direto ao núcleo da questão, oferecendo a sabedoria direta do universo sem rodeios ou ambiguidades.'
+                    : 'In simplicity lies clarity. A single card, a single moment of truth. This spread cuts through illusions and goes straight to the core of the matter, offering direct wisdom from the universe without detours or ambiguities.'
             },
             'card_of_day': {
                 name: isPortuguese ? 'Carta do Dia' : 'Card of the Day',
                 description: isPortuguese
                     ? 'Uma reflexão diária para guiar seus passos.'
                     : 'A daily reflection to guide your steps.',
+                spiritual: isPortuguese
+                    ? 'Cada dia é um novo capítulo na grande narrativa cósmica. Esta carta é sua bússola espiritual, revelando a energia que permeia as próximas 24 horas. Um farol de consciência para navegar as correntes invisíveis do destino diário.'
+                    : 'Each day is a new chapter in the great cosmic narrative. This card is your spiritual compass, revealing the energy permeating the next 24 hours. A beacon of consciousness to navigate the invisible currents of daily destiny.'
             },
         };
-        return translationMap[spreadId] || { name: 'Unknown', description: '' };
+        return translationMap[spreadId] || { name: 'Unknown', description: '', spiritual: '' };
     };
 
     const getPositionTranslation = (spreadId: string, positionIndex: number, englishName: string, englishDescription: string) => {
@@ -269,7 +284,12 @@ const Spreads = () => {
     };
 
     const handleSelectSpread = (spread: Spread) => {
-        setSelectedSpread(spread);
+        // Toggle: se já está selecionado, desselecionar
+        if (selectedSpread?.id === spread.id) {
+            setSelectedSpread(null);
+        } else {
+            setSelectedSpread(spread);
+        }
     };
 
     const difficultyColor: Record<string, string> = {
@@ -293,14 +313,14 @@ const Spreads = () => {
 
     return (
         <div className="relative flex flex-col min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
-            <Header />
+            <Header onLoginClick={() => setShowAuthModal(true)} />
             <CartDrawer />
             <StarsBackground />
 
             <main className="relative z-10 flex-1 w-full px-4 md:px-8 py-12">
                 <div className="max-w-[1600px] mx-auto">
                     {/* Header */}
-                    <div className="mb-12">
+                    <div className="mb-12 max-w-6xl mx-auto">
                         <style>{`
                             .text-gradient-gold {
                                 background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
@@ -319,9 +339,9 @@ const Spreads = () => {
                         </p>
                     </div>
 
-                    {/* Mobile Layout - Cards with Inline Details */}
-                    <div className="block md:hidden">
-                        <div className="space-y-6">
+                    {/* Unified Layout - Mobile and Desktop */}
+                    <div className="w-full">
+                        <div className="space-y-6 md:space-y-8 max-w-6xl mx-auto">
                             {SPREADS.map((spread) => {
                                 const translation = getSpreadTranslation(spread.id);
                                 const isSelected = selectedSpread?.id === spread.id;
@@ -331,21 +351,21 @@ const Spreads = () => {
                                         {/* Spread Card */}
                                         <div
                                             onClick={() => handleSelectSpread(spread)}
-                                            className={`relative p-4 rounded-2xl border-2 cursor-pointer overflow-hidden transition-all ${isSelected
+                                            className={`relative p-4 md:p-6 rounded-2xl border-2 cursor-pointer overflow-hidden transition-all ${isSelected
                                                 ? 'border-[#a77fd4] bg-gradient-to-r from-[#875faf]/25 to-[#a77fd4]/15 shadow-lg shadow-purple-900/30'
                                                 : 'border-white/10 bg-white/5 hover:border-white/20'
                                                 }`}
                                         >
                                             <div className="flex items-start justify-between">
                                                 <div className="flex-1">
-                                                    <h3 className={`font-bold text-base mb-2 ${isSelected ? 'text-[#a77fd4]' : 'text-white'}`}>
+                                                    <h3 className={`font-bold text-base md:text-xl mb-2 ${isSelected ? 'text-[#a77fd4]' : 'text-white'}`}>
                                                         {translation.name}
                                                     </h3>
-                                                    <p className={`text-xs line-clamp-2 mb-3 ${isSelected ? 'text-gray-300' : 'text-gray-400'}`}>
+                                                    <p className={`text-xs md:text-sm line-clamp-2 mb-3 ${isSelected ? 'text-gray-300' : 'text-gray-400'}`}>
                                                         {translation.description}
                                                     </p>
                                                     <div className="flex items-center gap-2">
-                                                        <span className={`px-2.5 py-1 rounded-md text-white text-[9px] font-bold uppercase ${isSelected ? 'bg-[#a77fd4]/30 text-[#a77fd4]' : 'bg-white/10'}`}>
+                                                        <span className={`px-2.5 py-1 md:px-3 md:py-1.5 rounded-md text-white text-[9px] md:text-[11px] font-bold uppercase ${isSelected ? 'bg-[#a77fd4]/30 text-[#a77fd4]' : 'bg-white/10'}`}>
                                                             {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
                                                         </span>
                                                     </div>
@@ -353,89 +373,128 @@ const Spreads = () => {
                                             </div>
                                         </div>
 
-                                        {/* Spread Details - Show Below Selected Card (Mobile Only) */}
+                                        {/* Spread Details - Show Below Selected Card */}
                                         {isSelected && (
-                                            <div className="mt-6 relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/2 border border-white/10 p-6 flex flex-col">
+                                            <div className="mt-6 md:mt-8 -mx-4 md:-mx-8 relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/2 border border-white/10 p-6 md:p-8 flex flex-col">
+                                                <div className="max-w-7xl mx-auto w-full space-y-6 md:space-y-8">
+                                                    {/* Spiritual Description - Full Width Premium Banner */}
+                                                    <div className="relative p-5 md:p-7 rounded-2xl bg-gradient-to-br from-[#a77fd4]/10 to-[#875faf]/5 border border-[#a77fd4]/30 overflow-hidden">
+                                                        {/* Decorative background elements */}
+                                                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#a77fd4]/20 to-transparent rounded-bl-full"></div>
+                                                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-[#875faf]/20 to-transparent rounded-tr-full"></div>
+                                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#a77fd4]/5 rounded-full blur-3xl"></div>
 
-                                                {/* Main Content - Two Column Layout */}
-                                                <div className="relative flex flex-col lg:flex-row gap-8 flex-1">
-                                                    {/* Left Part - Image, Title, Description */}
-                                                    <div className="lg:w-2/5 flex flex-col items-start">
-                                                        {/* Image with Premium Banner */}
-                                                        <div className="mb-8 w-full max-w-[280px] relative group">
-                                                            {/* Premium Background Banner */}
-                                                            <div className="absolute -inset-6 bg-gradient-to-br from-[#2a1a3a] via-[#1e1628] to-[#1a1024] rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                                            <div className="absolute -inset-4 bg-gradient-to-t from-[#a77fd4]/20 to-transparent rounded-2xl"></div>
-
-                                                            <img
-                                                                src={spreadImages[selectedSpread.id]}
-                                                                alt={getSpreadTranslation(selectedSpread.id).name}
-                                                                className="relative w-full aspect-[2/3.2] object-cover rounded-2xl shadow-2xl shadow-purple-900/50 border-2 border-[#a77fd4]/30 group-hover:border-[#a77fd4]/60 transition-all duration-300"
-                                                            />
-
-                                                            {/* Overlay Accent */}
-                                                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-[#1a1024]/40 via-transparent to-transparent pointer-events-none"></div>
+                                                        <div className="relative flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-5 mb-3">
+                                                            <div className="flex-shrink-0 w-11 h-11 md:w-13 md:h-13 rounded-full bg-gradient-to-br from-[#e0c080] to-[#b88a44] flex items-center justify-center shadow-xl">
+                                                                <span className="material-symbols-outlined text-white text-xl md:text-2xl">auto_awesome</span>
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                <h3 className="text-[#e0c080] text-xs md:text-sm font-bold uppercase tracking-widest mb-1">
+                                                                    {isPortuguese ? 'Essência Espiritual' : 'Spiritual Essence'}
+                                                                </h3>
+                                                                <p className="text-gray-400 text-xs">
+                                                                    {isPortuguese ? 'O significado ancestral deste jogo' : 'The ancestral meaning of this spread'}
+                                                                </p>
+                                                            </div>
                                                         </div>
-
-                                                        {/* Title and Subtitle */}
-                                                        <h2 className="text-3xl md:text-4xl font-black text-white mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                                            {getSpreadTranslation(selectedSpread.id).name}
-                                                        </h2>
-                                                        <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-8">
-                                                            {getSpreadTranslation(selectedSpread.id).description}
+                                                        <p className="relative text-gray-200 text-sm md:text-base leading-relaxed italic max-w-5xl">
+                                                            {getSpreadTranslation(selectedSpread.id).spiritual}
                                                         </p>
-
-                                                        {/* CTA Button */}
-                                                        <button
-                                                            onClick={() => handleStartReading(selectedSpread)}
-                                                            className="w-full px-6 py-3 bg-gradient-to-r from-[#875faf] via-[#9968ba] to-[#a77fd4] text-white font-bold text-base rounded-xl shadow-2xl shadow-purple-900/50 active:scale-95 flex items-center justify-center gap-2 border border-[#a77fd4]/30 transition-all"
-                                                        >
-                                                            <span className="material-symbols-outlined text-lg">stars</span>
-                                                            {isPortuguese ? 'Iniciar Leitura' : 'Start Reading'}
-                                                        </button>
                                                     </div>
 
-                                                    {/* Right Part - Positions Clean List */}
-                                                    <div className="lg:w-2/5 lg:ml-8 flex flex-col">
-                                                        <h3 className="text-sm font-bold text-[#e0c080] uppercase tracking-widest mb-8 flex items-center gap-2">
-                                                            <span className="w-2 h-2 rounded-full bg-[#e0c080]"></span>
-                                                            {isPortuguese ? 'Jornada das Cartas' : 'Card Journey'}
-                                                        </h3>
+                                                    {/* Three Column Grid - Image + Info + Positions */}
+                                                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+                                                        {/* Column 1: Image - 3 cols */}
+                                                        <div className="lg:col-span-3 flex flex-col items-center lg:items-start">
+                                                            <div className="w-full max-w-[260px] relative group">
+                                                                {/* Premium Background Banner */}
+                                                                <div className="absolute -inset-5 bg-gradient-to-br from-[#2a1a3a] via-[#1e1628] to-[#1a1024] rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                                                <div className="absolute -inset-3 bg-gradient-to-t from-[#a77fd4]/20 to-transparent rounded-2xl"></div>
 
-                                                        <div className="relative space-y-6 flex-1">
-                                                            {selectedSpread.positions.map((position, idx) => {
-                                                                const posTranslation = getPositionTranslation(
-                                                                    selectedSpread.id,
-                                                                    position.index,
-                                                                    position.name,
-                                                                    position.description
-                                                                );
-                                                                const isLast = idx === selectedSpread.positions.length - 1;
+                                                                <img
+                                                                    src={spreadImages[selectedSpread.id]}
+                                                                    alt={getSpreadTranslation(selectedSpread.id).name}
+                                                                    className="relative w-full aspect-[2/3.2] object-cover rounded-2xl shadow-2xl shadow-purple-900/50 border-2 border-[#a77fd4]/30 group-hover:border-[#a77fd4]/60 transition-all duration-300"
+                                                                />
 
-                                                                return (
-                                                                    <div key={position.index} className="relative">
-                                                                        {/* Vertical Line Connector */}
-                                                                        {!isLast && (
-                                                                            <div className="absolute left-5 top-12 w-0.5 h-6 bg-gradient-to-b from-[#a77fd4]/60 to-[#a77fd4]/20"></div>
-                                                                        )}
+                                                                {/* Overlay Accent */}
+                                                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-[#1a1024]/40 via-transparent to-transparent pointer-events-none"></div>
+                                                            </div>
+                                                        </div>
 
-                                                                        <div className="flex items-start gap-4">
-                                                                            {/* Circle Position Indicator */}
-                                                                            <div className="relative flex-shrink-0 mt-1">
-                                                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#a77fd4] to-[#875faf] flex items-center justify-center shadow-lg border-2 border-[#e0c080]/30 hover:border-[#e0c080] transition-all">
-                                                                                    <span className="text-white font-bold text-sm">{position.index + 1}</span>
+                                                        {/* Column 2: Title + Description + Button - 4 cols */}
+                                                        <div className="lg:col-span-4 flex flex-col justify-start">
+                                                            <h2 className="text-3xl md:text-4xl font-black text-white mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                                {getSpreadTranslation(selectedSpread.id).name}
+                                                            </h2>
+                                                            <p className="text-gray-300 text-sm leading-relaxed mb-5">
+                                                                {getSpreadTranslation(selectedSpread.id).description}
+                                                            </p>
+
+                                                            {/* Quick Stats */}
+                                                            <div className="flex flex-wrap gap-2 mb-6">
+                                                                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
+                                                                    <span className="material-symbols-outlined text-[#a77fd4] text-base">style</span>
+                                                                    <span className="text-white text-xs font-medium">{selectedSpread.cardCount} {isPortuguese ? 'Cartas' : 'Cards'}</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
+                                                                    <span className="material-symbols-outlined text-[#e0c080] text-base">schedule</span>
+                                                                    <span className="text-white text-xs font-medium">{selectedSpread.cardCount * 2}-{selectedSpread.cardCount * 3} min</span>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* CTA Button */}
+                                                            <button
+                                                                onClick={() => handleStartReading(selectedSpread)}
+                                                                className="w-full px-5 py-3 bg-gradient-to-r from-[#875faf] via-[#9968ba] to-[#a77fd4] text-white font-bold text-sm md:text-base rounded-xl shadow-2xl shadow-purple-900/50 hover:shadow-purple-900/70 active:scale-95 flex items-center justify-center gap-2 border border-[#a77fd4]/30 transition-all group"
+                                                            >
+                                                                <span className="material-symbols-outlined text-lg group-hover:rotate-180 transition-transform duration-500">stars</span>
+                                                                {isPortuguese ? 'Iniciar Leitura' : 'Start Reading'}
+                                                            </button>
+                                                        </div>
+
+                                                        {/* Column 3: Positions - 5 cols */}
+                                                        <div className="lg:col-span-5">
+                                                            <h3 className="text-xs md:text-sm font-bold text-[#e0c080] uppercase tracking-widest mb-5 flex items-center gap-2">
+                                                                <span className="w-2 h-2 rounded-full bg-[#e0c080]"></span>
+                                                                {isPortuguese ? 'Jornada das Cartas' : 'Card Journey'}
+                                                            </h3>
+
+                                                            <div className="relative space-y-4">
+                                                                {selectedSpread.positions.map((position, idx) => {
+                                                                    const posTranslation = getPositionTranslation(
+                                                                        selectedSpread.id,
+                                                                        position.index,
+                                                                        position.name,
+                                                                        position.description
+                                                                    );
+                                                                    const isLast = idx === selectedSpread.positions.length - 1;
+
+                                                                    return (
+                                                                        <div key={position.index} className="relative">
+                                                                            {/* Vertical Line Connector */}
+                                                                            {!isLast && (
+                                                                                <div className="absolute left-4 top-9 w-0.5 h-4 bg-gradient-to-b from-[#a77fd4]/60 to-[#a77fd4]/20"></div>
+                                                                            )}
+
+                                                                            <div className="flex items-start gap-3">
+                                                                                {/* Circle Position Indicator */}
+                                                                                <div className="relative flex-shrink-0">
+                                                                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#a77fd4] to-[#875faf] flex items-center justify-center shadow-lg border-2 border-[#e0c080]/30 hover:border-[#e0c080] transition-all">
+                                                                                        <span className="text-white font-bold text-xs">{position.index + 1}</span>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                {/* Text Content */}
+                                                                                <div className="flex-1 min-w-0">
+                                                                                    <h4 className="text-white font-bold text-xs mb-0.5 hover:text-[#e0c080] transition-colors">{posTranslation.name}</h4>
+                                                                                    <p className="text-gray-400 text-xs leading-relaxed">{posTranslation.description}</p>
                                                                                 </div>
                                                                             </div>
-
-                                                                            {/* Text Content */}
-                                                                            <div className="flex-1 min-w-0 py-1">
-                                                                                <h4 className="text-white font-bold text-sm mb-1 hover:text-[#e0c080] transition-colors">{posTranslation.name}</h4>
-                                                                                <p className="text-gray-400 text-xs leading-relaxed">{posTranslation.description}</p>
-                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                );
-                                                            })}
+                                                                    );
+                                                                })}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -445,137 +504,6 @@ const Spreads = () => {
                                 );
                             })}
                         </div>
-                    </div>
-
-                    {/* Tablet/Desktop Layout - Sidebar + Content */}
-                    <div className="hidden md:flex gap-8">
-                        {/* Left Sidebar - Spread Cards */}
-                        <aside className="w-80 lg:w-96 flex-shrink-0">
-                            <div className="space-y-4 sticky top-24">
-                                {SPREADS.map((spread) => {
-                                    const translation = getSpreadTranslation(spread.id);
-                                    const isSelected = selectedSpread?.id === spread.id;
-
-                                    return (
-                                        <div
-                                            key={spread.id}
-                                            onClick={() => handleSelectSpread(spread)}
-                                            className={`relative p-5 rounded-2xl border-2 cursor-pointer overflow-hidden transition-all ${isSelected
-                                                ? 'border-[#a77fd4] bg-gradient-to-r from-[#875faf]/25 to-[#a77fd4]/15 shadow-lg shadow-purple-900/30'
-                                                : 'border-white/10 bg-white/5 hover:border-white/20'
-                                                }`}
-                                        >
-                                            <div className="flex items-start justify-between">
-                                                <div className="flex-1">
-                                                    <h3 className={`font-bold text-lg mb-2 ${isSelected ? 'text-[#a77fd4]' : 'text-white'}`}>
-                                                        {translation.name}
-                                                    </h3>
-                                                    <p className={`text-sm line-clamp-2 mb-3 ${isSelected ? 'text-gray-300' : 'text-gray-400'}`}>
-                                                        {translation.description}
-                                                    </p>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className={`px-2.5 py-1 rounded-md text-white text-[10px] font-bold uppercase ${isSelected ? 'bg-[#a77fd4]/30 text-[#a77fd4]' : 'bg-white/10'}`}>
-                                                            {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </aside>
-
-                        {/* Right Content - Spread Details */}
-                        {selectedSpread && (
-                            <div className="flex-1 min-h-[500px]">
-                                <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/2 border border-white/10 p-10 flex flex-col">
-
-                                    {/* Main Content - Two Column Layout */}
-                                    <div className="relative flex flex-col lg:flex-row gap-8 flex-1">
-                                        {/* Left Part - Image, Title, Description */}
-                                        <div className="lg:w-2/5 flex flex-col items-start">
-                                            {/* Image with Premium Banner */}
-                                            <div className="mb-8 w-full max-w-[280px] relative group">
-                                                {/* Premium Background Banner */}
-                                                <div className="absolute -inset-6 bg-gradient-to-br from-[#2a1a3a] via-[#1e1628] to-[#1a1024] rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                                <div className="absolute -inset-4 bg-gradient-to-t from-[#a77fd4]/20 to-transparent rounded-2xl"></div>
-
-                                                <img
-                                                    src={spreadImages[selectedSpread.id]}
-                                                    alt={getSpreadTranslation(selectedSpread.id).name}
-                                                    className="relative w-full aspect-[2/3.2] object-cover rounded-2xl shadow-2xl shadow-purple-900/50 border-2 border-[#a77fd4]/30 group-hover:border-[#a77fd4]/60 transition-all duration-300"
-                                                />
-
-                                                {/* Overlay Accent */}
-                                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-[#1a1024]/40 via-transparent to-transparent pointer-events-none"></div>
-                                            </div>
-
-                                            {/* Title and Subtitle */}
-                                            <h2 className="text-4xl font-black text-white mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                                {getSpreadTranslation(selectedSpread.id).name}
-                                            </h2>
-                                            <p className="text-gray-300 text-base leading-relaxed mb-8">
-                                                {getSpreadTranslation(selectedSpread.id).description}
-                                            </p>
-
-                                            {/* CTA Button */}
-                                            <button
-                                                onClick={() => handleStartReading(selectedSpread)}
-                                                className="w-full px-6 py-3 bg-gradient-to-r from-[#875faf] via-[#9968ba] to-[#a77fd4] text-white font-bold text-base rounded-xl shadow-2xl shadow-purple-900/50 active:scale-95 flex items-center justify-center gap-2 border border-[#a77fd4]/30 transition-all"
-                                            >
-                                                <span className="material-symbols-outlined text-lg">stars</span>
-                                                {isPortuguese ? 'Iniciar Leitura' : 'Start Reading'}
-                                            </button>
-                                        </div>
-
-                                        {/* Right Part - Positions Clean List */}
-                                        <div className="lg:w-2/5 lg:ml-8 flex flex-col">
-                                            <h3 className="text-sm font-bold text-[#e0c080] uppercase tracking-widest mb-8 flex items-center gap-2">
-                                                <span className="w-2 h-2 rounded-full bg-[#e0c080]"></span>
-                                                {isPortuguese ? 'Jornada das Cartas' : 'Card Journey'}
-                                            </h3>
-
-                                            <div className="relative space-y-6 flex-1">
-                                                {selectedSpread.positions.map((position, idx) => {
-                                                    const posTranslation = getPositionTranslation(
-                                                        selectedSpread.id,
-                                                        position.index,
-                                                        position.name,
-                                                        position.description
-                                                    );
-                                                    const isLast = idx === selectedSpread.positions.length - 1;
-
-                                                    return (
-                                                        <div key={position.index} className="relative">
-                                                            {/* Vertical Line Connector */}
-                                                            {!isLast && (
-                                                                <div className="absolute left-5 top-12 w-0.5 h-6 bg-gradient-to-b from-[#a77fd4]/60 to-[#a77fd4]/20"></div>
-                                                            )}
-
-                                                            <div className="flex items-start gap-4">
-                                                                {/* Circle Position Indicator */}
-                                                                <div className="relative flex-shrink-0 mt-1">
-                                                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#a77fd4] to-[#875faf] flex items-center justify-center shadow-lg border-2 border-[#e0c080]/30 hover:border-[#e0c080] transition-all">
-                                                                        <span className="text-white font-bold text-sm">{position.index + 1}</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                {/* Text Content */}
-                                                                <div className="flex-1 min-w-0 py-1">
-                                                                    <h4 className="text-white font-bold text-sm mb-1 hover:text-[#e0c080] transition-colors">{posTranslation.name}</h4>
-                                                                    <p className="text-gray-400 text-xs leading-relaxed">{posTranslation.description}</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </main>

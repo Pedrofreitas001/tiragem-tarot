@@ -239,7 +239,6 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               <button
                 onClick={() => {
                   onLogin?.();
-                  setTimeout(onClose, 100);
                 }}
                 className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-300 hover:text-white font-medium transition-all"
               >
