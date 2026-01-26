@@ -402,10 +402,7 @@ export const DailyCard = () => {
                                 <div className="relative md:w-[500px] md:h-[460px] w-[380px] h-[360px] flex items-center justify-center group perspective-1000">
                                     {/* Background Circles */}
 
-                                    {/* Outer Decorative Circle - offset for visual interest */}
-                                    <div className="ring-absolute ring-6 z-5" style={{ top: '48%', left: '52%' }}></div>
-
-                                    {/* Middle Circle - centered on card */}
+                                    {/* Outer Circle - centered on card */}
                                     <div className="ring-absolute ring-4 z-10" style={{ top: '48%', left: '50%' }}></div>
 
                                     {/* Inner Circle - centered on card */}
