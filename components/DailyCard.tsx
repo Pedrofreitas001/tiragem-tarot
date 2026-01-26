@@ -403,7 +403,7 @@ export const DailyCard = () => {
                                     {/* Background Circles */}
 
                                     {/* Outer Decorative Circle - dashed, offset to the right */}
-                                    <div className="ring-absolute ring-6 z-5" style={{ top: '46%', left: '52%' }}></div>
+                                    <div className="ring-absolute ring-6 z-5" style={{ top: '48%', left: '52%' }}></div>
 
                                     {/* Inner Circle - centered on card */}
                                     <div className="ring-absolute ring-5 z-10" style={{ top: '46%', left: '50%' }}></div>
