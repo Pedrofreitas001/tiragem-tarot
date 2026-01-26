@@ -553,22 +553,7 @@ const Home = () => {
             </section>
 
             {/* WhatsApp Daily Card Subscription Section */}
-            <section className="relative min-h-[80vh] flex items-center justify-center p-4 lg:p-10 bg-[#0B061A]">
-                {/* Background Effects */}
-                <div className="absolute inset-0 pointer-events-none z-0">
-                    <div className="absolute inset-0" style={{
-                        backgroundImage: `radial-gradient(1px 1px at 25px 35px, #fff, rgba(0,0,0,0)),
-                                         radial-gradient(1px 1px at 50px 80px, #ffffff88, rgba(0,0,0,0)),
-                                         radial-gradient(1.5px 1.5px at 110px 140px, #fff, rgba(0,0,0,0)),
-                                         radial-gradient(1px 1px at 150px 50px, #ffffffaa, rgba(0,0,0,0))`,
-                        backgroundRepeat: 'repeat',
-                        backgroundSize: '200px 200px',
-                        opacity: 0.3
-                    }}></div>
-                    <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[120px]"></div>
-                    <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] bg-blue-900/10 rounded-full blur-[120px]"></div>
-                </div>
-
+            <section className="relative z-10 py-16 md:py-24 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">
                 <style>{`
                     .home-glass-card {
                         background: rgba(255, 255, 255, 0.04);
@@ -584,260 +569,296 @@ const Home = () => {
                         background: rgba(168, 85, 247, 0.15);
                         box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
                     }
+                    .text-gradient-gold-home {
+                        background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                    }
                 `}</style>
 
-                <div className="home-glass-card w-full max-w-6xl rounded-[2.5rem] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.8)] relative flex flex-col lg:flex-row items-stretch z-10">
-                    {/* Form Content */}
-                    <div className="flex-1 p-6 lg:p-14 order-2 lg:order-1">
-                        <header className="mb-8 text-center lg:text-left">
-                            <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary font-medium text-[10px] mb-4 tracking-[0.2em] uppercase border border-primary/30 backdrop-blur-md">
-                                {isPortuguese ? 'Conexão Celestial' : 'Celestial Connection'}
-                            </span>
-                            <h2 className="font-display text-3xl md:text-5xl text-white mb-6 leading-tight">
-                                {isPortuguese ? 'Desperte seu' : 'Awaken Your'} <br />
-                                <span className="text-primary italic" style={{ filter: 'drop-shadow(0 0 15px rgba(168, 85, 247, 0.7))' }}>{isPortuguese ? 'Destino Diário' : 'Daily Destiny'}</span>
-                            </h2>
-                            <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                                {isPortuguese
-                                    ? 'Receba orientações ancestrais e insights poderosos diretamente no seu WhatsApp.'
-                                    : 'Receive ancestral guidance and powerful insights directly on your WhatsApp.'}
-                            </p>
-                        </header>
+                <div className="max-w-6xl mx-auto">
+                    {/* Feature Presentation Header */}
+                    <div className="text-center mb-12 md:mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gradient-gold-home mb-4 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
+                        </h2>
+                        <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto mb-10">
+                            {isPortuguese
+                                ? 'Receba diariamente uma mensagem personalizada com orientações do tarot diretamente no seu celular.'
+                                : 'Receive daily personalized tarot guidance messages directly on your phone.'}
+                        </p>
 
-                        <form action="#" className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                        {isPortuguese ? 'Nome Completo' : 'Full Name'}
-                                    </label>
-                                    <div className="relative group">
-                                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">person</span>
-                                        <input
-                                            className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600"
-                                            placeholder={isPortuguese ? 'Seu nome' : 'Your name'}
-                                            type="text"
-                                        />
-                                    </div>
+                        {/* Feature Boxes */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto mb-12">
+                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-primary/20 transition-all">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 flex items-center justify-center mx-auto mb-3">
+                                    <span className="material-symbols-outlined text-yellow-500 text-xl">auto_awesome</span>
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">WhatsApp</label>
-                                    <div className="relative group">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
-                                            <img alt="Brasil Flag" className="w-5 h-auto rounded-sm opacity-80" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/32px-Flag_of_Brazil.svg.png" />
-                                        </div>
-                                        <input
-                                            className="w-full pl-16 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600"
-                                            placeholder="+55 (00) 00000-0000"
-                                            type="tel"
-                                        />
-                                    </div>
+                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? 'Carta Personalizada' : 'Personalized Card'}</h3>
+                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Interpretação única para seu dia' : 'Unique interpretation for your day'}</p>
+                            </div>
+                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-primary/20 transition-all">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/10 flex items-center justify-center mx-auto mb-3">
+                                    <span className="material-symbols-outlined text-primary text-xl">schedule</span>
                                 </div>
+                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? 'Horário Ideal' : 'Ideal Time'}</h3>
+                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Escolha quando receber' : 'Choose when to receive'}</p>
                             </div>
-
-                            <div className="space-y-2">
-                                <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                    {isPortuguese ? 'Estado' : 'State'}
-                                </label>
-                                <div className="relative group">
-                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">location_on</span>
-                                    <select
-                                        className="w-full pl-12 pr-10 py-3 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white appearance-none cursor-pointer"
-                                        style={{ backgroundImage: 'none' }}
-                                        defaultValue=""
-                                    >
-                                        <option value="" disabled className="bg-[#1a1628] text-gray-400">
-                                            {isPortuguese ? 'Selecione seu estado' : 'Select your state'}
-                                        </option>
-                                        <option value="AC" className="bg-[#1a1628]">Acre (AC)</option>
-                                        <option value="AL" className="bg-[#1a1628]">Alagoas (AL)</option>
-                                        <option value="AP" className="bg-[#1a1628]">Amapá (AP)</option>
-                                        <option value="AM" className="bg-[#1a1628]">Amazonas (AM)</option>
-                                        <option value="BA" className="bg-[#1a1628]">Bahia (BA)</option>
-                                        <option value="CE" className="bg-[#1a1628]">Ceará (CE)</option>
-                                        <option value="DF" className="bg-[#1a1628]">Distrito Federal (DF)</option>
-                                        <option value="ES" className="bg-[#1a1628]">Espírito Santo (ES)</option>
-                                        <option value="GO" className="bg-[#1a1628]">Goiás (GO)</option>
-                                        <option value="MA" className="bg-[#1a1628]">Maranhão (MA)</option>
-                                        <option value="MT" className="bg-[#1a1628]">Mato Grosso (MT)</option>
-                                        <option value="MS" className="bg-[#1a1628]">Mato Grosso do Sul (MS)</option>
-                                        <option value="MG" className="bg-[#1a1628]">Minas Gerais (MG)</option>
-                                        <option value="PA" className="bg-[#1a1628]">Pará (PA)</option>
-                                        <option value="PB" className="bg-[#1a1628]">Paraíba (PB)</option>
-                                        <option value="PR" className="bg-[#1a1628]">Paraná (PR)</option>
-                                        <option value="PE" className="bg-[#1a1628]">Pernambuco (PE)</option>
-                                        <option value="PI" className="bg-[#1a1628]">Piauí (PI)</option>
-                                        <option value="RJ" className="bg-[#1a1628]">Rio de Janeiro (RJ)</option>
-                                        <option value="RN" className="bg-[#1a1628]">Rio Grande do Norte (RN)</option>
-                                        <option value="RS" className="bg-[#1a1628]">Rio Grande do Sul (RS)</option>
-                                        <option value="RO" className="bg-[#1a1628]">Rondônia (RO)</option>
-                                        <option value="RR" className="bg-[#1a1628]">Roraima (RR)</option>
-                                        <option value="SC" className="bg-[#1a1628]">Santa Catarina (SC)</option>
-                                        <option value="SP" className="bg-[#1a1628]">São Paulo (SP)</option>
-                                        <option value="SE" className="bg-[#1a1628]">Sergipe (SE)</option>
-                                        <option value="TO" className="bg-[#1a1628]">Tocantins (TO)</option>
-                                    </select>
-                                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">expand_more</span>
+                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-primary/20 transition-all">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center mx-auto mb-3">
+                                    <span className="material-symbols-outlined text-emerald-500 text-xl">chat</span>
                                 </div>
+                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}</h3>
+                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Direto no seu celular' : 'Right on your phone'}</p>
                             </div>
-
-                            <div className="space-y-2">
-                                <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                    {isPortuguese ? 'Melhor Período' : 'Best Period'}
-                                </label>
-                                <div className="grid grid-cols-3 gap-2">
-                                    <label className="home-frequency-card cursor-pointer group">
-                                        <input defaultChecked className="hidden" name="home-freq" type="radio" value="manha" />
-                                        <div className="home-glass-card flex flex-col items-center justify-center py-3 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                            <span className="material-symbols-outlined text-xl mb-1 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
-                                            <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                {isPortuguese ? 'Manhã' : 'Morning'}
-                                            </span>
-                                        </div>
-                                    </label>
-                                    <label className="home-frequency-card cursor-pointer group">
-                                        <input className="hidden" name="home-freq" type="radio" value="tarde" />
-                                        <div className="home-glass-card flex flex-col items-center justify-center py-3 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                            <span className="material-symbols-outlined text-xl mb-1 text-primary group-hover:scale-110 transition-transform">routine</span>
-                                            <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                {isPortuguese ? 'Tarde' : 'Afternoon'}
-                                            </span>
-                                        </div>
-                                    </label>
-                                    <label className="home-frequency-card cursor-pointer group">
-                                        <input className="hidden" name="home-freq" type="radio" value="noite" />
-                                        <div className="home-glass-card flex flex-col items-center justify-center py-3 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                            <span className="material-symbols-outlined text-xl mb-1 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
-                                            <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                {isPortuguese ? 'Noite' : 'Night'}
-                                            </span>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="flex items-start gap-3 cursor-pointer group">
-                                    <div className="relative flex-shrink-0 mt-0.5">
-                                        <input type="checkbox" className="peer sr-only" required />
-                                        <div className="w-5 h-5 rounded-md border-2 border-white/20 bg-white/5 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center group-hover:border-primary/50">
-                                            <span className="material-symbols-outlined text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity" style={{ fontSize: '14px' }}>check</span>
-                                        </div>
-                                    </div>
-                                    <span className="text-xs text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
-                                        {isPortuguese
-                                            ? 'Concordo em receber mensagens via WhatsApp. Posso cancelar a qualquer momento.'
-                                            : 'I agree to receive messages via WhatsApp. I can unsubscribe at any time.'}
-                                    </span>
-                                </label>
-                            </div>
-
-                            <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
-                                <button
-                                    className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3.5 px-6 rounded-2xl shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all active:scale-[0.98]"
-                                    type="submit"
-                                >
-                                    <span className="relative z-10 flex items-center justify-center gap-2 text-sm uppercase tracking-widest">
-                                        {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
-                                        <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                    </span>
-                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                </button>
-                                <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase tracking-[0.2em] px-4">
-                                    <span className="material-symbols-outlined text-[14px]">lock</span>
-                                    <p>{isPortuguese ? 'Dados protegidos' : 'Protected data'}</p>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
                     </div>
 
-                    {/* iPhone Mockup */}
-                    <div className="lg:w-[340px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-6 lg:p-8 order-1 lg:order-2 relative overflow-hidden">
-                        <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
-                        <div className="relative z-10">
-                            <div className="relative w-[200px] h-[420px] bg-black rounded-[2.2rem] p-[7px] shadow-[0_0_40px_rgba(168,85,247,0.25),0_15px_30px_rgba(0,0,0,0.5)]">
-                                <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-16 h-4 bg-black rounded-full z-30"></div>
-                                <div className="w-full h-full rounded-[1.8rem] overflow-hidden bg-[#0b141a] flex flex-col">
-                                    <div className="h-5 bg-[#0b141a] flex items-center justify-between px-3 pt-1 flex-shrink-0">
-                                        <span className="text-white text-[8px] font-semibold">9:41</span>
-                                        <div className="flex items-center gap-[2px]">
-                                            <svg className="w-[10px] h-[7px] text-white" viewBox="0 0 18 12" fill="currentColor">
-                                                <rect x="0" y="8" width="3" height="4" rx="0.5"/>
-                                                <rect x="4" y="5" width="3" height="7" rx="0.5"/>
-                                                <rect x="8" y="2" width="3" height="10" rx="0.5"/>
-                                                <rect x="12" y="0" width="3" height="12" rx="0.5"/>
-                                            </svg>
-                                            <div className="flex items-center">
-                                                <div className="w-[16px] h-[7px] border border-white rounded-[2px] flex items-center p-[1px]">
-                                                    <div className="w-[11px] h-[4px] bg-white rounded-[1px]"></div>
-                                                </div>
-                                                <div className="w-[1px] h-[3px] bg-white rounded-r ml-[1px]"></div>
+                    {/* Form Card */}
+                    <div className="home-glass-card w-full max-w-5xl mx-auto rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
+                        {/* Form Content */}
+                        <div className="flex-1 p-6 lg:p-12 order-2 lg:order-1">
+                            <header className="mb-6 text-center lg:text-left">
+                                <h3 className="font-display text-2xl md:text-3xl text-white mb-4 leading-tight">
+                                    {isPortuguese ? 'Cadastre-se Agora' : 'Sign Up Now'}
+                                </h3>
+                                <p className="text-gray-400 text-sm max-w-lg">
+                                    {isPortuguese
+                                        ? 'Preencha seus dados e comece a receber orientações místicas.'
+                                        : 'Fill in your details and start receiving mystic guidance.'}
+                                </p>
+                            </header>
+
+                            <form action="#" className="space-y-5">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                            {isPortuguese ? 'Nome Completo' : 'Full Name'}
+                                        </label>
+                                        <div className="relative group">
+                                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">person</span>
+                                            <input
+                                                className="w-full pl-10 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
+                                                placeholder={isPortuguese ? 'Seu nome' : 'Your name'}
+                                                type="text"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">WhatsApp</label>
+                                        <div className="relative group">
+                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
+                                                <img alt="Brasil Flag" className="w-4 h-auto rounded-sm opacity-80" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/32px-Flag_of_Brazil.svg.png" />
                                             </div>
+                                            <input
+                                                className="w-full pl-14 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
+                                                placeholder="+55 (00) 00000-0000"
+                                                type="tel"
+                                            />
                                         </div>
-                                    </div>
-                                    <div className="bg-[#1f2c34] px-1.5 py-1 flex items-center gap-1 flex-shrink-0">
-                                        <svg className="w-2.5 h-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                        </svg>
-                                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-white text-[8px]">auto_awesome</span>
-                                        </div>
-                                        <div className="flex-1 ml-0.5">
-                                            <h4 className="text-white text-[8px] font-medium leading-tight">Mystic Tarot</h4>
-                                            <p className="text-emerald-400 text-[6px]">online</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex-1 relative" style={{
-                                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                                        backgroundColor: '#0b141a'
-                                    }}>
-                                        <div className="absolute inset-0 p-1.5 overflow-hidden">
-                                            <div className="max-w-[95%] bg-[#1f2c34] rounded-md rounded-tl-none shadow-lg">
-                                                <div className="p-1">
-                                                    <div className="relative rounded overflow-hidden">
-                                                        <img
-                                                            alt="Tarot Card"
-                                                            className="w-full h-28 object-cover object-top"
-                                                            src={TAROT_CARDS[0].imageUrl}
-                                                            onError={handleImageError}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="px-1.5 pb-1 pt-0.5">
-                                                    <p className="text-white/90 text-[7px] leading-relaxed font-normal">
-                                                        <span className="font-semibold text-yellow-400">{getCardName(TAROT_CARDS[0].id, isPortuguese)}</span>
-                                                        <br /><br />
-                                                        {isPortuguese ? 'Sua carta de hoje traz uma mensagem especial.' : 'Your card today brings a special message.'}
-                                                    </p>
-                                                    <div className="flex items-center justify-end gap-1 mt-0.5">
-                                                        <span className="text-[6px] text-gray-400">08:00</span>
-                                                        <svg className="w-2.5 h-2 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                                            <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/>
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="bg-[#1f2c34] px-1.5 py-1 flex items-center gap-1 flex-shrink-0">
-                                        <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-                                        </svg>
-                                        <div className="flex-1 bg-[#2a3942] rounded-full h-6 px-2 flex items-center">
-                                            <span className="text-gray-500 text-[8px]">{isPortuguese ? 'Mensagem' : 'Message'}</span>
-                                        </div>
-                                        <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
-                                        </svg>
                                     </div>
                                 </div>
-                                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-20 h-0.5 bg-white/30 rounded-full"></div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                        {isPortuguese ? 'Estado' : 'State'}
+                                    </label>
+                                    <div className="relative group">
+                                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">location_on</span>
+                                        <select
+                                            className="w-full pl-10 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white appearance-none cursor-pointer text-sm"
+                                            style={{ backgroundImage: 'none' }}
+                                            defaultValue=""
+                                        >
+                                            <option value="" disabled className="bg-[#1a1628] text-gray-400">
+                                                {isPortuguese ? 'Selecione seu estado' : 'Select your state'}
+                                            </option>
+                                            <option value="AC" className="bg-[#1a1628]">Acre (AC)</option>
+                                            <option value="AL" className="bg-[#1a1628]">Alagoas (AL)</option>
+                                            <option value="AP" className="bg-[#1a1628]">Amapá (AP)</option>
+                                            <option value="AM" className="bg-[#1a1628]">Amazonas (AM)</option>
+                                            <option value="BA" className="bg-[#1a1628]">Bahia (BA)</option>
+                                            <option value="CE" className="bg-[#1a1628]">Ceará (CE)</option>
+                                            <option value="DF" className="bg-[#1a1628]">Distrito Federal (DF)</option>
+                                            <option value="ES" className="bg-[#1a1628]">Espírito Santo (ES)</option>
+                                            <option value="GO" className="bg-[#1a1628]">Goiás (GO)</option>
+                                            <option value="MA" className="bg-[#1a1628]">Maranhão (MA)</option>
+                                            <option value="MT" className="bg-[#1a1628]">Mato Grosso (MT)</option>
+                                            <option value="MS" className="bg-[#1a1628]">Mato Grosso do Sul (MS)</option>
+                                            <option value="MG" className="bg-[#1a1628]">Minas Gerais (MG)</option>
+                                            <option value="PA" className="bg-[#1a1628]">Pará (PA)</option>
+                                            <option value="PB" className="bg-[#1a1628]">Paraíba (PB)</option>
+                                            <option value="PR" className="bg-[#1a1628]">Paraná (PR)</option>
+                                            <option value="PE" className="bg-[#1a1628]">Pernambuco (PE)</option>
+                                            <option value="PI" className="bg-[#1a1628]">Piauí (PI)</option>
+                                            <option value="RJ" className="bg-[#1a1628]">Rio de Janeiro (RJ)</option>
+                                            <option value="RN" className="bg-[#1a1628]">Rio Grande do Norte (RN)</option>
+                                            <option value="RS" className="bg-[#1a1628]">Rio Grande do Sul (RS)</option>
+                                            <option value="RO" className="bg-[#1a1628]">Rondônia (RO)</option>
+                                            <option value="RR" className="bg-[#1a1628]">Roraima (RR)</option>
+                                            <option value="SC" className="bg-[#1a1628]">Santa Catarina (SC)</option>
+                                            <option value="SP" className="bg-[#1a1628]">São Paulo (SP)</option>
+                                            <option value="SE" className="bg-[#1a1628]">Sergipe (SE)</option>
+                                            <option value="TO" className="bg-[#1a1628]">Tocantins (TO)</option>
+                                        </select>
+                                        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-lg">expand_more</span>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                        {isPortuguese ? 'Melhor Período' : 'Best Period'}
+                                    </label>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <label className="home-frequency-card cursor-pointer group">
+                                            <input defaultChecked className="hidden" name="home-freq" type="radio" value="manha" />
+                                            <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                <span className="material-symbols-outlined text-lg mb-1 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
+                                                <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                    {isPortuguese ? 'Manhã' : 'Morning'}
+                                                </span>
+                                            </div>
+                                        </label>
+                                        <label className="home-frequency-card cursor-pointer group">
+                                            <input className="hidden" name="home-freq" type="radio" value="tarde" />
+                                            <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                <span className="material-symbols-outlined text-lg mb-1 text-primary group-hover:scale-110 transition-transform">routine</span>
+                                                <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                    {isPortuguese ? 'Tarde' : 'Afternoon'}
+                                                </span>
+                                            </div>
+                                        </label>
+                                        <label className="home-frequency-card cursor-pointer group">
+                                            <input className="hidden" name="home-freq" type="radio" value="noite" />
+                                            <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                <span className="material-symbols-outlined text-lg mb-1 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
+                                                <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                    {isPortuguese ? 'Noite' : 'Night'}
+                                                </span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="flex items-start gap-2.5 cursor-pointer group">
+                                        <div className="relative flex-shrink-0 mt-0.5">
+                                            <input type="checkbox" className="peer sr-only" required />
+                                            <div className="w-4 h-4 rounded border-2 border-white/20 bg-white/5 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center group-hover:border-primary/50">
+                                                <span className="material-symbols-outlined text-white opacity-0 peer-checked:opacity-100 transition-opacity" style={{ fontSize: '12px' }}>check</span>
+                                            </div>
+                                        </div>
+                                        <span className="text-[11px] text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
+                                            {isPortuguese
+                                                ? 'Concordo em receber mensagens via WhatsApp.'
+                                                : 'I agree to receive messages via WhatsApp.'}
+                                        </span>
+                                    </label>
+                                </div>
+
+                                <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
+                                    <button
+                                        className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
+                                        type="submit"
+                                    >
+                                        <span className="relative z-10 flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
+                                            {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
+                                            <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                        </span>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    </button>
+                                    <div className="flex items-center gap-1.5 text-[9px] text-gray-500 uppercase tracking-[0.15em]">
+                                        <span className="material-symbols-outlined text-[12px]">lock</span>
+                                        <p>{isPortuguese ? 'Dados protegidos' : 'Protected data'}</p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        {/* iPhone Mockup */}
+                        <div className="lg:w-[300px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-5 lg:p-6 order-1 lg:order-2 relative overflow-hidden">
+                            <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
+                            <div className="relative z-10">
+                                <div className="relative w-[180px] h-[380px] bg-black rounded-[2rem] p-[6px] shadow-[0_0_30px_rgba(168,85,247,0.2),0_10px_25px_rgba(0,0,0,0.4)]">
+                                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-14 h-3.5 bg-black rounded-full z-30"></div>
+                                    <div className="w-full h-full rounded-[1.6rem] overflow-hidden bg-[#0b141a] flex flex-col">
+                                        <div className="h-4 bg-[#0b141a] flex items-center justify-between px-2.5 pt-0.5 flex-shrink-0">
+                                            <span className="text-white text-[7px] font-semibold">9:41</span>
+                                            <div className="flex items-center gap-[2px]">
+                                                <svg className="w-[9px] h-[6px] text-white" viewBox="0 0 18 12" fill="currentColor">
+                                                    <rect x="0" y="8" width="3" height="4" rx="0.5"/>
+                                                    <rect x="4" y="5" width="3" height="7" rx="0.5"/>
+                                                    <rect x="8" y="2" width="3" height="10" rx="0.5"/>
+                                                    <rect x="12" y="0" width="3" height="12" rx="0.5"/>
+                                                </svg>
+                                                <div className="flex items-center">
+                                                    <div className="w-[14px] h-[6px] border border-white rounded-[1.5px] flex items-center p-[0.5px]">
+                                                        <div className="w-[9px] h-[3.5px] bg-white rounded-[0.5px]"></div>
+                                                    </div>
+                                                    <div className="w-[1px] h-[2.5px] bg-white rounded-r ml-[0.5px]"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-[#1f2c34] px-1.5 py-0.5 flex items-center gap-1 flex-shrink-0">
+                                            <svg className="w-2 h-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                            </svg>
+                                            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-white text-[6px]">auto_awesome</span>
+                                            </div>
+                                            <div className="flex-1 ml-0.5">
+                                                <h4 className="text-white text-[7px] font-medium leading-tight">Mystic Tarot</h4>
+                                                <p className="text-emerald-400 text-[5px]">online</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 relative" style={{
+                                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                                            backgroundColor: '#0b141a'
+                                        }}>
+                                            <div className="absolute inset-0 p-1 overflow-hidden">
+                                                <div className="max-w-[95%] bg-[#1f2c34] rounded rounded-tl-none shadow-lg">
+                                                    <div className="p-0.5">
+                                                        <div className="relative rounded overflow-hidden">
+                                                            <img
+                                                                alt="Tarot Card"
+                                                                className="w-full h-24 object-cover object-top"
+                                                                src={TAROT_CARDS[0].imageUrl}
+                                                                onError={handleImageError}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="px-1 pb-0.5 pt-0.5">
+                                                        <p className="text-white/90 text-[6px] leading-relaxed font-normal">
+                                                            <span className="font-semibold text-yellow-400">{getCardName(TAROT_CARDS[0].id, isPortuguese)}</span>
+                                                            <br /><br />
+                                                            {isPortuguese ? 'Sua carta de hoje!' : 'Your card today!'}
+                                                        </p>
+                                                        <div className="flex items-center justify-end gap-0.5 mt-0.5">
+                                                            <span className="text-[5px] text-gray-400">08:00</span>
+                                                            <svg className="w-2 h-1.5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-[#1f2c34] px-1 py-1.5 flex items-center gap-1 flex-shrink-0">
+                                            <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                                            </svg>
+                                            <div className="flex-1 bg-[#2a3942] rounded-full h-5 px-1.5 flex items-center">
+                                                <span className="text-gray-500 text-[6px]">{isPortuguese ? 'Mensagem' : 'Message'}</span>
+                                            </div>
+                                            <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-0.5 bg-white/30 rounded-full"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="absolute top-6 right-6 text-primary/20 hidden lg:block">
-                            <span className="material-symbols-outlined text-4xl">stars</span>
-                        </div>
-                        <div className="absolute bottom-6 left-6 text-yellow-500/20 hidden lg:block">
-                            <span className="material-symbols-outlined text-5xl">auto_awesome</span>
                         </div>
                     </div>
                 </div>

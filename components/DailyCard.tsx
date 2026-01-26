@@ -537,25 +537,8 @@ export const DailyCard = () => {
                 </div>
             </section >
 
-            {/* WhatsApp Form Section - Daily Destiny Glass Design */}
-            <section className="relative min-h-screen flex items-center justify-center p-4 lg:p-12 bg-[#0B061A]">
-                {/* Background Effects */}
-                <div className="fixed inset-0 pointer-events-none z-0">
-                    <div className="absolute inset-0" style={{
-                        backgroundImage: `radial-gradient(1px 1px at 25px 35px, #fff, rgba(0,0,0,0)),
-                                         radial-gradient(1px 1px at 50px 80px, #ffffff88, rgba(0,0,0,0)),
-                                         radial-gradient(1.5px 1.5px at 110px 140px, #fff, rgba(0,0,0,0)),
-                                         radial-gradient(1px 1px at 150px 50px, #ffffffaa, rgba(0,0,0,0)),
-                                         radial-gradient(2px 2px at 190px 180px, #fff, rgba(0,0,0,0)),
-                                         radial-gradient(1px 1px at 40px 120px, #fff, rgba(0,0,0,0))`,
-                        backgroundRepeat: 'repeat',
-                        backgroundSize: '250px 250px',
-                        opacity: 0.4
-                    }}></div>
-                    <div className="absolute -top-40 -left-40 w-[800px] h-[800px] bg-purple-900/15 rounded-full blur-[140px]"></div>
-                    <div className="absolute -bottom-40 -right-40 w-[800px] h-[800px] bg-blue-900/15 rounded-full blur-[140px]"></div>
-                </div>
-
+            {/* WhatsApp Form Section - Daily Destiny */}
+            <section className="relative py-16 md:py-24 px-4 md:px-6 bg-gradient-to-b from-[#0d0812] via-purple-950/10 to-[#0d0812]">
                 <style>{`
                     .glass-card {
                         background: rgba(255, 255, 255, 0.04);
@@ -571,18 +554,51 @@ export const DailyCard = () => {
                         background: rgba(168, 85, 247, 0.15);
                         box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
                     }
-                    .material-symbols-outlined {
-                        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-                    }
                     .cosmic-glow {
                         filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.7));
                     }
-                    .mobile-inset {
-                        transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
-                    }
                 `}</style>
 
-                <div className="glass-card w-full max-w-6xl rounded-[2.5rem] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.8)] relative flex flex-col lg:flex-row items-stretch">
+                <div className="max-w-6xl mx-auto">
+                    {/* Feature Presentation Header */}
+                    <div className="text-center mb-12 md:mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gradient-gold mb-4 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Receba sua Carta do Dia' : 'Receive Your Daily Card'}
+                        </h2>
+                        <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto mb-10">
+                            {isPortuguese
+                                ? 'Comece cada dia com orientação espiritual personalizada diretamente no seu WhatsApp.'
+                                : 'Start each day with personalized spiritual guidance directly on your WhatsApp.'}
+                        </p>
+
+                        {/* Feature Boxes */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto mb-12">
+                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-yellow-500/20 transition-all">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 flex items-center justify-center mx-auto mb-3">
+                                    <span className="material-symbols-outlined text-yellow-500 text-xl">auto_awesome</span>
+                                </div>
+                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? 'Interpretação Diária' : 'Daily Interpretation'}</h3>
+                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Mensagem única para seu dia' : 'Unique message for your day'}</p>
+                            </div>
+                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-primary/20 transition-all">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/10 flex items-center justify-center mx-auto mb-3">
+                                    <span className="material-symbols-outlined text-primary text-xl">schedule</span>
+                                </div>
+                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? 'Horário Personalizado' : 'Custom Schedule'}</h3>
+                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Escolha manhã, tarde ou noite' : 'Choose morning, afternoon or night'}</p>
+                            </div>
+                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/20 transition-all">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center mx-auto mb-3">
+                                    <span className="material-symbols-outlined text-emerald-500 text-xl">smartphone</span>
+                                </div>
+                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? '100% Gratuito' : '100% Free'}</h3>
+                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Sem custos, cancele quando quiser' : 'No costs, cancel anytime'}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Form Card */}
+                    <div className="glass-card w-full max-w-5xl mx-auto rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
                     {/* Form Content */}
                     <div className="flex-1 p-6 lg:p-14 order-2 lg:order-1">
                         <header className="mb-8 text-center lg:text-left">
@@ -848,7 +864,7 @@ export const DailyCard = () => {
                                     </div>
 
                                     {/* Input Bar - at very bottom */}
-                                    <div className="bg-[#1f2c34] px-2 py-1.5 flex items-center gap-1.5 flex-shrink-0">
+                                    <div className="bg-[#1f2c34] px-2 py-2 flex items-center gap-1.5 flex-shrink-0">
                                         <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
                                         </svg>
@@ -876,6 +892,7 @@ export const DailyCard = () => {
                             <span className="material-symbols-outlined text-6xl">auto_awesome</span>
                         </div>
                     </div>
+                </div>
                 </div>
             </section>
 
