@@ -252,8 +252,8 @@ export const DailyCard = () => {
         }
         .ring-6 {
             width: 460px; height: 460px;
-            border: 1px dashed rgba(224, 192, 128, 0.15);
-            box-shadow: 0 0 25px rgba(123, 82, 171, 0.1);
+            border: 1px dashed rgba(224, 192, 128, 0.2);
+            box-shadow: 0 0 25px rgba(224, 192, 128, 0.1);
             animation: spin-reverse 60s linear infinite;
         }
         @media (max-width: 768px) {
@@ -398,18 +398,18 @@ export const DailyCard = () => {
 
                         {/* Right Column - Card Display + Info Below */}
                         <div className="flex flex-col items-center lg:order-last order-last">
-                            <div className="relative w-full flex items-center justify-center">
-                                <div className="relative md:w-[500px] md:h-[500px] w-[380px] h-[380px] flex items-center justify-center group perspective-1000">
+                            <div className="relative w-full flex items-center justify-center overflow-hidden">
+                                <div className="relative md:w-[500px] md:h-[460px] w-[380px] h-[360px] flex items-center justify-center group perspective-1000">
                                     {/* Background Circles */}
 
                                     {/* Outer Decorative Circle - offset for visual interest */}
-                                    <div className="ring-absolute ring-6 z-5" style={{ top: '52%', left: '52%' }}></div>
+                                    <div className="ring-absolute ring-6 z-5" style={{ top: '48%', left: '52%' }}></div>
 
                                     {/* Middle Circle - centered on card */}
-                                    <div className="ring-absolute ring-4 z-10" style={{ top: '50%', left: '50%' }}></div>
+                                    <div className="ring-absolute ring-4 z-10" style={{ top: '48%', left: '50%' }}></div>
 
                                     {/* Inner Circle - centered on card */}
-                                    <div className="ring-absolute ring-5 z-10" style={{ top: '50%', left: '50%' }}></div>
+                                    <div className="ring-absolute ring-5 z-10" style={{ top: '48%', left: '50%' }}></div>
 
                                     {/* Card Image */}
                                     <div className="relative md:w-[200px] md:h-[310px] w-[152px] h-[236px] z-20 card-float transition-transform duration-700 ease-out group-hover:scale-105 group-hover:rotate-1">
@@ -426,12 +426,12 @@ export const DailyCard = () => {
 
                                     {/* Decorative dots */}
                                     <div className="absolute top-[15%] right-[10%] text-yellow-500/30 text-[8px]">✦</div>
-                                    <div className="absolute bottom-[20%] left-[8%] text-yellow-500/20 text-[6px]">✦</div>
+                                    <div className="absolute bottom-[25%] left-[8%] text-yellow-500/20 text-[6px]">✦</div>
                                 </div>
                             </div>
 
                             {/* Card Name and Arcano Below Image */}
-                            <div className="space-y-3 -mt-4 text-center w-full z-20">
+                            <div className="space-y-3 mt-2 text-center w-full z-30 relative">
                                 <h2 className="font-serif text-3xl md:text-4xl text-white tracking-wider drop-shadow-md">
                                     {cardName}
                                 </h2>
