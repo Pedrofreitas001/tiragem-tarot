@@ -600,43 +600,17 @@ const Home = () => {
                             return { phase: 'waning', icon: '🌘', pt: 'Minguante' };
                         };
 
-                        // Calculate progress to next moon phase
-                        const getLunarProgress = () => {
+                        // Calculate lunar cycle progress (0-1 = full cycle from new moon)
+                        // Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova
+                        const getLunarCycleProgress = () => {
                             const lunarCycle = 29.53;
                             const newMoonDate = new Date(2024, 0, 11);
                             const daysSinceNewMoon = (currentDate.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
                             const lunarDay = ((daysSinceNewMoon % lunarCycle) + lunarCycle) % lunarCycle / lunarCycle;
-
-                            // Phase boundaries: new(0), waxing(0.125), full(0.375), waning(0.625), new(0.875)
-                            // Calculate progress within current phase (0-1)
-                            let phaseProgress = 0;
-                            let currentPhaseStart = 0;
-                            let nextPhaseStart = 0;
-
-                            if (lunarDay < 0.125) {
-                                currentPhaseStart = 0;
-                                nextPhaseStart = 0.125;
-                            } else if (lunarDay < 0.375) {
-                                currentPhaseStart = 0.125;
-                                nextPhaseStart = 0.375;
-                            } else if (lunarDay < 0.625) {
-                                currentPhaseStart = 0.375;
-                                nextPhaseStart = 0.625;
-                            } else if (lunarDay < 0.875) {
-                                currentPhaseStart = 0.625;
-                                nextPhaseStart = 0.875;
-                            } else {
-                                currentPhaseStart = 0.875;
-                                nextPhaseStart = 1.0;
-                            }
-
-                            const phaseLength = nextPhaseStart - currentPhaseStart;
-                            phaseProgress = (lunarDay - currentPhaseStart) / phaseLength;
-
-                            return Math.min(Math.max(phaseProgress, 0), 1);
+                            return lunarDay; // 0 = new moon, 0.25 = first quarter, 0.5 = full, 0.75 = last quarter
                         };
 
-                        const lunarProgress = getLunarProgress();
+                        const lunarCycleProgress = getLunarCycleProgress();
 
                         const calendarDays = [];
                         for (let i = 0; i < startingDayOfWeek; i++) {
@@ -762,35 +736,29 @@ const Home = () => {
 
                                         {/* The Mandala Body - Responsive */}
                                         <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
-                                            {/* Progress Arc - Shows progress to next moon phase */}
-                                            <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+                                            {/* Progress Arc - Shows lunar cycle progress from New Moon */}
+                                            {/* Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova */}
+                                            <svg className="absolute inset-0 w-full h-full" style={{ transform: 'rotate(90deg)' }} viewBox="0 0 100 100">
                                                 {/* Background track */}
                                                 <circle
                                                     cx="50"
                                                     cy="50"
                                                     r="49"
                                                     fill="none"
-                                                    stroke="rgba(173, 146, 201, 0.1)"
-                                                    strokeWidth="2"
+                                                    stroke="rgba(173, 146, 201, 0.08)"
+                                                    strokeWidth="1.5"
                                                 />
-                                                {/* Progress arc */}
+                                                {/* Progress arc - starts from New Moon (bottom) goes clockwise */}
                                                 <circle
                                                     cx="50"
                                                     cy="50"
                                                     r="49"
                                                     fill="none"
-                                                    stroke="url(#lunarGradient)"
-                                                    strokeWidth="2"
+                                                    stroke="rgba(173, 146, 201, 0.6)"
+                                                    strokeWidth="1.5"
                                                     strokeLinecap="round"
-                                                    strokeDasharray={`${lunarProgress * 307.8} 307.8`}
-                                                    style={{ filter: 'drop-shadow(0 0 6px rgba(173, 146, 201, 0.8))' }}
+                                                    strokeDasharray={`${lunarCycleProgress * 307.8} 307.8`}
                                                 />
-                                                <defs>
-                                                    <linearGradient id="lunarGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                        <stop offset="0%" stopColor="#9311d4" />
-                                                        <stop offset="100%" stopColor="#ad92c9" />
-                                                    </linearGradient>
-                                                </defs>
                                             </svg>
 
                                             {/* SVG Mandala Detail */}
