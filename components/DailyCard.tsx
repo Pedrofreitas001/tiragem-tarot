@@ -402,14 +402,11 @@ export const DailyCard = () => {
                                 <div className="relative md:w-[500px] md:h-[460px] w-[380px] h-[360px] flex items-center justify-center group perspective-1000">
                                     {/* Background Circles */}
 
-                                    {/* Outer Decorative Circle - offset to the right */}
-                                    <div className="ring-absolute ring-6 z-5" style={{ top: '44%', left: '52%' }}></div>
-
-                                    {/* Middle Circle - centered on card */}
-                                    <div className="ring-absolute ring-4 z-10" style={{ top: '44%', left: '50%' }}></div>
+                                    {/* Outer Decorative Circle - dashed, offset to the right */}
+                                    <div className="ring-absolute ring-6 z-5" style={{ top: '46%', left: '52%' }}></div>
 
                                     {/* Inner Circle - centered on card */}
-                                    <div className="ring-absolute ring-5 z-10" style={{ top: '44%', left: '50%' }}></div>
+                                    <div className="ring-absolute ring-5 z-10" style={{ top: '46%', left: '50%' }}></div>
 
                                     {/* Card Image */}
                                     <div className="relative md:w-[200px] md:h-[310px] w-[152px] h-[236px] z-20 card-float transition-transform duration-700 ease-out group-hover:scale-105 group-hover:rotate-1">
