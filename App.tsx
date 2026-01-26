@@ -738,8 +738,9 @@ const Home = () => {
                                         <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
                                             {/* Progress Arc - Shows lunar cycle progress from New Moon */}
                                             {/* Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova */}
-                                            {/* scaleX(-1) flips to counter-clockwise direction */}
-                                            <svg className="absolute inset-0 w-full h-full" style={{ transform: 'rotate(90deg) scaleX(-1)' }} viewBox="0 0 100 100">
+                                            {/* rotate(-90deg) starts at bottom, default clockwise goes: bottom → left → top → right */}
+                                            {/* We want: bottom → right, so we need counter-clockwise direction */}
+                                            <svg className="absolute inset-0 w-full h-full" style={{ transform: 'rotate(-90deg) scaleY(-1)' }} viewBox="0 0 100 100">
                                                 {/* Background track */}
                                                 <circle
                                                     cx="50"
@@ -3355,7 +3356,47 @@ const Session = () => {
                                     } as React.CSSProperties}
                                 >
                                     <div className="absolute inset-0 rounded-lg overflow-hidden bg-gradient-to-br from-[#2a1d34] to-[#1a0f1e] flex items-center justify-center">
-                                        <span className="material-symbols-outlined text-[#a77fd4]/70 text-xs md:text-lg drop-shadow-lg">style</span>
+                                        {/* Mystic Mandala Background */}
+                                        <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+                                            <defs>
+                                                <radialGradient id="mandalaGlow" cx="50%" cy="50%" r="50%">
+                                                    <stop offset="0%" stopColor="#a77fd4" stopOpacity="0.3" />
+                                                    <stop offset="100%" stopColor="#1a0f1e" stopOpacity="0" />
+                                                </radialGradient>
+                                            </defs>
+                                            {/* Central mandala */}
+                                            <circle cx="50" cy="75" r="40" fill="url(#mandalaGlow)" />
+                                            {/* Outer ring */}
+                                            <circle cx="50" cy="75" r="38" fill="none" stroke="#a77fd4" strokeWidth="0.3" />
+                                            <circle cx="50" cy="75" r="35" fill="none" stroke="#a77fd4" strokeWidth="0.2" strokeDasharray="3 2" />
+                                            <circle cx="50" cy="75" r="30" fill="none" stroke="#e0c080" strokeWidth="0.3" />
+                                            <circle cx="50" cy="75" r="25" fill="none" stroke="#a77fd4" strokeWidth="0.2" strokeDasharray="1 3" />
+                                            <circle cx="50" cy="75" r="18" fill="none" stroke="#e0c080" strokeWidth="0.2" />
+                                            <circle cx="50" cy="75" r="10" fill="none" stroke="#a77fd4" strokeWidth="0.3" />
+                                            {/* Cross lines */}
+                                            <line x1="50" y1="35" x2="50" y2="115" stroke="#a77fd4" strokeWidth="0.15" />
+                                            <line x1="10" y1="75" x2="90" y2="75" stroke="#a77fd4" strokeWidth="0.15" />
+                                            {/* Diagonal lines */}
+                                            <line x1="22" y1="47" x2="78" y2="103" stroke="#e0c080" strokeWidth="0.1" />
+                                            <line x1="78" y1="47" x2="22" y2="103" stroke="#e0c080" strokeWidth="0.1" />
+                                            {/* Star points */}
+                                            <polygon points="50,37 52,43 50,41 48,43" fill="#e0c080" opacity="0.6" />
+                                            <polygon points="50,113 52,107 50,109 48,107" fill="#e0c080" opacity="0.6" />
+                                            <polygon points="12,75 18,77 16,75 18,73" fill="#e0c080" opacity="0.6" />
+                                            <polygon points="88,75 82,77 84,75 82,73" fill="#e0c080" opacity="0.6" />
+                                            {/* Corner decorations */}
+                                            <circle cx="15" cy="20" r="8" fill="none" stroke="#a77fd4" strokeWidth="0.2" />
+                                            <circle cx="85" cy="20" r="8" fill="none" stroke="#a77fd4" strokeWidth="0.2" />
+                                            <circle cx="15" cy="130" r="8" fill="none" stroke="#a77fd4" strokeWidth="0.2" />
+                                            <circle cx="85" cy="130" r="8" fill="none" stroke="#a77fd4" strokeWidth="0.2" />
+                                            {/* Inner decorative elements */}
+                                            <circle cx="50" cy="75" r="5" fill="none" stroke="#e0c080" strokeWidth="0.4" />
+                                            <circle cx="50" cy="75" r="2" fill="#e0c080" opacity="0.4" />
+                                        </svg>
+                                        {/* Border frame */}
+                                        <div className="absolute inset-1 rounded-md border border-[#a77fd4]/20"></div>
+                                        <div className="absolute inset-2 rounded border border-[#e0c080]/10"></div>
+                                        <span className="material-symbols-outlined text-[#e0c080]/60 text-xs md:text-lg drop-shadow-lg z-10">auto_awesome</span>
                                     </div>
                                 </div>
                             );
