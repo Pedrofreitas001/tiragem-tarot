@@ -738,7 +738,8 @@ const Home = () => {
                                         <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
                                             {/* Progress Arc - Shows lunar cycle progress from New Moon */}
                                             {/* Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova */}
-                                            <svg className="absolute inset-0 w-full h-full" style={{ transform: 'rotate(90deg)' }} viewBox="0 0 100 100">
+                                            {/* scaleX(-1) flips to counter-clockwise direction */}
+                                            <svg className="absolute inset-0 w-full h-full" style={{ transform: 'rotate(90deg) scaleX(-1)' }} viewBox="0 0 100 100">
                                                 {/* Background track */}
                                                 <circle
                                                     cx="50"
@@ -748,7 +749,7 @@ const Home = () => {
                                                     stroke="rgba(173, 146, 201, 0.08)"
                                                     strokeWidth="1.5"
                                                 />
-                                                {/* Progress arc - starts from New Moon (bottom) goes clockwise */}
+                                                {/* Progress arc - starts from New Moon (bottom) goes to Crescente, Cheia, Minguante */}
                                                 <circle
                                                     cx="50"
                                                     cy="50"
