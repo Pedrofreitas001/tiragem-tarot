@@ -600,29 +600,30 @@ export const DailyCard = () => {
                             </p>
                         </header>
 
-                        <form action="#" className="space-y-10">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-3">
+                        <form action="#" className="space-y-8">
+                            {/* Name and Phone Row */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
                                     <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">
                                         {isPortuguese ? 'Nome Completo' : 'Full Name'}
                                     </label>
                                     <div className="relative group">
                                         <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">person</span>
                                         <input
-                                            className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none glow-border transition-all text-white placeholder:text-gray-600"
+                                            className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none glow-border transition-all text-white placeholder:text-gray-600"
                                             placeholder={isPortuguese ? 'Seu nome místico' : 'Your mystical name'}
                                             type="text"
                                         />
                                     </div>
                                 </div>
-                                <div className="space-y-3">
+                                <div className="space-y-2">
                                     <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">WhatsApp</label>
                                     <div className="relative group">
                                         <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
                                             <img alt="Brasil Flag" className="w-5 h-auto rounded-sm opacity-80" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/32px-Flag_of_Brazil.svg.png" />
                                         </div>
                                         <input
-                                            className="w-full pl-16 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none glow-border transition-all text-white placeholder:text-gray-600"
+                                            className="w-full pl-16 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none glow-border transition-all text-white placeholder:text-gray-600"
                                             placeholder="+55 (00) 00000-0000"
                                             type="tel"
                                         />
@@ -630,49 +631,119 @@ export const DailyCard = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-5">
+                            {/* State Dropdown */}
+                            <div className="space-y-2">
                                 <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                    {isPortuguese ? 'Frequência das Mensagens' : 'Message Frequency'}
+                                    {isPortuguese ? 'Estado' : 'State'}
                                 </label>
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                                <div className="relative group">
+                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">location_on</span>
+                                    <select
+                                        className="w-full pl-12 pr-10 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none glow-border transition-all text-white appearance-none cursor-pointer"
+                                        style={{ backgroundImage: 'none' }}
+                                        defaultValue=""
+                                    >
+                                        <option value="" disabled className="bg-[#1a1628] text-gray-400">
+                                            {isPortuguese ? 'Selecione seu estado' : 'Select your state'}
+                                        </option>
+                                        <option value="AC" className="bg-[#1a1628]">Acre (AC)</option>
+                                        <option value="AL" className="bg-[#1a1628]">Alagoas (AL)</option>
+                                        <option value="AP" className="bg-[#1a1628]">Amapá (AP)</option>
+                                        <option value="AM" className="bg-[#1a1628]">Amazonas (AM)</option>
+                                        <option value="BA" className="bg-[#1a1628]">Bahia (BA)</option>
+                                        <option value="CE" className="bg-[#1a1628]">Ceará (CE)</option>
+                                        <option value="DF" className="bg-[#1a1628]">Distrito Federal (DF)</option>
+                                        <option value="ES" className="bg-[#1a1628]">Espírito Santo (ES)</option>
+                                        <option value="GO" className="bg-[#1a1628]">Goiás (GO)</option>
+                                        <option value="MA" className="bg-[#1a1628]">Maranhão (MA)</option>
+                                        <option value="MT" className="bg-[#1a1628]">Mato Grosso (MT)</option>
+                                        <option value="MS" className="bg-[#1a1628]">Mato Grosso do Sul (MS)</option>
+                                        <option value="MG" className="bg-[#1a1628]">Minas Gerais (MG)</option>
+                                        <option value="PA" className="bg-[#1a1628]">Pará (PA)</option>
+                                        <option value="PB" className="bg-[#1a1628]">Paraíba (PB)</option>
+                                        <option value="PR" className="bg-[#1a1628]">Paraná (PR)</option>
+                                        <option value="PE" className="bg-[#1a1628]">Pernambuco (PE)</option>
+                                        <option value="PI" className="bg-[#1a1628]">Piauí (PI)</option>
+                                        <option value="RJ" className="bg-[#1a1628]">Rio de Janeiro (RJ)</option>
+                                        <option value="RN" className="bg-[#1a1628]">Rio Grande do Norte (RN)</option>
+                                        <option value="RS" className="bg-[#1a1628]">Rio Grande do Sul (RS)</option>
+                                        <option value="RO" className="bg-[#1a1628]">Rondônia (RO)</option>
+                                        <option value="RR" className="bg-[#1a1628]">Roraima (RR)</option>
+                                        <option value="SC" className="bg-[#1a1628]">Santa Catarina (SC)</option>
+                                        <option value="SP" className="bg-[#1a1628]">São Paulo (SP)</option>
+                                        <option value="SE" className="bg-[#1a1628]">Sergipe (SE)</option>
+                                        <option value="TO" className="bg-[#1a1628]">Tocantins (TO)</option>
+                                    </select>
+                                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">expand_more</span>
+                                </div>
+                            </div>
+
+                            {/* Frequency Buttons - Smaller */}
+                            <div className="space-y-3">
+                                <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                    {isPortuguese ? 'Melhor Período' : 'Best Period'}
+                                </label>
+                                <div className="grid grid-cols-3 gap-3">
                                     <label className="frequency-card cursor-pointer group">
-                                        <input defaultChecked className="hidden" name="freq" type="radio" value="diario" />
-                                        <div className="glass-card flex flex-col items-center justify-center p-8 rounded-3xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                            <span className="material-symbols-outlined text-4xl mb-3 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
-                                            <span className="text-sm font-bold text-gray-200 uppercase tracking-widest">
-                                                {isPortuguese ? 'Diário' : 'Daily'}
+                                        <input defaultChecked className="hidden" name="freq" type="radio" value="manha" />
+                                        <div className="glass-card flex flex-col items-center justify-center py-4 px-2 rounded-2xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                            <span className="material-symbols-outlined text-2xl mb-1.5 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
+                                            <span className="text-[10px] font-bold text-gray-200 uppercase tracking-wider">
+                                                {isPortuguese ? 'Manhã' : 'Morning'}
                                             </span>
                                         </div>
                                     </label>
                                     <label className="frequency-card cursor-pointer group">
-                                        <input className="hidden" name="freq" type="radio" value="semanal" />
-                                        <div className="glass-card flex flex-col items-center justify-center p-8 rounded-3xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                            <span className="material-symbols-outlined text-4xl mb-3 text-primary group-hover:scale-110 transition-transform">auto_awesome</span>
-                                            <span className="text-sm font-bold text-gray-200 uppercase tracking-widest">
-                                                {isPortuguese ? 'Semanal' : 'Weekly'}
+                                        <input className="hidden" name="freq" type="radio" value="tarde" />
+                                        <div className="glass-card flex flex-col items-center justify-center py-4 px-2 rounded-2xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                            <span className="material-symbols-outlined text-2xl mb-1.5 text-primary group-hover:scale-110 transition-transform">routine</span>
+                                            <span className="text-[10px] font-bold text-gray-200 uppercase tracking-wider">
+                                                {isPortuguese ? 'Tarde' : 'Afternoon'}
                                             </span>
                                         </div>
                                     </label>
                                     <label className="frequency-card cursor-pointer group">
-                                        <input className="hidden" name="freq" type="radio" value="mensal" />
-                                        <div className="glass-card flex flex-col items-center justify-center p-8 rounded-3xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                            <span className="material-symbols-outlined text-4xl mb-3 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
-                                            <span className="text-sm font-bold text-gray-200 uppercase tracking-widest">
-                                                {isPortuguese ? 'Mensal' : 'Monthly'}
+                                        <input className="hidden" name="freq" type="radio" value="noite" />
+                                        <div className="glass-card flex flex-col items-center justify-center py-4 px-2 rounded-2xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                            <span className="material-symbols-outlined text-2xl mb-1.5 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
+                                            <span className="text-[10px] font-bold text-gray-200 uppercase tracking-wider">
+                                                {isPortuguese ? 'Noite' : 'Night'}
                                             </span>
                                         </div>
                                     </label>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col sm:flex-row items-center gap-6 pt-4">
+                            {/* Consent Checkbox */}
+                            <div className="space-y-3">
+                                <label className="flex items-start gap-3 cursor-pointer group">
+                                    <div className="relative flex-shrink-0 mt-0.5">
+                                        <input
+                                            type="checkbox"
+                                            className="peer sr-only"
+                                            required
+                                        />
+                                        <div className="w-5 h-5 rounded-md border-2 border-white/20 bg-white/5 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center group-hover:border-primary/50">
+                                            <span className="material-symbols-outlined text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity" style={{ fontSize: '14px' }}>check</span>
+                                        </div>
+                                    </div>
+                                    <span className="text-sm text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
+                                        {isPortuguese
+                                            ? 'Concordo em receber mensagens de orientação mística e cartas do dia via WhatsApp. Posso cancelar a qualquer momento.'
+                                            : 'I agree to receive mystic guidance messages and daily cards via WhatsApp. I can unsubscribe at any time.'}
+                                    </span>
+                                </label>
+                            </div>
+
+                            {/* Submit Button */}
+                            <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
                                 <button
-                                    className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-5 px-8 rounded-2xl shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all active:scale-[0.98]"
+                                    className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-4 px-8 rounded-2xl shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all active:scale-[0.98]"
                                     type="submit"
                                 >
-                                    <span className="relative z-10 flex items-center justify-center gap-2 text-base uppercase tracking-widest">
+                                    <span className="relative z-10 flex items-center justify-center gap-2 text-sm uppercase tracking-widest">
                                         {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
-                                        <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                        <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
                                     </span>
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 </button>
