@@ -524,139 +524,206 @@ export const DailyCard = () => {
                 </div>
             </section >
 
-            {/* WhatsApp Form Section */}
-            < section className="relative py-20 md:py-28 px-4 md:px-8" >
-                <div className="max-w-4xl mx-auto">
-                    <div className="bg-gradient-to-br from-[#1a1230]/50 to-[#12091a]/50 backdrop-blur-sm border border-white/10 rounded-2xl p-10 md:p-14">
-                        <div className="text-center mb-12">
-                            <h2 className="text-white text-3xl md:text-4xl font-light mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Receba sua Carta do Dia' : 'Receive Your Daily Card'}
-                            </h2>
-                            <p className="text-gray-400 text-base font-light leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                {isPortuguese
-                                    ? 'Receba mensagens diárias, orientações semanais e insights mensais sobre sua jornada.'
-                                    : 'Receive daily messages, weekly guidance, and monthly insights about your journey.'}
-                            </p>
+            {/* WhatsApp Form Section - Daily Destiny with 2-Step Form */}
+            <section className="relative py-12 lg:py-24 px-4 sm:px-6 lg:px-8 bg-[#0B061A]">
+                <style>{`
+                    .glass-card {
+                        background: rgba(255, 255, 255, 0.04);
+                        backdrop-filter: blur(12px);
+                        border: 1px solid rgba(255, 255, 255, 0.08);
+                    }
+                    .glow-border:focus-within {
+                        border-color: #A855F7;
+                        box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+                    }
+                    .frequency-card input:checked + div {
+                        border-color: #A855F7;
+                        background: rgba(168, 85, 247, 0.15);
+                        box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
+                    }
+                    .material-symbols-outlined {
+                        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+                    }
+                    .cosmic-glow {
+                        filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.7));
+                    }
+                    #step2-trigger:checked ~ .step-1-content { display: none; }
+                    #step2-trigger:checked ~ .step-2-content { display: block; }
+                    #step2-trigger:not(:checked) ~ .step-2-content { display: none; }
+                    #step2-trigger:checked ~ .progress-container .step-2-indicator { background-color: #A855F7; }
+                    #step2-trigger:checked ~ .progress-container .step-line { background-color: #A855F7; }
+                `}</style>
+                <div className="container mx-auto max-w-7xl">
+                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                        {/* Left Column - Phone Mockup */}
+                        <div className="hidden lg:flex justify-center items-center relative">
+                            <div className="absolute w-[100px] h-[1200px] bg-primary/20 blur-[120px] rounded-full"></div>
+                            <div className="relative w-[50px] h-[1100px] bg-gray-950 rounded-[3rem] border-8 border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden ring-1 ring-white/10">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-8 bg-gray-900 rounded-b-2xl z-20"></div>
+                                <div className="h-full flex flex-col bg-[#0b141a]">
+                                    <div className="bg-[#202c33] p-5 pt-10 flex items-center gap-2 border-b border-white/5">
+                                        <div>
+                                            <h4 className="text-white text-base font-semibold">
+                                                {isPortuguese ? 'Oráculo Digital' : 'Digital Oracle'}
+                                            </h4>
+                                            <p className="text-emerald-500 text-[11px]">online</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex-1 p-5 space-y-5 overflow-y-auto">
+                                        <div className="max-w-[90%] bg-[#202c33] rounded-lg rounded-tl-none p-4 shadow-sm border border-white/5">
+                                            <div className="relative rounded overflow-hidden mb-3">
+                                                <img alt="Tarot Card" className="w-full h-72 object-cover" src={dailyCard.imageUrl} onError={handleImageError} />
+                                                <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm p-3 text-center border-t border-white/10">
+                                                    <span className="font-display text-yellow-400 text-sm tracking-widest uppercase">{cardName}</span>
+                                                </div>
+                                            </div>
+                                            <p className="text-gray-200 text-sm leading-relaxed">
+                                                {meaning}
+                                            </p>
+                                            <span className="block text-[10px] text-gray-400 text-right mt-2">08:00</span>
+                                        </div>
+                                    </div>
+                                    <div className="bg-[#202c33] p-4 flex items-center gap-3">
+                                        <div className="flex-1 bg-[#2a3942] rounded-full h-12 px-5 flex items-center border border-white/5">
+                                            <span className="text-gray-400 text-sm">
+                                                {isPortuguese ? 'Mensagem...' : 'Message...'}
+                                            </span>
+                                        </div>
+                                        <div className="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">
+                                            <span className="material-icons text-white text-lg">mic</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <form className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-gray-300 text-sm font-medium mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                        {isPortuguese ? 'Nome Completo' : 'Full Name'}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={isPortuguese ? 'Digite seu nome' : 'Enter your name'}
-                                        className="w-full px-5 py-3.5 bg-black/30 border border-white/10 rounded-lg text-white text-sm font-light placeholder-gray-500 focus:border-yellow-500/50 focus:bg-black/40 focus:outline-none transition-all"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-300 text-sm font-medium mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                        {isPortuguese ? 'E-mail' : 'Email'}
-                                    </label>
-                                    <input
-                                        type="email"
-                                        placeholder={isPortuguese ? 'seu@email.com' : 'your@email.com'}
-                                        className="w-full px-5 py-3.5 bg-black/30 border border-white/10 rounded-lg text-white text-sm font-light placeholder-gray-500 focus:border-yellow-500/50 focus:bg-black/40 focus:outline-none transition-all"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    />
-                                </div>
-                            </div>
+                        {/* Right Column - Form with 2 Steps */}
+                        <div className="w-full">
+                            <div className="max-w-xl mx-auto lg:mx-0">
+                                <header className="mb-8 text-center lg:text-left">
+                                    <span className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary font-medium text-xs mb-4 tracking-[0.2em] uppercase border border-primary/30 backdrop-blur-md">
+                                        {isPortuguese ? 'Conexão Celestial' : 'Celestial Connection'}
+                                    </span>
+                                    <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight">
+                                        {isPortuguese ? 'Desperte seu' : 'Awaken Your'} <br />
+                                        <span className="text-primary cosmic-glow italic">{isPortuguese ? 'Destino Diário' : 'Daily Destiny'}</span>
+                                    </h1>
+                                    <p className="text-gray-300 text-lg max-w-md mx-auto lg:mx-0">
+                                        {isPortuguese
+                                            ? 'Receba orientações ancestrais e insights poderosos diretamente no seu WhatsApp através de um mapa estelar personalizado.'
+                                            : 'Receive ancestral guidance and powerful insights directly on your WhatsApp through a personalized star map.'}
+                                    </p>
+                                </header>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-gray-300 text-sm font-medium mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                        {isPortuguese ? 'WhatsApp' : 'WhatsApp'}
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        placeholder={isPortuguese ? '+55 (00) 00000-0000' : '+1 (000) 000-0000'}
-                                        className="w-full px-5 py-3.5 bg-black/30 border border-white/10 rounded-lg text-white text-sm font-light placeholder-gray-500 focus:border-yellow-500/50 focus:bg-black/40 focus:outline-none transition-all"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-300 text-sm font-medium mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                        {isPortuguese ? 'País' : 'Country'}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder={isPortuguese ? 'Digite seu país' : 'Enter your country'}
-                                        className="w-full px-5 py-3.5 bg-black/30 border border-white/10 rounded-lg text-white text-sm font-light placeholder-gray-500 focus:border-yellow-500/50 focus:bg-black/40 focus:outline-none transition-all"
-                                        style={{ fontFamily: "'Inter', sans-serif" }}
-                                    />
-                                </div>
-                            </div>
+                                <form className="space-y-8 relative">
+                                    <input className="hidden peer" id="step2-trigger" type="checkbox" />
 
-                            <div>
-                                <label className="block text-gray-300 text-sm font-medium mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese ? 'Cidade' : 'City'}
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder={isPortuguese ? 'Digite sua cidade' : 'Enter your city'}
-                                    className="w-full px-5 py-3.5 bg-black/30 border border-white/10 rounded-lg text-white text-sm font-light placeholder-gray-500 focus:border-yellow-500/50 focus:bg-black/40 focus:outline-none transition-all"
-                                    style={{ fontFamily: "'Inter', sans-serif" }}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-gray-300 text-sm font-medium mb-4" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese ? 'Frequência de Recebimento' : 'Delivery Frequency'}
-                                </label>
-                                <div className="grid grid-cols-3 gap-4">
-                                    <label className="relative flex items-center justify-center px-5 py-4 bg-black/20 border border-white/10 rounded-lg cursor-pointer hover:border-yellow-500/30 hover:bg-black/30 transition-all group">
-                                        <input type="radio" name="frequency" value="daily" className="peer sr-only" defaultChecked />
-                                        <div className="flex flex-col items-center gap-2">
-                                            <div className="w-5 h-5 rounded-full border-2 border-gray-400 peer-checked:border-yellow-500 peer-checked:bg-yellow-500 transition-all flex items-center justify-center">
-                                                <div className="w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity" />
-                                            </div>
-                                            <span className="text-sm font-light text-gray-400 peer-checked:text-white transition-colors" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {isPortuguese ? 'Diário' : 'Daily'}
-                                            </span>
+                                    <div className="progress-container flex items-center justify-between max-w-[200px] mx-auto lg:mx-0 mb-8 relative">
+                                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center z-10 border-2 border-primary shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+                                            <span className="text-xs font-bold text-white">1</span>
                                         </div>
-                                    </label>
-
-                                    <label className="relative flex items-center justify-center px-5 py-4 bg-black/20 border border-white/10 rounded-lg cursor-pointer hover:border-yellow-500/30 hover:bg-black/30 transition-all group">
-                                        <input type="radio" name="frequency" value="weekly" className="peer sr-only" />
-                                        <div className="flex flex-col items-center gap-2">
-                                            <div className="w-5 h-5 rounded-full border-2 border-gray-400 peer-checked:border-yellow-500 peer-checked:bg-yellow-500 transition-all flex items-center justify-center">
-                                                <div className="w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity" />
-                                            </div>
-                                            <span className="text-sm font-light text-gray-400 peer-checked:text-white transition-colors" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {isPortuguese ? 'Semanal' : 'Weekly'}
-                                            </span>
+                                        <div className="step-line flex-1 h-[2px] bg-white/10 mx-2 transition-colors duration-300"></div>
+                                        <div className="step-2-indicator w-8 h-8 rounded-full bg-white/5 flex items-center justify-center z-10 border-2 border-white/10 transition-all duration-300">
+                                            <span className="text-xs font-bold text-gray-400">2</span>
                                         </div>
-                                    </label>
+                                    </div>
 
-                                    <label className="relative flex items-center justify-center px-5 py-4 bg-black/20 border border-white/10 rounded-lg cursor-pointer hover:border-yellow-500/30 hover:bg-black/30 transition-all group">
-                                        <input type="radio" name="frequency" value="monthly" className="peer sr-only" />
-                                        <div className="flex flex-col items-center gap-2">
-                                            <div className="w-5 h-5 rounded-full border-2 border-gray-400 peer-checked:border-yellow-500 peer-checked:bg-yellow-500 transition-all flex items-center justify-center">
-                                                <div className="w-2 h-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity" />
+                                    <div className="step-1-content space-y-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-wider">
+                                                    {isPortuguese ? 'Nome Completo' : 'Full Name'}
+                                                </label>
+                                                <div className="relative group">
+                                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">person</span>
+                                                    <input
+                                                        className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none glow-border transition-all text-white placeholder:text-gray-600"
+                                                        placeholder={isPortuguese ? 'Seu nome místico' : 'Your mystical name'}
+                                                        type="text"
+                                                    />
+                                                </div>
                                             </div>
-                                            <span className="text-sm font-light text-gray-400 peer-checked:text-white transition-colors" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {isPortuguese ? 'Mensal' : 'Monthly'}
-                                            </span>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-wider">
+                                                    WhatsApp
+                                                </label>
+                                                <div className="relative group">
+                                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
+                                                        <span className="text-xs font-medium text-gray-400">+55</span>
+                                                    </div>
+                                                    <input
+                                                        className="w-full pl-16 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none glow-border transition-all text-white placeholder:text-gray-600"
+                                                        placeholder={isPortuguese ? '(00) 00000-0000' : '(000) 000-0000'}
+                                                        type="tel"
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                    </label>
-                                </div>
+                                        <label className="w-full cursor-pointer relative group overflow-hidden bg-white/5 text-white font-bold py-5 rounded-2xl border border-white/10 flex items-center justify-center gap-2 text-lg uppercase tracking-widest hover:bg-white/10 transition-all" htmlFor="step2-trigger">
+                                            {isPortuguese ? 'Próximo Passo' : 'Next Step'}
+                                            <span className="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                        </label>
+                                    </div>
+
+                                    <div className="step-2-content space-y-8">
+                                        <div className="space-y-4">
+                                            <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-wider">
+                                                {isPortuguese ? 'Frequência das Mensagens' : 'Message Frequency'}
+                                            </label>
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <label className="frequency-card cursor-pointer group">
+                                                    <input defaultChecked className="hidden" name="freq" type="radio" value="diario" />
+                                                    <div className="glass-card flex flex-col items-center justify-center p-6 rounded-2xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                        <span className="material-symbols-outlined text-3xl mb-3 text-yellow-400 group-hover:scale-110 transition-transform">sunny</span>
+                                                        <span className="text-xs font-bold text-gray-300 uppercase tracking-tighter">
+                                                            {isPortuguese ? 'Diário' : 'Daily'}
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                                <label className="frequency-card cursor-pointer group">
+                                                    <input className="hidden" name="freq" type="radio" value="semanal" />
+                                                    <div className="glass-card flex flex-col items-center justify-center p-6 rounded-2xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                        <span className="material-symbols-outlined text-3xl mb-3 text-primary group-hover:scale-110 transition-transform">auto_awesome</span>
+                                                        <span className="text-xs font-bold text-gray-300 uppercase tracking-tighter">
+                                                            {isPortuguese ? 'Semanal' : 'Weekly'}
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                                <label className="frequency-card cursor-pointer group">
+                                                    <input className="hidden" name="freq" type="radio" value="mensal" />
+                                                    <div className="glass-card flex flex-col items-center justify-center p-6 rounded-2xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                        <span className="material-symbols-outlined text-3xl mb-3 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
+                                                        <span className="text-xs font-bold text-gray-300 uppercase tracking-tighter">
+                                                            {isPortuguese ? 'Mensal' : 'Monthly'}
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            className="w-full relative group overflow-hidden bg-primary text-white font-bold py-5 rounded-2xl shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all active:scale-[0.98]"
+                                            type="submit"
+                                        >
+                                            <span className="relative z-10 flex items-center justify-center gap-2 text-lg uppercase tracking-widest">
+                                                {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
+                                                <span className="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                            </span>
+                                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        </button>
+
+                                        <label className="block text-center cursor-pointer text-xs text-gray-500 hover:text-gray-300 transition-colors uppercase tracking-widest" htmlFor="step2-trigger">
+                                            {isPortuguese ? 'Voltar para Dados Pessoais' : 'Back to Personal Data'}
+                                        </label>
+                                    </div>
+
+                                    <div className="flex items-center justify-center gap-2 text-[10px] text-gray-500 uppercase tracking-[0.1em] pt-4">
+                                        <span className="material-symbols-outlined text-[14px]">lock</span>
+                                        <p>{isPortuguese ? 'Dados criptografados e protegidos' : 'Encrypted and secure data'}</p>
+                                    </div>
+                                </form>
                             </div>
-
-                            <button
-                                type="submit"
-                                className="w-full h-14 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium text-base rounded-lg transition-all shadow-lg hover:shadow-purple-600/30 mt-8"
-                                style={{ fontFamily: "'Inter', sans-serif" }}
-                            >
-                                {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
-                            </button>
-
-                            <p className="text-center text-gray-500 text-xs mt-6" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                {isPortuguese ? 'Seus dados estão seguros e protegidos.' : 'Your data is safe and protected.'}
-                            </p>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </section>
