@@ -738,9 +738,8 @@ const Home = () => {
                                         <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
                                             {/* Progress Arc - Shows lunar cycle progress from New Moon */}
                                             {/* Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova */}
-                                            {/* rotate(-90deg) starts at bottom, default clockwise goes: bottom → left → top → right */}
-                                            {/* We want: bottom → right, so we need counter-clockwise direction */}
-                                            <svg className="absolute inset-0 w-full h-full" style={{ transform: 'rotate(-90deg) scaleY(-1)' }} viewBox="0 0 100 100">
+                                            {/* Path starts at bottom, sweep-flag=1 for clockwise in SVG = counter-clockwise on screen */}
+                                            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
                                                 {/* Background track */}
                                                 <circle
                                                     cx="50"
@@ -750,16 +749,15 @@ const Home = () => {
                                                     stroke="rgba(173, 146, 201, 0.08)"
                                                     strokeWidth="1.5"
                                                 />
-                                                {/* Progress arc - starts from New Moon (bottom) goes to Crescente, Cheia, Minguante */}
-                                                <circle
-                                                    cx="50"
-                                                    cy="50"
-                                                    r="49"
+                                                {/* Progress arc: bottom → right → top → left (counter-clockwise on screen) */}
+                                                <path
+                                                    d="M 50 99 A 49 49 0 1 1 50.01 99"
                                                     fill="none"
                                                     stroke="rgba(173, 146, 201, 0.6)"
                                                     strokeWidth="1.5"
                                                     strokeLinecap="round"
-                                                    strokeDasharray={`${lunarCycleProgress * 307.8} 307.8`}
+                                                    pathLength="100"
+                                                    strokeDasharray={`${lunarCycleProgress * 100} 100`}
                                                 />
                                             </svg>
 
@@ -3355,48 +3353,65 @@ const Session = () => {
                                                     : 'none',
                                     } as React.CSSProperties}
                                 >
-                                    <div className="absolute inset-0 rounded-lg overflow-hidden bg-gradient-to-br from-[#2a1d34] to-[#1a0f1e] flex items-center justify-center">
-                                        {/* Mystic Mandala Background */}
-                                        <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+                                    <div className="absolute inset-0 rounded-lg overflow-hidden bg-gradient-to-br from-[#1a1020] via-[#12091a] to-[#0a0510] flex items-center justify-center">
+                                        {/* Premium Gold Mystic Mandala Background */}
+                                        <svg className="absolute inset-0 w-full h-full opacity-70" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
                                             <defs>
-                                                <radialGradient id="mandalaGlow" cx="50%" cy="50%" r="50%">
-                                                    <stop offset="0%" stopColor="#a77fd4" stopOpacity="0.3" />
+                                                <radialGradient id="goldGlow" cx="50%" cy="50%" r="50%">
+                                                    <stop offset="0%" stopColor="#d4a850" stopOpacity="0.4" />
+                                                    <stop offset="50%" stopColor="#b8942d" stopOpacity="0.2" />
                                                     <stop offset="100%" stopColor="#1a0f1e" stopOpacity="0" />
                                                 </radialGradient>
+                                                <linearGradient id="goldLine" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stopColor="#f0d890" />
+                                                    <stop offset="50%" stopColor="#d4a850" />
+                                                    <stop offset="100%" stopColor="#a67c20" />
+                                                </linearGradient>
                                             </defs>
-                                            {/* Central mandala */}
-                                            <circle cx="50" cy="75" r="40" fill="url(#mandalaGlow)" />
-                                            {/* Outer ring */}
-                                            <circle cx="50" cy="75" r="38" fill="none" stroke="#a77fd4" strokeWidth="0.3" />
-                                            <circle cx="50" cy="75" r="35" fill="none" stroke="#a77fd4" strokeWidth="0.2" strokeDasharray="3 2" />
-                                            <circle cx="50" cy="75" r="30" fill="none" stroke="#e0c080" strokeWidth="0.3" />
-                                            <circle cx="50" cy="75" r="25" fill="none" stroke="#a77fd4" strokeWidth="0.2" strokeDasharray="1 3" />
-                                            <circle cx="50" cy="75" r="18" fill="none" stroke="#e0c080" strokeWidth="0.2" />
-                                            <circle cx="50" cy="75" r="10" fill="none" stroke="#a77fd4" strokeWidth="0.3" />
-                                            {/* Cross lines */}
-                                            <line x1="50" y1="35" x2="50" y2="115" stroke="#a77fd4" strokeWidth="0.15" />
-                                            <line x1="10" y1="75" x2="90" y2="75" stroke="#a77fd4" strokeWidth="0.15" />
-                                            {/* Diagonal lines */}
-                                            <line x1="22" y1="47" x2="78" y2="103" stroke="#e0c080" strokeWidth="0.1" />
-                                            <line x1="78" y1="47" x2="22" y2="103" stroke="#e0c080" strokeWidth="0.1" />
-                                            {/* Star points */}
-                                            <polygon points="50,37 52,43 50,41 48,43" fill="#e0c080" opacity="0.6" />
-                                            <polygon points="50,113 52,107 50,109 48,107" fill="#e0c080" opacity="0.6" />
-                                            <polygon points="12,75 18,77 16,75 18,73" fill="#e0c080" opacity="0.6" />
-                                            <polygon points="88,75 82,77 84,75 82,73" fill="#e0c080" opacity="0.6" />
-                                            {/* Corner decorations */}
-                                            <circle cx="15" cy="20" r="8" fill="none" stroke="#a77fd4" strokeWidth="0.2" />
-                                            <circle cx="85" cy="20" r="8" fill="none" stroke="#a77fd4" strokeWidth="0.2" />
-                                            <circle cx="15" cy="130" r="8" fill="none" stroke="#a77fd4" strokeWidth="0.2" />
-                                            <circle cx="85" cy="130" r="8" fill="none" stroke="#a77fd4" strokeWidth="0.2" />
-                                            {/* Inner decorative elements */}
-                                            <circle cx="50" cy="75" r="5" fill="none" stroke="#e0c080" strokeWidth="0.4" />
-                                            <circle cx="50" cy="75" r="2" fill="#e0c080" opacity="0.4" />
+                                            {/* Central mandala glow */}
+                                            <circle cx="50" cy="75" r="42" fill="url(#goldGlow)" />
+                                            {/* Outer decorative rings - gold */}
+                                            <circle cx="50" cy="75" r="40" fill="none" stroke="#d4a850" strokeWidth="0.8" opacity="0.9" />
+                                            <circle cx="50" cy="75" r="36" fill="none" stroke="#c9a040" strokeWidth="0.4" strokeDasharray="4 2" opacity="0.7" />
+                                            <circle cx="50" cy="75" r="32" fill="none" stroke="#f0d890" strokeWidth="0.6" opacity="0.8" />
+                                            <circle cx="50" cy="75" r="26" fill="none" stroke="#d4a850" strokeWidth="0.3" strokeDasharray="2 4" opacity="0.6" />
+                                            <circle cx="50" cy="75" r="20" fill="none" stroke="#e8c060" strokeWidth="0.5" opacity="0.7" />
+                                            <circle cx="50" cy="75" r="12" fill="none" stroke="#f0d890" strokeWidth="0.6" opacity="0.8" />
+                                            {/* Cross lines - gold */}
+                                            <line x1="50" y1="30" x2="50" y2="120" stroke="url(#goldLine)" strokeWidth="0.4" opacity="0.6" />
+                                            <line x1="5" y1="75" x2="95" y2="75" stroke="url(#goldLine)" strokeWidth="0.4" opacity="0.6" />
+                                            {/* Diagonal lines - gold */}
+                                            <line x1="18" y1="43" x2="82" y2="107" stroke="#d4a850" strokeWidth="0.3" opacity="0.5" />
+                                            <line x1="82" y1="43" x2="18" y2="107" stroke="#d4a850" strokeWidth="0.3" opacity="0.5" />
+                                            {/* Star/diamond points - brighter gold */}
+                                            <polygon points="50,33 53,40 50,37 47,40" fill="#f0d890" opacity="0.9" />
+                                            <polygon points="50,117 53,110 50,113 47,110" fill="#f0d890" opacity="0.9" />
+                                            <polygon points="8,75 15,78 12,75 15,72" fill="#f0d890" opacity="0.9" />
+                                            <polygon points="92,75 85,78 88,75 85,72" fill="#f0d890" opacity="0.9" />
+                                            {/* Corner sun decorations */}
+                                            <circle cx="15" cy="18" r="10" fill="none" stroke="#d4a850" strokeWidth="0.4" opacity="0.6" />
+                                            <circle cx="15" cy="18" r="6" fill="none" stroke="#f0d890" strokeWidth="0.3" opacity="0.5" />
+                                            <circle cx="85" cy="18" r="10" fill="none" stroke="#d4a850" strokeWidth="0.4" opacity="0.6" />
+                                            <circle cx="85" cy="18" r="6" fill="none" stroke="#f0d890" strokeWidth="0.3" opacity="0.5" />
+                                            <circle cx="15" cy="132" r="10" fill="none" stroke="#d4a850" strokeWidth="0.4" opacity="0.6" />
+                                            <circle cx="15" cy="132" r="6" fill="none" stroke="#f0d890" strokeWidth="0.3" opacity="0.5" />
+                                            <circle cx="85" cy="132" r="10" fill="none" stroke="#d4a850" strokeWidth="0.4" opacity="0.6" />
+                                            <circle cx="85" cy="132" r="6" fill="none" stroke="#f0d890" strokeWidth="0.3" opacity="0.5" />
+                                            {/* Center sun symbol */}
+                                            <circle cx="50" cy="75" r="6" fill="none" stroke="#f0d890" strokeWidth="0.8" opacity="0.9" />
+                                            <circle cx="50" cy="75" r="3" fill="#d4a850" opacity="0.7" />
+                                            {/* Small rays from center */}
+                                            <line x1="50" y1="65" x2="50" y2="68" stroke="#f0d890" strokeWidth="0.5" opacity="0.8" />
+                                            <line x1="50" y1="82" x2="50" y2="85" stroke="#f0d890" strokeWidth="0.5" opacity="0.8" />
+                                            <line x1="40" y1="75" x2="43" y2="75" stroke="#f0d890" strokeWidth="0.5" opacity="0.8" />
+                                            <line x1="57" y1="75" x2="60" y2="75" stroke="#f0d890" strokeWidth="0.5" opacity="0.8" />
                                         </svg>
-                                        {/* Border frame */}
-                                        <div className="absolute inset-1 rounded-md border border-[#a77fd4]/20"></div>
-                                        <div className="absolute inset-2 rounded border border-[#e0c080]/10"></div>
-                                        <span className="material-symbols-outlined text-[#e0c080]/60 text-xs md:text-lg drop-shadow-lg z-10">auto_awesome</span>
+                                        {/* Ornate border frames - gold */}
+                                        <div className="absolute inset-[3px] rounded-md border-2 border-[#d4a850]/40"></div>
+                                        <div className="absolute inset-[7px] rounded border border-[#f0d890]/25"></div>
+                                        <div className="absolute inset-[10px] rounded-sm border border-[#d4a850]/15"></div>
+                                        {/* Center icon */}
+                                        <span className="material-symbols-outlined text-[#f0d890] text-sm md:text-xl drop-shadow-[0_0_8px_rgba(212,168,80,0.5)] z-10">auto_awesome</span>
                                     </div>
                                 </div>
                             );
