@@ -582,18 +582,18 @@ export const DailyCard = () => {
                     }
                 `}</style>
 
-                <div className="glass-card w-full max-w-7xl rounded-[3rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] relative flex flex-col lg:flex-row items-stretch">
+                <div className="glass-card w-full max-w-6xl rounded-[2.5rem] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.8)] relative flex flex-col lg:flex-row items-stretch">
                     {/* Form Content */}
-                    <div className="flex-1 p-8 lg:p-20 order-2 lg:order-1">
-                        <header className="mb-12 text-center lg:text-left">
-                            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary font-medium text-xs mb-6 tracking-[0.2em] uppercase border border-primary/30 backdrop-blur-md">
+                    <div className="flex-1 p-6 lg:p-14 order-2 lg:order-1">
+                        <header className="mb-8 text-center lg:text-left">
+                            <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary font-medium text-[10px] mb-4 tracking-[0.2em] uppercase border border-primary/30 backdrop-blur-md">
                                 {isPortuguese ? 'Conexão Celestial' : 'Celestial Connection'}
                             </span>
-                            <h1 className="font-display text-4xl md:text-6xl text-white mb-8 leading-tight">
+                            <h1 className="font-display text-3xl md:text-5xl text-white mb-6 leading-tight">
                                 {isPortuguese ? 'Desperte seu' : 'Awaken Your'} <br />
                                 <span className="text-primary cosmic-glow italic">{isPortuguese ? 'Destino Diário' : 'Daily Destiny'}</span>
                             </h1>
-                            <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                            <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                                 {isPortuguese
                                     ? 'Receba orientações ancestrais e insights poderosos diretamente no seu WhatsApp através de um mapa estelar personalizado.'
                                     : 'Receive ancestral guidance and powerful insights directly on your WhatsApp through a personalized star map.'}
@@ -756,76 +756,71 @@ export const DailyCard = () => {
                     </div>
 
                     {/* iPhone Mockup - WhatsApp Style */}
-                    <div className="lg:w-[420px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-8 lg:p-12 order-1 lg:order-2 relative overflow-hidden">
+                    <div className="lg:w-[380px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-6 lg:p-10 order-1 lg:order-2 relative overflow-hidden">
                         <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
                         <div className="relative z-10">
                             {/* iPhone Frame */}
-                            <div className="relative w-[260px] h-[540px] bg-black rounded-[3rem] p-[10px] shadow-[0_0_60px_rgba(168,85,247,0.25),0_25px_50px_rgba(0,0,0,0.5)]">
+                            <div className="relative w-[220px] h-[460px] bg-black rounded-[2.5rem] p-[8px] shadow-[0_0_50px_rgba(168,85,247,0.25),0_20px_40px_rgba(0,0,0,0.5)]">
                                 {/* Dynamic Island */}
-                                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-30"></div>
+                                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-30"></div>
 
                                 {/* Screen */}
-                                <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-[#0b141a]">
+                                <div className="w-full h-full rounded-[2rem] overflow-hidden bg-[#0b141a] flex flex-col">
                                     {/* Status Bar */}
-                                    <div className="h-7 bg-[#0b141a] flex items-center justify-between px-5 pt-1">
-                                        <span className="text-white text-[10px] font-semibold">9:41</span>
+                                    <div className="h-6 bg-[#0b141a] flex items-center justify-between px-4 pt-1 flex-shrink-0">
+                                        <span className="text-white text-[9px] font-semibold">9:41</span>
                                         <div className="flex items-center gap-[3px]">
-                                            <svg className="w-[14px] h-[10px] text-white" viewBox="0 0 18 12" fill="currentColor">
-                                                <path d="M1 4.5C2.8 2.3 6.2.5 9 .5s6.2 1.8 8 4c-1.8 2.2-5.2 4-8 4s-6.2-1.8-8-4z" fillOpacity="0.3"/>
-                                                <path d="M3 4.5C4.5 3 6.6 2 9 2s4.5 1 6 2.5C13.5 6 11.4 7 9 7s-4.5-1-6-2.5z"/>
-                                            </svg>
-                                            <svg className="w-[14px] h-[10px] text-white" viewBox="0 0 18 12" fill="currentColor">
+                                            <svg className="w-[12px] h-[9px] text-white" viewBox="0 0 18 12" fill="currentColor">
                                                 <rect x="0" y="8" width="3" height="4" rx="0.5"/>
                                                 <rect x="4" y="5" width="3" height="7" rx="0.5"/>
                                                 <rect x="8" y="2" width="3" height="10" rx="0.5"/>
                                                 <rect x="12" y="0" width="3" height="12" rx="0.5"/>
                                             </svg>
                                             <div className="flex items-center">
-                                                <div className="w-[22px] h-[10px] border border-white rounded-[3px] flex items-center p-[1px]">
-                                                    <div className="w-[16px] h-[6px] bg-white rounded-[1px]"></div>
+                                                <div className="w-[20px] h-[9px] border border-white rounded-[2px] flex items-center p-[1px]">
+                                                    <div className="w-[14px] h-[5px] bg-white rounded-[1px]"></div>
                                                 </div>
-                                                <div className="w-[1px] h-[4px] bg-white rounded-r ml-[1px]"></div>
+                                                <div className="w-[1px] h-[3px] bg-white rounded-r ml-[1px]"></div>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* WhatsApp Header */}
-                                    <div className="bg-[#1f2c34] px-2 py-1.5 flex items-center gap-1.5">
-                                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div className="bg-[#1f2c34] px-2 py-1 flex items-center gap-1 flex-shrink-0">
+                                        <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                         </svg>
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-white text-sm">auto_awesome</span>
+                                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-white text-[10px]">auto_awesome</span>
                                         </div>
                                         <div className="flex-1 ml-1">
-                                            <h4 className="text-white text-xs font-medium leading-tight">Mystic Tarot</h4>
-                                            <p className="text-emerald-400 text-[9px]">online</p>
+                                            <h4 className="text-white text-[10px] font-medium leading-tight">Mystic Tarot</h4>
+                                            <p className="text-emerald-400 text-[8px]">online</p>
                                         </div>
-                                        <div className="flex items-center gap-3">
-                                            <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                        <div className="flex items-center gap-2">
+                                            <svg className="w-3 h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M17 12c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm3 7h-2v2h-2v-2h-2v-2h2v-2h2v2h2v2zM18 6c0-1.1-.9-2-2-2H8C5.79 4 4 5.79 4 8v10c0 1.1.9 2 2 2h5c0-.73.1-1.43.28-2.1-.34.06-.69.1-1.05.1-2.79 0-5.06-2.27-5.06-5.06 0-1.51.66-2.86 1.71-3.78L12 3.97l5.12 5.19c.5.44.88 1 1.09 1.62.55-.5 1.17-.91 1.85-1.22C20.02 8.42 20 7.22 20 6h-2z"/>
                                             </svg>
-                                            <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                            <svg className="w-3 h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
                                             </svg>
                                         </div>
                                     </div>
 
-                                    {/* Chat Background Pattern */}
+                                    {/* Chat Background Pattern - flex-1 to fill remaining space */}
                                     <div className="flex-1 relative" style={{
                                         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                                        backgroundColor: '#0b141a',
-                                        height: '360px'
+                                        backgroundColor: '#0b141a'
                                     }}>
-                                        <div className="absolute inset-0 p-3 overflow-hidden">
+                                        <div className="absolute inset-0 p-2 overflow-hidden">
                                             {/* Message Bubble */}
                                             <div className="max-w-[95%] bg-[#1f2c34] rounded-lg rounded-tl-none shadow-lg">
                                                 {/* Card Image */}
-                                                <div className="p-1.5">
-                                                    <div className="relative rounded-lg overflow-hidden">
+                                                <div className="p-1">
+                                                    <div className="relative rounded-md overflow-hidden">
                                                         <img
                                                             alt={cardName}
-                                                            className="w-full h-44 object-cover object-top"
+                                                            className="w-full h-36 object-cover object-top"
                                                             src={dailyCard.imageUrl}
                                                             onError={handleImageError}
                                                         />
@@ -833,17 +828,17 @@ export const DailyCard = () => {
                                                 </div>
 
                                                 {/* Message Text */}
-                                                <div className="px-2 pb-1.5 pt-0.5">
-                                                    <p className="text-white/90 text-[11px] leading-relaxed font-normal">
+                                                <div className="px-1.5 pb-1 pt-0.5">
+                                                    <p className="text-white/90 text-[9px] leading-relaxed font-normal">
                                                         <span className="font-semibold text-yellow-400">{cardName}</span>
                                                         <br /><br />
                                                         {isPortuguese
-                                                            ? 'Bom dia! Sua carta de hoje traz uma mensagem especial. Esta energia convida você a refletir sobre novos caminhos e possibilidades que se abrem em sua jornada.'
-                                                            : 'Good morning! Your card today brings a special message. This energy invites you to reflect on new paths and possibilities opening in your journey.'}
+                                                            ? 'Bom dia! Sua carta de hoje traz uma mensagem especial sobre novos caminhos.'
+                                                            : 'Good morning! Your card today brings a special message about new paths.'}
                                                     </p>
-                                                    <div className="flex items-center justify-end gap-1 mt-1">
-                                                        <span className="text-[9px] text-gray-400">08:00</span>
-                                                        <svg className="w-4 h-3 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                                                    <div className="flex items-center justify-end gap-1 mt-0.5">
+                                                        <span className="text-[7px] text-gray-400">08:00</span>
+                                                        <svg className="w-3 h-2 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
                                                             <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/>
                                                         </svg>
                                                     </div>
@@ -852,33 +847,33 @@ export const DailyCard = () => {
                                         </div>
                                     </div>
 
-                                    {/* Input Bar */}
-                                    <div className="bg-[#1f2c34] px-2 py-2 flex items-center gap-2">
-                                        <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                    {/* Input Bar - at very bottom */}
+                                    <div className="bg-[#1f2c34] px-2 py-1.5 flex items-center gap-1.5 flex-shrink-0">
+                                        <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
                                         </svg>
-                                        <div className="flex-1 bg-[#2a3942] rounded-full h-9 px-3 flex items-center">
-                                            <span className="text-gray-500 text-xs">
+                                        <div className="flex-1 bg-[#2a3942] rounded-full h-7 px-2 flex items-center">
+                                            <span className="text-gray-500 text-[10px]">
                                                 {isPortuguese ? 'Mensagem' : 'Message'}
                                             </span>
                                         </div>
-                                        <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
                                         </svg>
                                     </div>
                                 </div>
 
                                 {/* Home Indicator */}
-                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-28 h-1 bg-white/30 rounded-full"></div>
+                                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/30 rounded-full"></div>
                             </div>
                         </div>
 
                         {/* Decorative Elements */}
-                        <div className="absolute top-10 right-10 text-primary/20 hidden lg:block">
-                            <span className="material-symbols-outlined text-6xl">stars</span>
+                        <div className="absolute top-8 right-8 text-primary/20 hidden lg:block">
+                            <span className="material-symbols-outlined text-5xl">stars</span>
                         </div>
-                        <div className="absolute bottom-10 left-10 text-yellow-500/20 hidden lg:block">
-                            <span className="material-symbols-outlined text-7xl">auto_awesome</span>
+                        <div className="absolute bottom-8 left-8 text-yellow-500/20 hidden lg:block">
+                            <span className="material-symbols-outlined text-6xl">auto_awesome</span>
                         </div>
                     </div>
                 </div>
