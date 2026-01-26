@@ -654,12 +654,12 @@ export const DailyCard = () => {
 
                             <div className="flex flex-col sm:flex-row items-center gap-6 pt-4">
                                 <button
-                                    className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-6 px-10 rounded-2xl shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all active:scale-[0.98]"
+                                    className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-5 px-8 rounded-2xl shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all active:scale-[0.98]"
                                     type="submit"
                                 >
-                                    <span className="relative z-10 flex items-center justify-center gap-3 text-lg uppercase tracking-widest">
+                                    <span className="relative z-10 flex items-center justify-center gap-2 text-base uppercase tracking-widest">
                                         {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
-                                        <span className="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                        <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
                                     </span>
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 </button>
@@ -671,64 +671,122 @@ export const DailyCard = () => {
                         </form>
                     </div>
 
-                    {/* iPhone Mockup */}
-                    <div className="lg:w-[420px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-12 order-1 lg:order-2 relative overflow-hidden">
+                    {/* iPhone Mockup - WhatsApp Style */}
+                    <div className="lg:w-[420px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-8 lg:p-12 order-1 lg:order-2 relative overflow-hidden">
                         <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
-                        <div className="relative mobile-inset z-10">
-                            <div className="relative w-[280px] h-[560px] bg-gray-950 rounded-[2.5rem] border-8 border-white/10 shadow-[0_0_80px_rgba(168,85,247,0.3)] overflow-hidden ring-1 ring-white/10">
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-5 bg-gray-900 rounded-b-2xl z-20"></div>
-                                <div className="h-full flex flex-col bg-[#0b141a]">
-                                    <div className="bg-[#202c33] p-4 pt-8 flex items-center gap-3 border-b border-white/5">
-                                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg">
-                                            <span className="material-icons text-white text-base">auto_awesome</span>
-                                        </div>
-                                        <div>
-                                            <h4 className="text-white text-xs font-semibold">
-                                                {isPortuguese ? 'Oráculo Digital' : 'Digital Oracle'}
-                                            </h4>
-                                            <p className="text-emerald-500 text-[9px]">online</p>
+                        <div className="relative z-10">
+                            {/* iPhone Frame */}
+                            <div className="relative w-[260px] h-[540px] bg-black rounded-[3rem] p-[10px] shadow-[0_0_60px_rgba(168,85,247,0.25),0_25px_50px_rgba(0,0,0,0.5)]">
+                                {/* Dynamic Island */}
+                                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-30"></div>
+
+                                {/* Screen */}
+                                <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-[#0b141a]">
+                                    {/* Status Bar */}
+                                    <div className="h-10 bg-[#0b141a] flex items-end justify-between px-6 pb-1">
+                                        <span className="text-white text-[10px] font-medium">9:41</span>
+                                        <div className="flex items-center gap-1">
+                                            <svg className="w-4 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 3C7.46 3 3.34 4.78.29 7.67c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l10.29 10.29c.39.39 1.02.39 1.41 0L22.29 9.09c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71C19.34 4.78 15.14 3 12 3z"/>
+                                            </svg>
+                                            <svg className="w-4 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M2 22h20V2z"/>
+                                            </svg>
+                                            <div className="w-6 h-3 bg-white rounded-sm relative">
+                                                <div className="absolute right-0 top-1/2 -translate-y-1/2 -right-[2px] w-[2px] h-1.5 bg-white rounded-r"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="flex-1 p-3 space-y-4 overflow-y-auto">
-                                        <div className="max-w-[90%] bg-[#202c33] rounded-lg rounded-tl-none p-2 shadow-sm border border-white/5">
-                                            <div className="relative rounded overflow-hidden mb-2">
-                                                <img
-                                                    alt="Tarot Card"
-                                                    className="w-full h-36 object-cover"
-                                                    src={dailyCard.imageUrl}
-                                                    onError={handleImageError}
-                                                />
-                                                <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm p-1.5 text-center border-t border-white/10">
-                                                    <span className="font-display text-yellow-400 text-[10px] tracking-widest uppercase">{cardName}</span>
+
+                                    {/* WhatsApp Header */}
+                                    <div className="bg-[#1f2c34] px-3 py-2 flex items-center gap-2">
+                                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                        </svg>
+                                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-white text-base">auto_awesome</span>
+                                        </div>
+                                        <div className="flex-1">
+                                            <h4 className="text-white text-sm font-medium leading-tight">Mystic Tarot</h4>
+                                            <p className="text-emerald-400 text-[10px]">online</p>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.59l2.2-2.21c.28-.26.36-.65.25-1C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/>
+                                            </svg>
+                                            <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    {/* Chat Background Pattern */}
+                                    <div className="flex-1 relative" style={{
+                                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                                        backgroundColor: '#0b141a',
+                                        height: '340px'
+                                    }}>
+                                        <div className="absolute inset-0 p-3 overflow-hidden">
+                                            {/* Message Bubble */}
+                                            <div className="max-w-[95%] bg-[#1f2c34] rounded-lg rounded-tl-none shadow-lg">
+                                                {/* Card Image */}
+                                                <div className="p-1.5">
+                                                    <div className="relative rounded-lg overflow-hidden">
+                                                        <img
+                                                            alt={cardName}
+                                                            className="w-full h-44 object-cover object-top"
+                                                            src={dailyCard.imageUrl}
+                                                            onError={handleImageError}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Message Text */}
+                                                <div className="px-2 pb-1.5 pt-0.5">
+                                                    <p className="text-white/90 text-[11px] leading-relaxed font-normal">
+                                                        <span className="font-semibold text-yellow-400">{cardName}</span>
+                                                        <br /><br />
+                                                        {isPortuguese
+                                                            ? 'Bom dia! Sua carta de hoje traz uma mensagem especial. Esta energia convida você a refletir sobre novos caminhos e possibilidades que se abrem em sua jornada.'
+                                                            : 'Good morning! Your card today brings a special message. This energy invites you to reflect on new paths and possibilities opening in your journey.'}
+                                                    </p>
+                                                    <div className="flex items-center justify-end gap-1 mt-1">
+                                                        <span className="text-[9px] text-gray-400">08:00</span>
+                                                        <svg className="w-4 h-3 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/>
+                                                        </svg>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <p className="text-gray-200 text-[10px] leading-relaxed">
-                                                {isPortuguese
-                                                    ? 'Bom dia! Sua carta de hoje irradia clareza e vitalidade. O Sol brilha sobre seus projetos, trazendo o sucesso que você tanto buscou. ✨'
-                                                    : 'Good morning! Your card today radiates clarity and vitality. The Sun shines on your projects, bringing the success you have been seeking. ✨'}
-                                            </p>
-                                            <span className="block text-[8px] text-gray-400 text-right mt-1">08:00</span>
                                         </div>
                                     </div>
-                                    <div className="bg-[#202c33] p-2 flex items-center gap-2">
-                                        <div className="flex-1 bg-[#2a3942] rounded-full h-8 px-3 flex items-center border border-white/5">
-                                            <span className="text-gray-400 text-[10px]">
-                                                {isPortuguese ? 'Mensagem...' : 'Message...'}
+
+                                    {/* Input Bar */}
+                                    <div className="bg-[#1f2c34] px-2 py-2 flex items-center gap-2">
+                                        <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                                        </svg>
+                                        <div className="flex-1 bg-[#2a3942] rounded-full h-9 px-3 flex items-center">
+                                            <span className="text-gray-500 text-xs">
+                                                {isPortuguese ? 'Mensagem' : 'Message'}
                                             </span>
                                         </div>
-                                        <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">
-                                            <span className="material-icons text-white text-xs">mic</span>
-                                        </div>
+                                        <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+                                        </svg>
                                     </div>
                                 </div>
+
+                                {/* Home Indicator */}
+                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-28 h-1 bg-white/30 rounded-full"></div>
                             </div>
                         </div>
 
                         {/* Decorative Elements */}
-                        <div className="absolute top-10 right-10 text-primary/20">
+                        <div className="absolute top-10 right-10 text-primary/20 hidden lg:block">
                             <span className="material-symbols-outlined text-6xl">stars</span>
                         </div>
-                        <div className="absolute bottom-10 left-10 text-yellow-500/20">
+                        <div className="absolute bottom-10 left-10 text-yellow-500/20 hidden lg:block">
                             <span className="material-symbols-outlined text-7xl">auto_awesome</span>
                         </div>
                     </div>
