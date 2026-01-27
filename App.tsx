@@ -524,142 +524,154 @@ const Home = () => {
             </section>
 
             {/* Features Presentation Section */}
-            <section className="py-16 md:py-24 px-4 md:px-6 relative">
+            <section className="py-20 md:py-28 px-4 md:px-6 relative">
                 <div className="max-w-[1200px] mx-auto">
-                    <div className="text-center mb-12 md:mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gradient-gold mb-4 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                    <div className="text-center mb-14 md:mb-20">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Descubra o Poder do Tarot' : 'Discover the Power of Tarot'}
                         </h2>
-                        <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
                             {isPortuguese
                                 ? 'Uma experiência completa de autoconhecimento com tecnologia e sabedoria ancestral'
                                 : 'A complete self-discovery experience with technology and ancestral wisdom'}
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 mb-14">
                         {/* Feature 1 - Unlimited Readings */}
-                        <div className="group p-6 rounded-2xl bg-[#1a0f1e]/60 border border-[#875faf]/20 hover:border-[#a77fd4]/40 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#875faf]/30 to-[#a77fd4]/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <svg className="w-6 h-6 text-[#d4a850]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
+                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
+                            <div className="flex items-start gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-purple-400 text-xl">all_inclusive</span>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
+                                        {isPortuguese ? 'Tiragens Ilimitadas' : 'Unlimited Readings'}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? 'Realize quantas tiragens desejar, sem restrições'
+                                            : 'Perform as many readings as you wish'}
+                                    </p>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-semibold text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Tiragens Ilimitadas' : 'Unlimited Readings'}
-                            </h3>
-                            <p className="text-gray-400 text-sm">
-                                {isPortuguese
-                                    ? 'Realize quantas tiragens desejar, sem restrições ou limites'
-                                    : 'Perform as many readings as you wish, without restrictions'}
-                            </p>
                         </div>
 
                         {/* Feature 2 - AI Synthesis */}
-                        <div className="group p-6 rounded-2xl bg-[#1a0f1e]/60 border border-[#875faf]/20 hover:border-[#a77fd4]/40 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#875faf]/30 to-[#a77fd4]/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <svg className="w-6 h-6 text-[#d4a850]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                </svg>
+                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
+                            <div className="flex items-start gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-yellow-400 text-xl">psychology</span>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
+                                        {isPortuguese ? 'Síntese com IA' : 'AI-Powered Synthesis'}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? 'Interpretações profundas com inteligência artificial'
+                                            : 'Deep interpretations with artificial intelligence'}
+                                    </p>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-semibold text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Síntese com IA' : 'AI-Powered Synthesis'}
-                            </h3>
-                            <p className="text-gray-400 text-sm">
-                                {isPortuguese
-                                    ? 'Interpretações profundas integradas com inteligência artificial'
-                                    : 'Deep interpretations integrated with artificial intelligence'}
-                            </p>
                         </div>
 
                         {/* Feature 3 - 78 Cards Library */}
-                        <div className="group p-6 rounded-2xl bg-[#1a0f1e]/60 border border-[#875faf]/20 hover:border-[#a77fd4]/40 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#875faf]/30 to-[#a77fd4]/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <svg className="w-6 h-6 text-[#d4a850]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                </svg>
+                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
+                            <div className="flex items-start gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-purple-400 text-xl">collections_bookmark</span>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
+                                        {isPortuguese ? 'Biblioteca Completa' : 'Complete Library'}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? '78 cartas do Tarot de Waite originais'
+                                            : '78 original Waite Tarot cards'}
+                                    </p>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-semibold text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Biblioteca Completa' : 'Complete Library'}
-                            </h3>
-                            <p className="text-gray-400 text-sm">
-                                {isPortuguese
-                                    ? '78 cartas do Tarot de Waite com ilustrações originais'
-                                    : '78 Waite Tarot cards with original illustrations'}
-                            </p>
                         </div>
 
                         {/* Feature 4 - WhatsApp Daily Card */}
-                        <div className="group p-6 rounded-2xl bg-[#1a0f1e]/60 border border-[#875faf]/20 hover:border-[#a77fd4]/40 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#875faf]/30 to-[#a77fd4]/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <svg className="w-6 h-6 text-[#d4a850]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                </svg>
+                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
+                            <div className="flex items-start gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-emerald-400 text-xl">chat</span>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
+                                        {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? 'Receba mensagens personalizadas diariamente'
+                                            : 'Receive personalized messages daily'}
+                                    </p>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-semibold text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
-                            </h3>
-                            <p className="text-gray-400 text-sm">
-                                {isPortuguese
-                                    ? 'Receba mensagens personalizadas com sua carta diária'
-                                    : 'Receive personalized messages with your daily card'}
-                            </p>
                         </div>
 
                         {/* Feature 5 - Journey History */}
-                        <div className="group p-6 rounded-2xl bg-[#1a0f1e]/60 border border-[#875faf]/20 hover:border-[#a77fd4]/40 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#875faf]/30 to-[#a77fd4]/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <svg className="w-6 h-6 text-[#d4a850]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
+                            <div className="flex items-start gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-yellow-400 text-xl">history</span>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
+                                        {isPortuguese ? 'Histórico Completo' : 'Complete History'}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? 'Acompanhe toda a sua jornada de autoconhecimento'
+                                            : 'Track your entire self-discovery journey'}
+                                    </p>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-semibold text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Histórico Completo' : 'Complete History'}
-                            </h3>
-                            <p className="text-gray-400 text-sm">
-                                {isPortuguese
-                                    ? 'Acompanhe toda a sua jornada de autoconhecimento'
-                                    : 'Track your entire self-discovery journey'}
-                            </p>
                         </div>
 
                         {/* Feature 6 - Premium Support */}
-                        <div className="group p-6 rounded-2xl bg-[#1a0f1e]/60 border border-[#875faf]/20 hover:border-[#a77fd4]/40 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#875faf]/30 to-[#a77fd4]/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <svg className="w-6 h-6 text-[#d4a850]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                                </svg>
+                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
+                            <div className="flex items-start gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-purple-400 text-xl">diamond</span>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
+                                        {isPortuguese ? 'Experiência Premium' : 'Premium Experience'}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? 'Recursos exclusivos para aprofundar sua prática'
+                                            : 'Exclusive features to deepen your practice'}
+                                    </p>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-semibold text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Experiência Premium' : 'Premium Experience'}
-                            </h3>
-                            <p className="text-gray-400 text-sm">
-                                {isPortuguese
-                                    ? 'Recursos exclusivos para aprofundar sua prática'
-                                    : 'Exclusive features to deepen your practice'}
-                            </p>
                         </div>
                     </div>
 
-                    {/* CTA Buttons */}
+                    {/* CTA Buttons - Hero Style */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                         <button
                             onClick={() => setCurrentScreen('spreads')}
-                            className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white font-semibold text-base shadow-lg shadow-purple-900/30 hover:shadow-purple-900/50 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-2"
+                            className="group relative px-8 py-3.5 bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1"
                         >
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            {isPortuguese ? 'Acessar o Tarot' : 'Access Tarot'}
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
+                            <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2 text-sm">
+                                {isPortuguese ? 'Acessar o Tarot' : 'Access Tarot'}
+                                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                            </span>
                         </button>
                         <button
-                            className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#d4a850] to-[#e8c060] text-[#1a0f1e] font-semibold text-base shadow-lg shadow-amber-900/30 hover:shadow-amber-900/50 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-2"
+                            className="group px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
                         >
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                            </svg>
-                            {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                            <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
+                                {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                <span className="material-symbols-outlined text-sm">star</span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -729,7 +741,7 @@ const Home = () => {
             </section>
 
             {/* WhatsApp Daily Card Subscription Section */}
-            <section className="relative z-10 py-16 md:py-24 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">
                 <style>{`
                     .home-glass-card {
                         background: rgba(255, 255, 255, 0.04);
@@ -755,40 +767,15 @@ const Home = () => {
 
                 <div className="max-w-6xl mx-auto">
                     {/* Feature Presentation Header */}
-                    <div className="text-center mb-12 md:mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gradient-gold-home mb-4 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                    <div className="text-center mb-14 md:mb-20">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold-home mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
                         </h2>
-                        <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto mb-10">
+                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
                             {isPortuguese
                                 ? 'Receba diariamente uma mensagem personalizada com orientações do tarot diretamente no seu celular.'
                                 : 'Receive daily personalized tarot guidance messages directly on your phone.'}
                         </p>
-
-                        {/* Feature Boxes */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto mb-12">
-                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-primary/20 transition-all">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 flex items-center justify-center mx-auto mb-3">
-                                    <span className="material-symbols-outlined text-yellow-500 text-xl">auto_awesome</span>
-                                </div>
-                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? 'Carta Personalizada' : 'Personalized Card'}</h3>
-                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Interpretação única para seu dia' : 'Unique interpretation for your day'}</p>
-                            </div>
-                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-primary/20 transition-all">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/10 flex items-center justify-center mx-auto mb-3">
-                                    <span className="material-symbols-outlined text-primary text-xl">schedule</span>
-                                </div>
-                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? 'Horário Ideal' : 'Ideal Time'}</h3>
-                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Escolha quando receber' : 'Choose when to receive'}</p>
-                            </div>
-                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-primary/20 transition-all">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center mx-auto mb-3">
-                                    <span className="material-symbols-outlined text-emerald-500 text-xl">chat</span>
-                                </div>
-                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}</h3>
-                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Direto no seu celular' : 'Right on your phone'}</p>
-                            </div>
-                        </div>
                     </div>
 
                     {/* Form Card */}
@@ -1033,6 +1020,55 @@ const Home = () => {
                                         </div>
                                     </div>
                                     <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-0.5 bg-white/30 rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Feature Cards - Below Form */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 mt-14 md:mt-16">
+                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-yellow-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
+                            <div className="flex items-start gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-yellow-400 text-xl">auto_awesome</span>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
+                                        {isPortuguese ? 'Carta Personalizada' : 'Personalized Card'}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
+                                        {isPortuguese ? 'Interpretação única para seu dia' : 'Unique interpretation for your day'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
+                            <div className="flex items-start gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-purple-400 text-xl">schedule</span>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
+                                        {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
+                                        {isPortuguese ? 'Escolha quando receber sua carta' : 'Choose when to receive your card'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-emerald-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
+                            <div className="flex items-start gap-4">
+                                <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                                    <span className="material-symbols-outlined text-emerald-400 text-xl">chat</span>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
+                                        {isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
+                                        {isPortuguese ? 'Direto no seu celular' : 'Right on your phone'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
