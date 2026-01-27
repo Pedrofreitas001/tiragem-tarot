@@ -3747,6 +3747,52 @@ const Session = () => {
                         );
                     })}
                 </div>
+
+                {/* Question Input Section */}
+                <div className="max-w-[1200px] mx-auto mt-4">
+                    <div className="bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/5 rounded-2xl p-5 md:p-6">
+                        <div className="flex items-start gap-4">
+                            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
+                                <span className="material-symbols-outlined text-yellow-500 text-[20px]">help</span>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90 mb-1" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                    {isPortuguese ? 'Sua Pergunta (Opcional)' : 'Your Question (Optional)'}
+                                </h3>
+                                <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mb-3" />
+                                <p className="text-gray-400 text-xs mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese
+                                        ? 'Concentre-se em uma questão específica para receber uma orientação mais direcionada.'
+                                        : 'Focus on a specific question to receive more targeted guidance.'}
+                                </p>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={question}
+                                        onChange={(e) => setQuestion(e.target.value)}
+                                        placeholder={isPortuguese ? 'Ex: O que preciso saber sobre minha carreira neste momento?' : 'Ex: What do I need to know about my career right now?'}
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none focus:border-purple-500/50 focus:shadow-[0_0_20px_rgba(168,85,247,0.2)] transition-all text-white placeholder:text-gray-600 text-sm"
+                                        style={{ fontFamily: "'Inter', sans-serif" }}
+                                    />
+                                    {question && (
+                                        <button
+                                            onClick={() => setQuestion('')}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-lg">close</span>
+                                        </button>
+                                    )}
+                                </div>
+                                {question && (
+                                    <p className="text-emerald-400 text-xs mt-2 flex items-center gap-1">
+                                        <span className="material-symbols-outlined text-sm">check_circle</span>
+                                        {isPortuguese ? 'Sua pergunta será considerada na análise das cartas' : 'Your question will be considered in the card analysis'}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {selectedCards.length > 0 && (
@@ -4225,6 +4271,25 @@ const Result = () => {
                                             <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Tema Central' : 'Central Theme'}</span>
                                             <p className="text-white font-medium mt-1">{structuredSynthesis.tema_central}</p>
                                         </div>
+
+                                        {/* Pergunta do Consulente e Resposta */}
+                                        {state?.question && state.question.trim() && (
+                                            <div className="mb-4 p-4 rounded-lg bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/20">
+                                                <div className="flex items-start gap-3 mb-3">
+                                                    <span className="material-symbols-outlined text-yellow-500 text-lg mt-0.5">help</span>
+                                                    <div>
+                                                        <span className="text-yellow-500 text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Sua Pergunta' : 'Your Question'}</span>
+                                                        <p className="text-white font-medium mt-1">"{state.question}"</p>
+                                                    </div>
+                                                </div>
+                                                {structuredSynthesis.resposta_pergunta && (
+                                                    <div className="mt-3 pt-3 border-t border-yellow-500/20">
+                                                        <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'O que as Cartas Revelam' : 'What the Cards Reveal'}</span>
+                                                        <p className="text-gray-200 mt-1 leading-relaxed">{structuredSynthesis.resposta_pergunta}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
 
                                         {/* Síntese Principal */}
                                         <p className="text-gray-200 leading-relaxed text-base mb-4">

@@ -17,6 +17,7 @@ export interface StructuredSynthesis {
   pergunta_reflexiva: string;
   energia_geral: 'positiva' | 'neutra' | 'desafiadora';
   elementos_destaque: string[];
+  resposta_pergunta?: string;
 }
 
 // Verifica se a API está configurada
@@ -42,30 +43,55 @@ export const getStructuredSynthesis = async (
     const orientation = isReversed
       ? (isPortuguese ? 'Invertida' : 'Reversed')
       : (isPortuguese ? 'Normal' : 'Upright');
-    return `- Posição ${idx + 1} (${position.name}): ${card.name} (${orientation})`;
+    return `- Posição ${idx + 1} (${position.name}): ${card.name} (${orientation}) - Contexto: ${position.description}`;
   }).join('\n');
 
   const language = isPortuguese ? 'português brasileiro' : 'English';
+  const hasQuestion = question && question.trim().length > 0;
 
   const prompt = `
-Você é um intérprete de Tarot experiente e respeitoso. Analise esta tiragem e forneça uma síntese estruturada.
+Você é um tarólogo experiente, sábio e acolhedor. Sua missão é interpretar esta tiragem de Tarot de forma clara, objetiva e harmoniosa.
 
-REGRAS IMPORTANTES:
-1. Responda em ${language}
-2. Máximo 3 parágrafos na síntese
-3. Tom: acolhedor, reflexivo, simbólico - NUNCA faça previsões absolutas ou determinísticas
-4. Foque em padrões, conexões entre as cartas e insights simbólicos
-5. Termine com uma pergunta reflexiva para o consulente
-6. NUNCA diga que algo "vai acontecer" - use linguagem como "pode indicar", "sugere", "convida a refletir"
-7. Respeite que o Tarot é uma ferramenta de autoconhecimento, não de adivinhação
+═══════════════════════════════════════
+CONTEXTO DA LEITURA
+═══════════════════════════════════════
+• Tipo de Tiragem: ${spread.name}
+• Idioma: ${language}
+${hasQuestion ? `• PERGUNTA DO CONSULENTE: "${question}"` : '• Orientação geral (sem pergunta específica)'}
 
-TIRAGEM:
-- Tipo: ${spread.name}
-- Pergunta do consulente: "${question || (isPortuguese ? 'Orientação geral' : 'General guidance')}"
-- Cartas:
+═══════════════════════════════════════
+CARTAS REVELADAS
+═══════════════════════════════════════
 ${cardListText}
 
-Forneça a resposta no formato JSON especificado.
+═══════════════════════════════════════
+DIRETRIZES DE INTERPRETAÇÃO
+═══════════════════════════════════════
+1. SÍNTESE: Crie uma narrativa fluida e coerente (2-3 parágrafos curtos)
+   - Conecte as cartas entre si de forma harmoniosa
+   - Use linguagem acessível, evitando jargões excessivos
+   - Seja específico sobre o que cada carta sugere na sua posição
+
+2. TOM: Acolhedor, respeitoso e empoderador
+   - NUNCA faça previsões absolutas ("vai acontecer", "certamente")
+   - Use linguagem de possibilidade ("pode indicar", "sugere", "convida a refletir")
+   - Foque no autoconhecimento e nas escolhas do consulente
+
+3. ESTRUTURA:
+   - Tema central: uma frase que capture a essência da leitura
+   - Conexões: como as cartas dialogam entre si
+   - Elementos simbólicos: imagens e arquétipos que se destacam
+   - Pergunta reflexiva: uma pergunta poderosa para o consulente meditar
+
+${hasQuestion ? `4. RESPOSTA À PERGUNTA:
+   - Aborde diretamente a pergunta "${question}"
+   - Mostre como as cartas iluminam essa questão específica
+   - Ofereça perspectivas práticas baseadas nos símbolos revelados` : ''}
+
+═══════════════════════════════════════
+FORMATO DE RESPOSTA
+═══════════════════════════════════════
+Retorne um JSON estruturado conforme o schema especificado.
 `;
 
   const responseSchema = {
@@ -73,32 +99,38 @@ Forneça a resposta no formato JSON especificado.
     properties: {
       sintese: {
         type: Type.STRING,
-        description: "Síntese narrativa da leitura em 2-3 parágrafos (máximo 200 palavras)"
+        description: "Síntese narrativa da leitura em 2-3 parágrafos (150-200 palavras). Seja específico sobre cada carta."
       },
       tema_central: {
         type: Type.STRING,
-        description: "O tema principal identificado na leitura (máximo 10 palavras)"
+        description: "O tema principal identificado na leitura (uma frase de 5-12 palavras)"
       },
       conexoes: {
         type: Type.ARRAY,
         items: { type: Type.STRING },
-        description: "Lista de 2-4 conexões interessantes entre as cartas"
+        description: "Lista de 2-4 conexões significativas entre as cartas"
       },
       pergunta_reflexiva: {
         type: Type.STRING,
-        description: "Uma pergunta para o consulente refletir sobre a leitura"
+        description: "Uma pergunta poderosa para o consulente refletir"
       },
       energia_geral: {
         type: Type.STRING,
-        description: "Classificação da energia: positiva, neutra ou desafiadora"
+        description: "Classificação da energia predominante: positiva, neutra ou desafiadora"
       },
       elementos_destaque: {
         type: Type.ARRAY,
         items: { type: Type.STRING },
-        description: "2-3 elementos simbólicos que se destacam na leitura"
-      }
+        description: "2-3 símbolos ou arquétipos que se destacam na leitura"
+      },
+      ...(hasQuestion && {
+        resposta_pergunta: {
+          type: Type.STRING,
+          description: "Resposta direta à pergunta do consulente baseada nas cartas (2-3 frases)"
+        }
+      })
     },
-    required: ["sintese", "tema_central", "conexoes", "pergunta_reflexiva", "energia_geral", "elementos_destaque"]
+    required: ["sintese", "tema_central", "conexoes", "pergunta_reflexiva", "energia_geral", "elementos_destaque", ...(hasQuestion ? ["resposta_pergunta"] : [])]
   };
 
   try {
@@ -108,8 +140,8 @@ Forneça a resposta no formato JSON especificado.
       config: {
         responseMimeType: 'application/json',
         responseSchema: responseSchema,
-        temperature: 0.7,
-        maxOutputTokens: 1024,
+        temperature: 0.75,
+        maxOutputTokens: 1500,
       }
     });
 
