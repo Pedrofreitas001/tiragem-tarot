@@ -28,8 +28,35 @@ export interface StructuredSynthesis {
 // Verifica se a API está configurada
 export const isGeminiConfigured = (): boolean => {
   const configured = Boolean(API_KEY && ai);
-  console.log("Gemini configured:", configured, "API_KEY exists:", Boolean(API_KEY));
   return configured;
+};
+
+// Helper function to delay execution
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Retry wrapper with exponential backoff for rate limiting
+const retryWithBackoff = async <T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelay: number = 2000
+): Promise<T | null> => {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      const isRateLimited = error?.status === 429 || error?.message?.includes('429');
+
+      if (isRateLimited && attempt < maxRetries) {
+        const waitTime = baseDelay * Math.pow(2, attempt); // Exponential backoff: 2s, 4s, 8s
+        console.log(`Rate limited. Waiting ${waitTime/1000}s before retry ${attempt + 1}/${maxRetries}...`);
+        await delay(waitTime);
+        continue;
+      }
+
+      throw error;
+    }
+  }
+  return null;
 };
 
 // Síntese estruturada para Premium (resposta mais confiável e padronizada)
@@ -38,7 +65,7 @@ export const getStructuredSynthesis = async (
   isPortuguese: boolean = true
 ): Promise<StructuredSynthesis | null> => {
   if (!API_KEY || !ai) {
-    console.warn("Gemini API Key is not configured. API_KEY:", Boolean(API_KEY), "ai:", Boolean(ai));
+    console.warn("Gemini API Key is not configured.");
     return null;
   }
 
@@ -143,18 +170,26 @@ Retorne um JSON estruturado conforme o schema especificado.
   try {
     console.log("Calling Gemini API for structured synthesis...");
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: responseSchema,
-        temperature: 0.75,
-        maxOutputTokens: 1500,
-      }
+    const result = await retryWithBackoff(async () => {
+      const response = await ai!.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: responseSchema,
+          temperature: 0.75,
+          maxOutputTokens: 1500,
+        }
+      });
+      return response;
     });
 
-    const text = response.text;
+    if (!result) {
+      console.error("Failed to get response after retries");
+      return null;
+    }
+
+    const text = result.text;
     console.log("Gemini response received:", text ? "success" : "empty");
 
     if (!text) return null;
@@ -166,73 +201,8 @@ Retorne um JSON estruturado conforme o schema especificado.
   }
 };
 
-// Função original para compatibilidade
+// Função original para compatibilidade - não usada ativamente, mantida para fallback
 export const getGeminiInterpretation = async (session: ReadingSession): Promise<ReadingAnalysis | null> => {
-  if (!API_KEY || !ai) {
-    console.warn("Gemini API Key is not configured. Using fallback interpretation.");
-    return null;
-  }
-
-  const { spread, cards, question, reversedIndices } = session;
-
-  const cardListText = cards.map((card, idx) => {
-    const isReversed = reversedIndices.includes(idx);
-    const position = spread.positions[idx];
-    return `- Position ${idx + 1} (${position.name}): ${card.name} ${isReversed ? '(Reversed)' : '(Upright)'}. Context: ${position.description}`;
-  }).join('\n');
-
-  const prompt = `
-    You are an expert Mystic Tarot Reader.
-
-    User Query: "${question || 'General Guidance'}"
-    Spread Used: ${spread.name}
-
-    The cards drawn are:
-    ${cardListText}
-
-    Provide a structured interpretation in JSON format.
-    1. 'synthesis': A deep, narrative summary of the reading's energy (approx 60-80 words).
-    2. 'cards': An array where each item corresponds to a card drawn. Include specific interpretation for its position.
-    3. 'advice': A final actionable advice.
-  `;
-
-  const responseSchema = {
-    type: Type.OBJECT,
-    properties: {
-      synthesis: { type: Type.STRING, description: "A mystical summary of the reading." },
-      cards: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            index: { type: Type.INTEGER },
-            name: { type: Type.STRING },
-            interpretation: { type: Type.STRING, description: "Detailed interpretation of this card in its position." },
-            keywords: { type: Type.ARRAY, items: { type: Type.STRING } }
-          }
-        }
-      },
-      advice: { type: Type.STRING, description: "Actionable spiritual advice." }
-    }
-  };
-
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: responseSchema,
-        temperature: 0.7,
-      }
-    });
-
-    const text = response.text;
-    if (!text) return null;
-    return JSON.parse(text) as ReadingAnalysis;
-
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    return null;
-  }
+  // Retorna null para evitar chamada dupla - usamos apenas getStructuredSynthesis
+  return null;
 };
