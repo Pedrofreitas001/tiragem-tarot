@@ -524,7 +524,7 @@ const Home = () => {
             </section>
 
             {/* Features Presentation Section */}
-            <section className="py-20 md:py-28 px-4 md:px-6 relative">
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">
                 <div className="max-w-[1200px] mx-auto">
                     <div className="text-center mb-14 md:mb-20">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
