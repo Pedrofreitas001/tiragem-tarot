@@ -537,118 +537,136 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 mb-14">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 mb-14">
                         {/* Feature 1 - Unlimited Readings */}
-                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
-                            <div className="flex items-start gap-4">
-                                <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-purple-400 text-xl">all_inclusive</span>
+                        <div className="relative h-full">
+                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
+                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">all_inclusive</span>
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Tiragens Ilimitadas' : 'Unlimited Readings'}
+                                        </h3>
+                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
-                                        {isPortuguese ? 'Tiragens Ilimitadas' : 'Unlimited Readings'}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? 'Realize quantas tiragens desejar, sem restrições'
-                                            : 'Perform as many readings as you wish'}
-                                    </p>
-                                </div>
+                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese
+                                        ? 'Realize quantas tiragens desejar, sem restrições ou limites de consultas'
+                                        : 'Perform as many readings as you wish, without restrictions'}
+                                </p>
                             </div>
                         </div>
 
                         {/* Feature 2 - AI Synthesis */}
-                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
-                            <div className="flex items-start gap-4">
-                                <div className="w-11 h-11 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-yellow-400 text-xl">psychology</span>
+                        <div className="relative h-full">
+                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
+                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">psychology</span>
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}
+                                        </h3>
+                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
-                                        {isPortuguese ? 'Síntese com IA' : 'AI-Powered Synthesis'}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? 'Interpretações profundas com inteligência artificial'
-                                            : 'Deep interpretations with artificial intelligence'}
-                                    </p>
-                                </div>
+                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese
+                                        ? 'Interpretações profundas integradas com inteligência artificial avançada'
+                                        : 'Deep interpretations integrated with advanced AI'}
+                                </p>
                             </div>
                         </div>
 
                         {/* Feature 3 - 78 Cards Library */}
-                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
-                            <div className="flex items-start gap-4">
-                                <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-purple-400 text-xl">collections_bookmark</span>
+                        <div className="relative h-full">
+                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
+                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">collections_bookmark</span>
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Biblioteca Completa' : 'Complete Library'}
+                                        </h3>
+                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
-                                        {isPortuguese ? 'Biblioteca Completa' : 'Complete Library'}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? '78 cartas do Tarot de Waite originais'
-                                            : '78 original Waite Tarot cards'}
-                                    </p>
-                                </div>
+                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese
+                                        ? '78 cartas do Tarot de Waite com ilustrações originais completas'
+                                        : '78 Waite Tarot cards with complete original illustrations'}
+                                </p>
                             </div>
                         </div>
 
                         {/* Feature 4 - WhatsApp Daily Card */}
-                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
-                            <div className="flex items-start gap-4">
-                                <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-emerald-400 text-xl">chat</span>
+                        <div className="relative h-full">
+                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
+                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">chat</span>
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
+                                        </h3>
+                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
-                                        {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? 'Receba mensagens personalizadas diariamente'
-                                            : 'Receive personalized messages daily'}
-                                    </p>
-                                </div>
+                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese
+                                        ? 'Receba mensagens personalizadas com sua carta diária no WhatsApp'
+                                        : 'Receive personalized daily card messages on WhatsApp'}
+                                </p>
                             </div>
                         </div>
 
                         {/* Feature 5 - Journey History */}
-                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
-                            <div className="flex items-start gap-4">
-                                <div className="w-11 h-11 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-yellow-400 text-xl">history</span>
+                        <div className="relative h-full">
+                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
+                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">history</span>
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Histórico Completo' : 'Complete History'}
+                                        </h3>
+                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
-                                        {isPortuguese ? 'Histórico Completo' : 'Complete History'}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? 'Acompanhe toda a sua jornada de autoconhecimento'
-                                            : 'Track your entire self-discovery journey'}
-                                    </p>
-                                </div>
+                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese
+                                        ? 'Acompanhe toda a sua jornada de autoconhecimento e evolução'
+                                        : 'Track your entire self-discovery and evolution journey'}
+                                </p>
                             </div>
                         </div>
 
-                        {/* Feature 6 - Premium Support */}
-                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
-                            <div className="flex items-start gap-4">
-                                <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-purple-400 text-xl">diamond</span>
+                        {/* Feature 6 - Premium Experience */}
+                        <div className="relative h-full">
+                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
+                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">diamond</span>
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Experiência Premium' : 'Premium Experience'}
+                                        </h3>
+                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
-                                        {isPortuguese ? 'Experiência Premium' : 'Premium Experience'}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? 'Recursos exclusivos para aprofundar sua prática'
-                                            : 'Exclusive features to deepen your practice'}
-                                    </p>
-                                </div>
+                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese
+                                        ? 'Recursos exclusivos para aprofundar sua prática e conexão'
+                                        : 'Exclusive features to deepen your practice and connection'}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -681,8 +699,8 @@ const Home = () => {
             <section id="spreads" className="py-16 md:py-24 px-4 md:px-6">
                 <div className="max-w-[1200px] mx-auto">
                     <div className="text-center md:text-left mb-10 md:mb-14 px-2">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gradient-gold mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{t.home.chooseReading}</h2>
-                        <p className="text-gray-300 text-lg max-w-xl">{t.home.chooseReadingSubtitle}</p>
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{t.home.chooseReading}</h2>
+                        <p className="text-gray-400 text-lg md:text-xl max-w-xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>{t.home.chooseReadingSubtitle}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 px-2">
@@ -1026,50 +1044,59 @@ const Home = () => {
                     </div>
 
                     {/* Feature Cards - Below Form */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 mt-14 md:mt-16">
-                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-yellow-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
-                            <div className="flex items-start gap-4">
-                                <div className="w-11 h-11 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-yellow-400 text-xl">auto_awesome</span>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 mt-14 md:mt-16">
+                        <div className="relative h-full">
+                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
+                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">auto_awesome</span>
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Carta Personalizada' : 'Personalized Card'}
+                                        </h3>
+                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
-                                        {isPortuguese ? 'Carta Personalizada' : 'Personalized Card'}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
-                                        {isPortuguese ? 'Interpretação única para seu dia' : 'Unique interpretation for your day'}
-                                    </p>
-                                </div>
+                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese ? 'Interpretação única e personalizada para o seu dia' : 'Unique personalized interpretation for your day'}
+                                </p>
                             </div>
                         </div>
-                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
-                            <div className="flex items-start gap-4">
-                                <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-purple-400 text-xl">schedule</span>
+                        <div className="relative h-full">
+                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
+                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">schedule</span>
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
+                                        </h3>
+                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
-                                        {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
-                                        {isPortuguese ? 'Escolha quando receber sua carta' : 'Choose when to receive your card'}
-                                    </p>
-                                </div>
+                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese ? 'Escolha o melhor momento para receber sua carta' : 'Choose the best time to receive your card'}
+                                </p>
                             </div>
                         </div>
-                        <div className="group relative p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-emerald-500/30 hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-1">
-                            <div className="flex items-start gap-4">
-                                <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                                    <span className="material-symbols-outlined text-emerald-400 text-xl">chat</span>
+                        <div className="relative h-full">
+                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
+                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">chat</span>
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}
+                                        </h3>
+                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="text-white text-base font-medium mb-2 tracking-wide">
-                                        {isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed font-light">
-                                        {isPortuguese ? 'Direto no seu celular' : 'Right on your phone'}
-                                    </p>
-                                </div>
+                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {isPortuguese ? 'Receba diretamente no seu celular via WhatsApp' : 'Receive directly on your phone via WhatsApp'}
+                                </p>
                             </div>
                         </div>
                     </div>
