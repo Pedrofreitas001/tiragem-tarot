@@ -6,7 +6,12 @@ const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 let ai: GoogleGenAI | null = null;
 if (API_KEY) {
-  ai = new GoogleGenAI({ apiKey: API_KEY });
+  try {
+    ai = new GoogleGenAI({ apiKey: API_KEY });
+    console.log("Gemini AI initialized successfully");
+  } catch (error) {
+    console.error("Failed to initialize Gemini AI:", error);
+  }
 }
 
 // Tipo para síntese estruturada
@@ -22,7 +27,9 @@ export interface StructuredSynthesis {
 
 // Verifica se a API está configurada
 export const isGeminiConfigured = (): boolean => {
-  return Boolean(API_KEY && ai);
+  const configured = Boolean(API_KEY && ai);
+  console.log("Gemini configured:", configured, "API_KEY exists:", Boolean(API_KEY));
+  return configured;
 };
 
 // Síntese estruturada para Premium (resposta mais confiável e padronizada)
@@ -31,7 +38,7 @@ export const getStructuredSynthesis = async (
   isPortuguese: boolean = true
 ): Promise<StructuredSynthesis | null> => {
   if (!API_KEY || !ai) {
-    console.warn("Gemini API Key is not configured.");
+    console.warn("Gemini API Key is not configured. API_KEY:", Boolean(API_KEY), "ai:", Boolean(ai));
     return null;
   }
 
@@ -134,6 +141,8 @@ Retorne um JSON estruturado conforme o schema especificado.
   };
 
   try {
+    console.log("Calling Gemini API for structured synthesis...");
+
     const response = await ai.models.generateContent({
       model: 'gemini-2.0-flash',
       contents: prompt,
@@ -146,6 +155,8 @@ Retorne um JSON estruturado conforme o schema especificado.
     });
 
     const text = response.text;
+    console.log("Gemini response received:", text ? "success" : "empty");
+
     if (!text) return null;
     return JSON.parse(text) as StructuredSynthesis;
 
