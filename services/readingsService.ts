@@ -12,6 +12,118 @@ export interface SavedReading {
     notes?: string;
 }
 
+// Interface para resumo estruturado
+export interface ReadingSummary {
+    pergunta?: string;
+    tema_central?: string;
+    sintese?: string;
+    conselho?: string;
+    reflexao?: string;
+    resposta?: string; // Para sim/não
+    energia?: string;
+    desafio?: string;
+    ponto_atencao?: string;
+}
+
+/**
+ * Formata o resumo da leitura para salvar no histórico
+ * Cria um texto estruturado e legível
+ */
+export const formatReadingSummary = (
+    summary: ReadingSummary,
+    spreadType: string,
+    isPortuguese: boolean = true
+): string => {
+    const parts: string[] = [];
+
+    // Título baseado no tipo de spread
+    const spreadTitles: Record<string, { pt: string; en: string }> = {
+        'three_card': { pt: 'Três Cartas', en: 'Three Cards' },
+        'celtic_cross': { pt: 'Cruz Celta', en: 'Celtic Cross' },
+        'love_check': { pt: 'Amor e Relacionamento', en: 'Love & Relationship' },
+        'yes_no': { pt: 'Sim ou Não', en: 'Yes or No' },
+        'card_of_day': { pt: 'Carta do Dia', en: 'Daily Card' }
+    };
+
+    const title = spreadTitles[spreadType]?.[isPortuguese ? 'pt' : 'en'] || spreadType;
+
+    // Pergunta do usuário (se houver)
+    if (summary.pergunta?.trim()) {
+        parts.push(`${isPortuguese ? 'PERGUNTA' : 'QUESTION'}: "${summary.pergunta}"`);
+    }
+
+    // Para Sim/Não, mostrar resposta primeiro
+    if (summary.resposta && spreadType === 'yes_no') {
+        const respostaMap: Record<string, { pt: string; en: string }> = {
+            'sim': { pt: 'SIM', en: 'YES' },
+            'nao': { pt: 'NÃO', en: 'NO' },
+            'talvez': { pt: 'TALVEZ', en: 'MAYBE' }
+        };
+        const resp = respostaMap[summary.resposta]?.[isPortuguese ? 'pt' : 'en'] || summary.resposta;
+        parts.push(`${isPortuguese ? 'RESPOSTA' : 'ANSWER'}: ${resp}`);
+    }
+
+    // Tema central
+    if (summary.tema_central) {
+        parts.push(`${isPortuguese ? 'TEMA' : 'THEME'}: ${summary.tema_central}`);
+    }
+
+    // Energia (para carta do dia)
+    if (summary.energia) {
+        parts.push(`${isPortuguese ? 'ENERGIA' : 'ENERGY'}: ${summary.energia}`);
+    }
+
+    // Síntese principal
+    if (summary.sintese) {
+        parts.push(`\n${summary.sintese}`);
+    }
+
+    // Desafio (Cruz Celta)
+    if (summary.desafio) {
+        parts.push(`${isPortuguese ? 'DESAFIO' : 'CHALLENGE'}: ${summary.desafio}`);
+    }
+
+    // Ponto de atenção (Amor)
+    if (summary.ponto_atencao) {
+        parts.push(`${isPortuguese ? 'ATENÇÃO' : 'ATTENTION'}: ${summary.ponto_atencao}`);
+    }
+
+    // Conselho
+    if (summary.conselho) {
+        parts.push(`${isPortuguese ? 'CONSELHO' : 'ADVICE'}: ${summary.conselho}`);
+    }
+
+    // Reflexão
+    if (summary.reflexao) {
+        parts.push(`${isPortuguese ? 'REFLEXÃO' : 'REFLECTION'}: ${summary.reflexao}`);
+    }
+
+    return parts.join('\n');
+};
+
+/**
+ * Extrai resumo estruturado da síntese da IA
+ * Funciona com qualquer tipo de spread
+ */
+export const extractSummaryFromSynthesis = (
+    synthesis: any,
+    question?: string
+): ReadingSummary => {
+    if (!synthesis) return { pergunta: question };
+
+    return {
+        pergunta: question,
+        tema_central: synthesis.tema_central || synthesis.energia || undefined,
+        sintese: synthesis.sintese || synthesis.mensagem || synthesis.explicacao || undefined,
+        conselho: synthesis.conselho || synthesis.foco || undefined,
+        reflexao: synthesis.reflexao || synthesis.pergunta_reflexiva || undefined,
+        resposta: synthesis.resposta || undefined,
+        energia: synthesis.energia || undefined,
+        desafio: synthesis.desafio_principal || undefined,
+        ponto_atencao: synthesis.ponto_atencao || synthesis.condicao || undefined
+    };
+};
+
 /**
  * Salva uma leitura no Supabase database
  * Retorna true se foi salvo com sucesso, false caso contrário
@@ -62,6 +174,36 @@ export const saveReadingToSupabase = async (
         console.error('Exception saving reading to Supabase:', err);
         return false;
     }
+};
+
+/**
+ * Salva leitura com resumo estruturado
+ * Versão otimizada que formata automaticamente a síntese
+ */
+export const saveReadingWithSummary = async (
+    userId: string,
+    spreadType: string,
+    cards: TarotCard[],
+    rawSynthesis: any,
+    question?: string,
+    isPortuguese: boolean = true
+): Promise<boolean> => {
+    // Extrair resumo estruturado
+    const summary = extractSummaryFromSynthesis(rawSynthesis, question);
+
+    // Formatar para texto legível
+    const formattedSynthesis = formatReadingSummary(summary, spreadType, isPortuguese);
+
+    // Salvar com todos os dados
+    return saveReadingToSupabase(
+        userId,
+        spreadType,
+        cards,
+        question,
+        formattedSynthesis,
+        0,
+        summary.tema_central || summary.energia || ''
+    );
 };
 
 /**

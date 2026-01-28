@@ -6,7 +6,7 @@ import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, i
 import StarsBackground from './components/StarsBackground';
 import { MinimalStarsBackground } from './components/MinimalStarsBackground';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
-import { saveReadingToSupabase, deleteReadingFromSupabase } from './services/readingsService';
+import { saveReadingToSupabase, deleteReadingFromSupabase, saveReadingWithSummary } from './services/readingsService';
 import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
 import { CartProvider, useCart } from './contexts/CartContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -4188,23 +4188,16 @@ const Result = () => {
                         localStorage.setItem('tarot-history', JSON.stringify(updated));
 
                         // Save to Supabase if user is logged in
-                        // Save to Supabase if user is logged in
                         if (user) {
-                            console.log("📤 Saving reading to Supabase...");
-                            // Combine all parts for a complete history message
-                            const completeAnalysis = [
-                                synthesis?.sintese,
-                                synthesis?.resposta_pergunta ? `\n\n🎯 ${isPortuguese ? 'Resposta' : 'Answer'}: ${synthesis.resposta_pergunta}` : ''
-                            ].filter(Boolean).join('\n');
-
-                            await saveReadingToSupabase(
+                            console.log("📤 Saving reading to Supabase with formatted summary...");
+                            // Usar nova função que formata resumo completo automaticamente
+                            await saveReadingWithSummary(
                                 user.id,
                                 state.spread.id,
                                 state.cards,
-                                state.question || '', // Ensuring question is saved
-                                completeAnalysis, // Complete message in synthesis field
-                                0,
-                                synthesis?.tema_central || '' // theme in notes field
+                                rawSynthesis, // Passa a síntese bruta para formatação
+                                state.question || '',
+                                isPortuguese
                             );
                         }
                     }
