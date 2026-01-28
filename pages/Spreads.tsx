@@ -5,7 +5,6 @@ import { SPREADS } from '../constants';
 import { Spread } from '../types';
 import { UserMenu } from '../components/UserMenu';
 import { PaywallModal, usePaywall } from '../components/PaywallModal';
-import { useAuth } from '../contexts/AuthContext';
 import { AuthModal } from '../components/AuthModal';
 
 // Inline components since they're in App.tsx
@@ -165,7 +164,6 @@ const Spreads = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
     const { checkAccess } = usePaywall();
-    const { incrementReadingCount } = useAuth();
     const [selectedSpread, setSelectedSpread] = useState<Spread | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -178,13 +176,11 @@ const Spreads = () => {
         'card_of_day': 'images/spreads/card_of_day.png',
     };
 
-    const handleStartReading = async (spread: Spread) => {
+    const handleStartReading = (spread: Spread) => {
         if (!checkAccess('readings')) {
             setShowPaywall(true);
             return;
         }
-        // Increment reading count when starting a new reading (works for both guests and logged in users)
-        await incrementReadingCount();
         navigate('/session', { state: { spread } });
     };
 

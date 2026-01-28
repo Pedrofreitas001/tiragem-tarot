@@ -299,15 +299,11 @@ const Home = () => {
     const { checkAccess, readingsRemaining } = usePaywall();
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
-    const { user, incrementReadingCount } = useAuth();
-
-    const handleSelectSpread = async (spread: Spread) => {
+    const handleSelectSpread = (spread: Spread) => {
         if (!checkAccess('readings')) {
             setShowPaywall(true);
             return;
         }
-        // Increment reading count when starting a new reading (works for both guests and logged in users)
-        await incrementReadingCount();
         navigate('/session', { state: { spread } });
     };
 
@@ -3591,6 +3587,8 @@ const Session = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
+    const { checkAccess } = usePaywall();
+    const { incrementReadingCount } = useAuth();
     const spread = (location.state as any)?.spread as Spread;
 
     const [deck, setDeck] = useState<TarotCard[]>([]);
@@ -3598,7 +3596,10 @@ const Session = () => {
     const [question, setQuestion] = useState("");
     const [isShuffling, setIsShuffling] = useState(true);
     const [isSpreadingCards, setIsSpreadingCards] = useState(false);
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
     const isNavigatingRef = useRef(false);
+    const hasCheckedAccessRef = useRef(false);
 
     const getSpreadTranslation = (spreadId: string) => {
         switch (spreadId) {
@@ -3674,9 +3675,19 @@ const Session = () => {
         }, 800);
     }, [spread, navigate]);
 
-    const handleCardClick = (card: TarotCard) => {
+    const handleCardClick = async (card: TarotCard) => {
         if (selectedCards.length >= spread.cardCount) return;
         if (selectedCards.find(c => c.card.id === card.id)) return;
+
+        // Verificar acesso na primeira carta (antes de qualquer processamento)
+        if (selectedCards.length === 0 && !hasCheckedAccessRef.current) {
+            if (!checkAccess('readings')) {
+                setShowPaywall(true);
+                return;
+            }
+            hasCheckedAccessRef.current = true;
+            await incrementReadingCount();
+        }
 
         // Efeito sonoro de escolha
         try {
@@ -4031,6 +4042,21 @@ const Session = () => {
                             t.common.loading}
                 </p>
             </div>
+
+            {/* Paywall Modal */}
+            <PaywallModal
+                isOpen={showPaywall}
+                onClose={() => setShowPaywall(false)}
+                feature="readings"
+                onLogin={() => {
+                    setShowPaywall(false);
+                    setShowAuthModal(true);
+                }}
+                onCheckout={() => navigate('/checkout')}
+            />
+
+            {/* Auth Modal */}
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </div>
     );
 };
@@ -4495,6 +4521,7 @@ const Result = () => {
                     setShowPaywall(false);
                     setShowAuthModal(true);
                 }}
+                onCheckout={() => navigate('/checkout')}
             />
 
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
