@@ -248,7 +248,7 @@ Responda em JSON válido.`;
         console.log(`📡 Gemini API - Spread: ${spreadId}, Cards: ${cards.length}`);
 
         // Tentar modelos em ordem de preferência
-        const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-pro'];
+        const modelsToTry = ['gemini-2.0-flash-lite', 'gemini-2.0-flash', 'gemini-2.5-flash'];
         let lastError = null;
 
         for (const modelName of modelsToTry) {
@@ -349,7 +349,7 @@ Crie uma mensagem inspiradora e prática para o dia. Responda em JSON válido.`;
         };
 
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
