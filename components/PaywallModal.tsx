@@ -228,7 +228,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             <>
               <button
                 onClick={() => {
-                  onLogin?.(); // Abre modal de autenticação para criar conta
+                  onCheckout?.(); // Vai para checkout onde escolhe Free ou Premium
                   onClose();
                 }}
                 className="w-full py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-xl text-white font-bold transition-all shadow-lg shadow-[#875faf]/30"
@@ -237,7 +237,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               </button>
               <button
                 onClick={() => {
-                  onLogin?.();
+                  onLogin?.(); // Abre modal de login para quem já tem conta
                   onClose();
                 }}
                 className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-300 hover:text-white font-medium transition-all"
