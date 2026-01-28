@@ -3,11 +3,12 @@ import { useLanguage, LanguageToggle } from '../contexts/LanguageContext';
 import { useCart } from '../contexts/CartContext';
 import { TAROT_CARDS } from '../tarotData';
 import { getCardName } from '../tarotData';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserMenu } from './UserMenu';
 import { AuthModal } from './AuthModal';
 import { PaywallModal } from './PaywallModal';
 import { MinimalStarsBackground } from './MinimalStarsBackground';
+import { getDailyCardSynthesis, DailyCardSynthesis } from '../services/geminiService';
 
 // Header Component
 const Header = () => {
@@ -161,6 +162,8 @@ export const DailyCard = () => {
     const { isPortuguese } = useLanguage();
     const navigate = useNavigate();
     const [showPaywall, setShowPaywall] = useState(false);
+    const [aiSynthesis, setAiSynthesis] = useState<DailyCardSynthesis | null>(null);
+    const [isLoadingAI, setIsLoadingAI] = useState(false);
 
     // CSS para órbitas planetárias - estáticas e estilos dos botões
     const orbitStyles = `
@@ -332,6 +335,28 @@ export const DailyCard = () => {
     const advice = isPortuguese ? dailyCard.advice_pt : dailyCard.advice;
     const description = isPortuguese ? dailyCard.description_pt : dailyCard.description;
 
+    // Buscar síntese da IA automaticamente
+    useEffect(() => {
+        const fetchAISynthesis = async () => {
+            setIsLoadingAI(true);
+            try {
+                const synthesis = await getDailyCardSynthesis(
+                    { name: dailyCard.name, id: dailyCard.id },
+                    isPortuguese
+                );
+                if (synthesis) {
+                    setAiSynthesis(synthesis);
+                }
+            } catch (error) {
+                console.error('Erro ao buscar síntese IA:', error);
+            } finally {
+                setIsLoadingAI(false);
+            }
+        };
+
+        fetchAISynthesis();
+    }, [dailyCard.id, isPortuguese]);
+
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
         e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=Tarot";
         e.currentTarget.onerror = null;
@@ -458,11 +483,30 @@ export const DailyCard = () => {
                         <div className="w-16 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto opacity-60" />
                     </div>
 
-                    {/* Meaning Quote */}
+                    {/* AI Message or Static Meaning */}
                     <div className="mb-20 md:mb-28 text-center px-4">
-                        <p className="text-gray-100 text-2xl md:text-3xl font-light leading-relaxed max-w-3xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            "{meaning}"
-                        </p>
+                        {isLoadingAI ? (
+                            <div className="flex flex-col items-center justify-center gap-4">
+                                <div className="w-8 h-8 border-2 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin"></div>
+                                <p className="text-gray-400 text-sm">{isPortuguese ? 'Consultando os astros...' : 'Consulting the stars...'}</p>
+                            </div>
+                        ) : aiSynthesis ? (
+                            <div className="space-y-6">
+                                <p className="text-gray-100 text-2xl md:text-3xl font-light leading-relaxed max-w-3xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    "{aiSynthesis.mensagem}"
+                                </p>
+                                <div className="flex justify-center">
+                                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 border border-yellow-500/30">
+                                        <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+                                        <span className="text-yellow-400 text-sm font-medium">{aiSynthesis.energia}</span>
+                                    </span>
+                                </div>
+                            </div>
+                        ) : (
+                            <p className="text-gray-100 text-2xl md:text-3xl font-light leading-relaxed max-w-3xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                "{meaning}"
+                            </p>
+                        )}
                     </div>
 
                     {/* Three Columns - Sophisticated Layout */}
@@ -494,7 +538,7 @@ export const DailyCard = () => {
                             </div>
                         </div>
 
-                        {/* Reflexão */}
+                        {/* Foco do Dia (IA) ou Reflexão (estático) */}
                         <div className="relative h-full">
                             <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col">
                                 <div className="flex items-start gap-4 mb-6">
@@ -503,18 +547,18 @@ export const DailyCard = () => {
                                     </div>
                                     <div className="flex-1 pt-1">
                                         <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Reflexão' : 'Reflection'}
+                                            {aiSynthesis ? (isPortuguese ? 'Foco do Dia' : 'Focus Today') : (isPortuguese ? 'Reflexão' : 'Reflection')}
                                         </h3>
                                         <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
                                     </div>
                                 </div>
                                 <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {description}
+                                    {aiSynthesis ? aiSynthesis.foco : description}
                                 </p>
                             </div>
                         </div>
 
-                        {/* Orientação */}
+                        {/* Reflexão (IA) ou Orientação (estático) */}
                         <div className="relative h-full">
                             <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col">
                                 <div className="flex items-start gap-4 mb-6">
@@ -523,13 +567,13 @@ export const DailyCard = () => {
                                     </div>
                                     <div className="flex-1 pt-1">
                                         <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Orientação' : 'Guidance'}
+                                            {aiSynthesis ? (isPortuguese ? 'Pergunta Reflexiva' : 'Reflective Question') : (isPortuguese ? 'Orientação' : 'Guidance')}
                                         </h3>
                                         <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
                                     </div>
                                 </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {advice}
+                                <p className="text-gray-300 text-sm leading-loose font-light flex-1 italic" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {aiSynthesis ? aiSynthesis.reflexao : advice}
                                 </p>
                             </div>
                         </div>

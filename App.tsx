@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
-import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured } from './services/geminiService';
+import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured, AnySynthesis, convertToLegacySynthesis } from './services/geminiService';
 import StarsBackground from './components/StarsBackground';
 import { MinimalStarsBackground } from './components/MinimalStarsBackground';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
@@ -4089,8 +4089,13 @@ const Result = () => {
             };
 
             // Fetch structured synthesis from Gemini (single API call)
-            const synthesis = isGeminiConfigured()
+            const rawSynthesis = isGeminiConfigured()
                 ? await getStructuredSynthesis(session, isPortuguese)
+                : null;
+
+            // Converter para formato legado para compatibilidade com UI existente
+            const synthesis = rawSynthesis
+                ? convertToLegacySynthesis(rawSynthesis, state.spread.id)
                 : null;
 
             setAnalysis(null); // No longer using the old analysis format
