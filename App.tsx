@@ -968,10 +968,10 @@ const Home = () => {
                                             <span className="text-white text-[7px] font-semibold">9:41</span>
                                             <div className="flex items-center gap-[2px]">
                                                 <svg className="w-[9px] h-[6px] text-white" viewBox="0 0 18 12" fill="currentColor">
-                                                    <rect x="0" y="8" width="3" height="4" rx="0.5"/>
-                                                    <rect x="4" y="5" width="3" height="7" rx="0.5"/>
-                                                    <rect x="8" y="2" width="3" height="10" rx="0.5"/>
-                                                    <rect x="12" y="0" width="3" height="12" rx="0.5"/>
+                                                    <rect x="0" y="8" width="3" height="4" rx="0.5" />
+                                                    <rect x="4" y="5" width="3" height="7" rx="0.5" />
+                                                    <rect x="8" y="2" width="3" height="10" rx="0.5" />
+                                                    <rect x="12" y="0" width="3" height="12" rx="0.5" />
                                                 </svg>
                                                 <div className="flex items-center">
                                                     <div className="w-[14px] h-[6px] border border-white rounded-[1.5px] flex items-center p-[0.5px]">
@@ -1018,7 +1018,7 @@ const Home = () => {
                                                         <div className="flex items-center justify-end gap-0.5 mt-0.5">
                                                             <span className="text-[5px] text-gray-400">08:00</span>
                                                             <svg className="w-2 h-1.5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                                                <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/>
+                                                                <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" />
                                                             </svg>
                                                         </div>
                                                     </div>
@@ -1027,13 +1027,13 @@ const Home = () => {
                                         </div>
                                         <div className="bg-[#1f2c34] px-1 py-1.5 flex items-center gap-1 flex-shrink-0">
                                             <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
                                             </svg>
                                             <div className="flex-1 bg-[#2a3942] rounded-full h-5 px-1.5 flex items-center">
                                                 <span className="text-gray-500 text-[6px]">{isPortuguese ? 'Mensagem' : 'Message'}</span>
                                             </div>
                                             <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+                                                <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
                                             </svg>
                                         </div>
                                     </div>
@@ -1106,155 +1106,156 @@ const Home = () => {
             {/* Journey Section - A Jornada do Herói */}
             <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} onOpenAuthModal={() => setShowAuthModal(true)} />
 
-            {/* Cosmic Mandala Animation Section */}
-            <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark">
-                <div className="max-w-[1200px] mx-auto">
-                    <div className="text-center md:text-left mb-10 md:mb-14 px-2">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
-                        <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Acompanhe as fases da lua e planeje seus rituais' : 'Track moon phases and plan your rituals'}</p>
-                    </div>
-                    {(() => {
-                        const currentDate = new Date();
-                        const cosmicDay = getCosmicDay(currentDate);
-                        const { moonPhase, zodiacSun, planetaryRuler, bestFor, bestFor_pt, avoid, avoid_pt } = cosmicDay;
+            {/* Cosmic Mandala Animation Section - HIDDEN (kept for future use) */}
+            <div style={{ display: 'none' }}>
+                <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark">
+                    <div className="max-w-[1200px] mx-auto">
+                        <div className="text-center md:text-left mb-10 md:mb-14 px-2">
+                            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
+                            <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Acompanhe as fases da lua e planeje seus rituais' : 'Track moon phases and plan your rituals'}</p>
+                        </div>
+                        {(() => {
+                            const currentDate = new Date();
+                            const cosmicDay = getCosmicDay(currentDate);
+                            const { moonPhase, zodiacSun, planetaryRuler, bestFor, bestFor_pt, avoid, avoid_pt } = cosmicDay;
 
-                        const monthNames = isPortuguese
-                            ? ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
-                            : ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                            const monthNames = isPortuguese
+                                ? ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+                                : ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
-                        // Calendar generation
-                        const year = currentDate.getFullYear();
-                        const month = currentDate.getMonth();
-                        const firstDay = new Date(year, month, 1);
-                        const lastDay = new Date(year, month + 1, 0);
-                        const daysInMonth = lastDay.getDate();
-                        const startingDayOfWeek = firstDay.getDay();
+                            // Calendar generation
+                            const year = currentDate.getFullYear();
+                            const month = currentDate.getMonth();
+                            const firstDay = new Date(year, month, 1);
+                            const lastDay = new Date(year, month + 1, 0);
+                            const daysInMonth = lastDay.getDate();
+                            const startingDayOfWeek = firstDay.getDay();
 
-                        const calendarMonthNames = isPortuguese
-                            ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
-                            : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                            const calendarMonthNames = isPortuguese
+                                ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+                                : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-                        const dayNames = isPortuguese
-                            ? ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
-                            : ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+                            const dayNames = isPortuguese
+                                ? ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
+                                : ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
-                        const getMoonPhaseForDay = (day: number) => {
-                            const dateToCheck = new Date(year, month, day);
-                            const lunarCycle = 29.53;
-                            const newMoonDate = new Date(2024, 0, 11);
-                            const daysSinceNewMoon = (dateToCheck.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
-                            const lunarDay = (daysSinceNewMoon % lunarCycle) / lunarCycle;
+                            const getMoonPhaseForDay = (day: number) => {
+                                const dateToCheck = new Date(year, month, day);
+                                const lunarCycle = 29.53;
+                                const newMoonDate = new Date(2024, 0, 11);
+                                const daysSinceNewMoon = (dateToCheck.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
+                                const lunarDay = (daysSinceNewMoon % lunarCycle) / lunarCycle;
 
-                            if (lunarDay < 0.125 || lunarDay > 0.875) return { phase: 'new', icon: '🌑', pt: 'Nova' };
-                            if (lunarDay < 0.375) return { phase: 'waxing', icon: '🌒', pt: 'Crescente' };
-                            if (lunarDay < 0.625) return { phase: 'full', icon: '🌕', pt: 'Cheia' };
-                            return { phase: 'waning', icon: '🌘', pt: 'Minguante' };
-                        };
+                                if (lunarDay < 0.125 || lunarDay > 0.875) return { phase: 'new', icon: '🌑', pt: 'Nova' };
+                                if (lunarDay < 0.375) return { phase: 'waxing', icon: '🌒', pt: 'Crescente' };
+                                if (lunarDay < 0.625) return { phase: 'full', icon: '🌕', pt: 'Cheia' };
+                                return { phase: 'waning', icon: '🌘', pt: 'Minguante' };
+                            };
 
-                        // Calculate lunar cycle progress (0-1 = full cycle from new moon)
-                        // Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova
-                        const getLunarCycleProgress = () => {
-                            const lunarCycle = 29.53;
-                            const newMoonDate = new Date(2024, 0, 11);
-                            const daysSinceNewMoon = (currentDate.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
-                            const lunarDay = ((daysSinceNewMoon % lunarCycle) + lunarCycle) % lunarCycle / lunarCycle;
-                            return lunarDay; // 0 = new moon, 0.25 = first quarter, 0.5 = full, 0.75 = last quarter
-                        };
+                            // Calculate lunar cycle progress (0-1 = full cycle from new moon)
+                            // Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova
+                            const getLunarCycleProgress = () => {
+                                const lunarCycle = 29.53;
+                                const newMoonDate = new Date(2024, 0, 11);
+                                const daysSinceNewMoon = (currentDate.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
+                                const lunarDay = ((daysSinceNewMoon % lunarCycle) + lunarCycle) % lunarCycle / lunarCycle;
+                                return lunarDay; // 0 = new moon, 0.25 = first quarter, 0.5 = full, 0.75 = last quarter
+                            };
 
-                        const lunarCycleProgress = getLunarCycleProgress();
+                            const lunarCycleProgress = getLunarCycleProgress();
 
-                        const calendarDays = [];
-                        for (let i = 0; i < startingDayOfWeek; i++) {
-                            calendarDays.push(null);
-                        }
-                        for (let i = 1; i <= daysInMonth; i++) {
-                            calendarDays.push(i);
-                        }
+                            const calendarDays = [];
+                            for (let i = 0; i < startingDayOfWeek; i++) {
+                                calendarDays.push(null);
+                            }
+                            for (let i = 1; i <= daysInMonth; i++) {
+                                calendarDays.push(i);
+                            }
 
-                        return (
-                            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-                                {/* LEFT: Calendar */}
-                                <div className="mb-12 lg:mb-0">
-                                    <div className="glass-widget rounded-2xl p-4 border border-primary/30 text-sm bg-surface-dark/60">
-                                        {/* Calendar Header - Month Only */}
-                                        <div className="text-center mb-4">
-                                            <h3 className="text-base md:text-lg font-bold text-white">{calendarMonthNames[month]} {year}</h3>
-                                        </div>
+                            return (
+                                <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+                                    {/* LEFT: Calendar */}
+                                    <div className="mb-12 lg:mb-0">
+                                        <div className="glass-widget rounded-2xl p-4 border border-primary/30 text-sm bg-surface-dark/60">
+                                            {/* Calendar Header - Month Only */}
+                                            <div className="text-center mb-4">
+                                                <h3 className="text-base md:text-lg font-bold text-white">{calendarMonthNames[month]} {year}</h3>
+                                            </div>
 
-                                        {/* Day Names */}
-                                        <div className="grid grid-cols-7 gap-1 mb-3">
-                                            {dayNames.map(day => (
-                                                <div key={day} className="text-center text-[10px] font-bold text-[#ad92c9] uppercase tracking-widest py-0.5">
-                                                    {day}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        {/* Calendar Days */}
-                                        <div className="grid grid-cols-7 gap-1 mb-3">
-                                            {calendarDays.map((day, idx) => {
-                                                if (day === null) {
-                                                    return <div key={`empty-${idx}`} className="aspect-square"></div>;
-                                                }
-
-                                                const moonPhaseData = getMoonPhaseForDay(day);
-                                                const isToday = day === currentDate.getDate();
-                                                const isFull = moonPhaseData.phase === 'full';
-                                                const isNew = moonPhaseData.phase === 'new';
-
-                                                return (
-                                                    <div
-                                                        key={day}
-                                                        className={`aspect-square rounded-sm flex flex-col items-center justify-center cursor-pointer transition-all duration-300 text-xs ${isToday
-                                                            ? 'bg-gradient-to-br from-primary/40 to-primary/20 border-2 border-primary'
-                                                            : isFull
-                                                                ? 'bg-white/10 hover:bg-white/15'
-                                                                : isNew
-                                                                    ? 'bg-zinc-900/40 hover:bg-zinc-800/40'
-                                                                    : 'bg-white/5 hover:bg-white/10'
-                                                            } group border border-white/10 hover:border-primary/30`}
-                                                    >
-                                                        <span className="text-base group-hover:scale-110 transition-transform">
-                                                            {moonPhaseData.phase === 'full' && '🌕'}
-                                                            {moonPhaseData.phase === 'new' && '🌑'}
-                                                            {moonPhaseData.phase === 'waxing' && '🌒'}
-                                                            {moonPhaseData.phase === 'waning' && '🌘'}
-                                                        </span>
-                                                        <span className={`text-[8px] font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
-                                                            {day}
-                                                        </span>
+                                            {/* Day Names */}
+                                            <div className="grid grid-cols-7 gap-1 mb-3">
+                                                {dayNames.map(day => (
+                                                    <div key={day} className="text-center text-[10px] font-bold text-[#ad92c9] uppercase tracking-widest py-0.5">
+                                                        {day}
                                                     </div>
-                                                );
-                                            })}
-                                        </div>
+                                                ))}
+                                            </div>
 
-                                        {/* Legend */}
-                                        <div className="pt-2 border-t border-white/10">
-                                            <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-sm">🌕</span>
-                                                    <span className="text-white/70">{isPortuguese ? 'Cheia' : 'Full'}</span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-sm">🌑</span>
-                                                    <span className="text-white/70">{isPortuguese ? 'Nova' : 'New'}</span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-sm">🌒</span>
-                                                    <span className="text-white/70">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-sm">🌘</span>
-                                                    <span className="text-white/70">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
+                                            {/* Calendar Days */}
+                                            <div className="grid grid-cols-7 gap-1 mb-3">
+                                                {calendarDays.map((day, idx) => {
+                                                    if (day === null) {
+                                                        return <div key={`empty-${idx}`} className="aspect-square"></div>;
+                                                    }
+
+                                                    const moonPhaseData = getMoonPhaseForDay(day);
+                                                    const isToday = day === currentDate.getDate();
+                                                    const isFull = moonPhaseData.phase === 'full';
+                                                    const isNew = moonPhaseData.phase === 'new';
+
+                                                    return (
+                                                        <div
+                                                            key={day}
+                                                            className={`aspect-square rounded-sm flex flex-col items-center justify-center cursor-pointer transition-all duration-300 text-xs ${isToday
+                                                                ? 'bg-gradient-to-br from-primary/40 to-primary/20 border-2 border-primary'
+                                                                : isFull
+                                                                    ? 'bg-white/10 hover:bg-white/15'
+                                                                    : isNew
+                                                                        ? 'bg-zinc-900/40 hover:bg-zinc-800/40'
+                                                                        : 'bg-white/5 hover:bg-white/10'
+                                                                } group border border-white/10 hover:border-primary/30`}
+                                                        >
+                                                            <span className="text-base group-hover:scale-110 transition-transform">
+                                                                {moonPhaseData.phase === 'full' && '🌕'}
+                                                                {moonPhaseData.phase === 'new' && '🌑'}
+                                                                {moonPhaseData.phase === 'waxing' && '🌒'}
+                                                                {moonPhaseData.phase === 'waning' && '🌘'}
+                                                            </span>
+                                                            <span className={`text-[8px] font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
+                                                                {day}
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            {/* Legend */}
+                                            <div className="pt-2 border-t border-white/10">
+                                                <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-sm">🌕</span>
+                                                        <span className="text-white/70">{isPortuguese ? 'Cheia' : 'Full'}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-sm">🌑</span>
+                                                        <span className="text-white/70">{isPortuguese ? 'Nova' : 'New'}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-sm">🌒</span>
+                                                        <span className="text-white/70">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-sm">🌘</span>
+                                                        <span className="text-white/70">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* RIGHT: Mandala */}
-                                <div className="flex items-center justify-center mt-8 lg:mt-0 lg:pl-8 lg:pt-24">
-                                    <style>{`
+                                    {/* RIGHT: Mandala */}
+                                    <div className="flex items-center justify-center mt-8 lg:mt-0 lg:pl-8 lg:pt-24">
+                                        <style>{`
                                         .cosmic-gradient { background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%); }
                                         .mandala-glow { box-shadow: 0 0 60px 10px rgba(147, 17, 212, 0.3); }
                                         .glass-widget { background: rgba(54, 35, 72, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(173, 146, 201, 0.2); }
@@ -1280,93 +1281,94 @@ const Home = () => {
                                         }
                                     `}</style>
 
-                                    <div className="relative w-full max-w-3xl mx-auto">
-                                        {/* Outer Orbits - Responsive */}
-                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] aspect-square border border-primary/10 rounded-full orbit-rotate"></div>
-                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[75vw] max-w-[420px] aspect-square border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
+                                        <div className="relative w-full max-w-3xl mx-auto">
+                                            {/* Outer Orbits - Responsive */}
+                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] aspect-square border border-primary/10 rounded-full orbit-rotate"></div>
+                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[75vw] max-w-[420px] aspect-square border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
 
-                                        {/* The Mandala Body - Responsive */}
-                                        <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
-                                            {/* Progress Arc - Shows lunar cycle progress from New Moon */}
-                                            {/* Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova */}
-                                            {/* Path starts at bottom, sweep-flag=1 for clockwise in SVG = counter-clockwise on screen */}
-                                            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-                                                {/* Background track */}
-                                                <circle
-                                                    cx="50"
-                                                    cy="50"
-                                                    r="49"
-                                                    fill="none"
-                                                    stroke="rgba(173, 146, 201, 0.08)"
-                                                    strokeWidth="1.5"
-                                                />
-                                                {/* Progress arc: bottom → right → top → left (counter-clockwise on screen) */}
-                                                <path
-                                                    d="M 50 99 A 49 49 0 1 1 50.01 99"
-                                                    fill="none"
-                                                    stroke="rgba(173, 146, 201, 0.6)"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                    pathLength="100"
-                                                    strokeDasharray={`${lunarCycleProgress * 100} 100`}
-                                                />
-                                            </svg>
+                                            {/* The Mandala Body - Responsive */}
+                                            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
+                                                {/* Progress Arc - Shows lunar cycle progress from New Moon */}
+                                                {/* Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova */}
+                                                {/* Path starts at bottom, sweep-flag=1 for clockwise in SVG = counter-clockwise on screen */}
+                                                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+                                                    {/* Background track */}
+                                                    <circle
+                                                        cx="50"
+                                                        cy="50"
+                                                        r="49"
+                                                        fill="none"
+                                                        stroke="rgba(173, 146, 201, 0.08)"
+                                                        strokeWidth="1.5"
+                                                    />
+                                                    {/* Progress arc: bottom → right → top → left (counter-clockwise on screen) */}
+                                                    <path
+                                                        d="M 50 99 A 49 49 0 1 1 50.01 99"
+                                                        fill="none"
+                                                        stroke="rgba(173, 146, 201, 0.6)"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        pathLength="100"
+                                                        strokeDasharray={`${lunarCycleProgress * 100} 100`}
+                                                    />
+                                                </svg>
 
-                                            {/* SVG Mandala Detail */}
-                                            <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
-                                                <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
-                                                <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
-                                                <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
-                                            </svg>
+                                                {/* SVG Mandala Detail */}
+                                                <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
+                                                    <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
+                                                    <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
+                                                    <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
+                                                </svg>
 
-                                            {/* Moon Phases Ring - Larger */}
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                {/* Full Moon - Top */}
-                                                <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
-                                                        🌕
+                                                {/* Moon Phases Ring - Larger */}
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    {/* Full Moon - Top */}
+                                                    <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
+                                                            🌕
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
-                                                </div>
-                                                {/* New Moon - Bottom */}
-                                                <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
-                                                        🌑
+                                                    {/* New Moon - Bottom */}
+                                                    <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
+                                                            🌑
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
-                                                </div>
-                                                {/* Waxing - Right */}
-                                                <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                        🌒
+                                                    {/* Waxing - Right */}
+                                                    <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
+                                                            🌒
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
-                                                </div>
-                                                {/* Waning - Left */}
-                                                <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                        🌘
+                                                    {/* Waning - Left */}
+                                                    <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
+                                                            🌘
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                 </div>
-                                            </div>
 
-                                            {/* Inner Core */}
-                                            <div className="text-center z-30">
-                                                <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-1" style={{ fontFamily: "'Crimson Text', serif" }}>{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
-                                                <p className="text-primary text-sm md:text-base font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
-                                                <div className="mt-3 flex justify-center gap-2">
-                                                    <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
+                                                {/* Inner Core */}
+                                                <div className="text-center z-30">
+                                                    <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-1" style={{ fontFamily: "'Crimson Text', serif" }}>{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
+                                                    <p className="text-primary text-sm md:text-base font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
+                                                    <div className="mt-3 flex justify-center gap-2">
+                                                        <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })()}
-                </div>
-            </section>
+                            );
+                        })()}
+                    </div>
+                </section>
+            </div>
 
             {/* Pricing Comparison Section */}
             <section className="relative z-10 py-16 md:py-24 px-4 md:px-6 overflow-x-hidden">
@@ -3596,6 +3598,7 @@ const Session = () => {
     const [question, setQuestion] = useState("");
     const [isShuffling, setIsShuffling] = useState(true);
     const [isSpreadingCards, setIsSpreadingCards] = useState(false);
+    const isNavigatingRef = useRef(false);
 
     const getSpreadTranslation = (spreadId: string) => {
         switch (spreadId) {
@@ -3694,15 +3697,19 @@ const Session = () => {
         }, 300);
 
         if (newSelection.length === spread.cardCount) {
+            if (isNavigatingRef.current) return;
+            isNavigatingRef.current = true;
+
             setTimeout(() => {
                 navigate('/result', {
                     state: {
                         spread,
                         cards: newSelection.map(s => s.card),
-                        question
+                        question,
+                        timestamp: Date.now() // Unique ID for this navigation session
                     }
                 });
-            }, 1500);
+            }, 1000);
         }
     };
 
@@ -4043,17 +4050,30 @@ const Result = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const fetchedRef = useRef(false); // Prevent duplicate API calls
 
-    // Reset hasSavedRef when state changes
+    // Reset hasSavedRef when state changes significantly
     useEffect(() => {
+        // Only reset if this is a actually a new session (different cards or different timestamp)
         hasSavedRef.current = false;
-    }, [state?.spread?.id, state?.cards]);
+        fetchedRef.current = false;
+    }, [state?.timestamp, state?.spread?.id]);
 
     useEffect(() => {
         if (!state?.spread || !state?.cards) {
             navigate('/');
             return;
         }
+
+        // Prevent duplicate calls in React Strict Mode
+        if (fetchedRef.current) {
+            console.log("⏭️ Skipping duplicate API call");
+            if (isLoading && structuredSynthesis) {
+                setIsLoading(false);
+            }
+            return;
+        }
+        fetchedRef.current = true;
 
         const fetchInterpretation = async () => {
             const reversedIndices = state.cards
@@ -4068,13 +4088,12 @@ const Result = () => {
                 date: new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US')
             };
 
-            // Fetch both interpretations in parallel
-            const [result, synthesis] = await Promise.all([
-                getGeminiInterpretation(session),
-                isGeminiConfigured() ? getStructuredSynthesis(session, isPortuguese) : Promise.resolve(null)
-            ]);
+            // Fetch structured synthesis from Gemini (single API call)
+            const synthesis = isGeminiConfigured()
+                ? await getStructuredSynthesis(session, isPortuguese)
+                : null;
 
-            setAnalysis(result);
+            setAnalysis(null); // No longer using the old analysis format
             setStructuredSynthesis(synthesis);
             setIsLoading(false);
 
@@ -4135,7 +4154,7 @@ const Result = () => {
                     previewCards: state.cards.map((c: TarotCard) => c.imageUrl),
                     cardNames: state.cards.map((c: TarotCard) => c.name),
                     positions: state.spread.positions.map((p: any) => p.name),
-                    notes: result?.synthesis || '',
+                    notes: synthesis?.sintese || '',
                     comment: '',
                     rating: 0
                 };
@@ -4164,26 +4183,36 @@ const Result = () => {
                         localStorage.setItem('tarot-history', JSON.stringify(updated));
 
                         // Save to Supabase if user is logged in
+                        // Save to Supabase if user is logged in
                         if (user) {
+                            console.log("📤 Saving reading to Supabase...");
+                            // Combine all parts for a complete history message
+                            const completeAnalysis = [
+                                synthesis?.sintese,
+                                synthesis?.resposta_pergunta ? `\n\n🎯 ${isPortuguese ? 'Resposta' : 'Answer'}: ${synthesis.resposta_pergunta}` : ''
+                            ].filter(Boolean).join('\n');
+
                             await saveReadingToSupabase(
                                 user.id,
                                 state.spread.id,
                                 state.cards,
-                                state.question,
-                                result?.synthesis || '',
+                                state.question || '', // Ensuring question is saved
+                                completeAnalysis, // Complete message in synthesis field
                                 0,
-                                ''
+                                synthesis?.tema_central || '' // theme in notes field
                             );
                         }
                     }
                 }
             } catch (e) {
-                console.error('Failed to save to history:', e);
+                console.error('❌ Failed to save to history:', e);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchInterpretation();
-    }, [state, navigate, isPortuguese]);
+    }, [state?.spread?.id, state?.cards, state?.question, isPortuguese, user?.id]);
 
     if (!state?.spread) return null;
 
@@ -4333,16 +4362,8 @@ const Result = () => {
                                 ) : (
                                     <>
                                         <p className="text-gray-200 leading-relaxed text-base mb-4">
-                                            {analysis?.synthesis || (isPortuguese ? 'Configure a chave da API Gemini para obter sínteses personalizadas.' : 'Configure the Gemini API key to get personalized syntheses.')}
+                                            {isPortuguese ? 'Configure a chave da API Gemini para obter sínteses personalizadas.' : 'Configure the Gemini API key to get personalized syntheses.'}
                                         </p>
-                                        {analysis?.advice && (
-                                            <div className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/20">
-                                                <p className="text-primary text-sm font-medium flex items-start gap-2">
-                                                    <span className="material-symbols-outlined text-lg mt-0.5">tips_and_updates</span>
-                                                    {analysis.advice}
-                                                </p>
-                                            </div>
-                                        )}
                                     </>
                                 )}
                             </div>
