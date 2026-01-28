@@ -392,15 +392,15 @@ export const DailyCard = () => {
 
                         {/* Right Column - Card Display + Info Below */}
                         <div className="flex flex-col items-center lg:order-last order-last">
-                            <div className="relative w-full flex items-center justify-center overflow-hidden">
+                            <div className="relative w-full flex items-center justify-center">
                                 <div className="relative md:w-[500px] md:h-[460px] w-[380px] h-[360px] flex items-center justify-center group perspective-1000">
                                     {/* Background Circles */}
 
-                                    {/* Outer Decorative Circle - dashed, offset to the right */}
-                                    <div className="ring-absolute ring-6 z-5" style={{ top: '48%', left: '52%' }}></div>
+                                    {/* Outer Decorative Circle - dashed */}
+                                    <div className="ring-absolute ring-6 z-5" style={{ top: '50%', left: '50%' }}></div>
 
                                     {/* Inner Circle - centered on card */}
-                                    <div className="ring-absolute ring-5 z-10" style={{ top: '46%', left: '50%' }}></div>
+                                    <div className="ring-absolute ring-5 z-10" style={{ top: '50%', left: '50%' }}></div>
 
                                     {/* Card Image */}
                                     <div className="relative md:w-[200px] md:h-[310px] w-[152px] h-[236px] z-20 card-float transition-transform duration-700 ease-out group-hover:scale-105 group-hover:rotate-1">

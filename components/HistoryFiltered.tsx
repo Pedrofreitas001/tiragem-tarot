@@ -208,15 +208,23 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
 
         const dayMap: Record<string, Record<string, number>> = {};
 
+        // Month abbreviation maps for locale date parsing
+        const monthMapPt: Record<string, string> = {
+            'jan': '01', 'fev': '02', 'mar': '03', 'abr': '04', 'mai': '05', 'jun': '06',
+            'jul': '07', 'ago': '08', 'set': '09', 'out': '10', 'nov': '11', 'dez': '12'
+        };
+        const monthMapEn: Record<string, string> = {
+            'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04', 'may': '05', 'jun': '06',
+            'jul': '07', 'aug': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12'
+        };
+
         // Group readings by day ONLY (no time)
         filteredReadings.forEach((reading) => {
             try {
-                // Parse date - extract just the day part (DD/MM format)
                 let dateStr = '';
                 if (reading.date.includes('/')) {
                     // Format: "23/01, 15:32" or "23/01/2024" - extract just DD/MM
                     const datePart = reading.date.split(',')[0].trim();
-                    // Get only DD/MM (first 5 chars)
                     dateStr = datePart.length >= 5 ? datePart.substring(0, 5) : datePart;
                 } else if (reading.date.includes('T')) {
                     // ISO format - convert to DD/MM
@@ -225,8 +233,27 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                     const month = String(d.getMonth() + 1).padStart(2, '0');
                     dateStr = `${day}/${month}`;
                 } else {
-                    // Fallback - try to extract DD/MM
-                    dateStr = reading.date.substring(0, 5);
+                    // Locale format: "28 de jan., 15:30" (pt-BR) or "Jan 28, 15:30" (en-US)
+                    const datePart = reading.date.split(',')[0].trim().toLowerCase();
+                    // Try Portuguese: "28 de jan." or "28 de janeiro"
+                    const ptMatch = datePart.match(/(\d{1,2})\s+de\s+(\w{3})/);
+                    if (ptMatch) {
+                        const day = ptMatch[1].padStart(2, '0');
+                        const month = monthMapPt[ptMatch[2]] || '01';
+                        dateStr = `${day}/${month}`;
+                    } else {
+                        // Try English: "Jan 28" or "January 28"
+                        const enMatch = datePart.match(/(\w{3})\s+(\d{1,2})/);
+                        if (enMatch) {
+                            const day = enMatch[2].padStart(2, '0');
+                            const month = monthMapEn[enMatch[1]] || '01';
+                            dateStr = `${day}/${month}`;
+                        } else {
+                            // Last fallback: use current date
+                            const now = new Date();
+                            dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
+                        }
+                    }
                 }
 
                 if (!dayMap[dateStr]) {
@@ -244,14 +271,16 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
             }
         });
 
-        // Sort by date ascending (smallest to largest) and return last 7 days
+        // Sort by date ascending (smallest to largest, left to right) and return last 7 days
         return Object.entries(dayMap)
             .sort(([dateA], [dateB]) => {
-                // Parse DD/MM format
-                const [dayA, monthA] = dateA.split('/').map(Number);
-                const [dayB, monthB] = dateB.split('/').map(Number);
+                // Parse DD/MM format safely
+                const partsA = dateA.split('/').map(Number);
+                const partsB = dateB.split('/').map(Number);
+                const monthA = partsA[1] || 0;
+                const monthB = partsB[1] || 0;
                 if (monthA !== monthB) return monthA - monthB;
-                return dayA - dayB;
+                return (partsA[0] || 0) - (partsB[0] || 0);
             })
             .slice(-7)
             .map(([day, types]) => ({
