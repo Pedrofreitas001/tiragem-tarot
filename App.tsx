@@ -3525,6 +3525,7 @@ const Explore = () => {
                                 <img
                                     src={card.imageUrl}
                                     alt={card.name}
+                                    loading="lazy"
                                     onError={handleImageError}
                                     className={`w-full h-full object-cover transition-opacity ${isLocked || isGuestLocked ? 'opacity-70 blur-[1px]' : 'opacity-80 group-hover:opacity-100'
                                         }`}
@@ -3541,7 +3542,6 @@ const Explore = () => {
                                 )}
 
                                 <div className="absolute bottom-0 left-0 p-3">
-                                    <p className="text-xs text-primary font-bold uppercase mb-0.5">{card.arcana === 'major' ? (isPortuguese ? 'Maior' : 'Major') : card.suit}</p>
                                     <p className="text-white font-bold text-lg leading-tight">{getCardName(card.id, isPortuguese)}</p>
                                 </div>
                             </div>
