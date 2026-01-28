@@ -42,9 +42,6 @@ const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400'}`}>
                                 {t.nav.history}
                             </button>
-                            <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400'}`}>
-                                {t.nav.shop}
-                            </button>
                         </nav>
 
                         <div className="flex items-center gap-3">
@@ -73,7 +70,6 @@ const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
                             <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300">{t.nav.history}</button>
-                            <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300">{t.nav.shop}</button>
                         </nav>
                     )}
                 </div>

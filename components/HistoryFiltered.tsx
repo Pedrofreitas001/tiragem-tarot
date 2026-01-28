@@ -244,16 +244,14 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
             }
         });
 
-        // Sort by date and return last 7 days
+        // Sort by date ascending (smallest to largest) and return last 7 days
         return Object.entries(dayMap)
             .sort(([dateA], [dateB]) => {
-                try {
-                    const a = new Date(dateA.replace(/(\d{2})\/(\d{2})/, '$2/$1'));
-                    const b = new Date(dateB.replace(/(\d{2})\/(\d{2})/, '$2/$1'));
-                    return a.getTime() - b.getTime();
-                } catch {
-                    return 0;
-                }
+                // Parse DD/MM format
+                const [dayA, monthA] = dateA.split('/').map(Number);
+                const [dayB, monthB] = dateB.split('/').map(Number);
+                if (monthA !== monthB) return monthA - monthB;
+                return dayA - dayB;
             })
             .slice(-7)
             .map(([day, types]) => ({

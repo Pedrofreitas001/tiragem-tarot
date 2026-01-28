@@ -181,9 +181,6 @@ const Header = () => {
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
-                            <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                                {t.nav.shop}
-                            </button>
                         </nav>
 
                         <div className="flex items-center gap-3">
@@ -220,7 +217,6 @@ const Header = () => {
                             <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
-                            <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
                         </nav>
                     )}
                 </div>
@@ -398,6 +394,48 @@ const Home = () => {
                         -webkit-text-fill-color: transparent;
                         background-clip: text;
                     }
+                    @keyframes spin-reverse-home {
+                        0% { transform: translate(-50%, -50%) rotate(0deg); }
+                        100% { transform: translate(-50%, -50%) rotate(-360deg); }
+                    }
+                    @keyframes spin-slow-home {
+                        from { transform: translate(-50%, -50%) rotate(0deg); }
+                        to { transform: translate(-50%, -50%) rotate(360deg); }
+                    }
+                    @keyframes float-home {
+                        0%, 100% { transform: translateY(0); }
+                        50% { transform: translateY(-10px); }
+                    }
+                    .ring-absolute-home {
+                        position: absolute;
+                        top: 50%; left: 50%;
+                        transform: translate(-50%, -50%);
+                        border-radius: 50%;
+                        pointer-events: none;
+                    }
+                    .ring-5-home {
+                        width: 300px; height: 300px;
+                        border: 1px solid rgba(224, 192, 128, 0.6);
+                        box-shadow: 0 0 15px rgba(224, 192, 128, 0.25), inset 0 0 10px rgba(224, 192, 128, 0.1);
+                        animation: spin-reverse-home 30s linear infinite;
+                    }
+                    .ring-6-home {
+                        width: 460px; height: 460px;
+                        border: 1px dashed rgba(224, 192, 128, 0.2);
+                        box-shadow: 0 0 25px rgba(224, 192, 128, 0.1);
+                        animation: spin-reverse-home 60s linear infinite;
+                    }
+                    .card-float-home {
+                        animation: float-home 6s ease-in-out infinite;
+                    }
+                    @media (max-width: 768px) {
+                        .ring-5-home { width: 250px; height: 250px; }
+                        .ring-6-home { width: 380px; height: 380px; }
+                    }
+                    @media (max-width: 640px) {
+                        .ring-5-home { width: 220px; height: 220px; }
+                        .ring-6-home { width: 340px; height: 340px; }
+                    }
                 `}} />
 
                 <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-12 w-full">
@@ -438,45 +476,29 @@ const Home = () => {
                             </div>
                         </div>
 
-                        {/* Right Column - Arcane Symbol (Mobile: appears first) */}
-                        <div className="flex items-center justify-center lg:justify-end order-1 lg:order-2">
-                            <div className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
-                                {/* Outer Ring */}
-                                <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.45)" strokeWidth="1" fill="none" />
-                                    <circle cx="220" cy="40" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <circle cx="220" cy="400" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <circle cx="40" cy="220" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <circle cx="400" cy="220" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <path d="M 220,20 L 220,50" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                    <path d="M 220,390 L 220,420" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                    <path d="M 20,220 L 50,220" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                    <path d="M 390,220 L 420,220" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                </svg>
-
-                                {/* Middle Ring */}
-                                <svg className="arcane-ring-middle absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="140" stroke="rgba(135, 95, 175, 0.38)" strokeWidth="1" fill="none" />
-                                    <circle cx="220" cy="80" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="220" cy="360" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="80" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="360" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="130" cy="130" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                    <circle cx="310" cy="130" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                    <circle cx="130" cy="310" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                    <circle cx="310" cy="310" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                </svg>
-
-                                {/* Inner Ring */}
-                                <svg className="arcane-ring-inner absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="80" stroke="rgba(135, 95, 175, 0.5)" strokeWidth="1.5" fill="none" />
-                                </svg>
-
-                                {/* Center Symbol */}
-                                <div className="arcane-center absolute inset-0 flex items-center justify-center">
-                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="6" cy="6" r="4" fill="rgba(135, 95, 175, 0.5)" />
-                                    </svg>
+                        {/* Right Column - Card Mockup (Mobile: appears first) */}
+                        <div className="flex flex-col items-center lg:order-last order-1 lg:order-2">
+                            <div className="relative w-full flex items-center justify-center overflow-hidden">
+                                <div className="relative md:w-[500px] md:h-[460px] w-[380px] h-[360px] flex items-center justify-center group perspective-1000">
+                                    {/* Outer Decorative Circle - dashed */}
+                                    <div className="ring-absolute-home ring-6-home z-5" style={{ top: '48%', left: '52%' }}></div>
+                                    {/* Inner Circle */}
+                                    <div className="ring-absolute-home ring-5-home z-10" style={{ top: '46%', left: '50%' }}></div>
+                                    {/* Card Image */}
+                                    <div className="relative md:w-[200px] md:h-[310px] w-[152px] h-[236px] z-20 card-float-home transition-transform duration-700 ease-out group-hover:scale-105 group-hover:rotate-1">
+                                        <div className="absolute inset-0 bg-yellow-400 blur-sm opacity-[0.02] rounded-xl group-hover:opacity-[0.05] transition-opacity duration-500"></div>
+                                        <img
+                                            alt="Tarot"
+                                            className="w-full h-full object-cover rounded-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-yellow-500/40 relative z-30"
+                                            src="https://www.sacred-texts.com/tarot/pkt/img/ar17.jpg"
+                                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/300x520/1c1022/9311d4?text=Tarot'; }}
+                                        />
+                                        <div className="absolute -inset-[1px] rounded-xl border border-yellow-500/30 z-40 pointer-events-none"></div>
+                                        <div className="absolute -inset-[6px] rounded-xl border border-yellow-500/10 z-30 pointer-events-none"></div>
+                                    </div>
+                                    {/* Decorative icons - one above, one below */}
+                                    <div className="absolute top-[15%] right-[10%] text-yellow-500/30 text-[8px]">&#10022;</div>
+                                    <div className="absolute bottom-[25%] left-[8%] text-yellow-500/20 text-[6px]">&#10022;</div>
                                 </div>
                             </div>
                         </div>
@@ -668,9 +690,9 @@ const Home = () => {
                     </div>
 
                     {/* CTA Buttons - Hero Style */}
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-6">
                         <button
-                            onClick={() => setCurrentScreen('spreads')}
+                            onClick={() => handleSelectSpread(SPREADS[0])}
                             className="group relative px-8 py-3.5 bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1"
                         >
                             <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
@@ -680,6 +702,7 @@ const Home = () => {
                             </span>
                         </button>
                         <button
+                            onClick={() => navigate('/checkout')}
                             className="group px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
                         >
                             <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
@@ -4069,21 +4092,12 @@ const Result = () => {
     const { checkAccess } = usePaywall();
     const { user } = useAuth();
     const state = location.state as any;
-    const hasSavedRef = useRef(false);
-
     const [analysis, setAnalysis] = useState<ReadingAnalysis | null>(null);
     const [structuredSynthesis, setStructuredSynthesis] = useState<StructuredSynthesis | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
-    const fetchedRef = useRef(false); // Prevent duplicate API calls
-
-    // Reset hasSavedRef when state changes significantly
-    useEffect(() => {
-        // Only reset if this is a actually a new session (different cards or different timestamp)
-        hasSavedRef.current = false;
-        fetchedRef.current = false;
-    }, [state?.timestamp, state?.spread?.id]);
+    const processedTimestampRef = useRef<number | null>(null); // Track which session we already processed
 
     useEffect(() => {
         if (!state?.spread || !state?.cards) {
@@ -4091,15 +4105,16 @@ const Result = () => {
             return;
         }
 
-        // Prevent duplicate calls in React Strict Mode
-        if (fetchedRef.current) {
-            console.log("⏭️ Skipping duplicate API call");
+        // Prevent duplicate calls: only process each unique timestamp once
+        const currentTimestamp = state?.timestamp || 0;
+        if (processedTimestampRef.current === currentTimestamp) {
+            console.log("⏭️ Skipping duplicate API call (same timestamp)");
             if (isLoading && structuredSynthesis) {
                 setIsLoading(false);
             }
             return;
         }
-        fetchedRef.current = true;
+        processedTimestampRef.current = currentTimestamp;
 
         const fetchInterpretation = async () => {
             const reversedIndices = state.cards
@@ -4165,14 +4180,10 @@ const Result = () => {
                     color: 'text-gray-400 bg-gray-500/10'
                 };
 
+                const now = new Date();
                 const historyItem = {
                     id: Date.now(),
-                    date: new Date().toLocaleString(isPortuguese ? 'pt-BR' : 'en-US', {
-                        day: '2-digit',
-                        month: 'short',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }),
+                    date: `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
                     spreadName: spreadInfo.name,
                     typeBadge: spreadInfo.tag,
                     typeColor: spreadInfo.color,
@@ -4185,49 +4196,35 @@ const Result = () => {
                     rating: 0
                 };
 
-                // Save to localStorage (always) - Only if not already saved
-                if (!hasSavedRef.current) {
-                    hasSavedRef.current = true;
-                    const existing = JSON.parse(localStorage.getItem('tarot-history') || '[]') as any[];
+                // Save to localStorage and Supabase (timestamp-based dedup already handled above)
+                const existing = JSON.parse(localStorage.getItem('tarot-history') || '[]') as any[];
 
-                    // Create a unique signature for this reading based on cards
-                    const cardSignature = state.cards.map((c: TarotCard) => c.id).sort().join(',');
+                // Check for duplicates: same timestamp in existing history
+                const isDuplicate = existing.some((item: any) =>
+                    Math.abs(item.id - historyItem.id) < 5000 && item.spreadId === historyItem.spreadId
+                );
 
-                    // Check for duplicates: same cards in last 5 seconds
-                    const isDuplicate = existing.some((item: any) => {
-                        const existingSignature = item.cardNames?.map((name: string) => {
-                            const card = TAROT_CARDS.find(c => c.name === name);
-                            return card?.id;
-                        }).filter(Boolean).sort().join(',');
+                if (!isDuplicate) {
+                    const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
+                    localStorage.setItem('tarot-history', JSON.stringify(updated));
 
-                        return existingSignature === cardSignature &&
-                            (Date.now() - item.id) < 5000;
-                    });
+                    // Save to Supabase if user is logged in
+                    if (user) {
+                        console.log("Saving reading to Supabase...");
+                        const completeAnalysis = [
+                            synthesis?.sintese,
+                            synthesis?.resposta_pergunta ? `\n\n${isPortuguese ? 'Resposta' : 'Answer'}: ${synthesis.resposta_pergunta}` : ''
+                        ].filter(Boolean).join('\n');
 
-                    if (!isDuplicate) {
-                        const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
-                        localStorage.setItem('tarot-history', JSON.stringify(updated));
-
-                        // Save to Supabase if user is logged in
-                        // Save to Supabase if user is logged in
-                        if (user) {
-                            console.log("📤 Saving reading to Supabase...");
-                            // Combine all parts for a complete history message
-                            const completeAnalysis = [
-                                synthesis?.sintese,
-                                synthesis?.resposta_pergunta ? `\n\n🎯 ${isPortuguese ? 'Resposta' : 'Answer'}: ${synthesis.resposta_pergunta}` : ''
-                            ].filter(Boolean).join('\n');
-
-                            await saveReadingToSupabase(
-                                user.id,
-                                state.spread.id,
-                                state.cards,
-                                state.question || '', // Ensuring question is saved
-                                completeAnalysis, // Complete message in synthesis field
-                                0,
-                                synthesis?.tema_central || '' // theme in notes field
-                            );
-                        }
+                        await saveReadingToSupabase(
+                            user.id,
+                            state.spread.id,
+                            state.cards,
+                            state.question || '',
+                            completeAnalysis,
+                            0,
+                            synthesis?.tema_central || ''
+                        );
                     }
                 }
             } catch (e) {

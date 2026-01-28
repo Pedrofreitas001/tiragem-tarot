@@ -48,9 +48,6 @@ const Header = () => {
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
-                            <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                                {t.nav.shop}
-                            </button>
                         </nav>
 
                         <div className="flex items-center gap-3">
@@ -87,7 +84,6 @@ const Header = () => {
                             <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
-                            <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
                         </nav>
                     )}
                 </div>
@@ -244,9 +240,7 @@ export const DailyCard = () => {
         }
         .ring-5 {
             width: 300px; height: 300px;
-            border: 1px solid rgba(224, 192, 128, 0.35);
-            border-top-color: rgba(224, 192, 128, 0.7);
-            border-bottom-color: rgba(224, 192, 128, 0.7);
+            border: 1px solid rgba(224, 192, 128, 0.6);
             box-shadow: 0 0 15px rgba(224, 192, 128, 0.25), inset 0 0 10px rgba(224, 192, 128, 0.1);
             animation: spin-reverse 30s linear infinite;
         }
