@@ -1,6 +1,45 @@
 // Service para salvar leituras no Supabase
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { TarotCard } from '../types';
+import { TAROT_CARDS } from '../tarotData';
+
+/**
+ * Encontra a imagem de uma carta pelo nome (português ou inglês)
+ * Usa fuzzy matching para lidar com variações de entrada do usuário
+ */
+const findCardImageByName = (cardName: string): string => {
+    if (!cardName) return '';
+
+    const normalizedName = cardName.toLowerCase().trim();
+
+    // Busca exata primeiro (nome em inglês ou português)
+    const exactMatch = TAROT_CARDS.find(card =>
+        card.name.toLowerCase() === normalizedName ||
+        card.name_pt.toLowerCase() === normalizedName
+    );
+
+    if (exactMatch) return exactMatch.imageUrl;
+
+    // Busca parcial (contém o nome)
+    const partialMatch = TAROT_CARDS.find(card =>
+        card.name.toLowerCase().includes(normalizedName) ||
+        card.name_pt.toLowerCase().includes(normalizedName) ||
+        normalizedName.includes(card.name.toLowerCase()) ||
+        normalizedName.includes(card.name_pt.toLowerCase())
+    );
+
+    if (partialMatch) return partialMatch.imageUrl;
+
+    // Busca por palavras-chave (ex: "louco" encontra "O Louco")
+    const keywordMatch = TAROT_CARDS.find(card => {
+        const nameParts = card.name_pt.toLowerCase().split(' ');
+        const inputParts = normalizedName.split(' ');
+        return nameParts.some(part => inputParts.includes(part) && part.length > 2) ||
+               inputParts.some(part => nameParts.includes(part) && part.length > 2);
+    });
+
+    return keywordMatch?.imageUrl || '';
+};
 
 export interface SavedReading {
     user_id: string;
@@ -138,7 +177,7 @@ export const saveReadingToSupabase = async (
     notes?: string
 ): Promise<boolean> => {
     if (!isSupabaseConfigured()) {
-        console.log('Supabase not configured, skipping database save');
+        // Supabase not configured
         return false;
     }
 
@@ -164,14 +203,13 @@ export const saveReadingToSupabase = async (
             ]);
 
         if (error) {
-            console.error('Error saving reading to Supabase:', error);
+            // Error saving reading
             return false;
         }
 
-        console.log('Reading saved successfully to Supabase');
-        return true;
+                return true;
     } catch (err) {
-        console.error('Exception saving reading to Supabase:', err);
+        // Exception saving reading
         return false;
     }
 };
@@ -351,7 +389,7 @@ export const transformSupabaseReading = (reading: any, isPortuguese: boolean = t
  */
 export const fetchReadingsFromSupabase = async (userId: string, limit: number = 20, isPortuguese: boolean = true) => {
     if (!isSupabaseConfigured()) {
-        console.log('Supabase not configured, skipping fetch');
+        // Supabase not configured
         return [];
     }
 
@@ -364,14 +402,14 @@ export const fetchReadingsFromSupabase = async (userId: string, limit: number = 
             .limit(limit);
 
         if (error) {
-            console.error('Error fetching readings from Supabase:', error);
+            // Error fetching readings
             return [];
         }
 
         // Transformar cada registro para o formato esperado pelos componentes
         return (data || []).map(reading => transformSupabaseReading(reading, isPortuguese));
     } catch (err) {
-        console.error('Exception fetching readings from Supabase:', err);
+        // Exception fetching readings
         return [];
     }
 };
@@ -384,7 +422,7 @@ export const updateReadingInSupabase = async (
     updates: Partial<SavedReading>
 ): Promise<boolean> => {
     if (!isSupabaseConfigured()) {
-        console.log('Supabase not configured, skipping update');
+        // Supabase not configured
         return false;
     }
 
@@ -395,14 +433,13 @@ export const updateReadingInSupabase = async (
             .eq('id', readingId);
 
         if (error) {
-            console.error('Error updating reading in Supabase:', error);
+            // Error updating reading
             return false;
         }
 
-        console.log('Reading updated successfully in Supabase');
-        return true;
+                return true;
     } catch (err) {
-        console.error('Exception updating reading in Supabase:', err);
+        // Exception updating reading
         return false;
     }
 };
@@ -412,7 +449,7 @@ export const updateReadingInSupabase = async (
  */
 export const deleteReadingFromSupabase = async (readingId: string | number): Promise<boolean> => {
     if (!isSupabaseConfigured()) {
-        console.log('Supabase not configured, skipping delete');
+        // Supabase not configured
         return false;
     }
 
@@ -423,14 +460,13 @@ export const deleteReadingFromSupabase = async (readingId: string | number): Pro
             .eq('id', readingId);
 
         if (error) {
-            console.error('Error deleting reading from Supabase:', error);
+            // Error deleting reading
             return false;
         }
 
-        console.log('Reading deleted successfully from Supabase');
-        return true;
+                return true;
     } catch (err) {
-        console.error('Exception deleting reading from Supabase:', err);
+        // Exception deleting reading
         return false;
     }
 };
@@ -455,7 +491,7 @@ export const savePhysicalReading = async (
     isPortuguese: boolean = true
 ): Promise<boolean> => {
     if (!isSupabaseConfigured()) {
-        console.log('Supabase not configured, skipping save');
+        // Supabase not configured
         return false;
     }
 
@@ -494,12 +530,13 @@ export const savePhysicalReading = async (
         }
 
         // Convert card names to card objects for storage
+        // Inclui imagens das cartas baseando-se no nome
         const cardsData = data.cards.map((cardName, index) => ({
             id: `physical_${index}`,
             name: cardName,
             arcana: 'unknown',
             suit: 'None',
-            imageUrl: ''
+            imageUrl: findCardImageByName(cardName)
         }));
 
         const { error } = await supabase
@@ -513,15 +550,9 @@ export const savePhysicalReading = async (
                 notes: interp?.tema_central || null
             }]);
 
-        if (error) {
-            console.error('Error saving physical reading to Supabase:', error);
-            return false;
-        }
-
-        console.log('Physical reading saved successfully to Supabase');
+        if (error) return false;
         return true;
-    } catch (err) {
-        console.error('Exception saving physical reading to Supabase:', err);
+    } catch {
         return false;
     }
 };

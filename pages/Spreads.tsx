@@ -169,6 +169,7 @@ const Spreads = () => {
     const [selectedSpread, setSelectedSpread] = useState<Spread | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
 
     const spreadImages: Record<string, string> = {
         'three_card': 'images/spreads/three_card.png',
@@ -512,6 +513,12 @@ const Spreads = () => {
                 feature="readings"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
@@ -521,6 +528,7 @@ const Spreads = () => {
             <AuthModal
                 isOpen={showAuthModal}
                 onClose={() => setShowAuthModal(false)}
+                initialMode={authModalMode}
             />
         </div>
     );

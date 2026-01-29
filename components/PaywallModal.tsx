@@ -7,7 +7,8 @@ interface PaywallModalProps {
   onClose: () => void;
   feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'ranking' | 'whatsapp' | 'physicalReading' | 'aiSynthesis';
   onLogin?: () => void;
-  onCheckout?: () => void;
+  onRegister?: () => void; // Para abrir modal de registro (guests)
+  onCheckout?: () => void; // Para ir ao checkout (upgrade premium)
 }
 
 export const PaywallModal: React.FC<PaywallModalProps> = ({
@@ -15,6 +16,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   onClose,
   feature = 'readings',
   onLogin,
+  onRegister,
   onCheckout
 }) => {
   const { isPortuguese } = useLanguage();
@@ -263,7 +265,12 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             <>
               <button
                 onClick={() => {
-                  onCheckout?.(); // Vai para checkout onde escolhe Free ou Premium
+                  // Guest: abrir modal de registro (conta gratuita)
+                  if (onRegister) {
+                    onRegister();
+                  } else if (onLogin) {
+                    onLogin(); // Fallback para login se register não fornecido
+                  }
                   onClose();
                 }}
                 className="w-full py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-xl text-white font-bold transition-all shadow-lg shadow-[#875faf]/30"

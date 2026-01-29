@@ -276,6 +276,7 @@ const Home = () => {
     const [showPaywall, setShowPaywall] = useState(false);
     const [showPaywallForm, setShowPaywallForm] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const { user, incrementReadingCount } = useAuth();
     const { isPortuguese: langIsPortuguese } = useLanguage();
     const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium'>('premium');
@@ -1638,6 +1639,12 @@ const Home = () => {
                 feature="readings"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
@@ -1650,13 +1657,19 @@ const Home = () => {
                 feature="whatsapp"
                 onLogin={() => {
                     setShowPaywallForm(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywallForm(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
             />
 
             {/* Auth Modal */}
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
         </div >
     );
 };
@@ -2598,6 +2611,7 @@ const History = () => {
     const [selectedReading, setSelectedReading] = useState<any | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const [filteredReadings, setFilteredReadings] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -2884,11 +2898,17 @@ const History = () => {
                 feature="history"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
             />
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
         </div>
     );
 };
@@ -3538,6 +3558,7 @@ const Explore = () => {
     const [filter, setFilter] = useState<'ALL' | 'MAJOR' | Suit>('ALL');
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     // Use TAROT_CARDS diretamente para garantir dados completos
     const deck = TAROT_CARDS;
 
@@ -3705,11 +3726,17 @@ const Explore = () => {
                 feature="archive"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
             />
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
         </div>
     );
 };
@@ -3730,6 +3757,7 @@ const Session = () => {
     const [isSpreadingCards, setIsSpreadingCards] = useState(false);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const isNavigatingRef = useRef(false);
 
     const getSpreadTranslation = (spreadId: string) => {
@@ -3868,11 +3896,17 @@ const Session = () => {
                 feature="readings"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
             />
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
 
             <div className="relative z-10 flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
                 <div className="flex flex-wrap justify-between items-end gap-4 mb-6 max-w-[1200px] mx-auto">
@@ -4204,6 +4238,7 @@ const Result = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const fetchedRef = useRef(false); // Prevent duplicate API calls
 
     // Reset hasSavedRef when state changes significantly
@@ -4645,11 +4680,17 @@ const Result = () => {
                 feature="readings"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
             />
 
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
 
             {/* Apply overflow hidden when paywall is open */}
             {showPaywall && <style>{`body { overflow: hidden; }`}</style>}
@@ -4678,6 +4719,7 @@ const Interpretacao = () => {
     const [error, setError] = useState<string | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const [savedToHistory, setSavedToHistory] = useState(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -4851,11 +4893,17 @@ const Interpretacao = () => {
                 feature="aiSynthesis"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
             />
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
 
             {/* Hero Section - Aesthetic Design */}
             <section className="relative pt-20 pb-16 px-6 md:px-12 overflow-hidden">
