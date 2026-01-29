@@ -170,6 +170,9 @@ const Header = () => {
                             <button onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')} className={`text-sm font-medium transition-colors ${(isActive('/carta-do-dia') || isActive('/daily-card')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
                             </button>
+                            <button onClick={() => navigate(isPortuguese ? '/interpretacao' : '/interpretation')} className={`text-sm font-medium transition-colors ${(isActive('/interpretacao') || isActive('/interpretation')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {isPortuguese ? 'Interpretação' : 'Interpretation'}
+                            </button>
                             <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.cardMeanings}
                             </button>
@@ -198,6 +201,7 @@ const Header = () => {
                             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
+                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
                         </nav>
@@ -4853,20 +4857,73 @@ const Interpretacao = () => {
             />
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
 
-            {/* Hero Section */}
-            <section className="relative pt-24 pb-12 px-6 md:px-12">
-                <div className="max-w-[1200px] mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-                        <span className="material-symbols-outlined text-amber-400 text-sm">auto_awesome</span>
-                        <span className="text-amber-400 text-sm font-medium">
+            {/* Hero Section - Aesthetic Design */}
+            <section className="relative pt-20 pb-16 px-6 md:px-12 overflow-hidden">
+                {/* Background Effects */}
+                <div className="absolute inset-0 pointer-events-none">
+                    {/* Purple Glow Orbs */}
+                    <div className="absolute top-10 left-1/4 w-72 h-72 bg-purple-600/20 rounded-full blur-[100px] animate-pulse" />
+                    <div className="absolute top-20 right-1/4 w-96 h-96 bg-violet-500/15 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-48 bg-gradient-to-t from-purple-900/30 to-transparent blur-[60px]" />
+
+                    {/* Stars - Small White Dots */}
+                    {[...Array(30)].map((_, i) => (
+                        <div
+                            key={i}
+                            className="absolute rounded-full bg-white animate-pulse"
+                            style={{
+                                width: `${Math.random() * 2 + 1}px`,
+                                height: `${Math.random() * 2 + 1}px`,
+                                top: `${Math.random() * 100}%`,
+                                left: `${Math.random() * 100}%`,
+                                opacity: Math.random() * 0.7 + 0.3,
+                                animationDelay: `${Math.random() * 3}s`,
+                                animationDuration: `${Math.random() * 2 + 2}s`
+                            }}
+                        />
+                    ))}
+                </div>
+
+                <div className="relative max-w-[1200px] mx-auto text-center z-10">
+                    {/* Premium Badge */}
+                    <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-400/30 mb-8 backdrop-blur-sm">
+                        <span className="material-symbols-outlined text-amber-400 text-base">auto_awesome</span>
+                        <span className="text-amber-300 text-sm font-semibold tracking-wide">
                             {isPortuguese ? 'Interpretação com IA' : 'AI Interpretation'}
                         </span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
+
+                    {/* Golden Title */}
+                    <h1
+                        className="text-4xl md:text-6xl font-black mb-6 leading-tight"
+                        style={{
+                            fontFamily: "'Crimson Text', serif",
+                            background: 'linear-gradient(135deg, #f0d890 0%, #d4a850 25%, #f5e6b8 50%, #c9a040 75%, #e8c060 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                            textShadow: '0 0 40px rgba(212, 168, 80, 0.3)',
+                            filter: 'drop-shadow(0 0 20px rgba(212, 168, 80, 0.2))'
+                        }}
+                    >
                         {ti.title || 'Physical Reading Interpretation'}
                     </h1>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+
+                    {/* Decorative Line */}
+                    <div className="flex items-center justify-center gap-4 mb-6">
+                        <div className="w-16 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+                        <span className="material-symbols-outlined text-amber-400/60 text-xl">star</span>
+                        <div className="w-16 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+                    </div>
+
+                    {/* Subtitle */}
+                    <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
                         {ti.subtitle || 'Transform your real spread into a clear and objective reading with AI'}
+                    </p>
+
+                    {/* Description */}
+                    <p className="text-gray-500 text-sm mt-4 max-w-xl mx-auto">
+                        {ti.heroDescription || 'Did a physical spread with your deck? Enter the cards that came up and receive a professional interpretation.'}
                     </p>
                 </div>
             </section>
