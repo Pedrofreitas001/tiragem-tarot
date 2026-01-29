@@ -509,11 +509,11 @@ const Home = () => {
             </section>
 
             {/* Spread Selection - Premium Cards Style */}
-            <section id="spreads" className="py-16 md:py-24 px-4 md:px-6 relative">
+            <section id="spreads" className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-6 relative">
                 <div className="max-w-[1200px] mx-auto relative">
-                    {/* Cosmic Flame Background */}
-                    <div className="absolute -right-40 -top-48 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
-                    <div className="absolute -right-32 -top-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
+                    {/* Cosmic Flame Background - Positioned lower */}
+                    <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
+                    <div className="absolute -right-32 top-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
 
                     {/* Subtle Star Dots */}
                     <div className="absolute top-12 left-8 w-1 h-1 rounded-full bg-white/40 pointer-events-none"></div>
@@ -4862,13 +4862,6 @@ const Interpretacao = () => {
 
     return (
         <div className="relative min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
-            {/* Fixed Purple Blur Background - Not limited by containers */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-600/25 rounded-full blur-[150px]" />
-                <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-violet-500/20 rounded-full blur-[180px]" />
-                <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-purple-700/15 rounded-full blur-[120px]" />
-            </div>
-
             {/* Stars Background */}
             <MinimalStarsBackground />
 
@@ -4893,48 +4886,114 @@ const Interpretacao = () => {
             />
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
 
-            {/* Hero Section - Aesthetic Design */}
-            <section className="relative pt-20 pb-16 px-6 md:px-12 overflow-hidden z-10">
+            {/* Hero Section - Home Page Style */}
+            <section className="relative pt-20 pb-8 md:pb-12 px-6 md:px-12 overflow-hidden z-10">
+                <div className="relative max-w-[1200px] mx-auto z-10">
+                    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+                        {/* Left Side - Text Content */}
+                        <div className="flex-1 text-center lg:text-left">
+                            {/* Premium Badge */}
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/30 mb-6">
+                                <span className="material-symbols-outlined text-amber-400 text-sm">auto_awesome</span>
+                                <span className="text-amber-300 text-xs font-bold uppercase tracking-wider">
+                                    {isPortuguese ? 'Premium' : 'Premium Feature'}
+                                </span>
+                            </div>
 
-                <div className="relative max-w-[1200px] mx-auto text-center z-10">
-                    {/* Golden Title */}
-                    <h1
-                        className="text-4xl md:text-6xl font-black mb-6 leading-tight"
-                        style={{
-                            fontFamily: "'Crimson Text', serif",
-                            background: 'linear-gradient(135deg, #f0d890 0%, #d4a850 25%, #f5e6b8 50%, #c9a040 75%, #e8c060 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text',
-                            textShadow: '0 0 40px rgba(212, 168, 80, 0.3)',
-                            filter: 'drop-shadow(0 0 20px rgba(212, 168, 80, 0.2))'
-                        }}
-                    >
-                        {ti.title || 'Physical Reading Interpretation'}
-                    </h1>
+                            {/* Golden Title */}
+                            <h1
+                                className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight"
+                                style={{
+                                    fontFamily: "'Crimson Text', serif",
+                                    background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text',
+                                }}
+                            >
+                                {ti.title || (isPortuguese ? 'Interpretação de Tiragem Física' : 'Physical Reading Interpretation')}
+                            </h1>
 
-                    {/* Decorative Line */}
-                    <div className="flex items-center justify-center gap-4 mb-6">
-                        <div className="w-16 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
-                        <span className="material-symbols-outlined text-amber-400/60 text-xl">star</span>
-                        <div className="w-16 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+                            {/* Subtitle */}
+                            <p className="text-gray-300 text-lg md:text-xl max-w-xl leading-relaxed mb-3">
+                                {ti.subtitle || (isPortuguese ? 'Transforme sua tiragem real em uma leitura clara e objetiva com IA' : 'Transform your real spread into a clear and objective reading with AI')}
+                            </p>
+
+                            {/* Description */}
+                            <p className="text-gray-500 text-sm max-w-lg mb-6">
+                                {ti.heroDescription || (isPortuguese ? 'Fez uma tiragem física com seu baralho? Insira as cartas que saíram e receba uma interpretação profissional.' : 'Did a physical spread with your deck? Enter the cards that came up and receive a professional interpretation.')}
+                            </p>
+
+                            {/* CTA Button */}
+                            <button
+                                onClick={() => document.getElementById('interpretation-form')?.scrollIntoView({ behavior: 'smooth' })}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
+                            >
+                                <span className="material-symbols-outlined text-lg">edit_note</span>
+                                {isPortuguese ? 'Começar Interpretação' : 'Start Interpretation'}
+                            </button>
+                        </div>
+
+                        {/* Right Side - Tarot Cards Display */}
+                        <div className="relative w-full lg:w-auto lg:flex-shrink-0">
+                            <div className="relative w-[300px] h-[320px] md:w-[360px] md:h-[380px] mx-auto">
+                                {/* Card 1 - Far left */}
+                                <div
+                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
+                                    style={{ left: '0%', top: '25%', transform: 'rotate(-25deg)', zIndex: 1 }}
+                                >
+                                    <img src="/images/cards/major/00-the-fool.webp" alt="The Fool" className="w-full h-full object-cover" />
+                                </div>
+                                {/* Card 2 */}
+                                <div
+                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
+                                    style={{ left: '12%', top: '8%', transform: 'rotate(-12deg)', zIndex: 2 }}
+                                >
+                                    <img src="/images/cards/major/01-the-magician.webp" alt="The Magician" className="w-full h-full object-cover" />
+                                </div>
+                                {/* Card 3 - Center top */}
+                                <div
+                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-amber-500/30"
+                                    style={{ left: '32%', top: '0%', transform: 'rotate(0deg)', zIndex: 5 }}
+                                >
+                                    <img src="/images/cards/major/02-the-high-priestess.webp" alt="The High Priestess" className="w-full h-full object-cover" />
+                                </div>
+                                {/* Card 4 */}
+                                <div
+                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
+                                    style={{ left: '52%', top: '8%', transform: 'rotate(12deg)', zIndex: 3 }}
+                                >
+                                    <img src="/images/cards/major/03-the-empress.webp" alt="The Empress" className="w-full h-full object-cover" />
+                                </div>
+                                {/* Card 5 - Far right */}
+                                <div
+                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
+                                    style={{ left: '64%', top: '25%', transform: 'rotate(25deg)', zIndex: 1 }}
+                                >
+                                    <img src="/images/cards/major/04-the-emperor.webp" alt="The Emperor" className="w-full h-full object-cover" />
+                                </div>
+
+                                {/* Glow effect behind cards */}
+                                <div className="absolute inset-0 -z-10">
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-purple-500/20 rounded-full blur-[80px]" />
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] bg-amber-500/15 rounded-full blur-[60px]" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    {/* Subtitle */}
-                    <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                        {ti.subtitle || 'Transform your real spread into a clear and objective reading with AI'}
-                    </p>
-
-                    {/* Description */}
-                    <p className="text-gray-500 text-sm mt-4 max-w-xl mx-auto">
-                        {ti.heroDescription || 'Did a physical spread with your deck? Enter the cards that came up and receive a professional interpretation.'}
-                    </p>
                 </div>
             </section>
 
             {/* Main Content */}
-            <section className="px-6 md:px-12 pb-20">
-                <div className="max-w-[900px] mx-auto">
+            <section id="interpretation-form" className="px-6 md:px-12 pb-20 relative">
+                {/* Purple Blur Background - Behind Form Only */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[150px]" />
+                    <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-violet-500/12 rounded-full blur-[180px]" />
+                    <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-purple-700/10 rounded-full blur-[120px]" />
+                </div>
+
+                <div className="max-w-[900px] mx-auto relative z-10">
                     {!interpretation ? (
                         <div className="bg-gradient-to-br from-surface-dark/80 to-card-dark/60 backdrop-blur-sm rounded-2xl border border-border-dark p-6 md:p-8">
                             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
