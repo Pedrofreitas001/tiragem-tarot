@@ -4959,31 +4959,47 @@ const Interpretacao = () => {
                                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                                         {selectedCards.map((cardName, index) => {
                                             const position = spreadConfigs[spreadType]?.positions?.[index] || `${ti.cardPosition || 'Card'} ${index + 1}`;
+                                            // Find card data to get imageUrl
+                                            const cardData = cardName ? TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName) : null;
                                             return (
                                                 <div key={index} className="relative">
                                                     <div
                                                         onClick={() => openCardSearch(index)}
-                                                        className={`aspect-[2/3] rounded-xl border-2 border-dashed cursor-pointer transition-all flex flex-col items-center justify-center p-2 ${cardName
-                                                            ? 'border-primary/50 bg-primary/10'
-                                                            : 'border-border-dark hover:border-primary/30 bg-surface-dark/50'
+                                                        className={`aspect-[2/3] rounded-xl overflow-hidden cursor-pointer transition-all ${cardName
+                                                            ? 'border-2 border-primary/50'
+                                                            : 'border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50'
                                                             }`}
                                                     >
-                                                        {cardName ? (
-                                                            <>
+                                                        {cardName && cardData ? (
+                                                            <div className="relative w-full h-full">
+                                                                <img
+                                                                    src={cardData.imageUrl}
+                                                                    alt={cardName}
+                                                                    className="w-full h-full object-cover"
+                                                                    onError={(e) => {
+                                                                        e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
+                                                                    }}
+                                                                />
+                                                                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2">
+                                                                    <span className="text-white text-[10px] text-center font-medium leading-tight block">{cardName}</span>
+                                                                </div>
+                                                            </div>
+                                                        ) : cardName ? (
+                                                            <div className="w-full h-full flex flex-col items-center justify-center p-2 bg-primary/10">
                                                                 <span className="material-symbols-outlined text-primary text-2xl mb-1">style</span>
                                                                 <span className="text-white text-xs text-center font-medium leading-tight">{cardName}</span>
-                                                            </>
+                                                            </div>
                                                         ) : (
-                                                            <>
+                                                            <div className="w-full h-full flex flex-col items-center justify-center p-2">
                                                                 <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add</span>
                                                                 <span className="text-gray-500 text-xs text-center">{position}</span>
-                                                            </>
+                                                            </div>
                                                         )}
                                                     </div>
                                                     {cardName && (
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); removeCard(index); }}
-                                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors"
+                                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors z-10"
                                                         >
                                                             <span className="material-symbols-outlined text-white text-sm">close</span>
                                                         </button>
