@@ -4885,14 +4885,6 @@ const Interpretacao = () => {
                 </div>
 
                 <div className="relative max-w-[1200px] mx-auto text-center z-10">
-                    {/* Premium Badge */}
-                    <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-400/30 mb-8 backdrop-blur-sm">
-                        <span className="material-symbols-outlined text-amber-400 text-base">auto_awesome</span>
-                        <span className="text-amber-300 text-sm font-semibold tracking-wide">
-                            {isPortuguese ? 'Interpretação com IA' : 'AI Interpretation'}
-                        </span>
-                    </div>
-
                     {/* Golden Title */}
                     <h1
                         className="text-4xl md:text-6xl font-black mb-6 leading-tight"
@@ -5141,7 +5133,7 @@ const Interpretacao = () => {
             {/* Card Search Modal */}
             {showCardSearch && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <div className="w-full max-w-2xl max-h-[80vh] bg-card-dark rounded-2xl border border-border-dark overflow-hidden flex flex-col">
+                    <div className="w-full max-w-4xl max-h-[85vh] bg-card-dark rounded-2xl border border-border-dark overflow-hidden flex flex-col">
                         <div className="p-4 border-b border-border-dark">
                             <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-gray-400">search</span>
@@ -5165,11 +5157,11 @@ const Interpretacao = () => {
                         <div className="flex-1 overflow-y-auto p-4">
                             {groupedCards.length > 0 ? (
                                 groupedCards.map((group, groupIndex) => (
-                                    <div key={groupIndex} className="mb-6 last:mb-0">
-                                        <h4 className="text-sm font-medium text-primary mb-3 sticky top-0 bg-card-dark py-1">
+                                    <div key={groupIndex} className="mb-8 last:mb-0">
+                                        <h4 className="text-sm font-medium text-primary mb-4 sticky top-0 bg-card-dark py-2 z-10">
                                             {group.title}
                                         </h4>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
                                             {group.cards.map((card) => {
                                                 const cardName = isPortuguese ? card.name_pt : card.name;
                                                 const isSelected = selectedCards.includes(cardName);
@@ -5178,17 +5170,32 @@ const Interpretacao = () => {
                                                         key={card.id}
                                                         onClick={() => !isSelected && handleCardSelect(card)}
                                                         disabled={isSelected}
-                                                        className={`p-3 rounded-xl text-left transition-all ${isSelected
-                                                            ? 'bg-gray-700/50 opacity-50 cursor-not-allowed'
-                                                            : 'bg-surface-dark hover:bg-primary/20 hover:border-primary/50 border border-transparent'
+                                                        className={`group flex flex-col items-center rounded-xl p-2 transition-all ${isSelected
+                                                            ? 'opacity-40 cursor-not-allowed'
+                                                            : 'hover:bg-primary/10 hover:scale-105'
                                                             }`}
                                                     >
-                                                        <span className="text-white text-sm font-medium">{cardName}</span>
-                                                        {isSelected && (
-                                                            <span className="block text-xs text-gray-500 mt-1">
-                                                                {isPortuguese ? 'Já selecionada' : 'Already selected'}
-                                                            </span>
-                                                        )}
+                                                        <div className={`relative w-full aspect-[2/3] rounded-lg overflow-hidden border-2 transition-all ${isSelected
+                                                            ? 'border-gray-600'
+                                                            : 'border-border-dark group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(147,17,212,0.3)]'
+                                                            }`}>
+                                                            <img
+                                                                src={card.imageUrl}
+                                                                alt={cardName}
+                                                                className="w-full h-full object-cover"
+                                                                onError={(e) => {
+                                                                    e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
+                                                                }}
+                                                            />
+                                                            {isSelected && (
+                                                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                                                    <span className="material-symbols-outlined text-white text-2xl">check_circle</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <span className={`mt-2 text-xs text-center font-medium leading-tight ${isSelected ? 'text-gray-500' : 'text-white'}`}>
+                                                            {cardName}
+                                                        </span>
                                                     </button>
                                                 );
                                             })}
