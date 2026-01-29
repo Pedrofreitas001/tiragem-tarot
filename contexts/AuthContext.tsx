@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode, useCa
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Profile, SubscriptionTier } from '../types/database';
+import { getGuestReading, clearGuestReading, transferGuestReadingToUser } from '../services/readingsService';
 
 // Limites para visitantes (não logados)
 export const GUEST_LIMITS = {
@@ -12,6 +13,8 @@ export const GUEST_LIMITS = {
   hasAISynthesis: false,
   hasPatternAnalysis: false,
   hasPDFExport: false,
+  hasWhatsApp: false,
+  hasPhysicalReading: false,
   hasAds: true,
 };
 
@@ -21,9 +24,11 @@ export const FREE_TIER_LIMITS = {
   historyDays: 7,
   maxHistoryItems: 3,
   maxArchiveCards: 7,
-  hasAISynthesis: false,
+  hasAISynthesis: true, // Free users get AI synthesis
   hasPatternAnalysis: false,
   hasPDFExport: false,
+  hasWhatsApp: false,
+  hasPhysicalReading: false, // Physical reading is premium only
   hasAds: true,
 };
 
@@ -36,6 +41,8 @@ export const PREMIUM_TIER_LIMITS = {
   hasAISynthesis: true,
   hasPatternAnalysis: true,
   hasPDFExport: true,
+  hasWhatsApp: true,
+  hasPhysicalReading: true,
   hasAds: false,
 };
 
@@ -96,6 +103,7 @@ interface AuthProviderProps {
 
 // Helper para gerenciar leituras de visitantes no localStorage
 const GUEST_STORAGE_KEY = 'tarot-guest-readings';
+const GUEST_PENDING_READING_KEY = 'tarot-guest-pending-reading';
 
 const getGuestReadings = (): { count: number; date: string } => {
   try {
@@ -124,6 +132,53 @@ const setGuestReadings = (count: number) => {
   }
 };
 
+// Interface for pending guest reading
+export interface GuestPendingReading {
+  spreadType: string;
+  spreadName: string;
+  cards: any[];
+  question?: string;
+  createdAt: string;
+}
+
+// Save guest reading to localStorage for later processing after signup
+export const saveGuestPendingReading = (reading: GuestPendingReading) => {
+  try {
+    localStorage.setItem(GUEST_PENDING_READING_KEY, JSON.stringify(reading));
+    console.log('Guest pending reading saved');
+  } catch (e) {
+    console.error('Error saving guest pending reading:', e);
+  }
+};
+
+// Get pending guest reading
+export const getGuestPendingReading = (): GuestPendingReading | null => {
+  try {
+    const stored = localStorage.getItem(GUEST_PENDING_READING_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error('Error reading guest pending reading:', e);
+  }
+  return null;
+};
+
+// Clear pending guest reading after it's been processed
+export const clearGuestPendingReading = () => {
+  try {
+    localStorage.removeItem(GUEST_PENDING_READING_KEY);
+    console.log('Guest pending reading cleared');
+  } catch (e) {
+    console.error('Error clearing guest pending reading:', e);
+  }
+};
+
+// Check if there's a pending guest reading
+export const hasGuestPendingReading = (): boolean => {
+  return getGuestPendingReading() !== null;
+};
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -140,48 +195,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Função para verificar se assinatura expirou
   const isSubscriptionExpired = (expiresAt: string | null): boolean => {
-    if (!expiresAt) return false; // Se não tem data de expiração, não expirou
+    if (!expiresAt) return false;
     try {
-      const expirationDate = new Date(expiresAt);
-      const now = new Date();
-      console.log('Checking expiration:', { expiresAt, expirationDate: expirationDate.toISOString(), now: now.toISOString(), isExpired: expirationDate < now });
-      return expirationDate < now;
-    } catch (e) {
-      console.error('Error parsing expiration date:', e);
-      return false; // Em caso de erro, assume não expirado
+      return new Date(expiresAt) < new Date();
+    } catch {
+      return false;
     }
   };
 
   // Derivar tier e limites com validação de expiração
   const computeTier = useCallback((): SubscriptionTier | 'guest' => {
     // Se usuário não está logado, é guest
-    if (isGuest) {
-      console.log('🔓 Tier: isGuest=true → GUEST');
-      return 'guest';
-    }
+    if (isGuest) return 'guest';
     // Se profile ainda não carregou, retornar 'free' temporário (não 'guest'!)
-    if (!profile) {
-      console.log('⏳ Tier: profile=null (loading) → FREE (temporary)');
-      return 'free';
-    }
+    if (!profile) return 'free';
 
     const subTier = profile.subscription_tier;
     const expiresAt = profile.subscription_expires_at;
 
-    console.log('📊 Tier computation:', {
-      email: profile.email,
-      subTier,
-      expiresAt
-    });
-
     if (subTier === 'premium') {
-      const expired = isSubscriptionExpired(expiresAt);
-      const finalTier = expired ? 'free' : 'premium';
-      console.log(`✨ Premium check: expired=${expired} → ${finalTier}`);
-      return finalTier;
+      return isSubscriptionExpired(expiresAt) ? 'free' : 'premium';
     }
 
-    console.log(`📌 Tier from profile: ${subTier}`);
     return (subTier as SubscriptionTier) || 'free';
   }, [isGuest, profile]);
 
@@ -202,23 +237,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Buscar perfil do usuário - retorna o perfil ou null
   const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
     if (!supabase) {
-      console.warn('⚠️ fetchProfile: Supabase not available');
       setProfileLoading(false);
       return null;
     }
 
     setProfileLoading(true);
-    console.log('🔄 fetchProfile: Starting for userId:', userId);
 
     try {
-      console.log('📡 fetchProfile: Calling supabase query...');
-
       // Timeout de 5 segundos
       const timeoutPromise = new Promise<{ data: null; error: any }>((resolve) => {
-        setTimeout(() => {
-          console.error('⏰ fetchProfile: TIMEOUT - query took too long');
-          resolve({ data: null, error: { message: 'Query timeout' } });
-        }, 5000);
+        setTimeout(() => resolve({ data: null, error: { message: 'Query timeout' } }), 5000);
       });
 
       const queryPromise = supabase
@@ -230,17 +258,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const result = await Promise.race([queryPromise, timeoutPromise]);
       const { data, error } = result;
 
-      console.log('📡 fetchProfile: Query result received:', {
-        hasError: !!error,
-        errorCode: error?.code,
-        hasTier: !!data?.subscription_tier,
-        tier: data?.subscription_tier
-      });
-
       if (error) {
         // Se o perfil não existe, criar um
         if (error.code === 'PGRST116') {
-          console.log('📝 Profile not found, creating new profile...');
           const newProfile: Profile = {
             id: userId,
             email: null,
@@ -254,7 +274,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             updated_at: new Date().toISOString(),
           };
 
-          console.log('📝 Inserting new profile:', newProfile.id);
           const { data: created, error: createError } = await supabase
             .from('profiles')
             .insert(newProfile)
@@ -262,38 +281,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             .single();
 
           if (!createError && created) {
-            console.log('✅ New profile created:', { id: created.id, tier: created.subscription_tier });
             setProfile(created);
             setProfileLoading(false);
             return created;
           }
-          console.error('❌ Failed to create profile:', createError?.message);
           setProfileLoading(false);
           return null;
         }
 
-        console.error('❌ Error fetching profile:', error.message, error.code);
         setProfileLoading(false);
         return null;
       }
 
       if (!data) {
-        console.warn('⚠️ fetchProfile: No data returned but no error');
         setProfileLoading(false);
         return null;
       }
 
-      console.log('✅ Profile fetched successfully:', {
-        id: data.id,
-        email: data.email,
-        tier: data.subscription_tier,
-        expires: data.subscription_expires_at
-      });
-
       // Resetar contador se for um novo dia
       if (data && isNewDay(data.last_reading_date)) {
-        console.log('📅 New day detected, resetting readings count');
-        const { data: updated, error: updateError } = await supabase
+        const { data: updated } = await supabase
           .from('profiles')
           .update({
             readings_today: 0,
@@ -303,23 +310,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           .select()
           .single();
 
-        if (updateError) {
-          console.warn('⚠️ Error updating daily reset:', updateError.message);
-        }
-
         const finalProfile = updated || data;
-        console.log('📌 Profile ready (after daily reset):', { id: finalProfile.id, tier: finalProfile.subscription_tier });
         setProfile(finalProfile);
         setProfileLoading(false);
         return finalProfile;
       } else {
-        console.log('📌 Profile ready (no daily reset):', { id: data.id, tier: data.subscription_tier });
         setProfile(data);
         setProfileLoading(false);
         return data;
       }
-    } catch (err: any) {
-      console.error('❌ fetchProfile catch error:', err?.message || err);
+    } catch {
       setProfileLoading(false);
       return null;
     }
@@ -345,10 +345,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Escutar mudanças de autenticação
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, session?.user?.email);
-
         if (event === 'SIGNED_OUT') {
-          console.log('SIGNED_OUT event - clearing all state');
           setSession(null);
           setUser(null);
           setProfile(null);
@@ -361,6 +358,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         if (session?.user) {
           await fetchProfile(session.user.id);
+
+          // Transfer guest reading to user account after sign in/sign up
+          if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+            const guestReading = getGuestReading();
+            if (guestReading) {
+              // Transfer the reading asynchronously
+              transferGuestReadingToUser(session.user.id, true)
+                .then((success) => {
+                  if (success) {
+                    console.log('Guest reading transferred to user account');
+                  }
+                })
+                .catch(() => {
+                  // Silent fail - clear anyway to avoid duplicates
+                  clearGuestReading();
+                });
+            }
+          }
         } else {
           setProfile(null);
         }
@@ -396,39 +411,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     try {
-      console.log('🔑 signIn: Starting login for', email);
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-      if (error) {
-        console.error('❌ signIn: Auth error:', error.message);
-        return { error, profile: null };
-      }
+      if (error) return { error, profile: null };
 
-      // Se login foi sucesso, carregar perfil
       if (data?.user) {
-        console.log('✅ signIn: Auth successful, now fetching profile...');
         setUser(data.user);
         setSession(data.session);
-
-        // Buscar e aguardar perfil - CRUCIAL aguardar aqui
         const userProfile = await fetchProfile(data.user.id);
-
-        if (userProfile) {
-          console.log('✅ signIn complete → tier:', userProfile.subscription_tier);
-        } else {
-          console.warn('⚠️ signIn: Profile null after fetch');
-        }
-
         return { error: null, profile: userProfile };
       }
 
-      console.warn('⚠️ signIn: No user data returned');
       return { error: null };
-    } catch (err) {
-      console.error('❌ SignIn catch error:', err);
+    } catch {
       return { error: { message: 'An error occurred during sign in' } as AuthError };
     }
   };
@@ -449,39 +444,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Logout
   const signOut = async () => {
-    console.log('SignOut: Starting...');
-
     // Limpar estado local PRIMEIRO para UI responder imediatamente
     setUser(null);
     setSession(null);
     setProfile(null);
     setLoading(false);
-    console.log('SignOut: Local state cleared');
 
-    // Limpar localStorage
+    // Limpar localStorage (tokens Supabase)
     try {
-      const keys = Object.keys(localStorage);
-      keys.forEach(key => {
-        if (key.startsWith('sb-')) {
-          console.log('SignOut: Removing localStorage key:', key);
-          localStorage.removeItem(key);
-        }
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('sb-')) localStorage.removeItem(key);
       });
-    } catch (e) {
-      console.error('SignOut: localStorage error:', e);
-    }
+    } catch { /* ignore */ }
 
-    // Sign out from Supabase (não bloquear se falhar)
+    // Sign out from Supabase
     if (supabase) {
       try {
         await supabase.auth.signOut({ scope: 'local' });
-        console.log('SignOut: Supabase signOut completed');
-      } catch (err) {
-        console.error('SignOut: Supabase error (ignored):', err);
-      }
+      } catch { /* ignore */ }
     }
-
-    console.log('SignOut: Complete');
   };
 
   // Reset de senha

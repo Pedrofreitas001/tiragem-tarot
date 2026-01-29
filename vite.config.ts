@@ -9,14 +9,17 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       host: '0.0.0.0',
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+        },
+      },
     },
     plugins: [react()],
-    // Expose env variables to the client
+    // No longer expose sensitive API keys to the client
     define: {
-      'process.env.API_KEY': JSON.stringify(env.VITE_GEMINI_API_KEY),
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.VITE_GEMINI_API_KEY),
-      // Also expose to import.meta.env manually if VITE_ prefix isn't working
-      'import.meta.env.VITE_GEMINI_API_KEY': JSON.stringify(env.VITE_GEMINI_API_KEY)
+      'process.env.APP_VERSION': JSON.stringify('1.0.0'),
     },
     resolve: {
       alias: {

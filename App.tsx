@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
-import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured } from './services/geminiService';
+import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured, AnySynthesis, convertToLegacySynthesis } from './services/geminiService';
 import StarsBackground from './components/StarsBackground';
 import { MinimalStarsBackground } from './components/MinimalStarsBackground';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
-import { saveReadingToSupabase, deleteReadingFromSupabase } from './services/readingsService';
+import { saveReadingToSupabase, deleteReadingFromSupabase, saveReadingWithSummary, fetchReadingsFromSupabase, saveGuestReading, getGuestReading, clearGuestReading, transferGuestReadingToUser, formatReadingSummary, extractSummaryFromSynthesis } from './services/readingsService';
 import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
 import { CartProvider, useCart } from './contexts/CartContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -74,12 +74,6 @@ const CartDrawer = () => {
                     <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
                         <span className="material-symbols-outlined text-6xl text-gray-600 mb-4">shopping_cart</span>
                         <p className="text-gray-400 mb-4">{t.cart.empty}</p>
-                        <button
-                            onClick={() => { toggleCart(false); navigate('/shop'); }}
-                            className="px-6 py-3 bg-primary hover:bg-primary-hover rounded-lg text-white font-bold transition-colors"
-                        >
-                            {t.cart.continueShopping}
-                        </button>
                     </div>
                 ) : (
                     <>
@@ -136,8 +130,9 @@ const CartDrawer = () => {
                             </button>
                         </div>
                     </>
-                )}
-            </div>
+                )
+                }
+            </div >
         </>
     );
 };
@@ -160,7 +155,7 @@ const Header = () => {
         <>
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
                 <div className="flex flex-col w-full max-w-[1200px]">
-                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
+                    <div className="flex items-center justify-between whitespace-nowrap px-2 py-2 sm:px-4 sm:py-3 lg:px-10 lg:py-4 gap-2">
                         <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
                             <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Mystic Tarot</h2>
                         </div>
@@ -175,39 +170,27 @@ const Header = () => {
                             <button onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')} className={`text-sm font-medium transition-colors ${(isActive('/carta-do-dia') || isActive('/daily-card')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
                             </button>
+                            <button onClick={() => navigate(isPortuguese ? '/interpretacao' : '/interpretation')} className={`text-sm font-medium transition-colors ${(isActive('/interpretacao') || isActive('/interpretation')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {isPortuguese ? 'Interpretação' : 'Interpretation'}
+                            </button>
                             <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.cardMeanings}
                             </button>
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
-                            <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                                {t.nav.shop}
-                            </button>
                         </nav>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1 sm:gap-2">
                             <LanguageToggle />
-
-                            <button
-                                onClick={() => toggleCart(true)}
-                                className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
-                            >
-                                <span className="material-symbols-outlined text-gray-300 hover:text-white">shopping_bag</span>
-                                {itemCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full text-[10px] font-bold text-white flex items-center justify-center">
-                                        {itemCount}
-                                    </span>
-                                )}
-                            </button>
 
                             <UserMenu onLoginClick={() => setShowAuthModal(true)} />
 
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="md:hidden p-2 rounded-lg hover:bg-white/5"
+                                className="md:hidden p-1.5 sm:p-2 rounded-lg hover:bg-white/5"
                             >
-                                <span className="material-symbols-outlined text-white">{mobileMenuOpen ? 'close' : 'menu'}</span>
+                                <span className="material-symbols-outlined text-white text-xl sm:text-2xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
                             </button>
                         </div>
                     </div>
@@ -218,9 +201,9 @@ const Header = () => {
                             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
+                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
-                            <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.shop}</button>
                         </nav>
                     )}
                 </div>
@@ -260,13 +243,6 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    <div>
-                        <h4 className="text-white font-bold text-sm mb-4">{t.footer.shop}</h4>
-                        <div className="flex flex-col gap-2">
-                            <button onClick={() => navigate('/shop')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.products}</button>
-                            <button onClick={() => navigate('/shop')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.cart}</button>
-                        </div>
-                    </div>
 
                     <div>
                         <h4 className="text-white font-bold text-sm mb-4">{t.footer.support}</h4>
@@ -298,16 +274,26 @@ const Home = () => {
     const { t, isPortuguese } = useLanguage();
     const { checkAccess, readingsRemaining } = usePaywall();
     const [showPaywall, setShowPaywall] = useState(false);
+    const [showPaywallForm, setShowPaywallForm] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const { user, incrementReadingCount } = useAuth();
+    const { isPortuguese: langIsPortuguese } = useLanguage();
+    const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium'>('premium');
+
+    // Carta do dia coletiva - mesma para todos no dia
+    const getDailyCard = () => {
+        const today = new Date();
+        const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+        const cardIndex = dayOfYear % TAROT_CARDS.length;
+        return TAROT_CARDS[cardIndex];
+    };
+
+    const dailyCard = getDailyCard();
+    const cardName = getCardName(dailyCard.id, isPortuguese);
 
     const handleSelectSpread = async (spread: Spread) => {
-        if (!checkAccess('readings')) {
-            setShowPaywall(true);
-            return;
-        }
-        // Increment reading count when starting a new reading (works for both guests and logged in users)
-        await incrementReadingCount();
+        // Navigate directly to session, paywall check moved to first card click
         navigate('/session', { state: { spread } });
     };
 
@@ -338,7 +324,7 @@ const Home = () => {
             <Header />
             <CartDrawer />
 
-            <MinimalStarsBackground />
+            {/* <MinimalStarsBackground /> */}
 
             {/* Hero Section - Editorial Premium */}
             <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden py-16">
@@ -490,220 +476,77 @@ const Home = () => {
             </section>
 
             {/* Interactive Stats Banner */}
-            <section className="py-8 md:py-12 px-4 md:px-6 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#875faf]/10 via-[#a77fd4]/5 to-[#875faf]/10"></div>
-                <div className="absolute inset-0 border-y border-[#875faf]/20"></div>
+            <section className="py-3 md:py-4 px-4 md:px-6 relative overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
+                <div className="absolute inset-0 border-y border-transparent"></div>
                 <div className="max-w-[1200px] mx-auto relative z-10">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+                    <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 md:gap-8">
                         <div className="text-center group">
-                            <div className="text-3xl md:text-4xl font-bold text-gradient-gold mb-1 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 1.247
                             </div>
-                            <div className="text-gray-400 text-sm md:text-base">{isPortuguese ? 'Jornadas Ativas' : 'Active Journeys'}</div>
+                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Jornadas Ativas' : 'Active Journeys'}</div>
                         </div>
                         <div className="text-center group">
-                            <div className="text-3xl md:text-4xl font-bold text-gradient-gold mb-1 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 8.432
                             </div>
-                            <div className="text-gray-400 text-sm md:text-base">{isPortuguese ? 'Leituras Realizadas' : 'Readings Performed'}</div>
+                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Leituras Realizadas' : 'Readings Performed'}</div>
                         </div>
                         <div className="text-center group">
-                            <div className="text-3xl md:text-4xl font-bold text-gradient-gold mb-1 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 78
                             </div>
-                            <div className="text-gray-400 text-sm md:text-base">{isPortuguese ? 'Arcanos Disponíveis' : 'Available Arcana'}</div>
+                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Arcanos Disponíveis' : 'Available Arcana'}</div>
                         </div>
                         <div className="text-center group">
-                            <div className="text-3xl md:text-4xl font-bold text-gradient-gold mb-1 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 24/7
                             </div>
-                            <div className="text-gray-400 text-sm md:text-base">{isPortuguese ? 'Disponível Sempre' : 'Always Available'}</div>
+                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Disponível Sempre' : 'Always Available'}</div>
                         </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Features Presentation Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">
-                <div className="max-w-[1200px] mx-auto">
-                    <div className="text-center mb-14 md:mb-20">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Descubra o Poder do Tarot' : 'Discover the Power of Tarot'}
-                        </h2>
-                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
-                            {isPortuguese
-                                ? 'Uma experiência completa de autoconhecimento com tecnologia e sabedoria ancestral'
-                                : 'A complete self-discovery experience with technology and ancestral wisdom'}
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 mb-14">
-                        {/* Feature 1 - Unlimited Readings */}
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">all_inclusive</span>
-                                    </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Tiragens Ilimitadas' : 'Unlimited Readings'}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
-                                    </div>
-                                </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese
-                                        ? 'Realize quantas tiragens desejar, sem restrições ou limites de consultas'
-                                        : 'Perform as many readings as you wish, without restrictions'}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Feature 2 - AI Synthesis */}
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">psychology</span>
-                                    </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
-                                    </div>
-                                </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese
-                                        ? 'Interpretações profundas integradas com inteligência artificial avançada'
-                                        : 'Deep interpretations integrated with advanced AI'}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Feature 3 - 78 Cards Library */}
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">collections_bookmark</span>
-                                    </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Biblioteca Completa' : 'Complete Library'}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
-                                    </div>
-                                </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese
-                                        ? '78 cartas do Tarot de Waite com ilustrações originais completas'
-                                        : '78 Waite Tarot cards with complete original illustrations'}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Feature 4 - WhatsApp Daily Card */}
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">chat</span>
-                                    </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
-                                    </div>
-                                </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese
-                                        ? 'Receba mensagens personalizadas com sua carta diária no WhatsApp'
-                                        : 'Receive personalized daily card messages on WhatsApp'}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Feature 5 - Journey History */}
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">history</span>
-                                    </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Histórico Completo' : 'Complete History'}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
-                                    </div>
-                                </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese
-                                        ? 'Acompanhe toda a sua jornada de autoconhecimento e evolução'
-                                        : 'Track your entire self-discovery and evolution journey'}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Feature 6 - Premium Experience */}
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">diamond</span>
-                                    </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Experiência Premium' : 'Premium Experience'}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
-                                    </div>
-                                </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese
-                                        ? 'Recursos exclusivos para aprofundar sua prática e conexão'
-                                        : 'Exclusive features to deepen your practice and connection'}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* CTA Buttons - Hero Style */}
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <button
-                            onClick={() => setCurrentScreen('spreads')}
-                            className="group relative px-8 py-3.5 bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
-                            <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2 text-sm">
-                                {isPortuguese ? 'Acessar o Tarot' : 'Access Tarot'}
-                                <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                            </span>
-                        </button>
-                        <button
-                            className="group px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
-                        >
-                            <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
-                                {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
-                                <span className="material-symbols-outlined text-sm">star</span>
-                            </span>
-                        </button>
                     </div>
                 </div>
             </section>
 
             {/* Spread Selection - Premium Cards Style */}
-            <section id="spreads" className="py-16 md:py-24 px-4 md:px-6">
-                <div className="max-w-[1200px] mx-auto">
+            <section id="spreads" className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-6 relative">
+                <div className="max-w-[1200px] mx-auto relative">
+                    {/* Cosmic Flame Background - Positioned lower */}
+                    <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
+                    <div className="absolute -right-32 top-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
+
+                    {/* Subtle Star Dots */}
+                    <div className="absolute top-12 left-8 w-1 h-1 rounded-full bg-white/40 pointer-events-none"></div>
+                    <div className="absolute top-24 right-12 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
+                    <div className="absolute bottom-32 left-1/4 w-1 h-1 rounded-full bg-white/38 pointer-events-none"></div>
+                    <div className="absolute top-32 right-1/3 w-1 h-1 rounded-full bg-white/32 pointer-events-none"></div>
+                    <div className="absolute bottom-20 right-20 w-1 h-1 rounded-full bg-white/40 pointer-events-none"></div>
+                    <div className="absolute top-40 left-1/2 w-1 h-1 rounded-full bg-white/30 pointer-events-none"></div>
+                    <div className="absolute bottom-40 left-12 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
+                    <div className="absolute top-48 right-1/4 w-1 h-1 rounded-full bg-white/33 pointer-events-none"></div>
+                    <div className="absolute bottom-16 left-2/3 w-1 h-1 rounded-full bg-white/38 pointer-events-none"></div>
+                    <div className="absolute top-20 left-1/3 w-1 h-1 rounded-full bg-white/36 pointer-events-none"></div>
+                    <div className="absolute bottom-28 right-1/2 w-1 h-1 rounded-full bg-white/34 pointer-events-none"></div>
+                    <div className="absolute top-56 right-8 w-1 h-1 rounded-full bg-white/32 pointer-events-none"></div>
+                    <div className="absolute top-16 right-1/2 w-1 h-1 rounded-full bg-white/37 pointer-events-none"></div>
+                    <div className="absolute bottom-24 left-1/3 w-1 h-1 rounded-full bg-white/31 pointer-events-none"></div>
+                    <div className="absolute top-36 left-1/4 w-1 h-1 rounded-full bg-white/39 pointer-events-none"></div>
+                    <div className="absolute bottom-36 right-1/4 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
+                    <div className="absolute top-44 right-40 w-1 h-1 rounded-full bg-white/33 pointer-events-none"></div>
+                    <div className="absolute bottom-12 left-1/2 w-1 h-1 rounded-full bg-white/37 pointer-events-none"></div>
+                    <div className="absolute top-28 left-2/3 w-1 h-1 rounded-full bg-white/34 pointer-events-none"></div>
+                    <div className="absolute bottom-44 right-1/3 w-1 h-1 rounded-full bg-white/36 pointer-events-none"></div>
+                    <div className="absolute top-52 left-1/2 w-1 h-1 rounded-full bg-white/32 pointer-events-none"></div>
+                    <div className="absolute bottom-8 right-1/3 w-1 h-1 rounded-full bg-white/38 pointer-events-none"></div>
+                    <div className="absolute top-14 right-1/4 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
+                    <div className="absolute bottom-48 left-1/2 w-1 h-1 rounded-full bg-white/33 pointer-events-none"></div>
+
                     <div className="text-center md:text-left mb-10 md:mb-14 px-2">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{t.home.chooseReading}</h2>
                         <p className="text-gray-400 text-lg md:text-xl max-w-xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>{t.home.chooseReadingSubtitle}</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 px-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 px-2 relative z-10">
                         {SPREADS.map((spread) => {
                             const translation = getSpreadTranslation(spread.id);
                             const spreadImages: Record<string, string> = {
@@ -758,6 +601,179 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Features Presentation Section */}
+            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark overflow-hidden">
+                {/* Decorative Stars */}
+                <div className="absolute inset-0 pointer-events-none">
+                    {/* Around Image - Top */}
+                    <div className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-50" style={{ top: '24%', left: '25%' }}></div>
+                    <div className="absolute w-1.5 h-1.5 bg-yellow-300 rounded-full opacity-45" style={{ top: '26%', left: '30%' }}></div>
+                    <div className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-60" style={{ top: '22%', left: '35%' }}></div>
+
+                    {/* Around Image - Bottom */}
+                    <div className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-55" style={{ top: '62%', left: '26%' }}></div>
+                    <div className="absolute w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-40" style={{ top: '65%', left: '32%' }}></div>
+                    <div className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-50" style={{ top: '60%', left: '38%' }}></div>
+                    <div className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-60" style={{ top: '68%', left: '25%' }}></div>
+                    <div className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-50" style={{ top: '70%', left: '31%' }}></div>
+                    <div className="absolute w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-45" style={{ top: '72%', left: '36%' }}></div>
+                    <div className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-55" style={{ top: '76%', left: '28%' }}></div>
+                    <div className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-50" style={{ top: '78%', left: '33%' }}></div>
+                    <div className="absolute w-1.5 h-1.5 bg-yellow-300 rounded-full opacity-40" style={{ top: '80%', left: '27%' }}></div>
+                    <div className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-60" style={{ top: '84%', left: '30%' }}></div>
+                    <div className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-50" style={{ top: '86%', left: '35%' }}></div>
+                    <div className="absolute w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-45" style={{ top: '88%', left: '26%' }}></div>
+                </div>
+                <div className="max-w-[1400px] mx-auto relative z-10">
+                    {/* Header - Above Grid */}
+                    <header className="space-y-4 mb-6 lg:mb-8 md:text-left px-2">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Descubra o Poder do Tarot' : 'Discover the Power of Tarot'}
+                        </h2>
+                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
+                            {isPortuguese
+                                ? 'Uma experiência completa de autoconhecimento com tecnologia e sabedoria ancestral'
+                                : 'A complete self-discovery experience with technology and ancestral wisdom'}
+                        </p>
+                    </header>
+
+                    {/* Main Grid Layout */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-16 items-start">
+
+                        {/* LEFT COLUMN - Banner Image */}
+                        <div className="flex justify-center items-center order-1 lg:order-1 min-h-[450px] lg:min-h-[520px] mt-4 lg:mt-16 -translate-y-4 md:-translate-y-6 lg:-translate-y-10 relative overflow-visible">
+                            {/* Cosmic Flame Background - Golden */}
+                            <div className="absolute inset-0 flex justify-center items-center pointer-events-none -inset-20">
+                                <div className="absolute w-[300px] lg:w-[480px] h-[300px] lg:h-[480px] bg-gradient-to-r from-yellow-600/30 via-amber-500/25 to-yellow-400/15 rounded-full blur-3xl" style={{ marginTop: '80px' }}></div>
+                                <div className="absolute w-[200px] lg:w-[320px] h-[200px] lg:h-[320px] bg-gradient-to-t from-amber-500/25 via-yellow-500/15 to-transparent rounded-full blur-2xl" style={{ marginTop: '100px' }}></div>
+                            </div>
+                            <div className="w-full max-w-2xl relative z-10">
+                                <div className="border-2 border-yellow-500 rounded-lg overflow-hidden">
+                                    <img
+                                        src="/banner_1.png"
+                                        alt="Tarot Banner"
+                                        className="w-full h-auto object-contain"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* RIGHT COLUMN - Content */}
+                        <div className="flex flex-col space-y-8 order-2 lg:order-2 mt-4 lg:mt-16 -translate-y-24 md:-translate-y-4 lg:translate-y-0">
+                            {/* Features Grid - 2 columns */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                    <div className="flex items-start gap-3 mb-3">
+                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">all_inclusive</span>
+                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Tiragens Ilimitadas' : 'Unlimited Readings'}
+                                        </h3>
+                                    </div>
+                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? 'Realize quantas tiragens desejar, sem restrições'
+                                            : 'Perform as many readings as you wish'}
+                                    </p>
+                                </div>
+
+                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                    <div className="flex items-start gap-3 mb-3">
+                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">psychology</span>
+                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}
+                                        </h3>
+                                    </div>
+                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? 'Interpretações profundas com IA avançada'
+                                            : 'Deep interpretations with advanced AI'}
+                                    </p>
+                                </div>
+
+                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                    <div className="flex items-start gap-3 mb-3">
+                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">collections_bookmark</span>
+                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Biblioteca Completa' : 'Complete Library'}
+                                        </h3>
+                                    </div>
+                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? '78 cartas com ilustrações originais'
+                                            : '78 cards with original illustrations'}
+                                    </p>
+                                </div>
+
+                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                    <div className="flex items-start gap-3 mb-3">
+                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">chat</span>
+                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
+                                        </h3>
+                                    </div>
+                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? 'Mensagens no WhatsApp diariamente'
+                                            : 'Daily WhatsApp messages'}
+                                    </p>
+                                </div>
+
+                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                    <div className="flex items-start gap-3 mb-3">
+                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">history</span>
+                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Histórico' : 'History'}
+                                        </h3>
+                                    </div>
+                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? 'Acompanhe sua jornada espiritual'
+                                            : 'Track your spiritual journey'}
+                                    </p>
+                                </div>
+
+                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                    <div className="flex items-start gap-3 mb-3">
+                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">diamond</span>
+                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                            {isPortuguese ? 'Premium' : 'Premium'}
+                                        </h3>
+                                    </div>
+                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                        {isPortuguese
+                                            ? 'Recursos exclusivos e premium'
+                                            : 'Exclusive premium features'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* CTA Buttons */}
+                            <div className="flex flex-col gap-6 pt-4 w-full">
+                                <button
+                                    onClick={() => { navigate('/spreads'); window.scrollTo(0, 0); }}
+                                    className="group relative w-full px-8 py-3.5 bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
+                                    <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2 text-sm">
+                                        {isPortuguese ? 'Acessar o Tarot' : 'Access Tarot'}
+                                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </span>
+                                </button>
+                                <button
+                                    onClick={() => navigate('/checkout')}
+                                    className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
+                                >
+                                    <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
+                                        {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                        <span className="material-symbols-outlined text-sm">star</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* WhatsApp Daily Card Subscription Section */}
             <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">
                 <style>{`
@@ -785,318 +801,347 @@ const Home = () => {
 
                 <div className="max-w-6xl mx-auto">
                     {/* Feature Presentation Header */}
-                    <div className="text-center mb-14 md:mb-20">
+                    <div className="text-left mb-14 md:mb-20 px-2">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold-home mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
                         </h2>
-                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
                             {isPortuguese
                                 ? 'Receba diariamente uma mensagem personalizada com orientações do tarot diretamente no seu celular.'
                                 : 'Receive daily personalized tarot guidance messages directly on your phone.'}
                         </p>
                     </div>
 
-                    {/* Form Card */}
-                    <div className="home-glass-card w-full max-w-5xl mx-auto rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
-                        {/* Form Content */}
-                        <div className="flex-1 p-6 lg:p-12 order-2 lg:order-1">
-                            <header className="mb-6 text-center lg:text-left">
-                                <h3 className="font-display text-2xl md:text-3xl text-white mb-4 leading-tight">
-                                    {isPortuguese ? 'Cadastre-se Agora' : 'Sign Up Now'}
-                                </h3>
-                                <p className="text-gray-400 text-sm max-w-lg">
-                                    {isPortuguese
-                                        ? 'Preencha seus dados e comece a receber orientações místicas.'
-                                        : 'Fill in your details and start receiving mystic guidance.'}
-                                </p>
-                            </header>
+                    {/* Form Card + Feature Circles */}
+                    <div className="flex flex-col lg:flex-row items-start gap-6 md:gap-8 lg:gap-10 relative">
+                        {/* Cosmic Flame Background */}
+                        <div className="absolute -left-40 -top-48 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -left-32 -top-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
 
-                            <form action="#" className="space-y-5">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Form Card - Left Side */}
+                        <div className="home-glass-card w-full lg:flex-1 rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
+                            {/* Form Content */}
+                            <div className="flex-1 p-6 lg:p-12 order-2 lg:order-1">
+                                <header className="mb-6 text-center lg:text-left">
+                                    <h3 className="font-display text-2xl md:text-3xl text-white mb-4 leading-tight">
+                                        {isPortuguese ? 'Cadastre-se Agora' : 'Sign Up Now'}
+                                    </h3>
+                                    <p className="text-gray-400 text-sm max-w-lg">
+                                        {isPortuguese
+                                            ? 'Preencha seus dados e comece a receber orientações místicas.'
+                                            : 'Fill in your details and start receiving mystic guidance.'}
+                                    </p>
+                                </header>
+
+                                <form action="#" className="space-y-5">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                                {isPortuguese ? 'Nome Completo' : 'Full Name'}
+                                            </label>
+                                            <div className="relative group">
+                                                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">person</span>
+                                                <input
+                                                    className="w-full pl-10 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
+                                                    placeholder={isPortuguese ? 'Seu nome' : 'Your name'}
+                                                    type="text"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">WhatsApp</label>
+                                            <div className="relative group">
+                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
+                                                    <img alt="Brasil Flag" className="w-4 h-auto rounded-sm opacity-80" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/32px-Flag_of_Brazil.svg.png" />
+                                                </div>
+                                                <input
+                                                    className="w-full pl-14 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
+                                                    placeholder="+55 (00) 00000-0000"
+                                                    type="tel"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div className="space-y-1.5">
                                         <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                            {isPortuguese ? 'Nome Completo' : 'Full Name'}
+                                            {isPortuguese ? 'Estado' : 'State'}
                                         </label>
                                         <div className="relative group">
-                                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">person</span>
-                                            <input
-                                                className="w-full pl-10 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
-                                                placeholder={isPortuguese ? 'Seu nome' : 'Your name'}
-                                                type="text"
-                                            />
+                                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">location_on</span>
+                                            <select
+                                                className="w-full pl-10 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white appearance-none cursor-pointer text-sm"
+                                                style={{ backgroundImage: 'none' }}
+                                                defaultValue=""
+                                            >
+                                                <option value="" disabled className="bg-[#1a1628] text-gray-400">
+                                                    {isPortuguese ? 'Selecione seu estado' : 'Select your state'}
+                                                </option>
+                                                <option value="AC" className="bg-[#1a1628]">Acre (AC)</option>
+                                                <option value="AL" className="bg-[#1a1628]">Alagoas (AL)</option>
+                                                <option value="AP" className="bg-[#1a1628]">Amapá (AP)</option>
+                                                <option value="AM" className="bg-[#1a1628]">Amazonas (AM)</option>
+                                                <option value="BA" className="bg-[#1a1628]">Bahia (BA)</option>
+                                                <option value="CE" className="bg-[#1a1628]">Ceará (CE)</option>
+                                                <option value="DF" className="bg-[#1a1628]">Distrito Federal (DF)</option>
+                                                <option value="ES" className="bg-[#1a1628]">Espírito Santo (ES)</option>
+                                                <option value="GO" className="bg-[#1a1628]">Goiás (GO)</option>
+                                                <option value="MA" className="bg-[#1a1628]">Maranhão (MA)</option>
+                                                <option value="MT" className="bg-[#1a1628]">Mato Grosso (MT)</option>
+                                                <option value="MS" className="bg-[#1a1628]">Mato Grosso do Sul (MS)</option>
+                                                <option value="MG" className="bg-[#1a1628]">Minas Gerais (MG)</option>
+                                                <option value="PA" className="bg-[#1a1628]">Pará (PA)</option>
+                                                <option value="PB" className="bg-[#1a1628]">Paraíba (PB)</option>
+                                                <option value="PR" className="bg-[#1a1628]">Paraná (PR)</option>
+                                                <option value="PE" className="bg-[#1a1628]">Pernambuco (PE)</option>
+                                                <option value="PI" className="bg-[#1a1628]">Piauí (PI)</option>
+                                                <option value="RJ" className="bg-[#1a1628]">Rio de Janeiro (RJ)</option>
+                                                <option value="RN" className="bg-[#1a1628]">Rio Grande do Norte (RN)</option>
+                                                <option value="RS" className="bg-[#1a1628]">Rio Grande do Sul (RS)</option>
+                                                <option value="RO" className="bg-[#1a1628]">Rondônia (RO)</option>
+                                                <option value="RR" className="bg-[#1a1628]">Roraima (RR)</option>
+                                                <option value="SC" className="bg-[#1a1628]">Santa Catarina (SC)</option>
+                                                <option value="SP" className="bg-[#1a1628]">São Paulo (SP)</option>
+                                                <option value="SE" className="bg-[#1a1628]">Sergipe (SE)</option>
+                                                <option value="TO" className="bg-[#1a1628]">Tocantins (TO)</option>
+                                            </select>
+                                            <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-lg">expand_more</span>
                                         </div>
                                     </div>
+
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">WhatsApp</label>
-                                        <div className="relative group">
-                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
-                                                <img alt="Brasil Flag" className="w-4 h-auto rounded-sm opacity-80" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/32px-Flag_of_Brazil.svg.png" />
-                                            </div>
-                                            <input
-                                                className="w-full pl-14 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
-                                                placeholder="+55 (00) 00000-0000"
-                                                type="tel"
-                                            />
+                                        <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                            {isPortuguese ? 'Melhor Período' : 'Best Period'}
+                                        </label>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            <label className="home-frequency-card cursor-pointer group">
+                                                <input defaultChecked className="hidden" name="home-freq" type="radio" value="manha" />
+                                                <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                    <span className="material-symbols-outlined text-lg mb-1 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
+                                                    <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                        {isPortuguese ? 'Manhã' : 'Morning'}
+                                                    </span>
+                                                </div>
+                                            </label>
+                                            <label className="home-frequency-card cursor-pointer group">
+                                                <input className="hidden" name="home-freq" type="radio" value="tarde" />
+                                                <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                    <span className="material-symbols-outlined text-lg mb-1 text-primary group-hover:scale-110 transition-transform">routine</span>
+                                                    <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                        {isPortuguese ? 'Tarde' : 'Afternoon'}
+                                                    </span>
+                                                </div>
+                                            </label>
+                                            <label className="home-frequency-card cursor-pointer group">
+                                                <input className="hidden" name="home-freq" type="radio" value="noite" />
+                                                <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                    <span className="material-symbols-outlined text-lg mb-1 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
+                                                    <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                        {isPortuguese ? 'Noite' : 'Night'}
+                                                    </span>
+                                                </div>
+                                            </label>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                        {isPortuguese ? 'Estado' : 'State'}
-                                    </label>
-                                    <div className="relative group">
-                                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">location_on</span>
-                                        <select
-                                            className="w-full pl-10 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white appearance-none cursor-pointer text-sm"
-                                            style={{ backgroundImage: 'none' }}
-                                            defaultValue=""
+                                    <div>
+                                        <label className="flex items-start gap-2.5 cursor-pointer group">
+                                            <div className="relative flex-shrink-0 mt-0.5">
+                                                <input type="checkbox" className="peer sr-only" required />
+                                                <div className="w-4 h-4 rounded border-2 border-white/20 bg-white/5 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center group-hover:border-primary/50">
+                                                    <span className="material-symbols-outlined text-white opacity-0 peer-checked:opacity-100 transition-opacity" style={{ fontSize: '12px' }}>check</span>
+                                                </div>
+                                            </div>
+                                            <span className="text-[11px] text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
+                                                {isPortuguese
+                                                    ? 'Concordo em receber mensagens via WhatsApp.'
+                                                    : 'I agree to receive messages via WhatsApp.'}
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setShowPaywallForm(true);
+                                            }}
+                                            className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
+                                            type="button"
                                         >
-                                            <option value="" disabled className="bg-[#1a1628] text-gray-400">
-                                                {isPortuguese ? 'Selecione seu estado' : 'Select your state'}
-                                            </option>
-                                            <option value="AC" className="bg-[#1a1628]">Acre (AC)</option>
-                                            <option value="AL" className="bg-[#1a1628]">Alagoas (AL)</option>
-                                            <option value="AP" className="bg-[#1a1628]">Amapá (AP)</option>
-                                            <option value="AM" className="bg-[#1a1628]">Amazonas (AM)</option>
-                                            <option value="BA" className="bg-[#1a1628]">Bahia (BA)</option>
-                                            <option value="CE" className="bg-[#1a1628]">Ceará (CE)</option>
-                                            <option value="DF" className="bg-[#1a1628]">Distrito Federal (DF)</option>
-                                            <option value="ES" className="bg-[#1a1628]">Espírito Santo (ES)</option>
-                                            <option value="GO" className="bg-[#1a1628]">Goiás (GO)</option>
-                                            <option value="MA" className="bg-[#1a1628]">Maranhão (MA)</option>
-                                            <option value="MT" className="bg-[#1a1628]">Mato Grosso (MT)</option>
-                                            <option value="MS" className="bg-[#1a1628]">Mato Grosso do Sul (MS)</option>
-                                            <option value="MG" className="bg-[#1a1628]">Minas Gerais (MG)</option>
-                                            <option value="PA" className="bg-[#1a1628]">Pará (PA)</option>
-                                            <option value="PB" className="bg-[#1a1628]">Paraíba (PB)</option>
-                                            <option value="PR" className="bg-[#1a1628]">Paraná (PR)</option>
-                                            <option value="PE" className="bg-[#1a1628]">Pernambuco (PE)</option>
-                                            <option value="PI" className="bg-[#1a1628]">Piauí (PI)</option>
-                                            <option value="RJ" className="bg-[#1a1628]">Rio de Janeiro (RJ)</option>
-                                            <option value="RN" className="bg-[#1a1628]">Rio Grande do Norte (RN)</option>
-                                            <option value="RS" className="bg-[#1a1628]">Rio Grande do Sul (RS)</option>
-                                            <option value="RO" className="bg-[#1a1628]">Rondônia (RO)</option>
-                                            <option value="RR" className="bg-[#1a1628]">Roraima (RR)</option>
-                                            <option value="SC" className="bg-[#1a1628]">Santa Catarina (SC)</option>
-                                            <option value="SP" className="bg-[#1a1628]">São Paulo (SP)</option>
-                                            <option value="SE" className="bg-[#1a1628]">Sergipe (SE)</option>
-                                            <option value="TO" className="bg-[#1a1628]">Tocantins (TO)</option>
-                                        </select>
-                                        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-lg">expand_more</span>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                        {isPortuguese ? 'Melhor Período' : 'Best Period'}
-                                    </label>
-                                    <div className="grid grid-cols-3 gap-2">
-                                        <label className="home-frequency-card cursor-pointer group">
-                                            <input defaultChecked className="hidden" name="home-freq" type="radio" value="manha" />
-                                            <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                <span className="material-symbols-outlined text-lg mb-1 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
-                                                <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                    {isPortuguese ? 'Manhã' : 'Morning'}
-                                                </span>
-                                            </div>
-                                        </label>
-                                        <label className="home-frequency-card cursor-pointer group">
-                                            <input className="hidden" name="home-freq" type="radio" value="tarde" />
-                                            <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                <span className="material-symbols-outlined text-lg mb-1 text-primary group-hover:scale-110 transition-transform">routine</span>
-                                                <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                    {isPortuguese ? 'Tarde' : 'Afternoon'}
-                                                </span>
-                                            </div>
-                                        </label>
-                                        <label className="home-frequency-card cursor-pointer group">
-                                            <input className="hidden" name="home-freq" type="radio" value="noite" />
-                                            <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                <span className="material-symbols-outlined text-lg mb-1 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
-                                                <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                    {isPortuguese ? 'Noite' : 'Night'}
-                                                </span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="flex items-start gap-2.5 cursor-pointer group">
-                                        <div className="relative flex-shrink-0 mt-0.5">
-                                            <input type="checkbox" className="peer sr-only" required />
-                                            <div className="w-4 h-4 rounded border-2 border-white/20 bg-white/5 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center group-hover:border-primary/50">
-                                                <span className="material-symbols-outlined text-white opacity-0 peer-checked:opacity-100 transition-opacity" style={{ fontSize: '12px' }}>check</span>
-                                            </div>
+                                            <span className="relative z-10 flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
+                                                {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
+                                                <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                            </span>
+                                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        </button>
+                                        <div className="flex items-center gap-1.5 text-[9px] text-gray-500 uppercase tracking-[0.15em]">
+                                            <span className="material-symbols-outlined text-[12px]">lock</span>
+                                            <p>{isPortuguese ? 'Dados protegidos' : 'Protected data'}</p>
                                         </div>
-                                        <span className="text-[11px] text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
-                                            {isPortuguese
-                                                ? 'Concordo em receber mensagens via WhatsApp.'
-                                                : 'I agree to receive messages via WhatsApp.'}
-                                        </span>
-                                    </label>
-                                </div>
-
-                                <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
-                                    <button
-                                        className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
-                                        type="submit"
-                                    >
-                                        <span className="relative z-10 flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
-                                            {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
-                                            <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                        </span>
-                                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                    </button>
-                                    <div className="flex items-center gap-1.5 text-[9px] text-gray-500 uppercase tracking-[0.15em]">
-                                        <span className="material-symbols-outlined text-[12px]">lock</span>
-                                        <p>{isPortuguese ? 'Dados protegidos' : 'Protected data'}</p>
                                     </div>
-                                </div>
-                            </form>
-                        </div>
+                                </form>
+                            </div>
 
-                        {/* iPhone Mockup */}
-                        <div className="lg:w-[300px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-5 lg:p-6 order-1 lg:order-2 relative overflow-hidden">
-                            <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
-                            <div className="relative z-10">
-                                <div className="relative w-[180px] h-[380px] bg-black rounded-[2rem] p-[6px] shadow-[0_0_30px_rgba(168,85,247,0.2),0_10px_25px_rgba(0,0,0,0.4)]">
-                                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-14 h-3.5 bg-black rounded-full z-30"></div>
-                                    <div className="w-full h-full rounded-[1.6rem] overflow-hidden bg-[#0b141a] flex flex-col">
-                                        <div className="h-4 bg-[#0b141a] flex items-center justify-between px-2.5 pt-0.5 flex-shrink-0">
-                                            <span className="text-white text-[7px] font-semibold">9:41</span>
-                                            <div className="flex items-center gap-[2px]">
-                                                <svg className="w-[9px] h-[6px] text-white" viewBox="0 0 18 12" fill="currentColor">
-                                                    <rect x="0" y="8" width="3" height="4" rx="0.5"/>
-                                                    <rect x="4" y="5" width="3" height="7" rx="0.5"/>
-                                                    <rect x="8" y="2" width="3" height="10" rx="0.5"/>
-                                                    <rect x="12" y="0" width="3" height="12" rx="0.5"/>
+                            {/* iPhone Mockup - WhatsApp Style */}
+                            <div className="lg:w-[380px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-3 sm:p-6 lg:p-10 order-1 lg:order-2 relative overflow-hidden">
+                                <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
+                                <div className="relative z-10">
+                                    {/* iPhone Frame */}
+                                    <div className="relative w-[140px] sm:w-[180px] md:w-[220px] h-[295px] sm:h-[380px] md:h-[460px] bg-black rounded-[1.5rem] sm:rounded-[2rem] lg:rounded-[2.5rem] p-[5px] sm:p-[6px] lg:p-[8px] shadow-[0_0_50px_rgba(168,85,247,0.25),0_20px_40px_rgba(0,0,0,0.5)]">
+                                        {/* Dynamic Island */}
+                                        <div className="absolute top-1 sm:top-1.5 md:top-2 left-1/2 -translate-x-1/2 w-12 sm:w-16 md:w-20 h-2.5 sm:h-3.5 md:h-5 bg-black rounded-full z-10"></div>
+
+                                        {/* Screen */}
+                                        <div className="w-full h-full rounded-[2rem] overflow-hidden bg-[#0b141a] flex flex-col">
+                                            {/* Status Bar */}
+                                            <div className="h-6 bg-[#0b141a] flex items-center justify-between px-4 pt-1 flex-shrink-0">
+                                                <span className="text-white text-[9px] font-semibold">9:41</span>
+                                                <div className="flex items-center gap-[2px] sm:gap-[3px]">
+                                                    <svg className="w-[9px] sm:w-[12px] h-[7px] sm:h-[9px] text-white" viewBox="0 0 18 12" fill="currentColor">
+                                                        <rect x="0" y="8" width="3" height="4" rx="0.5" />
+                                                        <rect x="4" y="5" width="3" height="7" rx="0.5" />
+                                                        <rect x="8" y="2" width="3" height="10" rx="0.5" />
+                                                        <rect x="12" y="0" width="3" height="12" rx="0.5" />
+                                                    </svg>
+                                                    <div className="flex items-center">
+                                                        <div className="w-[16px] sm:w-[20px] h-[7px] sm:h-[9px] border border-white rounded-[2px] flex items-center p-[1px]">
+                                                            <div className="w-[10px] sm:w-[14px] h-[3px] sm:h-[5px] bg-white rounded-[1px]"></div>
+                                                        </div>
+                                                        <div className="w-[1px] h-[2px] sm:h-[3px] bg-white rounded-r ml-[1px]"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* WhatsApp Header */}
+                                            <div className="bg-[#1f2c34] px-1 sm:px-1.5 md:px-2 py-0.5 sm:py-1 flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+                                                <svg className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                                 </svg>
-                                                <div className="flex items-center">
-                                                    <div className="w-[14px] h-[6px] border border-white rounded-[1.5px] flex items-center p-[0.5px]">
-                                                        <div className="w-[9px] h-[3.5px] bg-white rounded-[0.5px]"></div>
-                                                    </div>
-                                                    <div className="w-[1px] h-[2.5px] bg-white rounded-r ml-[0.5px]"></div>
+                                                <div className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-white text-[6px] sm:text-[8px] md:text-[10px]">auto_awesome</span>
+                                                </div>
+                                                <div className="flex-1 ml-0.5 sm:ml-1">
+                                                    <h4 className="text-white text-[7px] sm:text-[9px] md:text-[10px] font-medium leading-tight">Mystic Tarot</h4>
+                                                    <p className="text-emerald-400 text-[6px] sm:text-[7px] md:text-[8px]">online</p>
+                                                </div>
+                                                <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
+                                                    <svg className="w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M17 12c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm3 7h-2v2h-2v-2h-2v-2h2v-2h2v2h2v2zM18 6c0-1.1-.9-2-2-2H8C5.79 4 4 5.79 4 8v10c0 1.1.9 2 2 2h5c0-.73.1-1.43.28-2.1-.34.06-.69.1-1.05.1-2.79 0-5.06-2.27-5.06-5.06 0-1.51.66-2.86 1.71-3.78L12 3.97l5.12 5.19c.5.44.88 1 1.09 1.62.55-.5 1.17-.91 1.85-1.22C20.02 8.42 20 7.22 20 6h-2z" />
+                                                    </svg>
+                                                    <svg className="w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                                                    </svg>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="bg-[#1f2c34] px-1.5 py-0.5 flex items-center gap-1 flex-shrink-0">
-                                            <svg className="w-2 h-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                            </svg>
-                                            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-white text-[6px]">auto_awesome</span>
-                                            </div>
-                                            <div className="flex-1 ml-0.5">
-                                                <h4 className="text-white text-[7px] font-medium leading-tight">Mystic Tarot</h4>
-                                                <p className="text-emerald-400 text-[5px]">online</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex-1 relative" style={{
-                                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                                            backgroundColor: '#0b141a'
-                                        }}>
-                                            <div className="absolute inset-0 p-1 overflow-hidden">
-                                                <div className="max-w-[95%] bg-[#1f2c34] rounded rounded-tl-none shadow-lg">
-                                                    <div className="p-0.5">
-                                                        <div className="relative rounded overflow-hidden">
-                                                            <img
-                                                                alt="Tarot Card"
-                                                                className="w-full h-24 object-cover object-top"
-                                                                src={TAROT_CARDS[0].imageUrl}
-                                                                onError={handleImageError}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="px-1 pb-0.5 pt-0.5">
-                                                        <p className="text-white/90 text-[6px] leading-relaxed font-normal">
-                                                            <span className="font-semibold text-yellow-400">{getCardName(TAROT_CARDS[0].id, isPortuguese)}</span>
-                                                            <br /><br />
-                                                            {isPortuguese ? 'Sua carta de hoje!' : 'Your card today!'}
-                                                        </p>
-                                                        <div className="flex items-center justify-end gap-0.5 mt-0.5">
-                                                            <span className="text-[5px] text-gray-400">08:00</span>
-                                                            <svg className="w-2 h-1.5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                                                <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/>
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="bg-[#1f2c34] px-1 py-1.5 flex items-center gap-1 flex-shrink-0">
-                                            <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-                                            </svg>
-                                            <div className="flex-1 bg-[#2a3942] rounded-full h-5 px-1.5 flex items-center">
-                                                <span className="text-gray-500 text-[6px]">{isPortuguese ? 'Mensagem' : 'Message'}</span>
-                                            </div>
-                                            <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-0.5 bg-white/30 rounded-full"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* Feature Cards - Below Form */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 mt-14 md:mt-16">
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">auto_awesome</span>
-                                    </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Carta Personalizada' : 'Personalized Card'}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                            {/* Chat Background Pattern - flex-1 to fill remaining space */}
+                                            <div className="flex-1 relative overflow-hidden" style={{
+                                                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                                                backgroundColor: '#0b141a'
+                                            }}>
+                                                <div className="absolute inset-0 p-1.5 sm:p-2 overflow-hidden flex flex-col items-start">
+                                                    {/* Message Bubble - Vertical Layout */}
+                                                    <div className="max-w-[95%] bg-[#1f2c34] rounded-lg rounded-tl-none shadow-lg overflow-hidden">
+                                                        {/* Card Image - Smaller */}
+                                                        <div className="p-1 sm:p-1.5 md:p-2">
+                                                            <div className="relative rounded-md overflow-hidden">
+                                                                <img
+                                                                    alt="Sacerdotisa"
+                                                                    className="w-16 sm:w-24 md:w-32 h-20 sm:h-32 md:h-44 object-cover object-center"
+                                                                    src="/sarcedo.jpg"
+                                                                    onError={handleImageError}
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Message Text - Below Image */}
+                                                        <div className="px-1 sm:px-1.5 md:px-2 pb-1 sm:pb-1.5 md:pb-2">
+                                                            <p className="text-white/90 text-[5px] sm:text-[6px] md:text-[8px] leading-relaxed font-normal">
+                                                                <span className="font-semibold text-yellow-400 text-[6px] sm:text-[7px] md:text-[9px]">{cardName}</span>
+                                                                <br /><br />
+                                                                {isPortuguese
+                                                                    ? 'Bom dia! Sua carta de hoje traz uma mensagem especial sobre novos caminhos.'
+                                                                    : 'Good morning! Your card today brings a special message about new paths.'}
+                                                            </p>
+                                                            <div className="flex items-center justify-end gap-0.5 mt-0.5">
+                                                                <span className="text-[3px] md:text-[7px] text-gray-400">08:00</span>
+                                                                <svg className="w-1 md:w-3 h-1 md:h-2 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Input Bar - at very bottom */}
+                                            <div className="bg-[#1f2c34] px-1.5 py-1.5 sm:px-2 sm:py-1.5 md:px-2 md:py-1.5 flex items-center gap-1 sm:gap-1.5 md:gap-2 flex-shrink-0">
+                                                <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+                                                </svg>
+                                                <div className="flex-1 bg-[#2a3942] rounded-full h-5 sm:h-6 md:h-7 px-2 sm:px-2.5 md:px-3 flex items-center min-w-0">
+                                                    <span className="text-gray-500 text-[6px] sm:text-[8px] md:text-[10px] truncate">
+                                                        {isPortuguese ? 'Mensagem' : 'Message'}
+                                                    </span>
+                                                </div>
+                                                <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                        {/* Home Indicator */}
+                                        <div className="hidden md:block absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/30 rounded-full"></div>
                                     </div>
                                 </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese ? 'Interpretação única e personalizada para o seu dia' : 'Unique personalized interpretation for your day'}
-                                </p>
+
+                                {/* Decorative Elements */}
+                                <div className="absolute top-4 sm:top-6 md:top-8 right-4 sm:right-6 md:right-8 text-primary/20 block md:block">
+                                    <span className="material-symbols-outlined text-3xl sm:text-4xl md:text-5xl">stars</span>
+                                </div>
+                                <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-4 sm:left-6 md:left-8 text-yellow-500/20 block md:block">
+                                    <span className="material-symbols-outlined text-4xl sm:text-5xl md:text-6xl">auto_awesome</span>
+                                </div>
                             </div>
                         </div>
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">schedule</span>
-                                    </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
-                                    </div>
+
+                        {/* Circular Cards - Right Side */}
+                        <div className="hidden lg:flex flex-col items-center gap-4 md:gap-5 lg:gap-6 mt-12 lg:mt-20">
+                            {/* Card 1 - Circular */}
+                            <div className="flex flex-col items-center gap-3 group">
+                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
+                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">auto_awesome</span>
                                 </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese ? 'Escolha o melhor momento para receber sua carta' : 'Choose the best time to receive your card'}
-                                </p>
+                                <div className="text-center">
+                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        {isPortuguese ? 'Personalizada' : 'Personalized'}
+                                    </h3>
+                                </div>
                             </div>
-                        </div>
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col transition-all duration-300 hover:border-white/10">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">chat</span>
-                                    </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
-                                    </div>
+
+                            {/* Card 2 - Circular */}
+                            <div className="flex flex-col items-center gap-3 group">
+                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
+                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">schedule</span>
                                 </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {isPortuguese ? 'Receba diretamente no seu celular via WhatsApp' : 'Receive directly on your phone via WhatsApp'}
-                                </p>
+                                <div className="text-center">
+                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
+                                    </h3>
+                                </div>
+                            </div>
+
+                            {/* Card 3 - Circular */}
+                            <div className="flex flex-col items-center gap-3 group">
+                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
+                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">chat</span>
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        {isPortuguese ? 'WhatsApp' : 'WhatsApp'}
+                                    </h3>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1106,155 +1151,156 @@ const Home = () => {
             {/* Journey Section - A Jornada do Herói */}
             <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} onOpenAuthModal={() => setShowAuthModal(true)} />
 
-            {/* Cosmic Mandala Animation Section */}
-            <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark">
-                <div className="max-w-[1200px] mx-auto">
-                    <div className="text-center md:text-left mb-10 md:mb-14 px-2">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
-                        <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Acompanhe as fases da lua e planeje seus rituais' : 'Track moon phases and plan your rituals'}</p>
-                    </div>
-                    {(() => {
-                        const currentDate = new Date();
-                        const cosmicDay = getCosmicDay(currentDate);
-                        const { moonPhase, zodiacSun, planetaryRuler, bestFor, bestFor_pt, avoid, avoid_pt } = cosmicDay;
+            {/* Cosmic Mandala Animation Section - HIDDEN (kept for future use) */}
+            <div style={{ display: 'none' }}>
+                <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark">
+                    <div className="max-w-[1200px] mx-auto">
+                        <div className="text-center md:text-left mb-10 md:mb-14 px-2">
+                            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
+                            <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Acompanhe as fases da lua e planeje seus rituais' : 'Track moon phases and plan your rituals'}</p>
+                        </div>
+                        {(() => {
+                            const currentDate = new Date();
+                            const cosmicDay = getCosmicDay(currentDate);
+                            const { moonPhase, zodiacSun, planetaryRuler, bestFor, bestFor_pt, avoid, avoid_pt } = cosmicDay;
 
-                        const monthNames = isPortuguese
-                            ? ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
-                            : ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                            const monthNames = isPortuguese
+                                ? ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+                                : ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
-                        // Calendar generation
-                        const year = currentDate.getFullYear();
-                        const month = currentDate.getMonth();
-                        const firstDay = new Date(year, month, 1);
-                        const lastDay = new Date(year, month + 1, 0);
-                        const daysInMonth = lastDay.getDate();
-                        const startingDayOfWeek = firstDay.getDay();
+                            // Calendar generation
+                            const year = currentDate.getFullYear();
+                            const month = currentDate.getMonth();
+                            const firstDay = new Date(year, month, 1);
+                            const lastDay = new Date(year, month + 1, 0);
+                            const daysInMonth = lastDay.getDate();
+                            const startingDayOfWeek = firstDay.getDay();
 
-                        const calendarMonthNames = isPortuguese
-                            ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
-                            : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                            const calendarMonthNames = isPortuguese
+                                ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+                                : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-                        const dayNames = isPortuguese
-                            ? ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
-                            : ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+                            const dayNames = isPortuguese
+                                ? ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
+                                : ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
-                        const getMoonPhaseForDay = (day: number) => {
-                            const dateToCheck = new Date(year, month, day);
-                            const lunarCycle = 29.53;
-                            const newMoonDate = new Date(2024, 0, 11);
-                            const daysSinceNewMoon = (dateToCheck.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
-                            const lunarDay = (daysSinceNewMoon % lunarCycle) / lunarCycle;
+                            const getMoonPhaseForDay = (day: number) => {
+                                const dateToCheck = new Date(year, month, day);
+                                const lunarCycle = 29.53;
+                                const newMoonDate = new Date(2024, 0, 11);
+                                const daysSinceNewMoon = (dateToCheck.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
+                                const lunarDay = (daysSinceNewMoon % lunarCycle) / lunarCycle;
 
-                            if (lunarDay < 0.125 || lunarDay > 0.875) return { phase: 'new', icon: '🌑', pt: 'Nova' };
-                            if (lunarDay < 0.375) return { phase: 'waxing', icon: '🌒', pt: 'Crescente' };
-                            if (lunarDay < 0.625) return { phase: 'full', icon: '🌕', pt: 'Cheia' };
-                            return { phase: 'waning', icon: '🌘', pt: 'Minguante' };
-                        };
+                                if (lunarDay < 0.125 || lunarDay > 0.875) return { phase: 'new', icon: '🌑', pt: 'Nova' };
+                                if (lunarDay < 0.375) return { phase: 'waxing', icon: '🌒', pt: 'Crescente' };
+                                if (lunarDay < 0.625) return { phase: 'full', icon: '🌕', pt: 'Cheia' };
+                                return { phase: 'waning', icon: '🌘', pt: 'Minguante' };
+                            };
 
-                        // Calculate lunar cycle progress (0-1 = full cycle from new moon)
-                        // Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova
-                        const getLunarCycleProgress = () => {
-                            const lunarCycle = 29.53;
-                            const newMoonDate = new Date(2024, 0, 11);
-                            const daysSinceNewMoon = (currentDate.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
-                            const lunarDay = ((daysSinceNewMoon % lunarCycle) + lunarCycle) % lunarCycle / lunarCycle;
-                            return lunarDay; // 0 = new moon, 0.25 = first quarter, 0.5 = full, 0.75 = last quarter
-                        };
+                            // Calculate lunar cycle progress (0-1 = full cycle from new moon)
+                            // Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova
+                            const getLunarCycleProgress = () => {
+                                const lunarCycle = 29.53;
+                                const newMoonDate = new Date(2024, 0, 11);
+                                const daysSinceNewMoon = (currentDate.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
+                                const lunarDay = ((daysSinceNewMoon % lunarCycle) + lunarCycle) % lunarCycle / lunarCycle;
+                                return lunarDay; // 0 = new moon, 0.25 = first quarter, 0.5 = full, 0.75 = last quarter
+                            };
 
-                        const lunarCycleProgress = getLunarCycleProgress();
+                            const lunarCycleProgress = getLunarCycleProgress();
 
-                        const calendarDays = [];
-                        for (let i = 0; i < startingDayOfWeek; i++) {
-                            calendarDays.push(null);
-                        }
-                        for (let i = 1; i <= daysInMonth; i++) {
-                            calendarDays.push(i);
-                        }
+                            const calendarDays = [];
+                            for (let i = 0; i < startingDayOfWeek; i++) {
+                                calendarDays.push(null);
+                            }
+                            for (let i = 1; i <= daysInMonth; i++) {
+                                calendarDays.push(i);
+                            }
 
-                        return (
-                            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-                                {/* LEFT: Calendar */}
-                                <div className="mb-12 lg:mb-0">
-                                    <div className="glass-widget rounded-2xl p-4 border border-primary/30 text-sm bg-surface-dark/60">
-                                        {/* Calendar Header - Month Only */}
-                                        <div className="text-center mb-4">
-                                            <h3 className="text-base md:text-lg font-bold text-white">{calendarMonthNames[month]} {year}</h3>
-                                        </div>
+                            return (
+                                <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+                                    {/* LEFT: Calendar */}
+                                    <div className="mb-12 lg:mb-0">
+                                        <div className="glass-widget rounded-2xl p-4 border border-primary/30 text-sm bg-surface-dark/60">
+                                            {/* Calendar Header - Month Only */}
+                                            <div className="text-center mb-4">
+                                                <h3 className="text-base md:text-lg font-bold text-white">{calendarMonthNames[month]} {year}</h3>
+                                            </div>
 
-                                        {/* Day Names */}
-                                        <div className="grid grid-cols-7 gap-1 mb-3">
-                                            {dayNames.map(day => (
-                                                <div key={day} className="text-center text-[10px] font-bold text-[#ad92c9] uppercase tracking-widest py-0.5">
-                                                    {day}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        {/* Calendar Days */}
-                                        <div className="grid grid-cols-7 gap-1 mb-3">
-                                            {calendarDays.map((day, idx) => {
-                                                if (day === null) {
-                                                    return <div key={`empty-${idx}`} className="aspect-square"></div>;
-                                                }
-
-                                                const moonPhaseData = getMoonPhaseForDay(day);
-                                                const isToday = day === currentDate.getDate();
-                                                const isFull = moonPhaseData.phase === 'full';
-                                                const isNew = moonPhaseData.phase === 'new';
-
-                                                return (
-                                                    <div
-                                                        key={day}
-                                                        className={`aspect-square rounded-sm flex flex-col items-center justify-center cursor-pointer transition-all duration-300 text-xs ${isToday
-                                                            ? 'bg-gradient-to-br from-primary/40 to-primary/20 border-2 border-primary'
-                                                            : isFull
-                                                                ? 'bg-white/10 hover:bg-white/15'
-                                                                : isNew
-                                                                    ? 'bg-zinc-900/40 hover:bg-zinc-800/40'
-                                                                    : 'bg-white/5 hover:bg-white/10'
-                                                            } group border border-white/10 hover:border-primary/30`}
-                                                    >
-                                                        <span className="text-base group-hover:scale-110 transition-transform">
-                                                            {moonPhaseData.phase === 'full' && '🌕'}
-                                                            {moonPhaseData.phase === 'new' && '🌑'}
-                                                            {moonPhaseData.phase === 'waxing' && '🌒'}
-                                                            {moonPhaseData.phase === 'waning' && '🌘'}
-                                                        </span>
-                                                        <span className={`text-[8px] font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
-                                                            {day}
-                                                        </span>
+                                            {/* Day Names */}
+                                            <div className="grid grid-cols-7 gap-1 mb-3">
+                                                {dayNames.map(day => (
+                                                    <div key={day} className="text-center text-[10px] font-bold text-[#ad92c9] uppercase tracking-widest py-0.5">
+                                                        {day}
                                                     </div>
-                                                );
-                                            })}
-                                        </div>
+                                                ))}
+                                            </div>
 
-                                        {/* Legend */}
-                                        <div className="pt-2 border-t border-white/10">
-                                            <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-sm">🌕</span>
-                                                    <span className="text-white/70">{isPortuguese ? 'Cheia' : 'Full'}</span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-sm">🌑</span>
-                                                    <span className="text-white/70">{isPortuguese ? 'Nova' : 'New'}</span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-sm">🌒</span>
-                                                    <span className="text-white/70">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-sm">🌘</span>
-                                                    <span className="text-white/70">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
+                                            {/* Calendar Days */}
+                                            <div className="grid grid-cols-7 gap-1 mb-3">
+                                                {calendarDays.map((day, idx) => {
+                                                    if (day === null) {
+                                                        return <div key={`empty-${idx}`} className="aspect-square"></div>;
+                                                    }
+
+                                                    const moonPhaseData = getMoonPhaseForDay(day);
+                                                    const isToday = day === currentDate.getDate();
+                                                    const isFull = moonPhaseData.phase === 'full';
+                                                    const isNew = moonPhaseData.phase === 'new';
+
+                                                    return (
+                                                        <div
+                                                            key={day}
+                                                            className={`aspect-square rounded-sm flex flex-col items-center justify-center cursor-pointer transition-all duration-300 text-xs ${isToday
+                                                                ? 'bg-gradient-to-br from-primary/40 to-primary/20 border-2 border-primary'
+                                                                : isFull
+                                                                    ? 'bg-white/10 hover:bg-white/15'
+                                                                    : isNew
+                                                                        ? 'bg-zinc-900/40 hover:bg-zinc-800/40'
+                                                                        : 'bg-white/5 hover:bg-white/10'
+                                                                } group border border-white/10 hover:border-primary/30`}
+                                                        >
+                                                            <span className="text-base group-hover:scale-110 transition-transform">
+                                                                {moonPhaseData.phase === 'full' && '🌕'}
+                                                                {moonPhaseData.phase === 'new' && '🌑'}
+                                                                {moonPhaseData.phase === 'waxing' && '🌒'}
+                                                                {moonPhaseData.phase === 'waning' && '🌘'}
+                                                            </span>
+                                                            <span className={`text-[8px] font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
+                                                                {day}
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            {/* Legend */}
+                                            <div className="pt-2 border-t border-white/10">
+                                                <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-sm">🌕</span>
+                                                        <span className="text-white/70">{isPortuguese ? 'Cheia' : 'Full'}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-sm">🌑</span>
+                                                        <span className="text-white/70">{isPortuguese ? 'Nova' : 'New'}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-sm">🌒</span>
+                                                        <span className="text-white/70">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-sm">🌘</span>
+                                                        <span className="text-white/70">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* RIGHT: Mandala */}
-                                <div className="flex items-center justify-center mt-8 lg:mt-0 lg:pl-8 lg:pt-24">
-                                    <style>{`
+                                    {/* RIGHT: Mandala */}
+                                    <div className="flex items-center justify-center mt-8 lg:mt-0 lg:pl-8 lg:pt-24">
+                                        <style>{`
                                         .cosmic-gradient { background: radial-gradient(circle at center, #2e1a47 0%, #191022 100%); }
                                         .mandala-glow { box-shadow: 0 0 60px 10px rgba(147, 17, 212, 0.3); }
                                         .glass-widget { background: rgba(54, 35, 72, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(173, 146, 201, 0.2); }
@@ -1280,256 +1326,94 @@ const Home = () => {
                                         }
                                     `}</style>
 
-                                    <div className="relative w-full max-w-3xl mx-auto">
-                                        {/* Outer Orbits - Responsive */}
-                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] aspect-square border border-primary/10 rounded-full orbit-rotate"></div>
-                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[75vw] max-w-[420px] aspect-square border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
+                                        <div className="relative w-full max-w-3xl mx-auto">
+                                            {/* Outer Orbits - Responsive */}
+                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[90vw] max-w-[550px] aspect-square border border-primary/10 rounded-full orbit-rotate"></div>
+                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[82vw] sm:w-[75vw] max-w-[460px] aspect-square border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
 
-                                        {/* The Mandala Body - Responsive */}
-                                        <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
-                                            {/* Progress Arc - Shows lunar cycle progress from New Moon */}
-                                            {/* Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova */}
-                                            {/* Path starts at bottom, sweep-flag=1 for clockwise in SVG = counter-clockwise on screen */}
-                                            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-                                                {/* Background track */}
-                                                <circle
-                                                    cx="50"
-                                                    cy="50"
-                                                    r="49"
-                                                    fill="none"
-                                                    stroke="rgba(173, 146, 201, 0.08)"
-                                                    strokeWidth="1.5"
-                                                />
-                                                {/* Progress arc: bottom → right → top → left (counter-clockwise on screen) */}
-                                                <path
-                                                    d="M 50 99 A 49 49 0 1 1 50.01 99"
-                                                    fill="none"
-                                                    stroke="rgba(173, 146, 201, 0.6)"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                    pathLength="100"
-                                                    strokeDasharray={`${lunarCycleProgress * 100} 100`}
-                                                />
-                                            </svg>
+                                            {/* The Mandala Body - Responsive */}
+                                            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
+                                                {/* Progress Arc - Shows lunar cycle progress from New Moon */}
+                                                {/* Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova */}
+                                                {/* Path starts at bottom, sweep-flag=1 for clockwise in SVG = counter-clockwise on screen */}
+                                                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+                                                    {/* Background track */}
+                                                    <circle
+                                                        cx="50"
+                                                        cy="50"
+                                                        r="49"
+                                                        fill="none"
+                                                        stroke="rgba(173, 146, 201, 0.08)"
+                                                        strokeWidth="1.5"
+                                                    />
+                                                    {/* Progress arc: bottom → right → top → left (counter-clockwise on screen) */}
+                                                    <path
+                                                        d="M 50 99 A 49 49 0 1 1 50.01 99"
+                                                        fill="none"
+                                                        stroke="rgba(173, 146, 201, 0.6)"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        pathLength="100"
+                                                        strokeDasharray={`${lunarCycleProgress * 100} 100`}
+                                                    />
+                                                </svg>
 
-                                            {/* SVG Mandala Detail */}
-                                            <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
-                                                <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
-                                                <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
-                                                <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
-                                            </svg>
+                                                {/* SVG Mandala Detail */}
+                                                <svg className="absolute inset-0 p-4 w-full h-full stroke-primary fill-none opacity-50" viewBox="0 0 100 100">
+                                                    <circle cx="50" cy="50" r="48" strokeWidth="0.2"></circle>
+                                                    <circle cx="50" cy="50" r="40" strokeDasharray="1 2" strokeWidth="0.1"></circle>
+                                                    <path d="M50 2 L50 98 M2 50 L98 50 M15.5 15.5 L84.5 84.5 M15.5 84.5 L84.5 15.5" strokeWidth="0.1"></path>
+                                                </svg>
 
-                                            {/* Moon Phases Ring - Larger */}
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                {/* Full Moon - Top */}
-                                                <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
-                                                        🌕
+                                                {/* Moon Phases Ring - Larger */}
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    {/* Full Moon - Top */}
+                                                    <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
+                                                            🌕
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
-                                                </div>
-                                                {/* New Moon - Bottom */}
-                                                <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
-                                                        🌑
+                                                    {/* New Moon - Bottom */}
+                                                    <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
+                                                            🌑
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
-                                                </div>
-                                                {/* Waxing - Right */}
-                                                <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                        🌒
+                                                    {/* Waxing - Right */}
+                                                    <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
+                                                            🌒
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
-                                                </div>
-                                                {/* Waning - Left */}
-                                                <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
-                                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                        🌘
+                                                    {/* Waning - Left */}
+                                                    <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
+                                                        <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
+                                                            🌘
+                                                        </div>
+                                                        <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                     </div>
-                                                    <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                 </div>
-                                            </div>
 
-                                            {/* Inner Core */}
-                                            <div className="text-center z-30">
-                                                <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-1" style={{ fontFamily: "'Crimson Text', serif" }}>{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
-                                                <p className="text-primary text-sm md:text-base font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
-                                                <div className="mt-3 flex justify-center gap-2">
-                                                    <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
+                                                {/* Inner Core */}
+                                                <div className="text-center z-30">
+                                                    <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight mb-1" style={{ fontFamily: "'Crimson Text', serif" }}>{currentDate.getDate()} {monthNames[currentDate.getMonth()]}</h2>
+                                                    <p className="text-primary text-sm md:text-base font-medium tracking-[0.1em] uppercase">{isPortuguese ? 'Lua em' : 'Moon in'} {isPortuguese ? zodiacSun.sign_pt : zodiacSun.sign}</p>
+                                                    <div className="mt-3 flex justify-center gap-2">
+                                                        <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30 text-[8px] font-bold text-white uppercase tracking-widest">{isPortuguese ? moonPhase.name_pt : moonPhase.name}</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })()}
-                </div>
-            </section>
-
-            {/* Pricing Comparison Section */}
-            <section className="relative z-10 py-16 md:py-24 px-4 md:px-6 overflow-x-hidden">
-                <div className="max-w-[1100px] mx-auto">
-                    <div className="text-center mb-12 md:mb-16">
-                        <h2 className="text-3xl md:text-5xl font-normal text-white mb-4 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Escolha sua jornada' : 'Choose your journey'}
-                        </h2>
-                        <p className="text-gray-300 text-base md:text-lg font-light max-w-2xl mx-auto">
-                            {isPortuguese
-                                ? 'Comece gratuitamente ou aprofunde-se com acesso completo ao arquivo arcano.'
-                                : 'Start for free or deepen your practice with full access to the arcane archive.'}
-                        </p>
+                            );
+                        })()}
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto w-full">
-
-                        {/* Free Plan */}
-                        <div className="relative bg-[#1a1320]/40 backdrop-blur-sm border border-white/5 rounded-lg p-8 md:p-10">
-                            <div className="mb-8">
-                                <h3 className="text-2xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                    {isPortuguese ? 'Exploração Livre' : 'Free Exploration'}
-                                </h3>
-                                <div className="text-gray-400 text-sm font-light">
-                                    {isPortuguese ? 'Para começar sua prática' : 'To begin your practice'}
-                                </div>
-                                <div className="mt-6">
-                                    <span className="text-4xl font-light text-white">R$ 0</span>
-                                    <span className="text-gray-500 text-sm ml-2">{isPortuguese ? '/sempre' : '/forever'}</span>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
-                                    <div>
-                                        <div className="text-white text-sm font-light">{isPortuguese ? '1 tirada por dia' : '1 reading per day'}</div>
-                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Acesso básico às cartas' : 'Basic card access'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
-                                    <div>
-                                        <div className="text-white text-sm font-light">{isPortuguese ? 'Interpretação simples' : 'Simple interpretation'}</div>
-                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Sem análise de IA' : 'No AI analysis'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#875faf] text-xl mt-0.5">check_circle</span>
-                                    <div>
-                                        <div className="text-white text-sm font-light">{isPortuguese ? 'Histórico limitado' : 'Limited history'}</div>
-                                        <div className="text-gray-500 text-xs mt-0.5">{isPortuguese ? 'Últimas 7 tiragens' : 'Last 7 readings'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
-                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Análise de padrões' : 'Pattern analysis'}</div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
-                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Conteúdo exclusivo' : 'Exclusive content'}</div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-gray-600 text-xl mt-0.5">cancel</span>
-                                    <div className="text-gray-600 text-sm font-light line-through">{isPortuguese ? 'Relatórios detalhados' : 'Detailed reports'}</div>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={() => handleSelectSpread(SPREADS[0])}
-                                className="w-full mt-8 px-6 py-3.5 bg-white/5 border border-white/10 text-gray-300 text-sm font-light tracking-wide rounded-sm hover:bg-white/8 transition-all duration-300"
-                                style={{ fontFamily: "'Inter', sans-serif" }}
-                            >
-                                {isPortuguese ? 'Começar Agora' : 'Start Now'}
-                            </button>
-                        </div>
-
-                        {/* Premium Plan */}
-                        <div className="relative bg-gradient-to-br from-[#1a0d14] to-[#1a0f1e] border-2 border-[#875faf]/40 rounded-lg p-8 md:p-10 shadow-2xl shadow-purple-900/20">
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-xs font-medium uppercase tracking-wider rounded-full">
-                                {isPortuguese ? 'Recomendado' : 'Recommended'}
-                            </div>
-
-                            <div className="mb-8">
-                                <h3 className="text-2xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                    {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
-                                </h3>
-                                <div className="text-gray-300 text-sm font-light">
-                                    {isPortuguese ? 'Para praticantes dedicados' : 'For dedicated practitioners'}
-                                </div>
-                                <div className="mt-6">
-                                    <span className="text-4xl font-light text-white">R$ 19</span>
-                                    <span className="text-gray-400 text-sm ml-2">{isPortuguese ? '/mês' : '/month'}</span>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Consulte quantas vezes quiser' : 'Consult as many times as you want'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Síntese com IA' : 'AI synthesis'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Interpretação profunda personalizada' : 'Deep personalized interpretation'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Histórico completo' : 'Complete history'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Todas as suas tiragens salvas' : 'All your readings saved'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern analysis'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Identifique tendências na sua jornada' : 'Identify trends in your journey'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Conteúdo exclusivo' : 'Exclusive content'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Spreads e guias especiais' : 'Special spreads and guides'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Relatórios detalhados' : 'Detailed reports'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Exportação em PDF' : 'PDF export'}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="material-symbols-outlined text-[#a77fd4] text-xl mt-0.5">verified</span>
-                                    <div>
-                                        <div className="text-white text-sm font-medium">{isPortuguese ? 'Sem anúncios' : 'Ad-free'}</div>
-                                        <div className="text-gray-400 text-xs mt-0.5">{isPortuguese ? 'Experiência pura e focada' : 'Pure and focused experience'}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button
-                                className="w-full mt-8 px-6 py-3.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-sm font-medium tracking-wide rounded-sm hover:shadow-lg hover:shadow-purple-900/40 transition-all duration-300"
-                                style={{ fontFamily: "'Inter', sans-serif" }}
-                            >
-                                {isPortuguese ? 'Acessar Arquivo Arcano' : 'Access Arcane Archive'}
-                            </button>
-
-                            <div className="mt-4 text-center text-xs text-gray-500 font-light">
-                                {isPortuguese ? 'Cancele quando quiser • Sem compromisso' : 'Cancel anytime • No commitment'}
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </section>
+                </section>
+            </div>
 
             <Footer />
 
@@ -1540,13 +1424,37 @@ const Home = () => {
                 feature="readings"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
+                    setShowAuthModal(true);
+                }}
+                onCheckout={() => navigate('/checkout')}
+            />
+
+            {/* Paywall Modal for Form */}
+            <PaywallModal
+                isOpen={showPaywallForm}
+                onClose={() => setShowPaywallForm(false)}
+                feature="whatsapp"
+                onLogin={() => {
+                    setShowPaywallForm(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywallForm(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
             />
 
             {/* Auth Modal */}
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
         </div >
     );
 };
@@ -2397,15 +2305,110 @@ const ReadingModal = ({
                         </div>
                     </div>
 
-                    {/* Synthesis */}
+                    {/* Synthesis - Enhanced Layout */}
                     {reading.notes && (
-                        <div>
-                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                <span className="material-symbols-outlined text-primary text-lg">auto_awesome</span>
                                 {isPortuguese ? 'Síntese da Leitura' : 'Reading Synthesis'}
                             </h3>
-                            <p className="text-gray-300 text-sm leading-relaxed bg-surface-dark p-4 rounded-xl">
-                                {reading.notes}
-                            </p>
+                            <div className="bg-gradient-to-br from-purple-900/30 to-surface-dark border border-purple-500/20 rounded-xl p-5 space-y-4">
+                                {/* Parse and display structured synthesis */}
+                                {reading.notes.split('\n').map((line: string, idx: number) => {
+                                    const trimmedLine = line.trim();
+                                    if (!trimmedLine) return null;
+
+                                    // Check for section headers
+                                    if (trimmedLine.startsWith('PERGUNTA:') || trimmedLine.startsWith('QUESTION:')) {
+                                        return (
+                                            <div key={idx} className="flex items-start gap-3 bg-blue-500/10 rounded-lg p-3 border border-blue-500/20">
+                                                <span className="material-symbols-outlined text-blue-400 text-lg mt-0.5">help_outline</span>
+                                                <p className="text-blue-200 text-sm italic">{trimmedLine.replace(/^(PERGUNTA|QUESTION):\s*/, '').replace(/^"|"$/g, '')}</p>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('TEMA:') || trimmedLine.startsWith('THEME:')) {
+                                        return (
+                                            <div key={idx} className="flex items-center gap-2">
+                                                <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold uppercase">
+                                                    {trimmedLine.replace(/^(TEMA|THEME):\s*/, '')}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('ENERGIA:') || trimmedLine.startsWith('ENERGY:')) {
+                                        const energia = trimmedLine.replace(/^(ENERGIA|ENERGY):\s*/, '').toLowerCase();
+                                        const isPositive = energia.includes('positiv') || energia.includes('favorável');
+                                        return (
+                                            <div key={idx} className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isPositive ? 'bg-green-500/15 border border-green-500/20' : 'bg-orange-500/15 border border-orange-500/20'}`}>
+                                                <span className={`material-symbols-outlined text-lg ${isPositive ? 'text-green-400' : 'text-orange-400'}`}>
+                                                    {isPositive ? 'sentiment_satisfied' : 'warning'}
+                                                </span>
+                                                <span className={`text-sm font-medium ${isPositive ? 'text-green-300' : 'text-orange-300'}`}>
+                                                    {trimmedLine.replace(/^(ENERGIA|ENERGY):\s*/, '')}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('RESPOSTA:') || trimmedLine.startsWith('ANSWER:')) {
+                                        const answer = trimmedLine.replace(/^(RESPOSTA|ANSWER):\s*/, '');
+                                        const isYes = answer.toLowerCase().includes('sim') || answer.toLowerCase().includes('yes');
+                                        const isNo = answer.toLowerCase().includes('não') || answer.toLowerCase().includes('no');
+                                        return (
+                                            <div key={idx} className={`flex items-center justify-center gap-3 p-4 rounded-xl border ${isYes ? 'bg-green-500/20 border-green-500/30' : isNo ? 'bg-red-500/20 border-red-500/30' : 'bg-yellow-500/20 border-yellow-500/30'}`}>
+                                                <span className={`material-symbols-outlined text-3xl ${isYes ? 'text-green-400' : isNo ? 'text-red-400' : 'text-yellow-400'}`}>
+                                                    {isYes ? 'check_circle' : isNo ? 'cancel' : 'help'}
+                                                </span>
+                                                <span className={`text-2xl font-bold ${isYes ? 'text-green-300' : isNo ? 'text-red-300' : 'text-yellow-300'}`}>
+                                                    {answer}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('CONSELHO:') || trimmedLine.startsWith('ADVICE:')) {
+                                        return (
+                                            <div key={idx} className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                                                <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase mb-2">
+                                                    <span className="material-symbols-outlined text-sm">lightbulb</span>
+                                                    {isPortuguese ? 'Conselho' : 'Advice'}
+                                                </div>
+                                                <p className="text-amber-100 text-sm">{trimmedLine.replace(/^(CONSELHO|ADVICE):\s*/, '')}</p>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('REFLEXÃO:') || trimmedLine.startsWith('REFLECTION:')) {
+                                        return (
+                                            <div key={idx} className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
+                                                <div className="flex items-center gap-2 text-purple-400 text-xs font-bold uppercase mb-2">
+                                                    <span className="material-symbols-outlined text-sm">psychology</span>
+                                                    {isPortuguese ? 'Reflexão' : 'Reflection'}
+                                                </div>
+                                                <p className="text-purple-200 text-sm italic">{trimmedLine.replace(/^(REFLEXÃO|REFLECTION):\s*/, '')}</p>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('ATENÇÃO:') || trimmedLine.startsWith('ATTENTION:') || trimmedLine.startsWith('DESAFIO:') || trimmedLine.startsWith('CHALLENGE:')) {
+                                        return (
+                                            <div key={idx} className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3">
+                                                <div className="flex items-center gap-2 text-orange-400 text-xs font-bold uppercase mb-2">
+                                                    <span className="material-symbols-outlined text-sm">warning</span>
+                                                    {isPortuguese ? 'Ponto de Atenção' : 'Attention Point'}
+                                                </div>
+                                                <p className="text-orange-200 text-sm">{trimmedLine.replace(/^(ATENÇÃO|ATTENTION|DESAFIO|CHALLENGE):\s*/, '')}</p>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('--- CARTAS ---') || trimmedLine.startsWith('--- CARDS ---')) {
+                                        return null; // Skip this header
+                                    }
+                                    // Default: regular text
+                                    return (
+                                        <p key={idx} className="text-gray-300 text-sm leading-relaxed">
+                                            {trimmedLine}
+                                        </p>
+                                    );
+                                })}
+                            </div>
                         </div>
                     )}
 
@@ -2480,6 +2483,8 @@ const ReadingModal = ({
 };
 
 // History Page
+const VIEWED_READINGS_KEY = 'tarot-viewed-readings';
+
 const History = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
@@ -2488,10 +2493,47 @@ const History = () => {
     const [selectedReading, setSelectedReading] = useState<any | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const [filteredReadings, setFilteredReadings] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    // Track viewed readings
+    const [viewedReadings, setViewedReadings] = useState<Set<string | number>>(() => {
+        try {
+            const stored = localStorage.getItem(VIEWED_READINGS_KEY);
+            return stored ? new Set(JSON.parse(stored)) : new Set();
+        } catch {
+            return new Set();
+        }
+    });
+
+    // Mark a reading as viewed
+    const markAsViewed = (readingId: string | number) => {
+        setViewedReadings(prev => {
+            const updated = new Set(prev);
+            updated.add(readingId);
+            try {
+                localStorage.setItem(VIEWED_READINGS_KEY, JSON.stringify([...updated]));
+            } catch {}
+            return updated;
+        });
+    };
+
+    // Check if a reading is unviewed
+    const isUnviewed = (readingId: string | number) => {
+        return !viewedReadings.has(readingId);
+    };
+
+    // Handle opening a reading (marks it as viewed)
+    const handleOpenReading = (reading: any) => {
+        markAsViewed(reading.id);
+        setSelectedReading(reading);
+    };
 
     const [savedReadings, setSavedReadings] = useState<any[]>(() => {
         try {
+            // Se não estiver logado, pode carregar do localStorage
+            // Se estiver logado, vai carregar do Supabase
             const saved = localStorage.getItem('tarot-history');
             return saved ? JSON.parse(saved) : [];
         } catch {
@@ -2501,17 +2543,34 @@ const History = () => {
 
     // Recarregar histórico quando usuário faz login/logout
     useEffect(() => {
-        try {
-            const saved = localStorage.getItem('tarot-history');
-            const readings = saved ? JSON.parse(saved) : [];
-            setSavedReadings(readings);
-            setFilteredReadings(readings);
-        } catch (e) {
-            console.error('Error loading history:', e);
-            setSavedReadings([]);
-            setFilteredReadings([]);
-        }
-    }, [user]); // Recarrega quando user muda (login/logout)
+        const loadHistory = async () => {
+            try {
+                setLoading(true);
+
+                if (user && user.id) {
+                    // Usuário autenticado: carrega do Supabase com filtro por user_id
+                    const readings = await fetchReadingsFromSupabase(user.id, 1000, isPortuguese);
+                    setSavedReadings(readings);
+                    setFilteredReadings(readings);
+                } else {
+                    // Usuário não autenticado: carrega do localStorage
+                    // IMPORTANTE: Limpa dados do localStorage se mudou de usuário
+                    const saved = localStorage.getItem('tarot-history');
+                    const readings = saved ? JSON.parse(saved) : [];
+                    setSavedReadings(readings);
+                    setFilteredReadings(readings);
+                }
+            } catch (e) {
+                console.error('Error loading history:', e);
+                setSavedReadings([]);
+                setFilteredReadings([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadHistory();
+    }, [user, isPortuguese]); // Recarrega quando user muda (login/logout) ou idioma muda
 
     // Limitar leituras visíveis baseado no tier
     const historyLimit = getHistoryLimit();
@@ -2638,7 +2697,7 @@ const History = () => {
                                 <HistoryFiltered
                                     readings={savedReadings}
                                     isPortuguese={isPortuguese}
-                                    onSelect={setSelectedReading}
+                                    onSelect={handleOpenReading}
                                     onDelete={deleteReading}
                                     onFilterChange={setFilteredReadings}
                                 />
@@ -2649,11 +2708,20 @@ const History = () => {
                                 {visibleReadings.map((item) => (
                                     <div
                                         key={item.id}
-                                        className="bg-card-dark rounded-xl border border-border-dark hover:border-primary/30 transition-all overflow-hidden"
+                                        className={`bg-card-dark rounded-xl border transition-all overflow-hidden ${isUnviewed(item.id) ? 'border-green-500/40 ring-1 ring-green-500/20' : 'border-border-dark hover:border-primary/30'}`}
                                     >
                                         <div className="flex flex-col md:flex-row">
                                             {/* Cards Preview */}
-                                            <div className="flex gap-2 p-4 md:p-5 bg-surface-dark/50 overflow-x-auto">
+                                            <div className="relative flex gap-2 p-4 md:p-5 bg-surface-dark/50 overflow-x-auto">
+                                                {/* Unviewed Indicator */}
+                                                {isUnviewed(item.id) && (
+                                                    <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/20 border border-green-500/30">
+                                                        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                                                        <span className="text-green-400 text-[10px] font-bold uppercase">
+                                                            {isPortuguese ? 'Nova' : 'New'}
+                                                        </span>
+                                                    </div>
+                                                )}
                                                 {item.previewCards?.slice(0, 5).map((cardUrl: string, idx: number) => (
                                                     <div key={idx} className="flex-shrink-0 w-14 md:w-16">
                                                         <div className="aspect-[2/3] rounded-lg overflow-hidden border border-white/10 shadow-md">
@@ -2704,8 +2772,8 @@ const History = () => {
                                                 {/* Actions */}
                                                 <div className="flex gap-2 md:flex-col">
                                                     <button
-                                                        onClick={() => setSelectedReading(item)}
-                                                        className="flex-1 md:flex-none px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-medium text-sm flex items-center justify-center gap-2 transition-colors"
+                                                        onClick={() => handleOpenReading(item)}
+                                                        className={`flex-1 md:flex-none px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-colors ${isUnviewed(item.id) ? 'bg-green-500/20 hover:bg-green-500/30 text-green-400' : 'bg-primary/10 hover:bg-primary/20 text-primary'}`}
                                                     >
                                                         <span className="material-symbols-outlined text-lg">visibility</span>
                                                         {isPortuguese ? 'Ver' : 'View'}
@@ -2754,11 +2822,17 @@ const History = () => {
                 feature="history"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
             />
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
         </div>
     );
 };
@@ -3408,6 +3482,7 @@ const Explore = () => {
     const [filter, setFilter] = useState<'ALL' | 'MAJOR' | Suit>('ALL');
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     // Use TAROT_CARDS diretamente para garantir dados completos
     const deck = TAROT_CARDS;
 
@@ -3498,7 +3573,7 @@ const Explore = () => {
                             {isPortuguese ? 'Crie uma conta gratuita para explorar os significados das cartas.' : 'Create a free account to explore card meanings.'}
                         </p>
                         <button
-                            onClick={() => setShowAuthModal(true)}
+                            onClick={() => navigate('/checkout')}
                             className="px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
                         >
                             {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
@@ -3523,6 +3598,7 @@ const Explore = () => {
                                 <img
                                     src={card.imageUrl}
                                     alt={card.name}
+                                    loading="lazy"
                                     onError={handleImageError}
                                     className={`w-full h-full object-cover transition-opacity ${isLocked || isGuestLocked ? 'opacity-70 blur-[1px]' : 'opacity-80 group-hover:opacity-100'
                                         }`}
@@ -3539,7 +3615,6 @@ const Explore = () => {
                                 )}
 
                                 <div className="absolute bottom-0 left-0 p-3">
-                                    <p className="text-xs text-primary font-bold uppercase mb-0.5">{card.arcana === 'major' ? (isPortuguese ? 'Maior' : 'Major') : card.suit}</p>
                                     <p className="text-white font-bold text-lg leading-tight">{getCardName(card.id, isPortuguese)}</p>
                                 </div>
                             </div>
@@ -3575,11 +3650,17 @@ const Explore = () => {
                 feature="archive"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
             />
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
         </div>
     );
 };
@@ -3589,6 +3670,8 @@ const Session = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
+    const { checkAccess } = usePaywall();
+    const { incrementReadingCount } = useAuth();
     const spread = (location.state as any)?.spread as Spread;
 
     const [deck, setDeck] = useState<TarotCard[]>([]);
@@ -3596,6 +3679,10 @@ const Session = () => {
     const [question, setQuestion] = useState("");
     const [isShuffling, setIsShuffling] = useState(true);
     const [isSpreadingCards, setIsSpreadingCards] = useState(false);
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
+    const isNavigatingRef = useRef(false);
 
     const getSpreadTranslation = (spreadId: string) => {
         switch (spreadId) {
@@ -3671,9 +3758,19 @@ const Session = () => {
         }, 800);
     }, [spread, navigate]);
 
-    const handleCardClick = (card: TarotCard) => {
+    const handleCardClick = async (card: TarotCard) => {
         if (selectedCards.length >= spread.cardCount) return;
         if (selectedCards.find(c => c.card.id === card.id)) return;
+
+        // Check paywall access on FIRST card click
+        if (selectedCards.length === 0) {
+            if (!checkAccess('readings')) {
+                setShowPaywall(true);
+                return;
+            }
+            // Increment reading count only when user actually starts picking cards
+            await incrementReadingCount();
+        }
 
         // Efeito sonoro de escolha
         try {
@@ -3694,15 +3791,19 @@ const Session = () => {
         }, 300);
 
         if (newSelection.length === spread.cardCount) {
+            if (isNavigatingRef.current) return;
+            isNavigatingRef.current = true;
+
             setTimeout(() => {
                 navigate('/result', {
                     state: {
                         spread,
                         cards: newSelection.map(s => s.card),
-                        question
+                        question,
+                        timestamp: Date.now() // Unique ID for this navigation session
                     }
                 });
-            }, 1500);
+            }, 1000);
         }
     };
 
@@ -3712,6 +3813,24 @@ const Session = () => {
         <div className="relative flex flex-col min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
             <Header />
             <CartDrawer />
+
+            <PaywallModal
+                isOpen={showPaywall}
+                onClose={() => setShowPaywall(false)}
+                feature="readings"
+                onLogin={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
+                    setShowAuthModal(true);
+                }}
+                onCheckout={() => navigate('/checkout')}
+            />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
 
             <div className="relative z-10 flex-none px-6 pt-6 pb-2 md:px-12 md:pt-10">
                 <div className="flex flex-wrap justify-between items-end gap-4 mb-6 max-w-[1200px] mx-auto">
@@ -4043,17 +4162,31 @@ const Result = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
+    const fetchedRef = useRef(false); // Prevent duplicate API calls
 
-    // Reset hasSavedRef when state changes
+    // Reset hasSavedRef when state changes significantly
     useEffect(() => {
+        // Only reset if this is a actually a new session (different cards or different timestamp)
         hasSavedRef.current = false;
-    }, [state?.spread?.id, state?.cards]);
+        fetchedRef.current = false;
+    }, [state?.timestamp, state?.spread?.id]);
 
     useEffect(() => {
         if (!state?.spread || !state?.cards) {
             navigate('/');
             return;
         }
+
+        // Prevent duplicate calls in React Strict Mode
+        if (fetchedRef.current) {
+            console.log("⏭️ Skipping duplicate API call");
+            if (isLoading && structuredSynthesis) {
+                setIsLoading(false);
+            }
+            return;
+        }
+        fetchedRef.current = true;
 
         const fetchInterpretation = async () => {
             const reversedIndices = state.cards
@@ -4068,13 +4201,17 @@ const Result = () => {
                 date: new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US')
             };
 
-            // Fetch both interpretations in parallel
-            const [result, synthesis] = await Promise.all([
-                getGeminiInterpretation(session),
-                isGeminiConfigured() ? getStructuredSynthesis(session, isPortuguese) : Promise.resolve(null)
-            ]);
+            // Fetch structured synthesis from Gemini (single API call)
+            const rawSynthesis = isGeminiConfigured()
+                ? await getStructuredSynthesis(session, isPortuguese)
+                : null;
 
-            setAnalysis(result);
+            // Converter para formato legado para compatibilidade com UI existente
+            const synthesis = rawSynthesis
+                ? convertToLegacySynthesis(rawSynthesis, state.spread.id)
+                : null;
+
+            setAnalysis(null); // No longer using the old analysis format
             setStructuredSynthesis(synthesis);
             setIsLoading(false);
 
@@ -4135,7 +4272,7 @@ const Result = () => {
                     previewCards: state.cards.map((c: TarotCard) => c.imageUrl),
                     cardNames: state.cards.map((c: TarotCard) => c.name),
                     positions: state.spread.positions.map((p: any) => p.name),
-                    notes: result?.synthesis || '',
+                    notes: synthesis?.sintese || '',
                     comment: '',
                     rating: 0
                 };
@@ -4163,27 +4300,41 @@ const Result = () => {
                         const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
                         localStorage.setItem('tarot-history', JSON.stringify(updated));
 
-                        // Save to Supabase if user is logged in
+                        // Save to Supabase if user is logged in, or to localStorage if guest
                         if (user) {
-                            await saveReadingToSupabase(
+                            // Usar nova função que formata resumo completo automaticamente
+                            await saveReadingWithSummary(
                                 user.id,
                                 state.spread.id,
                                 state.cards,
-                                state.question,
-                                result?.synthesis || '',
-                                0,
-                                ''
+                                rawSynthesis, // Passa a síntese bruta para formatação
+                                state.question || '',
+                                isPortuguese
                             );
+                        } else {
+                            // Save guest reading for later recovery
+                            const summary = extractSummaryFromSynthesis(rawSynthesis, state.question);
+                            const formattedSynthesis = formatReadingSummary(summary, state.spread.id, isPortuguese);
+                            saveGuestReading({
+                                spreadType: state.spread.id,
+                                cards: state.cards,
+                                question: state.question || '',
+                                synthesis: formattedSynthesis,
+                                rawSynthesis: rawSynthesis,
+                                createdAt: new Date().toISOString()
+                            });
                         }
                     }
                 }
             } catch (e) {
-                console.error('Failed to save to history:', e);
+                console.error('❌ Failed to save to history:', e);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchInterpretation();
-    }, [state, navigate, isPortuguese]);
+    }, [state?.spread?.id, state?.cards, state?.question, isPortuguese, user?.id]);
 
     if (!state?.spread) return null;
 
@@ -4333,16 +4484,8 @@ const Result = () => {
                                 ) : (
                                     <>
                                         <p className="text-gray-200 leading-relaxed text-base mb-4">
-                                            {analysis?.synthesis || (isPortuguese ? 'Configure a chave da API Gemini para obter sínteses personalizadas.' : 'Configure the Gemini API key to get personalized syntheses.')}
+                                            {isPortuguese ? 'Configure a chave da API Gemini para obter sínteses personalizadas.' : 'Configure the Gemini API key to get personalized syntheses.'}
                                         </p>
-                                        {analysis?.advice && (
-                                            <div className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/20">
-                                                <p className="text-primary text-sm font-medium flex items-start gap-2">
-                                                    <span className="material-symbols-outlined text-lg mt-0.5">tips_and_updates</span>
-                                                    {analysis.advice}
-                                                </p>
-                                            </div>
-                                        )}
                                     </>
                                 )}
                             </div>
@@ -4472,14 +4615,690 @@ const Result = () => {
                 feature="readings"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
             />
 
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
 
             {/* Apply overflow hidden when paywall is open */}
             {showPaywall && <style>{`body { overflow: hidden; }`}</style>}
+
+            {/* Guest Conversion Banner */}
+            {!user && !isLoading && structuredSynthesis && (
+                <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-purple-900/95 via-purple-800/95 to-purple-900/95 backdrop-blur-md border-t border-purple-500/30 px-4 py-4 md:py-5">
+                    <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-3 text-center md:text-left">
+                            <span className="hidden md:flex w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 items-center justify-center">
+                                <span className="material-symbols-outlined text-white text-2xl">auto_awesome</span>
+                            </span>
+                            <div>
+                                <p className="text-white font-bold text-lg">
+                                    {isPortuguese ? 'Salve sua leitura para sempre!' : 'Save your reading forever!'}
+                                </p>
+                                <p className="text-purple-200 text-sm">
+                                    {isPortuguese
+                                        ? 'Crie uma conta grátis para acessar seu histórico e desbloquear mais recursos'
+                                        : 'Create a free account to access your history and unlock more features'}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    setAuthModalMode('login');
+                                    setShowAuthModal(true);
+                                }}
+                                className="px-5 py-2.5 rounded-lg border border-white/20 text-white text-sm font-bold hover:bg-white/10 transition-colors"
+                            >
+                                {isPortuguese ? 'Entrar' : 'Sign In'}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setAuthModalMode('register');
+                                    setShowAuthModal(true);
+                                }}
+                                className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 text-white text-sm font-bold hover:from-yellow-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-900/30"
+                            >
+                                {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <Footer />
+        </div>
+    );
+};
+
+// ========== PHYSICAL READING INTERPRETATION PAGE ==========
+const Interpretacao = () => {
+    const navigate = useNavigate();
+    const { t, isPortuguese } = useLanguage();
+    const { user, tier } = useAuth();
+    const { checkAccess } = usePaywall();
+
+    // State
+    const [spreadType, setSpreadType] = useState<string>('');
+    const [selectedCards, setSelectedCards] = useState<string[]>([]);
+    const [question, setQuestion] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showCardSearch, setShowCardSearch] = useState(false);
+    const [activeCardIndex, setActiveCardIndex] = useState<number | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [interpretation, setInterpretation] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
+    const [savedToHistory, setSavedToHistory] = useState(false);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    // Spread type configurations
+    const spreadConfigs: Record<string, { cardCount: number; positions: string[] }> = {
+        yes_no: { cardCount: 1, positions: [isPortuguese ? 'Resposta' : 'Answer'] },
+        three_card: { cardCount: 3, positions: isPortuguese ? ['Passado', 'Presente', 'Futuro'] : ['Past', 'Present', 'Future'] },
+        five_card: { cardCount: 5, positions: isPortuguese ? ['Centro', 'Cruzamento', 'Passado', 'Futuro', 'Resultado'] : ['Center', 'Crossing', 'Past', 'Future', 'Outcome'] },
+        seven_card: { cardCount: 7, positions: isPortuguese ? ['Passado', 'Presente', 'Futuro', 'Conselho', 'Ambiente', 'Esperanças', 'Resultado'] : ['Past', 'Present', 'Future', 'Advice', 'Environment', 'Hopes', 'Outcome'] },
+        celtic_cross: { cardCount: 10, positions: isPortuguese ? ['Significador', 'Cruzamento', 'Base', 'Passado', 'Coroa', 'Futuro', 'Eu', 'Ambiente', 'Esperanças/Medos', 'Resultado'] : ['Significator', 'Crossing', 'Foundation', 'Past', 'Crown', 'Future', 'Self', 'Environment', 'Hopes/Fears', 'Outcome'] },
+        custom: { cardCount: 15, positions: [] }
+    };
+
+    // Filter cards based on search query
+    const filteredCards = useMemo(() => {
+        if (!searchQuery.trim()) return TAROT_CARDS;
+        const query = searchQuery.toLowerCase();
+        return TAROT_CARDS.filter(card => {
+            const name = isPortuguese ? card.name_pt : card.name;
+            return name.toLowerCase().includes(query) ||
+                card.name.toLowerCase().includes(query) ||
+                card.name_pt.toLowerCase().includes(query);
+        });
+    }, [searchQuery, isPortuguese]);
+
+    // Group cards by arcana/suit
+    const groupedCards = useMemo(() => {
+        const groups: { title: string; cards: typeof TAROT_CARDS }[] = [];
+
+        const major = filteredCards.filter(c => c.arcana === 'major');
+        if (major.length > 0) {
+            groups.push({ title: (t as any).interpretation?.majorArcana || 'Major Arcana', cards: major });
+        }
+
+        const suits = ['Wands', 'Cups', 'Swords', 'Pentacles'];
+        const suitNames: Record<string, string> = isPortuguese
+            ? { Wands: 'Paus', Cups: 'Copas', Swords: 'Espadas', Pentacles: 'Ouros' }
+            : { Wands: 'Wands', Cups: 'Cups', Swords: 'Swords', Pentacles: 'Pentacles' };
+
+        suits.forEach(suit => {
+            const suitCards = filteredCards.filter(c => c.suit === suit);
+            if (suitCards.length > 0) {
+                groups.push({ title: suitNames[suit], cards: suitCards });
+            }
+        });
+
+        return groups;
+    }, [filteredCards, isPortuguese, t]);
+
+    // Handle spread type change
+    const handleSpreadTypeChange = (type: string) => {
+        setSpreadType(type);
+        const config = spreadConfigs[type];
+        if (config) {
+            setSelectedCards(Array(config.cardCount).fill(''));
+        }
+    };
+
+    // Handle card selection
+    const handleCardSelect = (card: typeof TAROT_CARDS[0]) => {
+        if (activeCardIndex === null) return;
+
+        const cardName = isPortuguese ? card.name_pt : card.name;
+        const newCards = [...selectedCards];
+        newCards[activeCardIndex] = cardName;
+        setSelectedCards(newCards);
+        setShowCardSearch(false);
+        setSearchQuery('');
+        setActiveCardIndex(null);
+    };
+
+    // Open card search for a specific position
+    const openCardSearch = (index: number) => {
+        setActiveCardIndex(index);
+        setShowCardSearch(true);
+        setSearchQuery('');
+        setTimeout(() => searchInputRef.current?.focus(), 100);
+    };
+
+    // Remove card from position
+    const removeCard = (index: number) => {
+        const newCards = [...selectedCards];
+        newCards[index] = '';
+        setSelectedCards(newCards);
+    };
+
+    // Submit interpretation request
+    const handleSubmit = async () => {
+        const ti = (t as any).interpretation;
+        if (!spreadType) {
+            setError(ti?.selectSpreadType || 'Select the spread type');
+            return;
+        }
+
+        const filledCards = selectedCards.filter(c => c.trim() !== '');
+        if (filledCards.length === 0) {
+            setError(ti?.addMinCards || 'Add at least one card');
+            return;
+        }
+
+        // Physical readings require premium (or at least being logged in to use AI)
+        if (!checkAccess('physicalReading')) {
+            setShowPaywall(true);
+            return;
+        }
+
+        setError(null);
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('/api/physical-reading', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    spreadType,
+                    cards: filledCards,
+                    question: question.trim() || undefined,
+                    isPortuguese
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to get interpretation');
+            }
+
+            setInterpretation(data.interpretation);
+
+            if (user?.id) {
+                const { savePhysicalReading } = await import('./services/readingsService');
+                const saved = await savePhysicalReading(user.id, {
+                    spreadType,
+                    cards: filledCards,
+                    question: question.trim() || undefined,
+                    interpretation: data.interpretation
+                }, isPortuguese);
+
+                if (saved) {
+                    setSavedToHistory(true);
+                }
+            }
+        } catch (err: any) {
+            console.error('Interpretation error:', err);
+            setError(err.message || 'An error occurred');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Reset form
+    const resetForm = () => {
+        setSpreadType('');
+        setSelectedCards([]);
+        setQuestion('');
+        setInterpretation(null);
+        setError(null);
+        setSavedToHistory(false);
+    };
+
+    const ti = (t as any).interpretation || {};
+
+    return (
+        <div className="relative min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
+            {/* Stars Background */}
+            <MinimalStarsBackground />
+
+            <Header />
+            <CartDrawer />
+
+            <PaywallModal
+                isOpen={showPaywall}
+                onClose={() => setShowPaywall(false)}
+                feature="aiSynthesis"
+                onLogin={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
+                    setShowAuthModal(true);
+                }}
+                onCheckout={() => navigate('/checkout')}
+            />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
+
+            {/* Hero Section - Home Page Style */}
+            <section className="relative pt-20 pb-8 md:pb-12 px-6 md:px-12 overflow-hidden z-10">
+                <div className="relative max-w-[1200px] mx-auto z-10">
+                    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+                        {/* Left Side - Text Content */}
+                        <div className="flex-1 text-center lg:text-left">
+                            {/* Premium Badge */}
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/30 mb-6">
+                                <span className="material-symbols-outlined text-amber-400 text-sm">auto_awesome</span>
+                                <span className="text-amber-300 text-xs font-bold uppercase tracking-wider">
+                                    {isPortuguese ? 'Premium' : 'Premium Feature'}
+                                </span>
+                            </div>
+
+                            {/* Golden Title */}
+                            <h1
+                                className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight"
+                                style={{
+                                    fontFamily: "'Crimson Text', serif",
+                                    background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text',
+                                }}
+                            >
+                                {ti.title || (isPortuguese ? 'Interpretação de Tiragem Física' : 'Physical Reading Interpretation')}
+                            </h1>
+
+                            {/* Subtitle */}
+                            <p className="text-gray-300 text-lg md:text-xl max-w-xl leading-relaxed mb-3">
+                                {ti.subtitle || (isPortuguese ? 'Transforme sua tiragem real em uma leitura clara e objetiva com IA' : 'Transform your real spread into a clear and objective reading with AI')}
+                            </p>
+
+                            {/* Description */}
+                            <p className="text-gray-500 text-sm max-w-lg mb-6">
+                                {ti.heroDescription || (isPortuguese ? 'Fez uma tiragem física com seu baralho? Insira as cartas que saíram e receba uma interpretação profissional.' : 'Did a physical spread with your deck? Enter the cards that came up and receive a professional interpretation.')}
+                            </p>
+
+                            {/* CTA Button */}
+                            <button
+                                onClick={() => document.getElementById('interpretation-form')?.scrollIntoView({ behavior: 'smooth' })}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
+                            >
+                                <span className="material-symbols-outlined text-lg">edit_note</span>
+                                {isPortuguese ? 'Começar Interpretação' : 'Start Interpretation'}
+                            </button>
+                        </div>
+
+                        {/* Right Side - Tarot Cards Display */}
+                        <div className="relative w-full lg:w-auto lg:flex-shrink-0">
+                            <div className="relative w-[300px] h-[320px] md:w-[360px] md:h-[380px] mx-auto">
+                                {/* Card 1 - Far left */}
+                                <div
+                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
+                                    style={{ left: '0%', top: '25%', transform: 'rotate(-25deg)', zIndex: 1 }}
+                                >
+                                    <img src="/images/cards/major/00-the-fool.webp" alt="The Fool" className="w-full h-full object-cover" />
+                                </div>
+                                {/* Card 2 */}
+                                <div
+                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
+                                    style={{ left: '12%', top: '8%', transform: 'rotate(-12deg)', zIndex: 2 }}
+                                >
+                                    <img src="/images/cards/major/01-the-magician.webp" alt="The Magician" className="w-full h-full object-cover" />
+                                </div>
+                                {/* Card 3 - Center top */}
+                                <div
+                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-amber-500/30"
+                                    style={{ left: '32%', top: '0%', transform: 'rotate(0deg)', zIndex: 5 }}
+                                >
+                                    <img src="/images/cards/major/02-the-high-priestess.webp" alt="The High Priestess" className="w-full h-full object-cover" />
+                                </div>
+                                {/* Card 4 */}
+                                <div
+                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
+                                    style={{ left: '52%', top: '8%', transform: 'rotate(12deg)', zIndex: 3 }}
+                                >
+                                    <img src="/images/cards/major/03-the-empress.webp" alt="The Empress" className="w-full h-full object-cover" />
+                                </div>
+                                {/* Card 5 - Far right */}
+                                <div
+                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
+                                    style={{ left: '64%', top: '25%', transform: 'rotate(25deg)', zIndex: 1 }}
+                                >
+                                    <img src="/images/cards/major/04-the-emperor.webp" alt="The Emperor" className="w-full h-full object-cover" />
+                                </div>
+
+                                {/* Glow effect behind cards */}
+                                <div className="absolute inset-0 -z-10">
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-purple-500/20 rounded-full blur-[80px]" />
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] bg-amber-500/15 rounded-full blur-[60px]" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Main Content */}
+            <section id="interpretation-form" className="px-6 md:px-12 pb-20 relative">
+                {/* Purple Blur Background - Behind Form Only */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[150px]" />
+                    <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-violet-500/12 rounded-full blur-[180px]" />
+                    <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-purple-700/10 rounded-full blur-[120px]" />
+                </div>
+
+                <div className="max-w-[900px] mx-auto relative z-10">
+                    {!interpretation ? (
+                        <div className="bg-gradient-to-br from-surface-dark/80 to-card-dark/60 backdrop-blur-sm rounded-2xl border border-border-dark p-6 md:p-8">
+                            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                <span className="material-symbols-outlined text-primary">style</span>
+                                {ti.formTitle || 'Your Spread'}
+                            </h2>
+
+                            {/* Spread Type Selector */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    {ti.spreadTypeLabel || 'Spread Type'}
+                                </label>
+                                <select
+                                    value={spreadType}
+                                    onChange={(e) => handleSpreadTypeChange(e.target.value)}
+                                    className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white focus:outline-none focus:border-primary transition-colors"
+                                >
+                                    <option value="">{ti.selectSpreadType || 'Select spread type...'}</option>
+                                    <option value="yes_no">{ti.spreadTypes?.yes_no || 'Yes or No (1 card)'}</option>
+                                    <option value="three_card">{ti.spreadTypes?.three_card || '3 cards (Past / Present / Future)'}</option>
+                                    <option value="five_card">{ti.spreadTypes?.five_card || '5 cards (Simple Cross)'}</option>
+                                    <option value="seven_card">{ti.spreadTypes?.seven_card || '7 cards'}</option>
+                                    <option value="celtic_cross">{ti.spreadTypes?.celtic_cross || 'Celtic Cross (10 cards)'}</option>
+                                    <option value="custom">{ti.spreadTypes?.custom || 'Other (custom)'}</option>
+                                </select>
+                            </div>
+
+                            {/* Card Selection */}
+                            {spreadType && (
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                                        {ti.cardsLabel || 'Spread Cards'}
+                                    </label>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                                        {selectedCards.map((cardName, index) => {
+                                            const position = spreadConfigs[spreadType]?.positions?.[index] || `${ti.cardPosition || 'Card'} ${index + 1}`;
+                                            // Find card data to get imageUrl
+                                            const cardData = cardName ? TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName) : null;
+                                            return (
+                                                <div key={index} className="relative">
+                                                    <div
+                                                        onClick={() => openCardSearch(index)}
+                                                        className={`aspect-[2/3] rounded-xl overflow-hidden cursor-pointer transition-all ${cardName
+                                                            ? 'border-2 border-primary/50'
+                                                            : 'border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50'
+                                                            }`}
+                                                    >
+                                                        {cardName && cardData ? (
+                                                            <div className="relative w-full h-full">
+                                                                <img
+                                                                    src={cardData.imageUrl}
+                                                                    alt={cardName}
+                                                                    className="w-full h-full object-cover"
+                                                                    onError={(e) => {
+                                                                        e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
+                                                                    }}
+                                                                />
+                                                                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2">
+                                                                    <span className="text-white text-[10px] text-center font-medium leading-tight block">{cardName}</span>
+                                                                </div>
+                                                            </div>
+                                                        ) : cardName ? (
+                                                            <div className="w-full h-full flex flex-col items-center justify-center p-2 bg-primary/10">
+                                                                <span className="material-symbols-outlined text-primary text-2xl mb-1">style</span>
+                                                                <span className="text-white text-xs text-center font-medium leading-tight">{cardName}</span>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-full h-full flex flex-col items-center justify-center p-2">
+                                                                <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add</span>
+                                                                <span className="text-gray-500 text-xs text-center">{position}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    {cardName && (
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); removeCard(index); }}
+                                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors z-10"
+                                                        >
+                                                            <span className="material-symbols-outlined text-white text-sm">close</span>
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                        {spreadType === 'custom' && selectedCards.length < 15 && (
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedCards([...selectedCards, '']);
+                                                    openCardSearch(selectedCards.length);
+                                                }}
+                                                className="aspect-[2/3] rounded-xl border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer transition-all"
+                                            >
+                                                <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add_circle</span>
+                                                <span className="text-gray-500 text-xs">{ti.addCard || 'Add Card'}</span>
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Question Input */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    {ti.questionLabel || 'Question asked to the Tarot'}
+                                </label>
+                                <textarea
+                                    value={question}
+                                    onChange={(e) => setQuestion(e.target.value)}
+                                    placeholder={ti.questionPlaceholder || 'What question did you ask during the spread?'}
+                                    rows={3}
+                                    className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors resize-none"
+                                />
+                                <p className="text-gray-500 text-xs mt-1">
+                                    {ti.questionHint || 'The question helps contextualize the interpretation'}
+                                </p>
+                            </div>
+
+                            {/* Error Message */}
+                            {error && (
+                                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-red-400">error</span>
+                                    <span className="text-red-400">{error}</span>
+                                </div>
+                            )}
+
+                            {/* Submit Button */}
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isLoading || !spreadType || selectedCards.filter(c => c).length === 0}
+                                className="w-full py-4 bg-gradient-to-r from-primary to-purple-600 hover:from-primary-hover hover:to-purple-700 text-white font-bold rounded-xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                                        {ti.interpreting || 'Interpreting...'}
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="material-symbols-outlined">auto_awesome</span>
+                                        {ti.submitButton || 'Interpret My Spread'}
+                                    </>
+                                )}
+                            </button>
+
+                            {tier !== 'premium' && (
+                                <p className="text-center text-amber-400/70 text-sm mt-4 flex items-center justify-center gap-2">
+                                    <span className="material-symbols-outlined text-sm">workspace_premium</span>
+                                    {ti.premiumFeature || 'Premium Feature'}
+                                </p>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            {savedToHistory && (
+                                <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-emerald-400">check_circle</span>
+                                    <span className="text-emerald-400">{ti.savedToHistory || 'Interpretation saved to your history!'}</span>
+                                </div>
+                            )}
+
+                            {interpretation.tema_central && (
+                                <div className="bg-gradient-to-r from-primary/20 to-purple-600/20 rounded-2xl border border-primary/30 p-6 text-center">
+                                    <span className="text-primary text-sm font-medium uppercase tracking-wider">
+                                        {ti.centralTheme || 'Central Theme'}
+                                    </span>
+                                    <h3 className="text-2xl font-bold text-white mt-2">{interpretation.tema_central}</h3>
+                                </div>
+                            )}
+
+                            {interpretation.visao_geral && (
+                                <div className="bg-surface-dark/80 rounded-2xl border border-border-dark p-6">
+                                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary">visibility</span>
+                                        {ti.overview || 'Overview'}
+                                    </h3>
+                                    <p className="text-gray-300 leading-relaxed">{interpretation.visao_geral}</p>
+                                </div>
+                            )}
+
+                            {interpretation.cartas && interpretation.cartas.length > 0 && (
+                                <div className="bg-surface-dark/80 rounded-2xl border border-border-dark p-6">
+                                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary">style</span>
+                                        {ti.cardByCard || 'Card by Card'}
+                                    </h3>
+                                    <div className="space-y-4">
+                                        {interpretation.cartas.map((card: any, index: number) => (
+                                            <div key={index} className="p-4 bg-card-dark/50 rounded-xl border border-border-dark">
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <span className="px-3 py-1 bg-primary/20 text-primary text-sm font-medium rounded-full">
+                                                        {card.posicao}
+                                                    </span>
+                                                    <span className="text-white font-medium">{card.carta}</span>
+                                                </div>
+                                                <p className="text-gray-400 text-sm">{card.interpretacao}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {interpretation.sintese_final && (
+                                <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-2xl border border-amber-500/30 p-6">
+                                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-amber-400">lightbulb</span>
+                                        {ti.finalSynthesis || 'Final Synthesis'}
+                                    </h3>
+                                    <p className="text-gray-300 leading-relaxed">{interpretation.sintese_final}</p>
+                                </div>
+                            )}
+
+                            <button
+                                onClick={resetForm}
+                                className="w-full py-4 bg-surface-dark hover:bg-card-dark border border-border-dark text-white font-medium rounded-xl flex items-center justify-center gap-3 transition-all"
+                            >
+                                <span className="material-symbols-outlined">refresh</span>
+                                {ti.newInterpretation || 'New Interpretation'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* Card Search Modal */}
+            {showCardSearch && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="w-full max-w-4xl max-h-[85vh] bg-card-dark rounded-2xl border border-border-dark overflow-hidden flex flex-col">
+                        <div className="p-4 border-b border-border-dark">
+                            <div className="flex items-center gap-3">
+                                <span className="material-symbols-outlined text-gray-400">search</span>
+                                <input
+                                    ref={searchInputRef}
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder={ti.cardsPlaceholder || 'Search card...'}
+                                    className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none"
+                                />
+                                <button
+                                    onClick={() => { setShowCardSearch(false); setActiveCardIndex(null); }}
+                                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-gray-400">close</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto p-4">
+                            {groupedCards.length > 0 ? (
+                                groupedCards.map((group, groupIndex) => (
+                                    <div key={groupIndex} className="mb-8 last:mb-0">
+                                        <h4 className="text-sm font-medium text-primary mb-4 sticky top-0 bg-card-dark py-2 z-10">
+                                            {group.title}
+                                        </h4>
+                                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                                            {group.cards.map((card) => {
+                                                const cardName = isPortuguese ? card.name_pt : card.name;
+                                                const isSelected = selectedCards.includes(cardName);
+                                                return (
+                                                    <button
+                                                        key={card.id}
+                                                        onClick={() => !isSelected && handleCardSelect(card)}
+                                                        disabled={isSelected}
+                                                        className={`group flex flex-col items-center rounded-xl p-2 transition-all ${isSelected
+                                                            ? 'opacity-40 cursor-not-allowed'
+                                                            : 'hover:bg-primary/10 hover:scale-105'
+                                                            }`}
+                                                    >
+                                                        <div className={`relative w-full aspect-[2/3] rounded-lg overflow-hidden border-2 transition-all ${isSelected
+                                                            ? 'border-gray-600'
+                                                            : 'border-border-dark group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(147,17,212,0.3)]'
+                                                            }`}>
+                                                            <img
+                                                                src={card.imageUrl}
+                                                                alt={cardName}
+                                                                className="w-full h-full object-cover"
+                                                                onError={(e) => {
+                                                                    e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
+                                                                }}
+                                                            />
+                                                            {isSelected && (
+                                                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                                                    <span className="material-symbols-outlined text-white text-2xl">check_circle</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <span className={`mt-2 text-xs text-center font-medium leading-tight ${isSelected ? 'text-gray-500' : 'text-white'}`}>
+                                                            {cardName}
+                                                        </span>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-8">
+                                    <span className="material-symbols-outlined text-gray-500 text-4xl mb-2">search_off</span>
+                                    <p className="text-gray-500">{ti.noCardsFound || 'No cards found'}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <Footer />
         </div>
@@ -4498,6 +5317,10 @@ const App = () => {
                             {/* Spreads Page - Available in both languages */}
                             <Route path="/spreads" element={<Spreads />} />
                             <Route path="/jogos-de-tarot" element={<Spreads />} />
+
+                            {/* Physical Reading Interpretation */}
+                            <Route path="/interpretacao" element={<Interpretacao />} />
+                            <Route path="/interpretation" element={<Interpretacao />} />
 
                             {/* Rotas em Português */}
                             <Route path="/arquivo-arcano" element={<Explore />} />
@@ -4519,8 +5342,6 @@ const App = () => {
                             <Route path="/carta-do-dia" element={<DailyCard />} />
                             <Route path="/daily-card" element={<DailyCard />} />
                             <Route path="/charts-demo" element={<SideBySideExample />} />
-                            <Route path="/shop" element={<Shop />} />
-                            <Route path="/shop/:slug" element={<ProductDetail />} />
                             <Route path="/checkout" element={<Checkout />} />
                         </Routes>
                     </Router>

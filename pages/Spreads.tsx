@@ -37,31 +37,27 @@ const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
                             <button onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')} className={`text-sm font-medium transition-colors ${(isActive('/carta-do-dia') || isActive('/daily-card')) ? 'text-white' : 'text-gray-400'}`}>
                                 {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
                             </button>
+                            <button onClick={() => navigate(isPortuguese ? '/interpretacao' : '/interpretation')} className={`text-sm font-medium transition-colors ${(isActive('/interpretacao') || isActive('/interpretation')) ? 'text-white' : 'text-gray-400'}`}>
+                                {isPortuguese ? 'Interpretação' : 'Interpretation'}
+                            </button>
                             <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400'}`}>
                                 {t.nav.cardMeanings}
                             </button>
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400'}`}>
                                 {t.nav.history}
                             </button>
-                            <button onClick={() => navigate('/shop')} className={`text-sm font-medium transition-colors ${isActive('/shop') ? 'text-white' : 'text-gray-400'}`}>
-                                {t.nav.shop}
-                            </button>
                         </nav>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1 sm:gap-2">
                             <LanguageToggle />
-
-                            <button className="p-2 rounded-lg">
-                                <span className="material-symbols-outlined text-gray-300">shopping_bag</span>
-                            </button>
 
                             <UserMenu onLoginClick={onLoginClick} />
 
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="md:hidden p-2 rounded-lg"
+                                className="md:hidden p-1.5 sm:p-2 rounded-lg"
                             >
-                                <span className="material-symbols-outlined text-white">{mobileMenuOpen ? 'close' : 'menu'}</span>
+                                <span className="material-symbols-outlined text-white text-xl sm:text-2xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
                             </button>
                         </div>
                     </div>
@@ -72,9 +68,9 @@ const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
                             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300">{t.nav.home}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-white font-medium">{t.nav.tarot}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
+                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300">{t.nav.history}</button>
-                            <button onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300">{t.nav.shop}</button>
                         </nav>
                     )}
                 </div>
@@ -169,6 +165,7 @@ const Spreads = () => {
     const [selectedSpread, setSelectedSpread] = useState<Spread | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
 
     const spreadImages: Record<string, string> = {
         'three_card': 'images/spreads/three_card.png',
@@ -179,12 +176,7 @@ const Spreads = () => {
     };
 
     const handleStartReading = async (spread: Spread) => {
-        if (!checkAccess('readings')) {
-            setShowPaywall(true);
-            return;
-        }
-        // Increment reading count when starting a new reading (works for both guests and logged in users)
-        await incrementReadingCount();
+        // Navigate directly to session, paywall check moved to first card click
         navigate('/session', { state: { spread } });
     };
 
@@ -517,6 +509,12 @@ const Spreads = () => {
                 feature="readings"
                 onLogin={() => {
                     setShowPaywall(false);
+                    setAuthModalMode('login');
+                    setShowAuthModal(true);
+                }}
+                onRegister={() => {
+                    setShowPaywall(false);
+                    setAuthModalMode('register');
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
@@ -526,6 +524,7 @@ const Spreads = () => {
             <AuthModal
                 isOpen={showAuthModal}
                 onClose={() => setShowAuthModal(false)}
+                initialMode={authModalMode}
             />
         </div>
     );

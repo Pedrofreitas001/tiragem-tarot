@@ -5,9 +5,10 @@ import { useAuth, FREE_TIER_LIMITS, PREMIUM_TIER_LIMITS } from '../contexts/Auth
 interface PaywallModalProps {
   isOpen: boolean;
   onClose: () => void;
-  feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'ranking';
+  feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'ranking' | 'whatsapp' | 'physicalReading' | 'aiSynthesis';
   onLogin?: () => void;
-  onCheckout?: () => void;
+  onRegister?: () => void; // Para abrir modal de registro (guests)
+  onCheckout?: () => void; // Para ir ao checkout (upgrade premium)
 }
 
 export const PaywallModal: React.FC<PaywallModalProps> = ({
@@ -15,6 +16,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   onClose,
   feature = 'readings',
   onLogin,
+  onRegister,
   onCheckout
 }) => {
   const { isPortuguese } = useLanguage();
@@ -40,6 +42,18 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     guestRankingDesc: isPortuguese
       ? 'Crie uma conta gratuita para ver seu ranking pessoal de energias.'
       : 'Create a free account to see your personal energy ranking.',
+    guestWhatsappTitle: isPortuguese ? 'Carta do Dia Premium' : 'Daily Card Premium',
+    guestWhatsappDesc: isPortuguese
+      ? 'Crie uma conta gratuita para receber a carta do dia pelo WhatsApp.'
+      : 'Create a free account to receive your daily card on WhatsApp.',
+    guestPhysicalTitle: isPortuguese ? 'Interpretação Física Premium' : 'Physical Reading Premium',
+    guestPhysicalDesc: isPortuguese
+      ? 'A interpretação de tiragens físicas com IA é exclusiva para assinantes Premium.'
+      : 'Physical reading interpretation with AI is exclusive to Premium subscribers.',
+    guestSynthesisTitle: isPortuguese ? 'Síntese com IA Requer Conta' : 'AI Synthesis Requires Account',
+    guestSynthesisDesc: isPortuguese
+      ? 'Crie uma conta gratuita para ter acesso à síntese personalizada com IA em suas tiragens.'
+      : 'Create a free account to access personalized AI synthesis in your readings.',
 
     // Títulos para free tier (logados)
     title: isPortuguese ? 'Limite Atingido' : 'Limit Reached',
@@ -48,8 +62,10 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     historyTitle: isPortuguese ? 'Histórico Completo é Premium' : 'Full History is Premium',
     exportTitle: isPortuguese ? 'Exportar PDF é Premium' : 'PDF Export is Premium',
     patternsTitle: isPortuguese ? 'Análise de Padrões é Premium' : 'Pattern Analysis is Premium',
+    whatsappTitle: isPortuguese ? 'Carta do Dia é Premium' : 'Daily Card is Premium',
     archiveTitle: isPortuguese ? 'Arquivo Completo é Premium' : 'Full Archive is Premium',
     rankingTitle: isPortuguese ? 'Top 3 Energias é Premium' : 'Top 3 Energies is Premium',
+    physicalTitle: isPortuguese ? 'Interpretação Física é Premium' : 'Physical Reading is Premium',
 
     readingsDesc: isPortuguese
       ? `Você já fez ${readingsToday} de ${FREE_TIER_LIMITS.readingsPerDay} tiragens gratuitas hoje. Volte amanhã ou faça upgrade para tiragens ilimitadas.`
@@ -72,6 +88,12 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     rankingDesc: isPortuguese
       ? 'Veja seu Top 3 de energias que guiam sua jornada espiritual. Recurso exclusivo Premium.'
       : 'See your Top 3 energies that guide your spiritual journey. Exclusive Premium feature.',
+    whatsappDesc: isPortuguese
+      ? 'Para receber a carta do dia pelo WhatsApp é necessário assinar o Premium.'
+      : 'To receive the daily card on WhatsApp you need to subscribe to Premium.',
+    physicalDesc: isPortuguese
+      ? 'A interpretação de tiragens físicas com IA é exclusiva para assinantes Premium.'
+      : 'Physical reading interpretation with AI is exclusive to Premium subscribers.',
 
     upgrade: isPortuguese ? 'Fazer Upgrade' : 'Upgrade Now',
     createAccount: isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account',
@@ -79,7 +101,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     maybeLater: isPortuguese ? 'Talvez Depois' : 'Maybe Later',
 
     freeBenefits: isPortuguese ? 'Com conta gratuita você tem' : 'With a free account you get',
-    threeReadings: isPortuguese ? '1 tirada por dia' : '1 reading per day',
+    threeReadings: isPortuguese ? '1 tirada por dia com síntese IA' : '1 reading per day with AI synthesis',
     historyAccess: isPortuguese ? 'Histórico das últimas 3 tiragens' : 'History of last 3 readings',
     sevenCards: isPortuguese ? 'Acesso a 7 cartas do arquivo' : 'Access to 7 archive cards',
 
@@ -103,17 +125,24 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         case 'history': return t.guestHistoryTitle;
         case 'archive': return t.guestArchiveTitle;
         case 'ranking': return t.guestRankingTitle;
+        case 'whatsapp': return t.guestWhatsappTitle;
+        case 'physicalReading': return t.guestPhysicalTitle;
+        case 'synthesis':
+        case 'aiSynthesis': return t.guestSynthesisTitle;
         default: return t.guestReadingsTitle;
       }
     }
     switch (feature) {
       case 'readings': return t.readingsTitle;
-      case 'synthesis': return t.synthesisTitle;
+      case 'synthesis':
+      case 'aiSynthesis': return t.synthesisTitle;
       case 'history': return t.historyTitle;
       case 'export': return t.exportTitle;
       case 'patterns': return t.patternsTitle;
       case 'archive': return t.archiveTitle;
       case 'ranking': return t.rankingTitle;
+      case 'whatsapp': return t.whatsappTitle;
+      case 'physicalReading': return t.physicalTitle;
       default: return t.title;
     }
   };
@@ -125,17 +154,24 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         case 'history': return t.guestHistoryDesc;
         case 'archive': return t.guestArchiveDesc;
         case 'ranking': return t.guestRankingDesc;
+        case 'whatsapp': return t.guestWhatsappDesc;
+        case 'physicalReading': return t.guestPhysicalDesc;
+        case 'synthesis':
+        case 'aiSynthesis': return t.guestSynthesisDesc;
         default: return t.guestReadingsDesc;
       }
     }
     switch (feature) {
       case 'readings': return t.readingsDesc;
-      case 'synthesis': return t.synthesisDesc;
+      case 'synthesis':
+      case 'aiSynthesis': return t.synthesisDesc;
       case 'history': return t.historyDesc;
       case 'export': return t.exportDesc;
       case 'patterns': return t.patternsDesc;
       case 'archive': return t.archiveDesc;
       case 'ranking': return t.rankingDesc;
+      case 'whatsapp': return t.whatsappDesc;
+      case 'physicalReading': return t.physicalDesc;
       default: return '';
     }
   };
@@ -149,6 +185,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       case 'patterns': return 'insights';
       case 'archive': return 'collections_bookmark';
       case 'ranking': return 'emoji_events';
+      case 'whatsapp': return 'chat';
       default: return 'lock';
     }
   };
@@ -228,9 +265,13 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             <>
               <button
                 onClick={() => {
-                  onCheckout?.();
-                  // Fechar modal depois de um pequeno delay para permitir transição
-                  setTimeout(onClose, 100);
+                  // Guest: abrir modal de registro (conta gratuita)
+                  if (onRegister) {
+                    onRegister();
+                  } else if (onLogin) {
+                    onLogin(); // Fallback para login se register não fornecido
+                  }
+                  onClose();
                 }}
                 className="w-full py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-xl text-white font-bold transition-all shadow-lg shadow-[#875faf]/30"
               >
@@ -238,7 +279,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               </button>
               <button
                 onClick={() => {
-                  onLogin?.();
+                  onLogin?.(); // Abre modal de login para quem já tem conta
+                  onClose();
                 }}
                 className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-300 hover:text-white font-medium transition-all"
               >
@@ -274,13 +316,14 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 export const usePaywall = () => {
   const { user, tier, canDoReading, limits, readingsToday, isGuest } = useAuth();
 
-  const checkAccess = (feature: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive'): boolean => {
+  const checkAccess = (feature: 'readings' | 'synthesis' | 'aiSynthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'physicalReading'): boolean => {
     if (tier === 'premium') return true;
 
     switch (feature) {
       case 'readings':
         return canDoReading;
       case 'synthesis':
+      case 'aiSynthesis':
         return limits.hasAISynthesis;
       case 'history':
         // Visitantes não têm acesso ao histórico
@@ -294,6 +337,8 @@ export const usePaywall = () => {
         return limits.hasPDFExport;
       case 'patterns':
         return limits.hasPatternAnalysis;
+      case 'physicalReading':
+        return limits.hasPhysicalReading;
       default:
         return false;
     }
