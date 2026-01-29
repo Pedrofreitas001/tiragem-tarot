@@ -6,7 +6,7 @@ import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, i
 import StarsBackground from './components/StarsBackground';
 import { MinimalStarsBackground } from './components/MinimalStarsBackground';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
-import { saveReadingToSupabase, deleteReadingFromSupabase, saveReadingWithSummary, fetchReadingsFromSupabase } from './services/readingsService';
+import { saveReadingToSupabase, deleteReadingFromSupabase, saveReadingWithSummary, fetchReadingsFromSupabase, saveGuestReading, getGuestReading, clearGuestReading, transferGuestReadingToUser, formatReadingSummary, extractSummaryFromSynthesis } from './services/readingsService';
 import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
 import { CartProvider, useCart } from './contexts/CartContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -2305,15 +2305,110 @@ const ReadingModal = ({
                         </div>
                     </div>
 
-                    {/* Synthesis */}
+                    {/* Synthesis - Enhanced Layout */}
                     {reading.notes && (
-                        <div>
-                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                <span className="material-symbols-outlined text-primary text-lg">auto_awesome</span>
                                 {isPortuguese ? 'Síntese da Leitura' : 'Reading Synthesis'}
                             </h3>
-                            <p className="text-gray-300 text-sm leading-relaxed bg-surface-dark p-4 rounded-xl">
-                                {reading.notes}
-                            </p>
+                            <div className="bg-gradient-to-br from-purple-900/30 to-surface-dark border border-purple-500/20 rounded-xl p-5 space-y-4">
+                                {/* Parse and display structured synthesis */}
+                                {reading.notes.split('\n').map((line: string, idx: number) => {
+                                    const trimmedLine = line.trim();
+                                    if (!trimmedLine) return null;
+
+                                    // Check for section headers
+                                    if (trimmedLine.startsWith('PERGUNTA:') || trimmedLine.startsWith('QUESTION:')) {
+                                        return (
+                                            <div key={idx} className="flex items-start gap-3 bg-blue-500/10 rounded-lg p-3 border border-blue-500/20">
+                                                <span className="material-symbols-outlined text-blue-400 text-lg mt-0.5">help_outline</span>
+                                                <p className="text-blue-200 text-sm italic">{trimmedLine.replace(/^(PERGUNTA|QUESTION):\s*/, '').replace(/^"|"$/g, '')}</p>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('TEMA:') || trimmedLine.startsWith('THEME:')) {
+                                        return (
+                                            <div key={idx} className="flex items-center gap-2">
+                                                <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold uppercase">
+                                                    {trimmedLine.replace(/^(TEMA|THEME):\s*/, '')}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('ENERGIA:') || trimmedLine.startsWith('ENERGY:')) {
+                                        const energia = trimmedLine.replace(/^(ENERGIA|ENERGY):\s*/, '').toLowerCase();
+                                        const isPositive = energia.includes('positiv') || energia.includes('favorável');
+                                        return (
+                                            <div key={idx} className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isPositive ? 'bg-green-500/15 border border-green-500/20' : 'bg-orange-500/15 border border-orange-500/20'}`}>
+                                                <span className={`material-symbols-outlined text-lg ${isPositive ? 'text-green-400' : 'text-orange-400'}`}>
+                                                    {isPositive ? 'sentiment_satisfied' : 'warning'}
+                                                </span>
+                                                <span className={`text-sm font-medium ${isPositive ? 'text-green-300' : 'text-orange-300'}`}>
+                                                    {trimmedLine.replace(/^(ENERGIA|ENERGY):\s*/, '')}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('RESPOSTA:') || trimmedLine.startsWith('ANSWER:')) {
+                                        const answer = trimmedLine.replace(/^(RESPOSTA|ANSWER):\s*/, '');
+                                        const isYes = answer.toLowerCase().includes('sim') || answer.toLowerCase().includes('yes');
+                                        const isNo = answer.toLowerCase().includes('não') || answer.toLowerCase().includes('no');
+                                        return (
+                                            <div key={idx} className={`flex items-center justify-center gap-3 p-4 rounded-xl border ${isYes ? 'bg-green-500/20 border-green-500/30' : isNo ? 'bg-red-500/20 border-red-500/30' : 'bg-yellow-500/20 border-yellow-500/30'}`}>
+                                                <span className={`material-symbols-outlined text-3xl ${isYes ? 'text-green-400' : isNo ? 'text-red-400' : 'text-yellow-400'}`}>
+                                                    {isYes ? 'check_circle' : isNo ? 'cancel' : 'help'}
+                                                </span>
+                                                <span className={`text-2xl font-bold ${isYes ? 'text-green-300' : isNo ? 'text-red-300' : 'text-yellow-300'}`}>
+                                                    {answer}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('CONSELHO:') || trimmedLine.startsWith('ADVICE:')) {
+                                        return (
+                                            <div key={idx} className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                                                <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase mb-2">
+                                                    <span className="material-symbols-outlined text-sm">lightbulb</span>
+                                                    {isPortuguese ? 'Conselho' : 'Advice'}
+                                                </div>
+                                                <p className="text-amber-100 text-sm">{trimmedLine.replace(/^(CONSELHO|ADVICE):\s*/, '')}</p>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('REFLEXÃO:') || trimmedLine.startsWith('REFLECTION:')) {
+                                        return (
+                                            <div key={idx} className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
+                                                <div className="flex items-center gap-2 text-purple-400 text-xs font-bold uppercase mb-2">
+                                                    <span className="material-symbols-outlined text-sm">psychology</span>
+                                                    {isPortuguese ? 'Reflexão' : 'Reflection'}
+                                                </div>
+                                                <p className="text-purple-200 text-sm italic">{trimmedLine.replace(/^(REFLEXÃO|REFLECTION):\s*/, '')}</p>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('ATENÇÃO:') || trimmedLine.startsWith('ATTENTION:') || trimmedLine.startsWith('DESAFIO:') || trimmedLine.startsWith('CHALLENGE:')) {
+                                        return (
+                                            <div key={idx} className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3">
+                                                <div className="flex items-center gap-2 text-orange-400 text-xs font-bold uppercase mb-2">
+                                                    <span className="material-symbols-outlined text-sm">warning</span>
+                                                    {isPortuguese ? 'Ponto de Atenção' : 'Attention Point'}
+                                                </div>
+                                                <p className="text-orange-200 text-sm">{trimmedLine.replace(/^(ATENÇÃO|ATTENTION|DESAFIO|CHALLENGE):\s*/, '')}</p>
+                                            </div>
+                                        );
+                                    }
+                                    if (trimmedLine.startsWith('--- CARTAS ---') || trimmedLine.startsWith('--- CARDS ---')) {
+                                        return null; // Skip this header
+                                    }
+                                    // Default: regular text
+                                    return (
+                                        <p key={idx} className="text-gray-300 text-sm leading-relaxed">
+                                            {trimmedLine}
+                                        </p>
+                                    );
+                                })}
+                            </div>
                         </div>
                     )}
 
@@ -2388,6 +2483,8 @@ const ReadingModal = ({
 };
 
 // History Page
+const VIEWED_READINGS_KEY = 'tarot-viewed-readings';
+
 const History = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
@@ -2399,6 +2496,39 @@ const History = () => {
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const [filteredReadings, setFilteredReadings] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+
+    // Track viewed readings
+    const [viewedReadings, setViewedReadings] = useState<Set<string | number>>(() => {
+        try {
+            const stored = localStorage.getItem(VIEWED_READINGS_KEY);
+            return stored ? new Set(JSON.parse(stored)) : new Set();
+        } catch {
+            return new Set();
+        }
+    });
+
+    // Mark a reading as viewed
+    const markAsViewed = (readingId: string | number) => {
+        setViewedReadings(prev => {
+            const updated = new Set(prev);
+            updated.add(readingId);
+            try {
+                localStorage.setItem(VIEWED_READINGS_KEY, JSON.stringify([...updated]));
+            } catch {}
+            return updated;
+        });
+    };
+
+    // Check if a reading is unviewed
+    const isUnviewed = (readingId: string | number) => {
+        return !viewedReadings.has(readingId);
+    };
+
+    // Handle opening a reading (marks it as viewed)
+    const handleOpenReading = (reading: any) => {
+        markAsViewed(reading.id);
+        setSelectedReading(reading);
+    };
 
     const [savedReadings, setSavedReadings] = useState<any[]>(() => {
         try {
@@ -2567,7 +2697,7 @@ const History = () => {
                                 <HistoryFiltered
                                     readings={savedReadings}
                                     isPortuguese={isPortuguese}
-                                    onSelect={setSelectedReading}
+                                    onSelect={handleOpenReading}
                                     onDelete={deleteReading}
                                     onFilterChange={setFilteredReadings}
                                 />
@@ -2578,11 +2708,20 @@ const History = () => {
                                 {visibleReadings.map((item) => (
                                     <div
                                         key={item.id}
-                                        className="bg-card-dark rounded-xl border border-border-dark hover:border-primary/30 transition-all overflow-hidden"
+                                        className={`bg-card-dark rounded-xl border transition-all overflow-hidden ${isUnviewed(item.id) ? 'border-green-500/40 ring-1 ring-green-500/20' : 'border-border-dark hover:border-primary/30'}`}
                                     >
                                         <div className="flex flex-col md:flex-row">
                                             {/* Cards Preview */}
-                                            <div className="flex gap-2 p-4 md:p-5 bg-surface-dark/50 overflow-x-auto">
+                                            <div className="relative flex gap-2 p-4 md:p-5 bg-surface-dark/50 overflow-x-auto">
+                                                {/* Unviewed Indicator */}
+                                                {isUnviewed(item.id) && (
+                                                    <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/20 border border-green-500/30">
+                                                        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                                                        <span className="text-green-400 text-[10px] font-bold uppercase">
+                                                            {isPortuguese ? 'Nova' : 'New'}
+                                                        </span>
+                                                    </div>
+                                                )}
                                                 {item.previewCards?.slice(0, 5).map((cardUrl: string, idx: number) => (
                                                     <div key={idx} className="flex-shrink-0 w-14 md:w-16">
                                                         <div className="aspect-[2/3] rounded-lg overflow-hidden border border-white/10 shadow-md">
@@ -2633,8 +2772,8 @@ const History = () => {
                                                 {/* Actions */}
                                                 <div className="flex gap-2 md:flex-col">
                                                     <button
-                                                        onClick={() => setSelectedReading(item)}
-                                                        className="flex-1 md:flex-none px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-medium text-sm flex items-center justify-center gap-2 transition-colors"
+                                                        onClick={() => handleOpenReading(item)}
+                                                        className={`flex-1 md:flex-none px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-colors ${isUnviewed(item.id) ? 'bg-green-500/20 hover:bg-green-500/30 text-green-400' : 'bg-primary/10 hover:bg-primary/20 text-primary'}`}
                                                     >
                                                         <span className="material-symbols-outlined text-lg">visibility</span>
                                                         {isPortuguese ? 'Ver' : 'View'}
@@ -4161,9 +4300,8 @@ const Result = () => {
                         const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
                         localStorage.setItem('tarot-history', JSON.stringify(updated));
 
-                        // Save to Supabase if user is logged in
+                        // Save to Supabase if user is logged in, or to localStorage if guest
                         if (user) {
-                            console.log("📤 Saving reading to Supabase with formatted summary...");
                             // Usar nova função que formata resumo completo automaticamente
                             await saveReadingWithSummary(
                                 user.id,
@@ -4173,6 +4311,18 @@ const Result = () => {
                                 state.question || '',
                                 isPortuguese
                             );
+                        } else {
+                            // Save guest reading for later recovery
+                            const summary = extractSummaryFromSynthesis(rawSynthesis, state.question);
+                            const formattedSynthesis = formatReadingSummary(summary, state.spread.id, isPortuguese);
+                            saveGuestReading({
+                                spreadType: state.spread.id,
+                                cards: state.cards,
+                                question: state.question || '',
+                                synthesis: formattedSynthesis,
+                                rawSynthesis: rawSynthesis,
+                                createdAt: new Date().toISOString()
+                            });
                         }
                     }
                 }
@@ -4480,6 +4630,49 @@ const Result = () => {
             {/* Apply overflow hidden when paywall is open */}
             {showPaywall && <style>{`body { overflow: hidden; }`}</style>}
 
+            {/* Guest Conversion Banner */}
+            {!user && !isLoading && structuredSynthesis && (
+                <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-purple-900/95 via-purple-800/95 to-purple-900/95 backdrop-blur-md border-t border-purple-500/30 px-4 py-4 md:py-5">
+                    <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-3 text-center md:text-left">
+                            <span className="hidden md:flex w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 items-center justify-center">
+                                <span className="material-symbols-outlined text-white text-2xl">auto_awesome</span>
+                            </span>
+                            <div>
+                                <p className="text-white font-bold text-lg">
+                                    {isPortuguese ? 'Salve sua leitura para sempre!' : 'Save your reading forever!'}
+                                </p>
+                                <p className="text-purple-200 text-sm">
+                                    {isPortuguese
+                                        ? 'Crie uma conta grátis para acessar seu histórico e desbloquear mais recursos'
+                                        : 'Create a free account to access your history and unlock more features'}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    setAuthModalMode('login');
+                                    setShowAuthModal(true);
+                                }}
+                                className="px-5 py-2.5 rounded-lg border border-white/20 text-white text-sm font-bold hover:bg-white/10 transition-colors"
+                            >
+                                {isPortuguese ? 'Entrar' : 'Sign In'}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setAuthModalMode('register');
+                                    setShowAuthModal(true);
+                                }}
+                                className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 text-white text-sm font-bold hover:from-yellow-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-900/30"
+                            >
+                                {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </div>
     );
@@ -4605,7 +4798,8 @@ const Interpretacao = () => {
             return;
         }
 
-        if (!checkAccess('aiSynthesis')) {
+        // Physical readings require premium (or at least being logged in to use AI)
+        if (!checkAccess('physicalReading')) {
             setShowPaywall(true);
             return;
         }

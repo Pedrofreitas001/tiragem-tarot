@@ -316,13 +316,14 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 export const usePaywall = () => {
   const { user, tier, canDoReading, limits, readingsToday, isGuest } = useAuth();
 
-  const checkAccess = (feature: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive'): boolean => {
+  const checkAccess = (feature: 'readings' | 'synthesis' | 'aiSynthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'physicalReading'): boolean => {
     if (tier === 'premium') return true;
 
     switch (feature) {
       case 'readings':
         return canDoReading;
       case 'synthesis':
+      case 'aiSynthesis':
         return limits.hasAISynthesis;
       case 'history':
         // Visitantes não têm acesso ao histórico
@@ -336,6 +337,8 @@ export const usePaywall = () => {
         return limits.hasPDFExport;
       case 'patterns':
         return limits.hasPatternAnalysis;
+      case 'physicalReading':
+        return limits.hasPhysicalReading;
       default:
         return false;
     }

@@ -485,6 +485,123 @@ export interface PhysicalReadingData {
 /**
  * Salva uma tiragem física no Supabase
  */
+// ============================================
+// GUEST READING STORAGE (localStorage)
+// ============================================
+
+export interface GuestReading {
+    spreadType: string;
+    cards: TarotCard[];
+    question?: string;
+    synthesis?: string;
+    rawSynthesis?: any;
+    createdAt: string;
+    isPhysical?: boolean;
+}
+
+const GUEST_READING_KEY = 'tarot_guest_reading';
+const GUEST_READING_VIEWED_KEY = 'tarot_guest_reading_viewed';
+
+/**
+ * Salva uma leitura de convidado no localStorage
+ */
+export const saveGuestReading = (reading: GuestReading): void => {
+    try {
+        localStorage.setItem(GUEST_READING_KEY, JSON.stringify(reading));
+        localStorage.removeItem(GUEST_READING_VIEWED_KEY); // Reset viewed flag
+    } catch (err) {
+        console.error('Error saving guest reading:', err);
+    }
+};
+
+/**
+ * Obtém a leitura salva do convidado
+ */
+export const getGuestReading = (): GuestReading | null => {
+    try {
+        const stored = localStorage.getItem(GUEST_READING_KEY);
+        if (stored) {
+            return JSON.parse(stored);
+        }
+        return null;
+    } catch (err) {
+        console.error('Error getting guest reading:', err);
+        return null;
+    }
+};
+
+/**
+ * Remove a leitura do convidado (após conversão ou expiração)
+ */
+export const clearGuestReading = (): void => {
+    try {
+        localStorage.removeItem(GUEST_READING_KEY);
+        localStorage.removeItem(GUEST_READING_VIEWED_KEY);
+    } catch (err) {
+        console.error('Error clearing guest reading:', err);
+    }
+};
+
+/**
+ * Verifica se há uma leitura de convidado pendente
+ */
+export const hasGuestReading = (): boolean => {
+    return localStorage.getItem(GUEST_READING_KEY) !== null;
+};
+
+/**
+ * Marca a leitura do convidado como visualizada
+ */
+export const markGuestReadingAsViewed = (): void => {
+    localStorage.setItem(GUEST_READING_VIEWED_KEY, 'true');
+};
+
+/**
+ * Verifica se a leitura do convidado já foi visualizada
+ */
+export const isGuestReadingViewed = (): boolean => {
+    return localStorage.getItem(GUEST_READING_VIEWED_KEY) === 'true';
+};
+
+/**
+ * Transfere a leitura do convidado para o Supabase após registro
+ * Retorna true se a transferência foi bem sucedida
+ */
+export const transferGuestReadingToUser = async (
+    userId: string,
+    isPortuguese: boolean = true
+): Promise<boolean> => {
+    const guestReading = getGuestReading();
+
+    if (!guestReading) {
+        return false;
+    }
+
+    try {
+        // Salvar no Supabase usando os dados do guest
+        const success = await saveReadingToSupabase(
+            userId,
+            guestReading.spreadType,
+            guestReading.cards,
+            guestReading.question,
+            guestReading.synthesis,
+            0,
+            ''
+        );
+
+        if (success) {
+            // Limpar a leitura do convidado após transferência bem sucedida
+            clearGuestReading();
+            return true;
+        }
+
+        return false;
+    } catch (err) {
+        console.error('Error transferring guest reading:', err);
+        return false;
+    }
+};
+
 export const savePhysicalReading = async (
     userId: string,
     data: PhysicalReadingData,

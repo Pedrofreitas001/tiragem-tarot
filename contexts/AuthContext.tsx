@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode, useCa
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Profile, SubscriptionTier } from '../types/database';
+import { getGuestReading, clearGuestReading, transferGuestReadingToUser } from '../services/readingsService';
 
 // Limites para visitantes (não logados)
 export const GUEST_LIMITS = {
@@ -357,6 +358,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         if (session?.user) {
           await fetchProfile(session.user.id);
+
+          // Transfer guest reading to user account after sign in/sign up
+          if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+            const guestReading = getGuestReading();
+            if (guestReading) {
+              // Transfer the reading asynchronously
+              transferGuestReadingToUser(session.user.id, true)
+                .then((success) => {
+                  if (success) {
+                    console.log('Guest reading transferred to user account');
+                  }
+                })
+                .catch(() => {
+                  // Silent fail - clear anyway to avoid duplicates
+                  clearGuestReading();
+                });
+            }
+          }
         } else {
           setProfile(null);
         }
