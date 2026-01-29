@@ -248,8 +248,63 @@ const getSpreadDisplayInfo = (spreadType: string, isPortuguese: boolean = true) 
                    'Futuro Próximo', 'O Eu', 'O Ambiente', 'Esperanças e Medos', 'O Resultado']
                 : ['The Significator', 'The Crossing', 'The Foundation', 'The Recent Past', 'The Crown',
                    'The Near Future', 'The Self', 'The Environment', 'Hopes & Fears', 'The Outcome']
+        },
+        // Physical reading types
+        'physical_yes_no': {
+            name: isPortuguese ? 'Tiragem Física - Sim ou Não' : 'Physical Reading - Yes or No',
+            tag: isPortuguese ? 'FÍSICA' : 'PHYSICAL',
+            color: 'text-amber-400 bg-amber-500/10',
+            positions: [isPortuguese ? 'Resposta' : 'Answer']
+        },
+        'physical_three_card': {
+            name: isPortuguese ? 'Tiragem Física - Três Cartas' : 'Physical Reading - Three Cards',
+            tag: isPortuguese ? 'FÍSICA' : 'PHYSICAL',
+            color: 'text-amber-400 bg-amber-500/10',
+            positions: isPortuguese
+                ? ['Passado', 'Presente', 'Futuro']
+                : ['Past', 'Present', 'Future']
+        },
+        'physical_five_card': {
+            name: isPortuguese ? 'Tiragem Física - Cruz Simples' : 'Physical Reading - Simple Cross',
+            tag: isPortuguese ? 'FÍSICA' : 'PHYSICAL',
+            color: 'text-amber-400 bg-amber-500/10',
+            positions: isPortuguese
+                ? ['Centro', 'Cruzamento', 'Passado', 'Futuro', 'Resultado']
+                : ['Center', 'Crossing', 'Past', 'Future', 'Outcome']
+        },
+        'physical_seven_card': {
+            name: isPortuguese ? 'Tiragem Física - Sete Cartas' : 'Physical Reading - Seven Cards',
+            tag: isPortuguese ? 'FÍSICA' : 'PHYSICAL',
+            color: 'text-amber-400 bg-amber-500/10',
+            positions: isPortuguese
+                ? ['Passado', 'Presente', 'Futuro', 'Conselho', 'Ambiente', 'Esperanças', 'Resultado']
+                : ['Past', 'Present', 'Future', 'Advice', 'Environment', 'Hopes', 'Outcome']
+        },
+        'physical_celtic_cross': {
+            name: isPortuguese ? 'Tiragem Física - Cruz Celta' : 'Physical Reading - Celtic Cross',
+            tag: isPortuguese ? 'FÍSICA' : 'PHYSICAL',
+            color: 'text-amber-400 bg-amber-500/10',
+            positions: isPortuguese
+                ? ['Significador', 'Cruzamento', 'Base', 'Passado', 'Coroa', 'Futuro', 'Eu', 'Ambiente', 'Esperanças/Medos', 'Resultado']
+                : ['Significator', 'Crossing', 'Foundation', 'Past', 'Crown', 'Future', 'Self', 'Environment', 'Hopes/Fears', 'Outcome']
+        },
+        'physical_custom': {
+            name: isPortuguese ? 'Tiragem Física - Personalizada' : 'Physical Reading - Custom',
+            tag: isPortuguese ? 'FÍSICA' : 'PHYSICAL',
+            color: 'text-amber-400 bg-amber-500/10',
+            positions: []
         }
     };
+
+    // Check if it's a physical reading with unknown type
+    if (spreadType.startsWith('physical_') && !spreadNameMap[spreadType]) {
+        return {
+            name: isPortuguese ? 'Tiragem Física' : 'Physical Reading',
+            tag: isPortuguese ? 'FÍSICA' : 'PHYSICAL',
+            color: 'text-amber-400 bg-amber-500/10',
+            positions: []
+        };
+    }
 
     return spreadNameMap[spreadType] || {
         name: spreadType,
@@ -376,6 +431,97 @@ export const deleteReadingFromSupabase = async (readingId: string | number): Pro
         return true;
     } catch (err) {
         console.error('Exception deleting reading from Supabase:', err);
+        return false;
+    }
+};
+
+// ============================================
+// PHYSICAL READING FUNCTIONS
+// ============================================
+
+export interface PhysicalReadingData {
+    spreadType: string;
+    cards: string[]; // Array of card names
+    question?: string;
+    interpretation: any; // The AI interpretation result
+}
+
+/**
+ * Salva uma tiragem física no Supabase
+ */
+export const savePhysicalReading = async (
+    userId: string,
+    data: PhysicalReadingData,
+    isPortuguese: boolean = true
+): Promise<boolean> => {
+    if (!isSupabaseConfigured()) {
+        console.log('Supabase not configured, skipping save');
+        return false;
+    }
+
+    try {
+        // Format interpretation as synthesis text
+        let synthesisText = '';
+        const interp = data.interpretation;
+
+        if (interp) {
+            const parts: string[] = [];
+
+            if (data.question) {
+                parts.push(`${isPortuguese ? 'PERGUNTA' : 'QUESTION'}: "${data.question}"`);
+            }
+
+            if (interp.tema_central) {
+                parts.push(`${isPortuguese ? 'TEMA' : 'THEME'}: ${interp.tema_central}`);
+            }
+
+            if (interp.visao_geral) {
+                parts.push(`\n${interp.visao_geral}`);
+            }
+
+            if (interp.cartas && Array.isArray(interp.cartas)) {
+                parts.push(`\n${isPortuguese ? '--- CARTAS ---' : '--- CARDS ---'}`);
+                interp.cartas.forEach((c: any) => {
+                    parts.push(`${c.posicao} (${c.carta}): ${c.interpretacao}`);
+                });
+            }
+
+            if (interp.sintese_final) {
+                parts.push(`\n${isPortuguese ? 'SÍNTESE FINAL' : 'FINAL SYNTHESIS'}: ${interp.sintese_final}`);
+            }
+
+            synthesisText = parts.join('\n');
+        }
+
+        // Convert card names to card objects for storage
+        const cardsData = data.cards.map((cardName, index) => ({
+            id: `physical_${index}`,
+            name: cardName,
+            arcana: 'unknown',
+            suit: 'None',
+            imageUrl: ''
+        }));
+
+        const { error } = await supabase
+            .from('readings')
+            .insert([{
+                user_id: userId,
+                spread_type: `physical_${data.spreadType}`,
+                cards: cardsData,
+                question: data.question || null,
+                synthesis: synthesisText || null,
+                notes: interp?.tema_central || null
+            }]);
+
+        if (error) {
+            console.error('Error saving physical reading to Supabase:', error);
+            return false;
+        }
+
+        console.log('Physical reading saved successfully to Supabase');
+        return true;
+    } catch (err) {
+        console.error('Exception saving physical reading to Supabase:', err);
         return false;
     }
 };

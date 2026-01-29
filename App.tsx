@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
@@ -4655,6 +4655,505 @@ const Result = () => {
     );
 };
 
+// ========== PHYSICAL READING INTERPRETATION PAGE ==========
+const Interpretacao = () => {
+    const navigate = useNavigate();
+    const { t, isPortuguese } = useLanguage();
+    const { user, tier } = useAuth();
+    const { checkAccess } = usePaywall();
+
+    // State
+    const [spreadType, setSpreadType] = useState<string>('');
+    const [selectedCards, setSelectedCards] = useState<string[]>([]);
+    const [question, setQuestion] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showCardSearch, setShowCardSearch] = useState(false);
+    const [activeCardIndex, setActiveCardIndex] = useState<number | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [interpretation, setInterpretation] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [savedToHistory, setSavedToHistory] = useState(false);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    // Spread type configurations
+    const spreadConfigs: Record<string, { cardCount: number; positions: string[] }> = {
+        yes_no: { cardCount: 1, positions: [isPortuguese ? 'Resposta' : 'Answer'] },
+        three_card: { cardCount: 3, positions: isPortuguese ? ['Passado', 'Presente', 'Futuro'] : ['Past', 'Present', 'Future'] },
+        five_card: { cardCount: 5, positions: isPortuguese ? ['Centro', 'Cruzamento', 'Passado', 'Futuro', 'Resultado'] : ['Center', 'Crossing', 'Past', 'Future', 'Outcome'] },
+        seven_card: { cardCount: 7, positions: isPortuguese ? ['Passado', 'Presente', 'Futuro', 'Conselho', 'Ambiente', 'Esperanças', 'Resultado'] : ['Past', 'Present', 'Future', 'Advice', 'Environment', 'Hopes', 'Outcome'] },
+        celtic_cross: { cardCount: 10, positions: isPortuguese ? ['Significador', 'Cruzamento', 'Base', 'Passado', 'Coroa', 'Futuro', 'Eu', 'Ambiente', 'Esperanças/Medos', 'Resultado'] : ['Significator', 'Crossing', 'Foundation', 'Past', 'Crown', 'Future', 'Self', 'Environment', 'Hopes/Fears', 'Outcome'] },
+        custom: { cardCount: 15, positions: [] }
+    };
+
+    // Filter cards based on search query
+    const filteredCards = useMemo(() => {
+        if (!searchQuery.trim()) return TAROT_CARDS;
+        const query = searchQuery.toLowerCase();
+        return TAROT_CARDS.filter(card => {
+            const name = isPortuguese ? card.name_pt : card.name;
+            return name.toLowerCase().includes(query) ||
+                card.name.toLowerCase().includes(query) ||
+                card.name_pt.toLowerCase().includes(query);
+        });
+    }, [searchQuery, isPortuguese]);
+
+    // Group cards by arcana/suit
+    const groupedCards = useMemo(() => {
+        const groups: { title: string; cards: typeof TAROT_CARDS }[] = [];
+
+        const major = filteredCards.filter(c => c.arcana === 'major');
+        if (major.length > 0) {
+            groups.push({ title: (t as any).interpretation?.majorArcana || 'Major Arcana', cards: major });
+        }
+
+        const suits = ['Wands', 'Cups', 'Swords', 'Pentacles'];
+        const suitNames: Record<string, string> = isPortuguese
+            ? { Wands: 'Paus', Cups: 'Copas', Swords: 'Espadas', Pentacles: 'Ouros' }
+            : { Wands: 'Wands', Cups: 'Cups', Swords: 'Swords', Pentacles: 'Pentacles' };
+
+        suits.forEach(suit => {
+            const suitCards = filteredCards.filter(c => c.suit === suit);
+            if (suitCards.length > 0) {
+                groups.push({ title: suitNames[suit], cards: suitCards });
+            }
+        });
+
+        return groups;
+    }, [filteredCards, isPortuguese, t]);
+
+    // Handle spread type change
+    const handleSpreadTypeChange = (type: string) => {
+        setSpreadType(type);
+        const config = spreadConfigs[type];
+        if (config) {
+            setSelectedCards(Array(config.cardCount).fill(''));
+        }
+    };
+
+    // Handle card selection
+    const handleCardSelect = (card: typeof TAROT_CARDS[0]) => {
+        if (activeCardIndex === null) return;
+
+        const cardName = isPortuguese ? card.name_pt : card.name;
+        const newCards = [...selectedCards];
+        newCards[activeCardIndex] = cardName;
+        setSelectedCards(newCards);
+        setShowCardSearch(false);
+        setSearchQuery('');
+        setActiveCardIndex(null);
+    };
+
+    // Open card search for a specific position
+    const openCardSearch = (index: number) => {
+        setActiveCardIndex(index);
+        setShowCardSearch(true);
+        setSearchQuery('');
+        setTimeout(() => searchInputRef.current?.focus(), 100);
+    };
+
+    // Remove card from position
+    const removeCard = (index: number) => {
+        const newCards = [...selectedCards];
+        newCards[index] = '';
+        setSelectedCards(newCards);
+    };
+
+    // Submit interpretation request
+    const handleSubmit = async () => {
+        const ti = (t as any).interpretation;
+        if (!spreadType) {
+            setError(ti?.selectSpreadType || 'Select the spread type');
+            return;
+        }
+
+        const filledCards = selectedCards.filter(c => c.trim() !== '');
+        if (filledCards.length === 0) {
+            setError(ti?.addMinCards || 'Add at least one card');
+            return;
+        }
+
+        if (!checkAccess('aiSynthesis')) {
+            setShowPaywall(true);
+            return;
+        }
+
+        setError(null);
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('/api/physical-reading', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    spreadType,
+                    cards: filledCards,
+                    question: question.trim() || undefined,
+                    isPortuguese
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to get interpretation');
+            }
+
+            setInterpretation(data.interpretation);
+
+            if (user?.id) {
+                const { savePhysicalReading } = await import('./services/readingsService');
+                const saved = await savePhysicalReading(user.id, {
+                    spreadType,
+                    cards: filledCards,
+                    question: question.trim() || undefined,
+                    interpretation: data.interpretation
+                }, isPortuguese);
+
+                if (saved) {
+                    setSavedToHistory(true);
+                }
+            }
+        } catch (err: any) {
+            console.error('Interpretation error:', err);
+            setError(err.message || 'An error occurred');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Reset form
+    const resetForm = () => {
+        setSpreadType('');
+        setSelectedCards([]);
+        setQuestion('');
+        setInterpretation(null);
+        setError(null);
+        setSavedToHistory(false);
+    };
+
+    const ti = (t as any).interpretation || {};
+
+    return (
+        <div className="min-h-screen bg-background-dark">
+            <Header />
+            <CartDrawer />
+            <MinimalStarsBackground />
+
+            <PaywallModal
+                isOpen={showPaywall}
+                onClose={() => setShowPaywall(false)}
+                feature="aiSynthesis"
+                onLogin={() => {
+                    setShowPaywall(false);
+                    setShowAuthModal(true);
+                }}
+                onCheckout={() => navigate('/checkout')}
+            />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+
+            {/* Hero Section */}
+            <section className="relative pt-24 pb-12 px-6 md:px-12">
+                <div className="max-w-[1200px] mx-auto text-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
+                        <span className="material-symbols-outlined text-amber-400 text-sm">auto_awesome</span>
+                        <span className="text-amber-400 text-sm font-medium">
+                            {isPortuguese ? 'Interpretação com IA' : 'AI Interpretation'}
+                        </span>
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-black text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
+                        {ti.title || 'Physical Reading Interpretation'}
+                    </h1>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                        {ti.subtitle || 'Transform your real spread into a clear and objective reading with AI'}
+                    </p>
+                </div>
+            </section>
+
+            {/* Main Content */}
+            <section className="px-6 md:px-12 pb-20">
+                <div className="max-w-[900px] mx-auto">
+                    {!interpretation ? (
+                        <div className="bg-gradient-to-br from-surface-dark/80 to-card-dark/60 backdrop-blur-sm rounded-2xl border border-border-dark p-6 md:p-8">
+                            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                <span className="material-symbols-outlined text-primary">style</span>
+                                {ti.formTitle || 'Your Spread'}
+                            </h2>
+
+                            {/* Spread Type Selector */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    {ti.spreadTypeLabel || 'Spread Type'}
+                                </label>
+                                <select
+                                    value={spreadType}
+                                    onChange={(e) => handleSpreadTypeChange(e.target.value)}
+                                    className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white focus:outline-none focus:border-primary transition-colors"
+                                >
+                                    <option value="">{ti.selectSpreadType || 'Select spread type...'}</option>
+                                    <option value="yes_no">{ti.spreadTypes?.yes_no || 'Yes or No (1 card)'}</option>
+                                    <option value="three_card">{ti.spreadTypes?.three_card || '3 cards (Past / Present / Future)'}</option>
+                                    <option value="five_card">{ti.spreadTypes?.five_card || '5 cards (Simple Cross)'}</option>
+                                    <option value="seven_card">{ti.spreadTypes?.seven_card || '7 cards'}</option>
+                                    <option value="celtic_cross">{ti.spreadTypes?.celtic_cross || 'Celtic Cross (10 cards)'}</option>
+                                    <option value="custom">{ti.spreadTypes?.custom || 'Other (custom)'}</option>
+                                </select>
+                            </div>
+
+                            {/* Card Selection */}
+                            {spreadType && (
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                                        {ti.cardsLabel || 'Spread Cards'}
+                                    </label>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                                        {selectedCards.map((cardName, index) => {
+                                            const position = spreadConfigs[spreadType]?.positions?.[index] || `${ti.cardPosition || 'Card'} ${index + 1}`;
+                                            return (
+                                                <div key={index} className="relative">
+                                                    <div
+                                                        onClick={() => openCardSearch(index)}
+                                                        className={`aspect-[2/3] rounded-xl border-2 border-dashed cursor-pointer transition-all flex flex-col items-center justify-center p-2 ${cardName
+                                                            ? 'border-primary/50 bg-primary/10'
+                                                            : 'border-border-dark hover:border-primary/30 bg-surface-dark/50'
+                                                            }`}
+                                                    >
+                                                        {cardName ? (
+                                                            <>
+                                                                <span className="material-symbols-outlined text-primary text-2xl mb-1">style</span>
+                                                                <span className="text-white text-xs text-center font-medium leading-tight">{cardName}</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add</span>
+                                                                <span className="text-gray-500 text-xs text-center">{position}</span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                    {cardName && (
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); removeCard(index); }}
+                                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors"
+                                                        >
+                                                            <span className="material-symbols-outlined text-white text-sm">close</span>
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                        {spreadType === 'custom' && selectedCards.length < 15 && (
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedCards([...selectedCards, '']);
+                                                    openCardSearch(selectedCards.length);
+                                                }}
+                                                className="aspect-[2/3] rounded-xl border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer transition-all"
+                                            >
+                                                <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add_circle</span>
+                                                <span className="text-gray-500 text-xs">{ti.addCard || 'Add Card'}</span>
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Question Input */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    {ti.questionLabel || 'Question asked to the Tarot'}
+                                </label>
+                                <textarea
+                                    value={question}
+                                    onChange={(e) => setQuestion(e.target.value)}
+                                    placeholder={ti.questionPlaceholder || 'What question did you ask during the spread?'}
+                                    rows={3}
+                                    className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors resize-none"
+                                />
+                                <p className="text-gray-500 text-xs mt-1">
+                                    {ti.questionHint || 'The question helps contextualize the interpretation'}
+                                </p>
+                            </div>
+
+                            {/* Error Message */}
+                            {error && (
+                                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-red-400">error</span>
+                                    <span className="text-red-400">{error}</span>
+                                </div>
+                            )}
+
+                            {/* Submit Button */}
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isLoading || !spreadType || selectedCards.filter(c => c).length === 0}
+                                className="w-full py-4 bg-gradient-to-r from-primary to-purple-600 hover:from-primary-hover hover:to-purple-700 text-white font-bold rounded-xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                                        {ti.interpreting || 'Interpreting...'}
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="material-symbols-outlined">auto_awesome</span>
+                                        {ti.submitButton || 'Interpret My Spread'}
+                                    </>
+                                )}
+                            </button>
+
+                            {tier !== 'premium' && (
+                                <p className="text-center text-amber-400/70 text-sm mt-4 flex items-center justify-center gap-2">
+                                    <span className="material-symbols-outlined text-sm">workspace_premium</span>
+                                    {ti.premiumFeature || 'Premium Feature'}
+                                </p>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            {savedToHistory && (
+                                <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-emerald-400">check_circle</span>
+                                    <span className="text-emerald-400">{ti.savedToHistory || 'Interpretation saved to your history!'}</span>
+                                </div>
+                            )}
+
+                            {interpretation.tema_central && (
+                                <div className="bg-gradient-to-r from-primary/20 to-purple-600/20 rounded-2xl border border-primary/30 p-6 text-center">
+                                    <span className="text-primary text-sm font-medium uppercase tracking-wider">
+                                        {ti.centralTheme || 'Central Theme'}
+                                    </span>
+                                    <h3 className="text-2xl font-bold text-white mt-2">{interpretation.tema_central}</h3>
+                                </div>
+                            )}
+
+                            {interpretation.visao_geral && (
+                                <div className="bg-surface-dark/80 rounded-2xl border border-border-dark p-6">
+                                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary">visibility</span>
+                                        {ti.overview || 'Overview'}
+                                    </h3>
+                                    <p className="text-gray-300 leading-relaxed">{interpretation.visao_geral}</p>
+                                </div>
+                            )}
+
+                            {interpretation.cartas && interpretation.cartas.length > 0 && (
+                                <div className="bg-surface-dark/80 rounded-2xl border border-border-dark p-6">
+                                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary">style</span>
+                                        {ti.cardByCard || 'Card by Card'}
+                                    </h3>
+                                    <div className="space-y-4">
+                                        {interpretation.cartas.map((card: any, index: number) => (
+                                            <div key={index} className="p-4 bg-card-dark/50 rounded-xl border border-border-dark">
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <span className="px-3 py-1 bg-primary/20 text-primary text-sm font-medium rounded-full">
+                                                        {card.posicao}
+                                                    </span>
+                                                    <span className="text-white font-medium">{card.carta}</span>
+                                                </div>
+                                                <p className="text-gray-400 text-sm">{card.interpretacao}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {interpretation.sintese_final && (
+                                <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-2xl border border-amber-500/30 p-6">
+                                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-amber-400">lightbulb</span>
+                                        {ti.finalSynthesis || 'Final Synthesis'}
+                                    </h3>
+                                    <p className="text-gray-300 leading-relaxed">{interpretation.sintese_final}</p>
+                                </div>
+                            )}
+
+                            <button
+                                onClick={resetForm}
+                                className="w-full py-4 bg-surface-dark hover:bg-card-dark border border-border-dark text-white font-medium rounded-xl flex items-center justify-center gap-3 transition-all"
+                            >
+                                <span className="material-symbols-outlined">refresh</span>
+                                {ti.newInterpretation || 'New Interpretation'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* Card Search Modal */}
+            {showCardSearch && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="w-full max-w-2xl max-h-[80vh] bg-card-dark rounded-2xl border border-border-dark overflow-hidden flex flex-col">
+                        <div className="p-4 border-b border-border-dark">
+                            <div className="flex items-center gap-3">
+                                <span className="material-symbols-outlined text-gray-400">search</span>
+                                <input
+                                    ref={searchInputRef}
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder={ti.cardsPlaceholder || 'Search card...'}
+                                    className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none"
+                                />
+                                <button
+                                    onClick={() => { setShowCardSearch(false); setActiveCardIndex(null); }}
+                                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-gray-400">close</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto p-4">
+                            {groupedCards.length > 0 ? (
+                                groupedCards.map((group, groupIndex) => (
+                                    <div key={groupIndex} className="mb-6 last:mb-0">
+                                        <h4 className="text-sm font-medium text-primary mb-3 sticky top-0 bg-card-dark py-1">
+                                            {group.title}
+                                        </h4>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                            {group.cards.map((card) => {
+                                                const cardName = isPortuguese ? card.name_pt : card.name;
+                                                const isSelected = selectedCards.includes(cardName);
+                                                return (
+                                                    <button
+                                                        key={card.id}
+                                                        onClick={() => !isSelected && handleCardSelect(card)}
+                                                        disabled={isSelected}
+                                                        className={`p-3 rounded-xl text-left transition-all ${isSelected
+                                                            ? 'bg-gray-700/50 opacity-50 cursor-not-allowed'
+                                                            : 'bg-surface-dark hover:bg-primary/20 hover:border-primary/50 border border-transparent'
+                                                            }`}
+                                                    >
+                                                        <span className="text-white text-sm font-medium">{cardName}</span>
+                                                        {isSelected && (
+                                                            <span className="block text-xs text-gray-500 mt-1">
+                                                                {isPortuguese ? 'Já selecionada' : 'Already selected'}
+                                                            </span>
+                                                        )}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-8">
+                                    <span className="material-symbols-outlined text-gray-500 text-4xl mb-2">search_off</span>
+                                    <p className="text-gray-500">{ti.noCardsFound || 'No cards found'}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <Footer />
+        </div>
+    );
+};
+
 const App = () => {
     return (
         <LanguageProvider>
@@ -4667,6 +5166,10 @@ const App = () => {
                             {/* Spreads Page - Available in both languages */}
                             <Route path="/spreads" element={<Spreads />} />
                             <Route path="/jogos-de-tarot" element={<Spreads />} />
+
+                            {/* Physical Reading Interpretation */}
+                            <Route path="/interpretacao" element={<Interpretacao />} />
+                            <Route path="/interpretation" element={<Interpretacao />} />
 
                             {/* Rotas em Português */}
                             <Route path="/arquivo-arcano" element={<Explore />} />

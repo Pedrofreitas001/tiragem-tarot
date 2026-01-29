@@ -447,6 +447,58 @@ export const pt = {
     from: "a partir de",
     currency: "R$",
   },
+
+  // Physical Reading Interpretation
+  interpretation: {
+    title: "Interpretação de Tiragem Física",
+    subtitle: "Transforme sua jogada real em uma leitura clara e objetiva com IA",
+    heroDescription: "Fez uma tiragem física com seu baralho? Insira as cartas que saíram e receba uma interpretação profissional.",
+    // Form
+    formTitle: "Sua Tiragem",
+    spreadTypeLabel: "Tipo de Jogada",
+    spreadTypes: {
+      yes_no: "Sim ou Não (1 carta)",
+      three_card: "3 cartas (Passado / Presente / Futuro)",
+      five_card: "5 cartas (Cruz Simples)",
+      seven_card: "7 cartas",
+      celtic_cross: "Cruz Celta (10 cartas)",
+      custom: "Outro (personalizado)",
+    },
+    cardsLabel: "Cartas da Tiragem",
+    cardsPlaceholder: "Buscar carta...",
+    cardPosition: "Carta",
+    removeCard: "Remover",
+    addCard: "Adicionar Carta",
+    questionLabel: "Pergunta feita ao Tarot",
+    questionPlaceholder: "Qual foi a pergunta que você fez durante a tiragem?",
+    questionHint: "A pergunta ajuda a contextualizar a interpretação",
+    submitButton: "Interpretar Minha Tiragem",
+    interpreting: "Interpretando...",
+    // Results
+    resultsTitle: "Sua Interpretação",
+    overview: "Visão Geral",
+    cardByCard: "Carta por Carta",
+    finalSynthesis: "Síntese Final",
+    centralTheme: "Tema Central",
+    savedToHistory: "Interpretação salva no seu histórico!",
+    newInterpretation: "Nova Interpretação",
+    // Validation
+    selectSpreadType: "Selecione o tipo de jogada",
+    addMinCards: "Adicione pelo menos uma carta",
+    addMoreCards: "Adicione mais cartas para este tipo de jogada",
+    enterQuestion: "A pergunta é recomendada para uma interpretação mais precisa",
+    // Premium
+    premiumFeature: "Recurso Premium",
+    premiumDescription: "A interpretação de tiragens físicas com IA é exclusiva para assinantes Premium.",
+    // Card search
+    majorArcana: "Arcanos Maiores",
+    minorArcana: "Arcanos Menores",
+    wands: "Paus",
+    cups: "Copas",
+    swords: "Espadas",
+    pentacles: "Ouros",
+    noCardsFound: "Nenhuma carta encontrada",
+  },
 };
 
 export type TranslationKeys = typeof pt;

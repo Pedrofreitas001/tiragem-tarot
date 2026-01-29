@@ -447,4 +447,56 @@ export const en: TranslationKeys = {
     from: "from",
     currency: "$",
   },
+
+  // Physical Reading Interpretation
+  interpretation: {
+    title: "Physical Reading Interpretation",
+    subtitle: "Transform your real spread into a clear and objective reading with AI",
+    heroDescription: "Did a physical spread with your deck? Enter the cards that came up and receive a professional interpretation.",
+    // Form
+    formTitle: "Your Spread",
+    spreadTypeLabel: "Spread Type",
+    spreadTypes: {
+      yes_no: "Yes or No (1 card)",
+      three_card: "3 cards (Past / Present / Future)",
+      five_card: "5 cards (Simple Cross)",
+      seven_card: "7 cards",
+      celtic_cross: "Celtic Cross (10 cards)",
+      custom: "Other (custom)",
+    },
+    cardsLabel: "Spread Cards",
+    cardsPlaceholder: "Search card...",
+    cardPosition: "Card",
+    removeCard: "Remove",
+    addCard: "Add Card",
+    questionLabel: "Question asked to the Tarot",
+    questionPlaceholder: "What question did you ask during the spread?",
+    questionHint: "The question helps contextualize the interpretation",
+    submitButton: "Interpret My Spread",
+    interpreting: "Interpreting...",
+    // Results
+    resultsTitle: "Your Interpretation",
+    overview: "Overview",
+    cardByCard: "Card by Card",
+    finalSynthesis: "Final Synthesis",
+    centralTheme: "Central Theme",
+    savedToHistory: "Interpretation saved to your history!",
+    newInterpretation: "New Interpretation",
+    // Validation
+    selectSpreadType: "Select the spread type",
+    addMinCards: "Add at least one card",
+    addMoreCards: "Add more cards for this spread type",
+    enterQuestion: "A question is recommended for a more accurate interpretation",
+    // Premium
+    premiumFeature: "Premium Feature",
+    premiumDescription: "Physical reading interpretation with AI is exclusive to Premium subscribers.",
+    // Card search
+    majorArcana: "Major Arcana",
+    minorArcana: "Minor Arcana",
+    wands: "Wands",
+    cups: "Cups",
+    swords: "Swords",
+    pentacles: "Pentacles",
+    noCardsFound: "No cards found",
+  },
 };
