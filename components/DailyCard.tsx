@@ -300,29 +300,55 @@ export const DailyCard = () => {
             position: absolute;
             inset: 0;
             z-index: 0;
-            /* overflow: hidden; Removed to prevent clipping */
             pointer-events: none;
             transform: translateY(-40px);
         }
-        .static-gold-circle {
+        /* Chama Amarela Brilhante e Suave */
+        .golden-flame {
             position: absolute;
             border-radius: 50%;
             pointer-events: none;
+            filter: blur(60px);
         }
-        /* Circle 1: Large centralized, thin elegant border */
-        .gold-c-1 {
-            width: 450px; height: 450px;
+        .flame-core {
+            width: 280px; height: 400px;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.1);
+            background: radial-gradient(ellipse at center bottom,
+                rgba(255, 200, 50, 0.5) 0%,
+                rgba(255, 180, 40, 0.35) 25%,
+                rgba(255, 150, 30, 0.2) 50%,
+                transparent 70%);
+            animation: flame-flicker 3s ease-in-out infinite;
         }
-        /* Circle 5: Very large, faint outer rim */
-        .gold-c-5 {
-            width: 500px; height: 500px;
+        .flame-glow {
+            width: 400px; height: 500px;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            border: 1px dashed rgba(255, 215, 0, 0.15);
+            background: radial-gradient(ellipse at center,
+                rgba(255, 215, 0, 0.25) 0%,
+                rgba(255, 180, 50, 0.15) 40%,
+                transparent 70%);
+            animation: flame-pulse 4s ease-in-out infinite;
+        }
+        .flame-outer {
+            width: 500px; height: 600px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(ellipse at center,
+                rgba(255, 200, 80, 0.1) 0%,
+                rgba(255, 165, 0, 0.05) 50%,
+                transparent 70%);
+        }
+        @keyframes flame-flicker {
+            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+            25% { opacity: 0.9; transform: translate(-50%, -51%) scale(1.02); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+            75% { opacity: 0.85; transform: translate(-50%, -49%) scale(1.01); }
+        }
+        @keyframes flame-pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
         }
         .card-breathing {
             animation: float-subtle 6s ease-in-out infinite;
@@ -332,11 +358,14 @@ export const DailyCard = () => {
             50% { transform: translateY(-8px); }
         }
         @media (max-width: 768px) {
-            .gold-c-1 {
-                width: 320px; height: 320px;
+            .flame-core {
+                width: 200px; height: 300px;
             }
-            .gold-c-5 {
-                width: 380px; height: 380px;
+            .flame-glow {
+                width: 300px; height: 380px;
+            }
+            .flame-outer {
+                width: 380px; height: 450px;
             }
         }
     `;
@@ -445,10 +474,11 @@ export const DailyCard = () => {
                         {/* Right Column - Golden Halo Card Display */}
                         <div className="flex flex-col items-center justify-center lg:order-last order-last relative pt-28 pb-12 lg:pt-20 lg:pb-0">
 
-                            {/* Static Golden Circles Background */}
+                            {/* Golden Flame Background */}
                             <div className="static-ring-container">
-                                <div className="static-gold-circle gold-c-1"></div>
-                                <div className="static-gold-circle gold-c-5"></div>
+                                <div className="golden-flame flame-outer"></div>
+                                <div className="golden-flame flame-glow"></div>
+                                <div className="golden-flame flame-core"></div>
                             </div>
 
                             {/* Main Card Container */}

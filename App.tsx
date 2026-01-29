@@ -508,6 +508,221 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Pricing Comparison Section */}
+            <section className="relative z-10 py-4 md:py-12 px-4 md:px-6 overflow-x-hidden">
+                <div className="max-w-[1200px] mx-auto">
+                    <div className="text-center mb-12 md:mb-16">
+                        <p className="text-[#a77fd4] text-sm uppercase tracking-widest font-semibold mb-4">
+                            {isPortuguese ? 'Escolha seu caminho' : 'Choose your path'}
+                        </p>
+                        <h2 className="text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.0] tracking-tight text-gradient-gold mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Escolha sua jornada' : 'Choose your journey'}
+                        </h2>
+                        <p className="text-gray-400 text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">
+                            {isPortuguese
+                                ? 'Para sua jornada de descobertas e evolução espiritual'
+                                : 'For your discovery journey and spiritual evolution'}
+                        </p>
+                    </div>
+
+                    {/* Plans Grid - Large Cards with Premium Design */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                        {/* Free Plan Card */}
+                        <button
+                            onClick={() => setSelectedPlan('free')}
+                            className={`group relative overflow-hidden transition-all duration-500 transform text-left rounded-3xl ${selectedPlan === 'free'
+                                ? 'scale-100 ring-2 ring-[#a77fd4]'
+                                : 'hover:scale-102 ring-2 ring-white/10 hover:ring-[#875faf]'
+                                }`}
+                            style={{ minHeight: '420px' }}
+                        >
+                            {/* Background Gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#1a1628]/80 via-[#2a1f3d]/60 to-[#0d0512] rounded-3xl" />
+
+                            {/* Decorative glow */}
+                            {selectedPlan === 'free' && (
+                                <div className="absolute -top-32 -right-32 w-64 h-64 bg-[#a77fd4]/20 rounded-full blur-3xl" />
+                            )}
+
+                            {/* Border effect */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-[#a77fd4]/10 via-transparent to-transparent pointer-events-none rounded-3xl" />
+
+                            {/* Content */}
+                            <div className="relative z-10 p-6 md:p-8 h-full flex flex-col rounded-3xl border border-[#a77fd4]/30 bg-gradient-to-br from-[#a77fd4]/5 via-transparent to-transparent">
+                                {/* Price Section */}
+                                <div className="mb-6">
+                                    <p className="text-[#a77fd4] text-sm uppercase tracking-widest font-semibold mb-3">
+                                        {isPortuguese ? 'Exploração Livre' : 'Free Exploration'}
+                                    </p>
+                                    <h3 className="text-5xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        {isPortuguese ? 'Gratuito' : 'Free'}
+                                    </h3>
+                                    <div className="text-4xl font-light text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        R$ 0<span className="text-lg text-gray-400 font-normal">/sempre</span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm">{isPortuguese ? 'Para começar sua prática' : 'To start your practice'}</p>
+                                </div>
+
+                                {/* Features */}
+                                <div className="flex-1 space-y-4 mb-10">
+                                    <div className="text-gray-300 text-sm flex items-start gap-3">
+                                        <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
+                                        <div>
+                                            <p className="font-medium">1 {isPortuguese ? 'tirada por dia' : 'reading per day'}</p>
+                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Acesso básico às cartas' : 'Basic card access'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-gray-300 text-sm flex items-start gap-3">
+                                        <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
+                                        <div>
+                                            <p className="font-medium">7 {isPortuguese ? 'cartas do arquivo' : 'archive cards'}</p>
+                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Tarot tradicional' : 'Traditional tarot'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-gray-300 text-sm flex items-start gap-3">
+                                        <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
+                                        <div>
+                                            <p className="font-medium">{isPortuguese ? 'Histórico de 3 leituras' : 'History of 3 readings'}</p>
+                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Acompanhamento básico' : 'Basic tracking'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-gray-400 text-sm flex items-start gap-3 opacity-60">
+                                        <span className="text-gray-600 font-bold mt-0.5 text-lg">✕</span>
+                                        <div>
+                                            <p className="font-medium">{isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}</p>
+                                            <p className="text-xs text-gray-600">{isPortuguese ? 'Interpretação avançada' : 'Advanced interpretation'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-gray-400 text-sm flex items-start gap-3 opacity-60">
+                                        <span className="text-gray-600 font-bold mt-0.5 text-lg">✕</span>
+                                        <div>
+                                            <p className="font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern Analysis'}</p>
+                                            <p className="text-xs text-gray-600">{isPortuguese ? 'Insights personalizados' : 'Custom insights'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Selection indicator */}
+                                {selectedPlan === 'free' && (
+                                    <div className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-[#a77fd4]/20 border border-[#a77fd4]/40 text-[#a77fd4] text-xs font-semibold mb-4">
+                                        ✓ {isPortuguese ? 'Selecionado' : 'Selected'}
+                                    </div>
+                                )}
+
+                                {/* Button */}
+                                <button
+                                    onClick={() => handleSelectSpread(SPREADS[0])}
+                                    className="w-full px-6 py-4 rounded-lg font-semibold transition-all text-base uppercase tracking-widest bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white hover:shadow-lg hover:shadow-[#875faf]/40"
+                                    style={{ fontFamily: "'Crimson Text', serif" }}
+                                >
+                                    {isPortuguese ? 'Começar Agora' : 'Start Now'}
+                                </button>
+                            </div>
+                        </button>
+
+                        {/* Premium Plan Card */}
+                        <button
+                            onClick={() => setSelectedPlan('premium')}
+                            className={`group relative overflow-hidden transition-all duration-500 transform text-left rounded-3xl ${selectedPlan === 'premium'
+                                ? 'scale-100 ring-2 ring-[#d4af37]'
+                                : 'hover:scale-102 ring-2 ring-white/10 hover:ring-[#d4af37]'
+                                }`}
+                            style={{ minHeight: '420px' }}
+                        >
+                            {/* Premium Badge */}
+                            <div className="absolute top-0 right-0 z-20">
+                                <div className="bg-gradient-to-r from-[#d4af37] to-[#c9a961] text-black px-6 py-2 rounded-bl-3xl font-semibold text-xs uppercase tracking-widest">
+                                    ⭐ {isPortuguese ? 'Recomendado' : 'Recommended'}
+                                </div>
+                            </div>
+
+                            {/* Background Gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#2a1f3d]/80 via-[#1a1628]/60 to-[#0d0512] rounded-3xl" />
+
+                            {/* Decorative glow */}
+                            {selectedPlan === 'premium' && (
+                                <div className="absolute -top-32 -left-32 w-64 h-64 bg-[#d4af37]/20 rounded-full blur-3xl" />
+                            )}
+
+                            {/* Border effect */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-[#d4af37]/10 via-transparent to-transparent pointer-events-none rounded-3xl" />
+
+                            {/* Content */}
+                            <div className="relative z-10 p-6 md:p-8 h-full flex flex-col rounded-3xl border border-[#d4af37]/30 bg-gradient-to-br from-[#d4af37]/5 via-transparent to-transparent">
+                                {/* Price Section */}
+                                <div className="mb-6">
+                                    <p className="text-[#d4af37] text-sm uppercase tracking-widest font-semibold mb-3">
+                                        {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
+                                    </p>
+                                    <h3 className="text-5xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        {isPortuguese ? 'Premium' : 'Premium'}
+                                    </h3>
+                                    <div className="text-4xl font-light text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        R$ 19<span className="text-lg text-gray-400 font-normal">,90/mês</span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm">{isPortuguese ? 'Para praticantes dedicados' : 'For dedicated practitioners'}</p>
+                                </div>
+
+                                {/* Features */}
+                                <div className="flex-1 space-y-4 mb-10">
+                                    <div className="text-gray-300 text-sm flex items-start gap-3">
+                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
+                                        <div>
+                                            <p className="font-medium">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</p>
+                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Quantas vezes quiser' : 'As many times as you want'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-gray-300 text-sm flex items-start gap-3">
+                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
+                                        <div>
+                                            <p className="font-medium">{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</p>
+                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Receba previsões direto no app' : 'Receive predictions directly on app'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-gray-300 text-sm flex items-start gap-3">
+                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
+                                        <div>
+                                            <p className="font-medium">{isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}</p>
+                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Interpretação avançada e personalizada' : 'Advanced custom interpretation'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-gray-300 text-sm flex items-start gap-3">
+                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
+                                        <div>
+                                            <p className="font-medium">{isPortuguese ? 'Histórico completo' : 'Full history'}</p>
+                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Todas as suas leituras salvas' : 'All your readings saved'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-gray-300 text-sm flex items-start gap-3">
+                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
+                                        <div>
+                                            <p className="font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern Analysis'}</p>
+                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Descubra tendências na sua jornada' : 'Discover trends in your journey'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Selection indicator */}
+                                {selectedPlan === 'premium' && (
+                                    <div className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/40 text-[#d4af37] text-xs font-semibold mb-4">
+                                        ✓ {isPortuguese ? 'Selecionado' : 'Selected'}
+                                    </div>
+                                )}
+
+                                {/* Button */}
+                                <button
+                                    onClick={() => navigate('/checkout')}
+                                    className="w-full px-6 py-4 rounded-lg font-semibold transition-all text-base uppercase tracking-widest bg-gradient-to-r from-[#d4af37] to-[#c9a961] text-black hover:shadow-lg hover:shadow-[#d4af37]/40"
+                                    style={{ fontFamily: "'Crimson Text', serif" }}
+                                >
+                                    {isPortuguese ? 'Acessar Premium' : 'Access Premium'}
+                                </button>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             {/* Features Presentation Section */}
             <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark overflow-hidden">
                 {/* Decorative Stars */}
@@ -1414,221 +1629,6 @@ const Home = () => {
                     </div>
                 </section>
             </div>
-
-            {/* Pricing Comparison Section */}
-            <section className="relative z-10 py-4 md:py-12 px-4 md:px-6 overflow-x-hidden">
-                <div className="max-w-[1200px] mx-auto">
-                    <div className="text-center mb-12 md:mb-16">
-                        <p className="text-[#a77fd4] text-sm uppercase tracking-widest font-semibold mb-4">
-                            {isPortuguese ? 'Escolha seu caminho' : 'Choose your path'}
-                        </p>
-                        <h2 className="text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.0] tracking-tight text-gradient-gold mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Escolha sua jornada' : 'Choose your journey'}
-                        </h2>
-                        <p className="text-gray-400 text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">
-                            {isPortuguese
-                                ? 'Para sua jornada de descobertas e evolução espiritual'
-                                : 'For your discovery journey and spiritual evolution'}
-                        </p>
-                    </div>
-
-                    {/* Plans Grid - Large Cards with Premium Design */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                        {/* Free Plan Card */}
-                        <button
-                            onClick={() => setSelectedPlan('free')}
-                            className={`group relative overflow-hidden transition-all duration-500 transform text-left rounded-3xl ${selectedPlan === 'free'
-                                ? 'scale-100 ring-2 ring-[#a77fd4]'
-                                : 'hover:scale-102 ring-2 ring-white/10 hover:ring-[#875faf]'
-                                }`}
-                            style={{ minHeight: '420px' }}
-                        >
-                            {/* Background Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#1a1628]/80 via-[#2a1f3d]/60 to-[#0d0512] rounded-3xl" />
-
-                            {/* Decorative glow */}
-                            {selectedPlan === 'free' && (
-                                <div className="absolute -top-32 -right-32 w-64 h-64 bg-[#a77fd4]/20 rounded-full blur-3xl" />
-                            )}
-
-                            {/* Border effect */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-[#a77fd4]/10 via-transparent to-transparent pointer-events-none rounded-3xl" />
-
-                            {/* Content */}
-                            <div className="relative z-10 p-6 md:p-8 h-full flex flex-col rounded-3xl border border-[#a77fd4]/30 bg-gradient-to-br from-[#a77fd4]/5 via-transparent to-transparent">
-                                {/* Price Section */}
-                                <div className="mb-6">
-                                    <p className="text-[#a77fd4] text-sm uppercase tracking-widest font-semibold mb-3">
-                                        {isPortuguese ? 'Exploração Livre' : 'Free Exploration'}
-                                    </p>
-                                    <h3 className="text-5xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        {isPortuguese ? 'Gratuito' : 'Free'}
-                                    </h3>
-                                    <div className="text-4xl font-light text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        R$ 0<span className="text-lg text-gray-400 font-normal">/sempre</span>
-                                    </div>
-                                    <p className="text-gray-400 text-sm">{isPortuguese ? 'Para começar sua prática' : 'To start your practice'}</p>
-                                </div>
-
-                                {/* Features */}
-                                <div className="flex-1 space-y-4 mb-10">
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">1 {isPortuguese ? 'tirada por dia' : 'reading per day'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Acesso básico às cartas' : 'Basic card access'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">7 {isPortuguese ? 'cartas do arquivo' : 'archive cards'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Tarot tradicional' : 'Traditional tarot'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Histórico de 3 leituras' : 'History of 3 readings'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Acompanhamento básico' : 'Basic tracking'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-400 text-sm flex items-start gap-3 opacity-60">
-                                        <span className="text-gray-600 font-bold mt-0.5 text-lg">✕</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}</p>
-                                            <p className="text-xs text-gray-600">{isPortuguese ? 'Interpretação avançada' : 'Advanced interpretation'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-400 text-sm flex items-start gap-3 opacity-60">
-                                        <span className="text-gray-600 font-bold mt-0.5 text-lg">✕</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern Analysis'}</p>
-                                            <p className="text-xs text-gray-600">{isPortuguese ? 'Insights personalizados' : 'Custom insights'}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Selection indicator */}
-                                {selectedPlan === 'free' && (
-                                    <div className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-[#a77fd4]/20 border border-[#a77fd4]/40 text-[#a77fd4] text-xs font-semibold mb-4">
-                                        ✓ {isPortuguese ? 'Selecionado' : 'Selected'}
-                                    </div>
-                                )}
-
-                                {/* Button */}
-                                <button
-                                    onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="w-full px-6 py-4 rounded-lg font-semibold transition-all text-base uppercase tracking-widest bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white hover:shadow-lg hover:shadow-[#875faf]/40"
-                                    style={{ fontFamily: "'Crimson Text', serif" }}
-                                >
-                                    {isPortuguese ? 'Começar Agora' : 'Start Now'}
-                                </button>
-                            </div>
-                        </button>
-
-                        {/* Premium Plan Card */}
-                        <button
-                            onClick={() => setSelectedPlan('premium')}
-                            className={`group relative overflow-hidden transition-all duration-500 transform text-left rounded-3xl ${selectedPlan === 'premium'
-                                ? 'scale-100 ring-2 ring-[#d4af37]'
-                                : 'hover:scale-102 ring-2 ring-white/10 hover:ring-[#d4af37]'
-                                }`}
-                            style={{ minHeight: '420px' }}
-                        >
-                            {/* Premium Badge */}
-                            <div className="absolute top-0 right-0 z-20">
-                                <div className="bg-gradient-to-r from-[#d4af37] to-[#c9a961] text-black px-6 py-2 rounded-bl-3xl font-semibold text-xs uppercase tracking-widest">
-                                    ⭐ {isPortuguese ? 'Recomendado' : 'Recommended'}
-                                </div>
-                            </div>
-
-                            {/* Background Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#2a1f3d]/80 via-[#1a1628]/60 to-[#0d0512] rounded-3xl" />
-
-                            {/* Decorative glow */}
-                            {selectedPlan === 'premium' && (
-                                <div className="absolute -top-32 -left-32 w-64 h-64 bg-[#d4af37]/20 rounded-full blur-3xl" />
-                            )}
-
-                            {/* Border effect */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-[#d4af37]/10 via-transparent to-transparent pointer-events-none rounded-3xl" />
-
-                            {/* Content */}
-                            <div className="relative z-10 p-6 md:p-8 h-full flex flex-col rounded-3xl border border-[#d4af37]/30 bg-gradient-to-br from-[#d4af37]/5 via-transparent to-transparent">
-                                {/* Price Section */}
-                                <div className="mb-6">
-                                    <p className="text-[#d4af37] text-sm uppercase tracking-widest font-semibold mb-3">
-                                        {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
-                                    </p>
-                                    <h3 className="text-5xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        {isPortuguese ? 'Premium' : 'Premium'}
-                                    </h3>
-                                    <div className="text-4xl font-light text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        R$ 19<span className="text-lg text-gray-400 font-normal">,90/mês</span>
-                                    </div>
-                                    <p className="text-gray-400 text-sm">{isPortuguese ? 'Para praticantes dedicados' : 'For dedicated practitioners'}</p>
-                                </div>
-
-                                {/* Features */}
-                                <div className="flex-1 space-y-4 mb-10">
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Quantas vezes quiser' : 'As many times as you want'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Receba previsões direto no app' : 'Receive predictions directly on app'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Interpretação avançada e personalizada' : 'Advanced custom interpretation'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Histórico completo' : 'Full history'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Todas as suas leituras salvas' : 'All your readings saved'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern Analysis'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Descubra tendências na sua jornada' : 'Discover trends in your journey'}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Selection indicator */}
-                                {selectedPlan === 'premium' && (
-                                    <div className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/40 text-[#d4af37] text-xs font-semibold mb-4">
-                                        ✓ {isPortuguese ? 'Selecionado' : 'Selected'}
-                                    </div>
-                                )}
-
-                                {/* Button */}
-                                <button
-                                    onClick={() => navigate('/checkout')}
-                                    className="w-full px-6 py-4 rounded-lg font-semibold transition-all text-base uppercase tracking-widest bg-gradient-to-r from-[#d4af37] to-[#c9a961] text-black hover:shadow-lg hover:shadow-[#d4af37]/40"
-                                    style={{ fontFamily: "'Crimson Text', serif" }}
-                                >
-                                    {isPortuguese ? 'Acessar Premium' : 'Access Premium'}
-                                </button>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </section>
 
             <Footer />
 
@@ -4882,10 +4882,19 @@ const Interpretacao = () => {
     const ti = (t as any).interpretation || {};
 
     return (
-        <div className="min-h-screen bg-background-dark">
+        <div className="relative min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
+            {/* Fixed Purple Blur Background - Not limited by containers */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-600/25 rounded-full blur-[150px]" />
+                <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-violet-500/20 rounded-full blur-[180px]" />
+                <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-purple-700/15 rounded-full blur-[120px]" />
+            </div>
+
+            {/* Stars Background */}
+            <MinimalStarsBackground />
+
             <Header />
             <CartDrawer />
-            <MinimalStarsBackground />
 
             <PaywallModal
                 isOpen={showPaywall}
@@ -4906,31 +4915,7 @@ const Interpretacao = () => {
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
 
             {/* Hero Section - Aesthetic Design */}
-            <section className="relative pt-20 pb-16 px-6 md:px-12 overflow-hidden">
-                {/* Background Effects */}
-                <div className="absolute inset-0 pointer-events-none">
-                    {/* Purple Glow Orbs */}
-                    <div className="absolute top-10 left-1/4 w-72 h-72 bg-purple-600/20 rounded-full blur-[100px] animate-pulse" />
-                    <div className="absolute top-20 right-1/4 w-96 h-96 bg-violet-500/15 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-48 bg-gradient-to-t from-purple-900/30 to-transparent blur-[60px]" />
-
-                    {/* Stars - Small White Dots */}
-                    {[...Array(30)].map((_, i) => (
-                        <div
-                            key={i}
-                            className="absolute rounded-full bg-white animate-pulse"
-                            style={{
-                                width: `${Math.random() * 2 + 1}px`,
-                                height: `${Math.random() * 2 + 1}px`,
-                                top: `${Math.random() * 100}%`,
-                                left: `${Math.random() * 100}%`,
-                                opacity: Math.random() * 0.7 + 0.3,
-                                animationDelay: `${Math.random() * 3}s`,
-                                animationDuration: `${Math.random() * 2 + 2}s`
-                            }}
-                        />
-                    ))}
-                </div>
+            <section className="relative pt-20 pb-16 px-6 md:px-12 overflow-hidden z-10">
 
                 <div className="relative max-w-[1200px] mx-auto text-center z-10">
                     {/* Golden Title */}
