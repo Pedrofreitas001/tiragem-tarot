@@ -2629,7 +2629,7 @@ const History = () => {
 
                 if (user && user.id) {
                     // Usuário autenticado: carrega do Supabase com filtro por user_id
-                    const readings = await fetchReadingsFromSupabase(user.id, 1000);
+                    const readings = await fetchReadingsFromSupabase(user.id, 1000, isPortuguese);
                     setSavedReadings(readings);
                     setFilteredReadings(readings);
                 } else {
@@ -2650,7 +2650,7 @@ const History = () => {
         };
 
         loadHistory();
-    }, [user]); // Recarrega quando user muda (login/logout)
+    }, [user, isPortuguese]); // Recarrega quando user muda (login/logout) ou idioma muda
 
     // Limitar leituras visíveis baseado no tier
     const historyLimit = getHistoryLimit();

@@ -207,9 +207,94 @@ export const saveReadingWithSummary = async (
 };
 
 /**
- * Busca histórico de leituras do Supabase
+ * Mapeamento de tipos de spread para informações de exibição
  */
-export const fetchReadingsFromSupabase = async (userId: string, limit: number = 20) => {
+const getSpreadDisplayInfo = (spreadType: string, isPortuguese: boolean = true) => {
+    const spreadNameMap: Record<string, { name: string; tag: string; color: string; positions: string[] }> = {
+        'card_of_day': {
+            name: isPortuguese ? 'Carta do Dia' : 'Card of the Day',
+            tag: isPortuguese ? 'DIÁRIA' : 'DAILY',
+            color: 'text-yellow-400 bg-yellow-500/10',
+            positions: [isPortuguese ? 'Energia do Dia' : "Today's Energy"]
+        },
+        'yes_no': {
+            name: isPortuguese ? 'Sim ou Não' : 'Yes or No',
+            tag: isPortuguese ? 'RÁPIDA' : 'QUICK',
+            color: 'text-blue-400 bg-blue-500/10',
+            positions: [isPortuguese ? 'Resposta' : 'Answer']
+        },
+        'three_card': {
+            name: isPortuguese ? 'Três Cartas' : 'Three Cards',
+            tag: isPortuguese ? 'PADRÃO' : 'STANDARD',
+            color: 'text-primary bg-primary/10',
+            positions: isPortuguese
+                ? ['O Passado', 'O Presente', 'O Futuro']
+                : ['The Past', 'The Present', 'The Future']
+        },
+        'love_check': {
+            name: isPortuguese ? 'Amor e Relacionamento' : 'Love & Relationship',
+            tag: isPortuguese ? 'AMOR' : 'LOVE',
+            color: 'text-pink-400 bg-pink-500/10',
+            positions: isPortuguese
+                ? ['Você', 'A Outra Pessoa', 'Relacionamento', 'Desafio', 'Conselho']
+                : ['You', 'Them', 'Relationship', 'Challenge', 'Advice']
+        },
+        'celtic_cross': {
+            name: isPortuguese ? 'Cruz Celta' : 'Celtic Cross',
+            tag: isPortuguese ? 'COMPLETA' : 'FULL',
+            color: 'text-green-400 bg-green-500/10',
+            positions: isPortuguese
+                ? ['O Significador', 'O Cruzamento', 'A Base', 'Passado Recente', 'A Coroa',
+                   'Futuro Próximo', 'O Eu', 'O Ambiente', 'Esperanças e Medos', 'O Resultado']
+                : ['The Significator', 'The Crossing', 'The Foundation', 'The Recent Past', 'The Crown',
+                   'The Near Future', 'The Self', 'The Environment', 'Hopes & Fears', 'The Outcome']
+        }
+    };
+
+    return spreadNameMap[spreadType] || {
+        name: spreadType,
+        tag: isPortuguese ? 'OUTRO' : 'OTHER',
+        color: 'text-gray-400 bg-gray-500/10',
+        positions: []
+    };
+};
+
+/**
+ * Transforma um registro do Supabase para o formato esperado pelos componentes
+ */
+export const transformSupabaseReading = (reading: any, isPortuguese: boolean = true) => {
+    const spreadInfo = getSpreadDisplayInfo(reading.spread_type, isPortuguese);
+    const cards = reading.cards || [];
+
+    // Formatar a data
+    const createdAt = new Date(reading.created_at);
+    const formattedDate = createdAt.toLocaleString(isPortuguese ? 'pt-BR' : 'en-US', {
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    return {
+        id: reading.id,
+        date: formattedDate,
+        spreadName: spreadInfo.name,
+        typeBadge: spreadInfo.tag,
+        typeColor: spreadInfo.color,
+        spreadId: reading.spread_type,
+        previewCards: cards.map((c: any) => c.imageUrl),
+        cardNames: cards.map((c: any) => c.name),
+        positions: spreadInfo.positions.slice(0, cards.length),
+        notes: reading.synthesis || reading.notes || '',
+        comment: reading.notes || '',
+        rating: reading.rating || 0
+    };
+};
+
+/**
+ * Busca histórico de leituras do Supabase e transforma para o formato de exibição
+ */
+export const fetchReadingsFromSupabase = async (userId: string, limit: number = 20, isPortuguese: boolean = true) => {
     if (!isSupabaseConfigured()) {
         console.log('Supabase not configured, skipping fetch');
         return [];
@@ -228,7 +313,8 @@ export const fetchReadingsFromSupabase = async (userId: string, limit: number = 
             return [];
         }
 
-        return data || [];
+        // Transformar cada registro para o formato esperado pelos componentes
+        return (data || []).map(reading => transformSupabaseReading(reading, isPortuguese));
     } catch (err) {
         console.error('Exception fetching readings from Supabase:', err);
         return [];
