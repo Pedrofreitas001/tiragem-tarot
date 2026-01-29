@@ -12,6 +12,8 @@ export const GUEST_LIMITS = {
   hasAISynthesis: false,
   hasPatternAnalysis: false,
   hasPDFExport: false,
+  hasWhatsApp: false,
+  hasPhysicalReading: false,
   hasAds: true,
 };
 
@@ -21,9 +23,11 @@ export const FREE_TIER_LIMITS = {
   historyDays: 7,
   maxHistoryItems: 3,
   maxArchiveCards: 7,
-  hasAISynthesis: false,
+  hasAISynthesis: true, // Free users get AI synthesis
   hasPatternAnalysis: false,
   hasPDFExport: false,
+  hasWhatsApp: false,
+  hasPhysicalReading: false, // Physical reading is premium only
   hasAds: true,
 };
 
@@ -36,6 +40,8 @@ export const PREMIUM_TIER_LIMITS = {
   hasAISynthesis: true,
   hasPatternAnalysis: true,
   hasPDFExport: true,
+  hasWhatsApp: true,
+  hasPhysicalReading: true,
   hasAds: false,
 };
 
@@ -96,6 +102,7 @@ interface AuthProviderProps {
 
 // Helper para gerenciar leituras de visitantes no localStorage
 const GUEST_STORAGE_KEY = 'tarot-guest-readings';
+const GUEST_PENDING_READING_KEY = 'tarot-guest-pending-reading';
 
 const getGuestReadings = (): { count: number; date: string } => {
   try {
@@ -122,6 +129,53 @@ const setGuestReadings = (count: number) => {
   } catch (e) {
     console.error('Error saving guest storage:', e);
   }
+};
+
+// Interface for pending guest reading
+export interface GuestPendingReading {
+  spreadType: string;
+  spreadName: string;
+  cards: any[];
+  question?: string;
+  createdAt: string;
+}
+
+// Save guest reading to localStorage for later processing after signup
+export const saveGuestPendingReading = (reading: GuestPendingReading) => {
+  try {
+    localStorage.setItem(GUEST_PENDING_READING_KEY, JSON.stringify(reading));
+    console.log('Guest pending reading saved');
+  } catch (e) {
+    console.error('Error saving guest pending reading:', e);
+  }
+};
+
+// Get pending guest reading
+export const getGuestPendingReading = (): GuestPendingReading | null => {
+  try {
+    const stored = localStorage.getItem(GUEST_PENDING_READING_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error('Error reading guest pending reading:', e);
+  }
+  return null;
+};
+
+// Clear pending guest reading after it's been processed
+export const clearGuestPendingReading = () => {
+  try {
+    localStorage.removeItem(GUEST_PENDING_READING_KEY);
+    console.log('Guest pending reading cleared');
+  } catch (e) {
+    console.error('Error clearing guest pending reading:', e);
+  }
+};
+
+// Check if there's a pending guest reading
+export const hasGuestPendingReading = (): boolean => {
+  return getGuestPendingReading() !== null;
 };
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {

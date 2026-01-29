@@ -5,7 +5,7 @@ import { useAuth, FREE_TIER_LIMITS, PREMIUM_TIER_LIMITS } from '../contexts/Auth
 interface PaywallModalProps {
   isOpen: boolean;
   onClose: () => void;
-  feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'ranking' | 'whatsapp';
+  feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'ranking' | 'whatsapp' | 'physicalReading' | 'aiSynthesis';
   onLogin?: () => void;
   onCheckout?: () => void;
 }
@@ -44,6 +44,14 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     guestWhatsappDesc: isPortuguese
       ? 'Crie uma conta gratuita para receber a carta do dia pelo WhatsApp.'
       : 'Create a free account to receive your daily card on WhatsApp.',
+    guestPhysicalTitle: isPortuguese ? 'Interpretação Física Premium' : 'Physical Reading Premium',
+    guestPhysicalDesc: isPortuguese
+      ? 'A interpretação de tiragens físicas com IA é exclusiva para assinantes Premium.'
+      : 'Physical reading interpretation with AI is exclusive to Premium subscribers.',
+    guestSynthesisTitle: isPortuguese ? 'Síntese com IA Requer Conta' : 'AI Synthesis Requires Account',
+    guestSynthesisDesc: isPortuguese
+      ? 'Crie uma conta gratuita para ter acesso à síntese personalizada com IA em suas tiragens.'
+      : 'Create a free account to access personalized AI synthesis in your readings.',
 
     // Títulos para free tier (logados)
     title: isPortuguese ? 'Limite Atingido' : 'Limit Reached',
@@ -55,6 +63,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     whatsappTitle: isPortuguese ? 'Carta do Dia é Premium' : 'Daily Card is Premium',
     archiveTitle: isPortuguese ? 'Arquivo Completo é Premium' : 'Full Archive is Premium',
     rankingTitle: isPortuguese ? 'Top 3 Energias é Premium' : 'Top 3 Energies is Premium',
+    physicalTitle: isPortuguese ? 'Interpretação Física é Premium' : 'Physical Reading is Premium',
 
     readingsDesc: isPortuguese
       ? `Você já fez ${readingsToday} de ${FREE_TIER_LIMITS.readingsPerDay} tiragens gratuitas hoje. Volte amanhã ou faça upgrade para tiragens ilimitadas.`
@@ -80,6 +89,9 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     whatsappDesc: isPortuguese
       ? 'Para receber a carta do dia pelo WhatsApp é necessário assinar o Premium.'
       : 'To receive the daily card on WhatsApp you need to subscribe to Premium.',
+    physicalDesc: isPortuguese
+      ? 'A interpretação de tiragens físicas com IA é exclusiva para assinantes Premium.'
+      : 'Physical reading interpretation with AI is exclusive to Premium subscribers.',
 
     upgrade: isPortuguese ? 'Fazer Upgrade' : 'Upgrade Now',
     createAccount: isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account',
@@ -87,7 +99,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     maybeLater: isPortuguese ? 'Talvez Depois' : 'Maybe Later',
 
     freeBenefits: isPortuguese ? 'Com conta gratuita você tem' : 'With a free account you get',
-    threeReadings: isPortuguese ? '1 tirada por dia' : '1 reading per day',
+    threeReadings: isPortuguese ? '1 tirada por dia com síntese IA' : '1 reading per day with AI synthesis',
     historyAccess: isPortuguese ? 'Histórico das últimas 3 tiragens' : 'History of last 3 readings',
     sevenCards: isPortuguese ? 'Acesso a 7 cartas do arquivo' : 'Access to 7 archive cards',
 
@@ -112,18 +124,23 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         case 'archive': return t.guestArchiveTitle;
         case 'ranking': return t.guestRankingTitle;
         case 'whatsapp': return t.guestWhatsappTitle;
+        case 'physicalReading': return t.guestPhysicalTitle;
+        case 'synthesis':
+        case 'aiSynthesis': return t.guestSynthesisTitle;
         default: return t.guestReadingsTitle;
       }
     }
     switch (feature) {
       case 'readings': return t.readingsTitle;
-      case 'synthesis': return t.synthesisTitle;
+      case 'synthesis':
+      case 'aiSynthesis': return t.synthesisTitle;
       case 'history': return t.historyTitle;
       case 'export': return t.exportTitle;
       case 'patterns': return t.patternsTitle;
       case 'archive': return t.archiveTitle;
       case 'ranking': return t.rankingTitle;
       case 'whatsapp': return t.whatsappTitle;
+      case 'physicalReading': return t.physicalTitle;
       default: return t.title;
     }
   };
@@ -136,18 +153,23 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         case 'archive': return t.guestArchiveDesc;
         case 'ranking': return t.guestRankingDesc;
         case 'whatsapp': return t.guestWhatsappDesc;
+        case 'physicalReading': return t.guestPhysicalDesc;
+        case 'synthesis':
+        case 'aiSynthesis': return t.guestSynthesisDesc;
         default: return t.guestReadingsDesc;
       }
     }
     switch (feature) {
       case 'readings': return t.readingsDesc;
-      case 'synthesis': return t.synthesisDesc;
+      case 'synthesis':
+      case 'aiSynthesis': return t.synthesisDesc;
       case 'history': return t.historyDesc;
       case 'export': return t.exportDesc;
       case 'patterns': return t.patternsDesc;
       case 'archive': return t.archiveDesc;
       case 'ranking': return t.rankingDesc;
       case 'whatsapp': return t.whatsappDesc;
+      case 'physicalReading': return t.physicalDesc;
       default: return '';
     }
   };
