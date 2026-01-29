@@ -5,7 +5,7 @@ import { useAuth, FREE_TIER_LIMITS, PREMIUM_TIER_LIMITS } from '../contexts/Auth
 interface PaywallModalProps {
   isOpen: boolean;
   onClose: () => void;
-  feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'ranking';
+  feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'ranking' | 'whatsapp';
   onLogin?: () => void;
   onCheckout?: () => void;
 }
@@ -40,6 +40,10 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     guestRankingDesc: isPortuguese
       ? 'Crie uma conta gratuita para ver seu ranking pessoal de energias.'
       : 'Create a free account to see your personal energy ranking.',
+    guestWhatsappTitle: isPortuguese ? 'Carta do Dia Premium' : 'Daily Card Premium',
+    guestWhatsappDesc: isPortuguese
+      ? 'Crie uma conta gratuita para receber a carta do dia pelo WhatsApp.'
+      : 'Create a free account to receive your daily card on WhatsApp.',
 
     // Títulos para free tier (logados)
     title: isPortuguese ? 'Limite Atingido' : 'Limit Reached',
@@ -48,6 +52,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     historyTitle: isPortuguese ? 'Histórico Completo é Premium' : 'Full History is Premium',
     exportTitle: isPortuguese ? 'Exportar PDF é Premium' : 'PDF Export is Premium',
     patternsTitle: isPortuguese ? 'Análise de Padrões é Premium' : 'Pattern Analysis is Premium',
+    whatsappTitle: isPortuguese ? 'Carta do Dia é Premium' : 'Daily Card is Premium',
     archiveTitle: isPortuguese ? 'Arquivo Completo é Premium' : 'Full Archive is Premium',
     rankingTitle: isPortuguese ? 'Top 3 Energias é Premium' : 'Top 3 Energies is Premium',
 
@@ -72,6 +77,9 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     rankingDesc: isPortuguese
       ? 'Veja seu Top 3 de energias que guiam sua jornada espiritual. Recurso exclusivo Premium.'
       : 'See your Top 3 energies that guide your spiritual journey. Exclusive Premium feature.',
+    whatsappDesc: isPortuguese
+      ? 'Para receber a carta do dia pelo WhatsApp é necessário assinar o Premium.'
+      : 'To receive the daily card on WhatsApp you need to subscribe to Premium.',
 
     upgrade: isPortuguese ? 'Fazer Upgrade' : 'Upgrade Now',
     createAccount: isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account',
@@ -103,6 +111,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         case 'history': return t.guestHistoryTitle;
         case 'archive': return t.guestArchiveTitle;
         case 'ranking': return t.guestRankingTitle;
+        case 'whatsapp': return t.guestWhatsappTitle;
         default: return t.guestReadingsTitle;
       }
     }
@@ -114,6 +123,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       case 'patterns': return t.patternsTitle;
       case 'archive': return t.archiveTitle;
       case 'ranking': return t.rankingTitle;
+      case 'whatsapp': return t.whatsappTitle;
       default: return t.title;
     }
   };
@@ -125,6 +135,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         case 'history': return t.guestHistoryDesc;
         case 'archive': return t.guestArchiveDesc;
         case 'ranking': return t.guestRankingDesc;
+        case 'whatsapp': return t.guestWhatsappDesc;
         default: return t.guestReadingsDesc;
       }
     }
@@ -136,6 +147,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       case 'patterns': return t.patternsDesc;
       case 'archive': return t.archiveDesc;
       case 'ranking': return t.rankingDesc;
+      case 'whatsapp': return t.whatsappDesc;
       default: return '';
     }
   };
@@ -149,6 +161,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       case 'patterns': return 'insights';
       case 'archive': return 'collections_bookmark';
       case 'ranking': return 'emoji_events';
+      case 'whatsapp': return 'chat';
       default: return 'lock';
     }
   };

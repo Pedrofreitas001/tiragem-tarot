@@ -179,12 +179,7 @@ const Spreads = () => {
     };
 
     const handleStartReading = async (spread: Spread) => {
-        if (!checkAccess('readings')) {
-            setShowPaywall(true);
-            return;
-        }
-        // Increment reading count when starting a new reading (works for both guests and logged in users)
-        await incrementReadingCount();
+        // Navigate directly to session, paywall check moved to first card click
         navigate('/session', { state: { spread } });
     };
 
