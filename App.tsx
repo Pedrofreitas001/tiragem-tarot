@@ -178,28 +178,16 @@ const Header = () => {
                             </button>
                         </nav>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1 sm:gap-2">
                             <LanguageToggle />
-
-                            <button
-                                onClick={() => toggleCart(true)}
-                                className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
-                            >
-                                <span className="material-symbols-outlined text-gray-300 hover:text-white">shopping_bag</span>
-                                {itemCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full text-[10px] font-bold text-white flex items-center justify-center">
-                                        {itemCount}
-                                    </span>
-                                )}
-                            </button>
 
                             <UserMenu onLoginClick={() => setShowAuthModal(true)} />
 
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="md:hidden p-2 rounded-lg hover:bg-white/5"
+                                className="md:hidden p-1.5 sm:p-2 rounded-lg hover:bg-white/5"
                             >
-                                <span className="material-symbols-outlined text-white">{mobileMenuOpen ? 'close' : 'menu'}</span>
+                                <span className="material-symbols-outlined text-white text-xl sm:text-2xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
                             </button>
                         </div>
                     </div>
@@ -483,8 +471,7 @@ const Home = () => {
             </section>
 
             {/* Interactive Stats Banner */}
-            <section className="py-3 md:py-4 px-4 md:px-6 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#875faf]/10 via-[#a77fd4]/5 to-[#875faf]/10"></div>
+            <section className="py-3 md:py-4 px-4 md:px-6 relative overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
                 <div className="absolute inset-0 border-y border-[#875faf]/20"></div>
                 <div className="max-w-[1200px] mx-auto relative z-10">
                     <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 md:gap-8">
@@ -1044,11 +1031,11 @@ const Home = () => {
                                             </div>
 
                                             {/* Chat Background Pattern - flex-1 to fill remaining space */}
-                                            <div className="flex-1 relative" style={{
+                                            <div className="flex-1 relative overflow-hidden" style={{
                                                 backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
                                                 backgroundColor: '#0b141a'
                                             }}>
-                                                <div className="absolute inset-0 p-2 pb-12 sm:pb-5 md:pb-4 overflow-hidden flex flex-col items-start">
+                                                <div className="absolute inset-0 p-1.5 sm:p-2 overflow-hidden flex flex-col items-start">
                                                     {/* Message Bubble - Vertical Layout */}
                                                     <div className="max-w-[95%] bg-[#1f2c34] rounded-lg rounded-tl-none shadow-lg overflow-hidden">
                                                         {/* Card Image - Smaller */}
@@ -1084,16 +1071,16 @@ const Home = () => {
                                             </div>
 
                                             {/* Input Bar - at very bottom */}
-                                            <div className="bg-[#1f2c34] px-1 py-1 sm:px-1.5 sm:py-1 md:px-2 md:py-1 flex items-center gap-0.5 sm:gap-1 md:gap-1.5 flex-shrink-0">
-                                                <svg className="w-2 sm:w-3 md:w-5 h-2 sm:h-3 md:h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                            <div className="bg-[#1f2c34] px-1.5 py-1.5 sm:px-2 sm:py-1.5 md:px-2 md:py-1.5 flex items-center gap-1 sm:gap-1.5 md:gap-2 flex-shrink-0">
+                                                <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
                                                 </svg>
-                                                <div className="flex-1 bg-[#2a3942] rounded-full h-4 sm:h-5 md:h-7 px-1 sm:px-1.5 md:px-2 flex items-center">
-                                                    <span className="text-gray-500 text-[4px] sm:text-[6px] md:text-[10px]">
+                                                <div className="flex-1 bg-[#2a3942] rounded-full h-5 sm:h-6 md:h-7 px-2 sm:px-2.5 md:px-3 flex items-center min-w-0">
+                                                    <span className="text-gray-500 text-[6px] sm:text-[8px] md:text-[10px] truncate">
                                                         {isPortuguese ? 'Mensagem' : 'Message'}
                                                     </span>
                                                 </div>
-                                                <svg className="w-2 sm:w-3 md:w-5 h-2 sm:h-3 md:h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
                                                 </svg>
                                             </div>

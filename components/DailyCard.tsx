@@ -1,6 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage, LanguageToggle } from '../contexts/LanguageContext';
-import { useCart } from '../contexts/CartContext';
 import { TAROT_CARDS } from '../tarotData';
 import { getCardName } from '../tarotData';
 import React, { useState, useEffect } from 'react';
@@ -15,12 +14,10 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
-    const { toggleCart, getItemCount } = useCart();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
-    const itemCount = getItemCount();
 
     const exploreRoute = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
 
@@ -51,28 +48,16 @@ const Header = () => {
                             </button>
                         </nav>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1 sm:gap-2">
                             <LanguageToggle />
-
-                            <button
-                                onClick={() => toggleCart(true)}
-                                className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
-                            >
-                                <span className="material-symbols-outlined text-gray-300 hover:text-white">shopping_bag</span>
-                                {itemCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full text-[10px] font-bold text-white flex items-center justify-center">
-                                        {itemCount}
-                                    </span>
-                                )}
-                            </button>
 
                             <UserMenu onLoginClick={() => setShowAuthModal(true)} />
 
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="md:hidden p-2 rounded-lg hover:bg-white/5"
+                                className="md:hidden p-1.5 sm:p-2 rounded-lg hover:bg-white/5"
                             >
-                                <span className="material-symbols-outlined text-white">{mobileMenuOpen ? 'close' : 'menu'}</span>
+                                <span className="material-symbols-outlined text-white text-xl sm:text-2xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
                             </button>
                         </div>
                     </div>
@@ -614,359 +599,374 @@ export const DailyCard = () => {
                 </div>
             </section >
 
-            {/* WhatsApp Form Section - Daily Destiny */}
-            <section className="relative py-16 md:py-24 px-4 md:px-6 bg-gradient-to-b from-[#0d0812] via-purple-950/10 to-[#0d0812]">
+            {/* WhatsApp Daily Card Subscription Section */}
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">
                 <style>{`
-                    .glass-card {
+                    .home-glass-card {
                         background: rgba(255, 255, 255, 0.04);
                         backdrop-filter: blur(24px);
                         border: 1px solid rgba(255, 255, 255, 0.1);
                     }
-                    .glow-border:focus-within {
+                    .home-glow-border:focus-within {
                         border-color: #A855F7;
                         box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
                     }
-                    .frequency-card input:checked + div {
+                    .home-frequency-card input:checked + div {
                         border-color: #A855F7;
                         background: rgba(168, 85, 247, 0.15);
                         box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
                     }
-                    .cosmic-glow {
-                        filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.7));
+                    .text-gradient-gold-home {
+                        background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
                     }
                 `}</style>
 
                 <div className="max-w-6xl mx-auto">
                     {/* Feature Presentation Header */}
-                    <div className="text-center mb-12 md:mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gradient-gold mb-4 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Receba sua Carta do Dia' : 'Receive Your Daily Card'}
+                    <div className="text-left mb-14 md:mb-20 px-2">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold-home mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
                         </h2>
-                        <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto mb-10">
+                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
                             {isPortuguese
-                                ? 'Comece cada dia com orientação espiritual personalizada diretamente no seu WhatsApp.'
-                                : 'Start each day with personalized spiritual guidance directly on your WhatsApp.'}
+                                ? 'Receba diariamente uma mensagem personalizada com orientações do tarot diretamente no seu celular.'
+                                : 'Receive daily personalized tarot guidance messages directly on your phone.'}
                         </p>
-
-                        {/* Feature Boxes */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto mb-12">
-                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-yellow-500/20 transition-all">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 flex items-center justify-center mx-auto mb-3">
-                                    <span className="material-symbols-outlined text-yellow-500 text-xl">auto_awesome</span>
-                                </div>
-                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? 'Interpretação Diária' : 'Daily Interpretation'}</h3>
-                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Mensagem única para seu dia' : 'Unique message for your day'}</p>
-                            </div>
-                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-primary/20 transition-all">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/10 flex items-center justify-center mx-auto mb-3">
-                                    <span className="material-symbols-outlined text-primary text-xl">schedule</span>
-                                </div>
-                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? 'Horário Personalizado' : 'Custom Schedule'}</h3>
-                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Escolha manhã, tarde ou noite' : 'Choose morning, afternoon or night'}</p>
-                            </div>
-                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/20 transition-all">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center mx-auto mb-3">
-                                    <span className="material-symbols-outlined text-emerald-500 text-xl">smartphone</span>
-                                </div>
-                                <h3 className="text-white font-semibold text-sm mb-1">{isPortuguese ? '100% Gratuito' : '100% Free'}</h3>
-                                <p className="text-gray-500 text-xs leading-relaxed">{isPortuguese ? 'Sem custos, cancele quando quiser' : 'No costs, cancel anytime'}</p>
-                            </div>
-                        </div>
                     </div>
 
-                    {/* Form Card */}
-                    <div className="glass-card w-full max-w-5xl mx-auto rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
-                        {/* Form Content */}
-                        <div className="flex-1 p-6 lg:p-14 order-2 lg:order-1">
-                            <header className="mb-8 text-center lg:text-left">
-                                <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary font-medium text-[10px] mb-4 tracking-[0.2em] uppercase border border-primary/30 backdrop-blur-md">
-                                    {isPortuguese ? 'Conexão Celestial' : 'Celestial Connection'}
-                                </span>
-                                <h1 className="font-display text-3xl md:text-5xl text-white mb-6 leading-tight">
-                                    {isPortuguese ? 'Desperte seu' : 'Awaken Your'} <br />
-                                    <span className="text-primary cosmic-glow italic">{isPortuguese ? 'Destino Diário' : 'Daily Destiny'}</span>
-                                </h1>
-                                <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                                    {isPortuguese
-                                        ? 'Receba orientações ancestrais e insights poderosos diretamente no seu WhatsApp através de um mapa estelar personalizado.'
-                                        : 'Receive ancestral guidance and powerful insights directly on your WhatsApp through a personalized star map.'}
-                                </p>
-                            </header>
+                    {/* Form Card + Feature Circles */}
+                    <div className="flex flex-col lg:flex-row items-start gap-6 md:gap-8 lg:gap-10 relative">
+                        {/* Cosmic Flame Background */}
+                        <div className="absolute -left-40 -top-48 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -left-32 -top-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
 
-                            <form action="#" className="space-y-8">
-                                {/* Name and Phone Row */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                            {isPortuguese ? 'Nome Completo' : 'Full Name'}
+                        {/* Form Card - Left Side */}
+                        <div className="home-glass-card w-full lg:flex-1 rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
+                            {/* Form Content */}
+                            <div className="flex-1 p-6 lg:p-12 order-2 lg:order-1">
+                                <header className="mb-6 text-center lg:text-left">
+                                    <h3 className="font-display text-2xl md:text-3xl text-white mb-4 leading-tight">
+                                        {isPortuguese ? 'Cadastre-se Agora' : 'Sign Up Now'}
+                                    </h3>
+                                    <p className="text-gray-400 text-sm max-w-lg">
+                                        {isPortuguese
+                                            ? 'Preencha seus dados e comece a receber orientações místicas.'
+                                            : 'Fill in your details and start receiving mystic guidance.'}
+                                    </p>
+                                </header>
+
+                                <form action="#" className="space-y-5">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                                {isPortuguese ? 'Nome Completo' : 'Full Name'}
+                                            </label>
+                                            <div className="relative group">
+                                                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">person</span>
+                                                <input
+                                                    className="w-full pl-10 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
+                                                    placeholder={isPortuguese ? 'Seu nome' : 'Your name'}
+                                                    type="text"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">WhatsApp</label>
+                                            <div className="relative group">
+                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
+                                                    <img alt="Brasil Flag" className="w-4 h-auto rounded-sm opacity-80" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/32px-Flag_of_Brazil.svg.png" />
+                                                </div>
+                                                <input
+                                                    className="w-full pl-14 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
+                                                    placeholder="+55 (00) 00000-0000"
+                                                    type="tel"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                            {isPortuguese ? 'Estado' : 'State'}
                                         </label>
                                         <div className="relative group">
-                                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">person</span>
-                                            <input
-                                                className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none glow-border transition-all text-white placeholder:text-gray-600"
-                                                placeholder={isPortuguese ? 'Seu nome místico' : 'Your mystical name'}
-                                                type="text"
-                                            />
+                                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">location_on</span>
+                                            <select
+                                                className="w-full pl-10 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white appearance-none cursor-pointer text-sm"
+                                                style={{ backgroundImage: 'none' }}
+                                                defaultValue=""
+                                            >
+                                                <option value="" disabled className="bg-[#1a1628] text-gray-400">
+                                                    {isPortuguese ? 'Selecione seu estado' : 'Select your state'}
+                                                </option>
+                                                <option value="AC" className="bg-[#1a1628]">Acre (AC)</option>
+                                                <option value="AL" className="bg-[#1a1628]">Alagoas (AL)</option>
+                                                <option value="AP" className="bg-[#1a1628]">Amapá (AP)</option>
+                                                <option value="AM" className="bg-[#1a1628]">Amazonas (AM)</option>
+                                                <option value="BA" className="bg-[#1a1628]">Bahia (BA)</option>
+                                                <option value="CE" className="bg-[#1a1628]">Ceará (CE)</option>
+                                                <option value="DF" className="bg-[#1a1628]">Distrito Federal (DF)</option>
+                                                <option value="ES" className="bg-[#1a1628]">Espírito Santo (ES)</option>
+                                                <option value="GO" className="bg-[#1a1628]">Goiás (GO)</option>
+                                                <option value="MA" className="bg-[#1a1628]">Maranhão (MA)</option>
+                                                <option value="MT" className="bg-[#1a1628]">Mato Grosso (MT)</option>
+                                                <option value="MS" className="bg-[#1a1628]">Mato Grosso do Sul (MS)</option>
+                                                <option value="MG" className="bg-[#1a1628]">Minas Gerais (MG)</option>
+                                                <option value="PA" className="bg-[#1a1628]">Pará (PA)</option>
+                                                <option value="PB" className="bg-[#1a1628]">Paraíba (PB)</option>
+                                                <option value="PR" className="bg-[#1a1628]">Paraná (PR)</option>
+                                                <option value="PE" className="bg-[#1a1628]">Pernambuco (PE)</option>
+                                                <option value="PI" className="bg-[#1a1628]">Piauí (PI)</option>
+                                                <option value="RJ" className="bg-[#1a1628]">Rio de Janeiro (RJ)</option>
+                                                <option value="RN" className="bg-[#1a1628]">Rio Grande do Norte (RN)</option>
+                                                <option value="RS" className="bg-[#1a1628]">Rio Grande do Sul (RS)</option>
+                                                <option value="RO" className="bg-[#1a1628]">Rondônia (RO)</option>
+                                                <option value="RR" className="bg-[#1a1628]">Roraima (RR)</option>
+                                                <option value="SC" className="bg-[#1a1628]">Santa Catarina (SC)</option>
+                                                <option value="SP" className="bg-[#1a1628]">São Paulo (SP)</option>
+                                                <option value="SE" className="bg-[#1a1628]">Sergipe (SE)</option>
+                                                <option value="TO" className="bg-[#1a1628]">Tocantins (TO)</option>
+                                            </select>
+                                            <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-lg">expand_more</span>
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">WhatsApp</label>
-                                        <div className="relative group">
-                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
-                                                <img alt="Brasil Flag" className="w-5 h-auto rounded-sm opacity-80" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/32px-Flag_of_Brazil.svg.png" />
-                                            </div>
-                                            <input
-                                                className="w-full pl-16 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none glow-border transition-all text-white placeholder:text-gray-600"
-                                                placeholder="+55 (00) 00000-0000"
-                                                type="tel"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
 
-                                {/* State Dropdown */}
-                                <div className="space-y-2">
-                                    <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                        {isPortuguese ? 'Estado' : 'State'}
-                                    </label>
-                                    <div className="relative group">
-                                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors">location_on</span>
-                                        <select
-                                            className="w-full pl-12 pr-10 py-3.5 bg-white/5 border border-white/10 rounded-2xl focus:ring-0 focus:outline-none glow-border transition-all text-white appearance-none cursor-pointer"
-                                            style={{ backgroundImage: 'none' }}
-                                            defaultValue=""
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                            {isPortuguese ? 'Melhor Período' : 'Best Period'}
+                                        </label>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            <label className="home-frequency-card cursor-pointer group">
+                                                <input defaultChecked className="hidden" name="home-freq" type="radio" value="manha" />
+                                                <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                    <span className="material-symbols-outlined text-lg mb-1 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
+                                                    <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                        {isPortuguese ? 'Manhã' : 'Morning'}
+                                                    </span>
+                                                </div>
+                                            </label>
+                                            <label className="home-frequency-card cursor-pointer group">
+                                                <input className="hidden" name="home-freq" type="radio" value="tarde" />
+                                                <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                    <span className="material-symbols-outlined text-lg mb-1 text-primary group-hover:scale-110 transition-transform">routine</span>
+                                                    <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                        {isPortuguese ? 'Tarde' : 'Afternoon'}
+                                                    </span>
+                                                </div>
+                                            </label>
+                                            <label className="home-frequency-card cursor-pointer group">
+                                                <input className="hidden" name="home-freq" type="radio" value="noite" />
+                                                <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                    <span className="material-symbols-outlined text-lg mb-1 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
+                                                    <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                        {isPortuguese ? 'Noite' : 'Night'}
+                                                    </span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="flex items-start gap-2.5 cursor-pointer group">
+                                            <div className="relative flex-shrink-0 mt-0.5">
+                                                <input type="checkbox" className="peer sr-only" required />
+                                                <div className="w-4 h-4 rounded border-2 border-white/20 bg-white/5 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center group-hover:border-primary/50">
+                                                    <span className="material-symbols-outlined text-white opacity-0 peer-checked:opacity-100 transition-opacity" style={{ fontSize: '12px' }}>check</span>
+                                                </div>
+                                            </div>
+                                            <span className="text-[11px] text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
+                                                {isPortuguese
+                                                    ? 'Concordo em receber mensagens via WhatsApp.'
+                                                    : 'I agree to receive messages via WhatsApp.'}
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setShowPaywall(true);
+                                            }}
+                                            className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
+                                            type="button"
                                         >
-                                            <option value="" disabled className="bg-[#1a1628] text-gray-400">
-                                                {isPortuguese ? 'Selecione seu estado' : 'Select your state'}
-                                            </option>
-                                            <option value="AC" className="bg-[#1a1628]">Acre (AC)</option>
-                                            <option value="AL" className="bg-[#1a1628]">Alagoas (AL)</option>
-                                            <option value="AP" className="bg-[#1a1628]">Amapá (AP)</option>
-                                            <option value="AM" className="bg-[#1a1628]">Amazonas (AM)</option>
-                                            <option value="BA" className="bg-[#1a1628]">Bahia (BA)</option>
-                                            <option value="CE" className="bg-[#1a1628]">Ceará (CE)</option>
-                                            <option value="DF" className="bg-[#1a1628]">Distrito Federal (DF)</option>
-                                            <option value="ES" className="bg-[#1a1628]">Espírito Santo (ES)</option>
-                                            <option value="GO" className="bg-[#1a1628]">Goiás (GO)</option>
-                                            <option value="MA" className="bg-[#1a1628]">Maranhão (MA)</option>
-                                            <option value="MT" className="bg-[#1a1628]">Mato Grosso (MT)</option>
-                                            <option value="MS" className="bg-[#1a1628]">Mato Grosso do Sul (MS)</option>
-                                            <option value="MG" className="bg-[#1a1628]">Minas Gerais (MG)</option>
-                                            <option value="PA" className="bg-[#1a1628]">Pará (PA)</option>
-                                            <option value="PB" className="bg-[#1a1628]">Paraíba (PB)</option>
-                                            <option value="PR" className="bg-[#1a1628]">Paraná (PR)</option>
-                                            <option value="PE" className="bg-[#1a1628]">Pernambuco (PE)</option>
-                                            <option value="PI" className="bg-[#1a1628]">Piauí (PI)</option>
-                                            <option value="RJ" className="bg-[#1a1628]">Rio de Janeiro (RJ)</option>
-                                            <option value="RN" className="bg-[#1a1628]">Rio Grande do Norte (RN)</option>
-                                            <option value="RS" className="bg-[#1a1628]">Rio Grande do Sul (RS)</option>
-                                            <option value="RO" className="bg-[#1a1628]">Rondônia (RO)</option>
-                                            <option value="RR" className="bg-[#1a1628]">Roraima (RR)</option>
-                                            <option value="SC" className="bg-[#1a1628]">Santa Catarina (SC)</option>
-                                            <option value="SP" className="bg-[#1a1628]">São Paulo (SP)</option>
-                                            <option value="SE" className="bg-[#1a1628]">Sergipe (SE)</option>
-                                            <option value="TO" className="bg-[#1a1628]">Tocantins (TO)</option>
-                                        </select>
-                                        <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">expand_more</span>
+                                            <span className="relative z-10 flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
+                                                {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
+                                                <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                            </span>
+                                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        </button>
+                                        <div className="flex items-center gap-1.5 text-[9px] text-gray-500 uppercase tracking-[0.15em]">
+                                            <span className="material-symbols-outlined text-[12px]">lock</span>
+                                            <p>{isPortuguese ? 'Dados protegidos' : 'Protected data'}</p>
+                                        </div>
                                     </div>
-                                </div>
+                                </form>
+                            </div>
 
-                                {/* Frequency Buttons - Smaller */}
-                                <div className="space-y-3">
-                                    <label className="text-xs font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                        {isPortuguese ? 'Melhor Período' : 'Best Period'}
-                                    </label>
-                                    <div className="grid grid-cols-3 gap-3">
-                                        <label className="frequency-card cursor-pointer group">
-                                            <input defaultChecked className="hidden" name="freq" type="radio" value="manha" />
-                                            <div className="glass-card flex flex-col items-center justify-center py-4 px-2 rounded-2xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                <span className="material-symbols-outlined text-2xl mb-1.5 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
-                                                <span className="text-[10px] font-bold text-gray-200 uppercase tracking-wider">
-                                                    {isPortuguese ? 'Manhã' : 'Morning'}
-                                                </span>
-                                            </div>
-                                        </label>
-                                        <label className="frequency-card cursor-pointer group">
-                                            <input className="hidden" name="freq" type="radio" value="tarde" />
-                                            <div className="glass-card flex flex-col items-center justify-center py-4 px-2 rounded-2xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                <span className="material-symbols-outlined text-2xl mb-1.5 text-primary group-hover:scale-110 transition-transform">routine</span>
-                                                <span className="text-[10px] font-bold text-gray-200 uppercase tracking-wider">
-                                                    {isPortuguese ? 'Tarde' : 'Afternoon'}
-                                                </span>
-                                            </div>
-                                        </label>
-                                        <label className="frequency-card cursor-pointer group">
-                                            <input className="hidden" name="freq" type="radio" value="noite" />
-                                            <div className="glass-card flex flex-col items-center justify-center py-4 px-2 rounded-2xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                <span className="material-symbols-outlined text-2xl mb-1.5 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
-                                                <span className="text-[10px] font-bold text-gray-200 uppercase tracking-wider">
-                                                    {isPortuguese ? 'Noite' : 'Night'}
-                                                </span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
+                            {/* iPhone Mockup - WhatsApp Style */}
+                            <div className="lg:w-[380px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-3 sm:p-6 lg:p-10 order-1 lg:order-2 relative overflow-hidden">
+                                <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
+                                <div className="relative z-10">
+                                    {/* iPhone Frame */}
+                                    <div className="relative w-[140px] sm:w-[180px] md:w-[220px] h-[295px] sm:h-[380px] md:h-[460px] bg-black rounded-[1.5rem] sm:rounded-[2rem] lg:rounded-[2.5rem] p-[5px] sm:p-[6px] lg:p-[8px] shadow-[0_0_50px_rgba(168,85,247,0.25),0_20px_40px_rgba(0,0,0,0.5)]">
+                                        {/* Dynamic Island */}
+                                        <div className="absolute top-1 sm:top-1.5 md:top-2 left-1/2 -translate-x-1/2 w-12 sm:w-16 md:w-20 h-2.5 sm:h-3.5 md:h-5 bg-black rounded-full z-10"></div>
 
-                                {/* Consent Checkbox */}
-                                <div className="space-y-3">
-                                    <label className="flex items-start gap-3 cursor-pointer group">
-                                        <div className="relative flex-shrink-0 mt-0.5">
-                                            <input
-                                                type="checkbox"
-                                                className="peer sr-only"
-                                                required
-                                            />
-                                            <div className="w-5 h-5 rounded-md border-2 border-white/20 bg-white/5 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center group-hover:border-primary/50">
-                                                <span className="material-symbols-outlined text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity" style={{ fontSize: '14px' }}>check</span>
+                                        {/* Screen */}
+                                        <div className="w-full h-full rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-[#0b141a] flex flex-col">
+                                            {/* Status Bar */}
+                                            <div className="h-5 sm:h-6 bg-[#0b141a] flex items-center justify-between px-2 sm:px-3 md:px-4 pt-1 flex-shrink-0">
+                                                <span className="text-white text-[7px] sm:text-[8px] md:text-[9px] font-semibold">9:41</span>
+                                                <div className="flex items-center gap-[2px] sm:gap-[3px]">
+                                                    <svg className="w-[9px] sm:w-[12px] h-[7px] sm:h-[9px] text-white" viewBox="0 0 18 12" fill="currentColor">
+                                                        <rect x="0" y="8" width="3" height="4" rx="0.5" />
+                                                        <rect x="4" y="5" width="3" height="7" rx="0.5" />
+                                                        <rect x="8" y="2" width="3" height="10" rx="0.5" />
+                                                        <rect x="12" y="0" width="3" height="12" rx="0.5" />
+                                                    </svg>
+                                                    <div className="flex items-center">
+                                                        <div className="w-[16px] sm:w-[20px] h-[7px] sm:h-[9px] border border-white rounded-[2px] flex items-center p-[1px]">
+                                                            <div className="w-[10px] sm:w-[14px] h-[3px] sm:h-[5px] bg-white rounded-[1px]"></div>
+                                                        </div>
+                                                        <div className="w-[1px] h-[2px] sm:h-[3px] bg-white rounded-r ml-[1px]"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* WhatsApp Header */}
+                                            <div className="bg-[#1f2c34] px-1 sm:px-1.5 md:px-2 py-0.5 sm:py-1 flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+                                                <svg className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                                </svg>
+                                                <div className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-white text-[6px] sm:text-[8px] md:text-[10px]">auto_awesome</span>
+                                                </div>
+                                                <div className="flex-1 ml-0.5 sm:ml-1">
+                                                    <h4 className="text-white text-[7px] sm:text-[9px] md:text-[10px] font-medium leading-tight">Mystic Tarot</h4>
+                                                    <p className="text-emerald-400 text-[6px] sm:text-[7px] md:text-[8px]">online</p>
+                                                </div>
+                                                <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
+                                                    <svg className="w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M17 12c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm3 7h-2v2h-2v-2h-2v-2h2v-2h2v2h2v2zM18 6c0-1.1-.9-2-2-2H8C5.79 4 4 5.79 4 8v10c0 1.1.9 2 2 2h5c0-.73.1-1.43.28-2.1-.34.06-.69.1-1.05.1-2.79 0-5.06-2.27-5.06-5.06 0-1.51.66-2.86 1.71-3.78L12 3.97l5.12 5.19c.5.44.88 1 1.09 1.62.55-.5 1.17-.91 1.85-1.22C20.02 8.42 20 7.22 20 6h-2z" />
+                                                    </svg>
+                                                    <svg className="w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                            {/* Chat Background Pattern - flex-1 to fill remaining space */}
+                                            <div className="flex-1 relative overflow-hidden" style={{
+                                                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                                                backgroundColor: '#0b141a'
+                                            }}>
+                                                <div className="absolute inset-0 p-1.5 sm:p-2 overflow-hidden flex flex-col items-start">
+                                                    {/* Message Bubble - Vertical Layout */}
+                                                    <div className="max-w-[95%] bg-[#1f2c34] rounded-lg rounded-tl-none shadow-lg overflow-hidden">
+                                                        {/* Card Image - Smaller */}
+                                                        <div className="p-1 sm:p-1.5 md:p-2">
+                                                            <div className="relative rounded-md overflow-hidden">
+                                                                <img
+                                                                    alt={cardName}
+                                                                    className="w-16 sm:w-24 md:w-32 h-20 sm:h-32 md:h-44 object-cover object-center"
+                                                                    src={dailyCard.imageUrl}
+                                                                    onError={handleImageError}
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Message Text - Below Image */}
+                                                        <div className="px-1 sm:px-1.5 md:px-2 pb-1 sm:pb-1.5 md:pb-2">
+                                                            <p className="text-white/90 text-[5px] sm:text-[6px] md:text-[8px] leading-relaxed font-normal">
+                                                                <span className="font-semibold text-yellow-400 text-[6px] sm:text-[7px] md:text-[9px]">{cardName}</span>
+                                                                <br /><br />
+                                                                {isPortuguese
+                                                                    ? 'Bom dia! Sua carta de hoje traz uma mensagem especial sobre novos caminhos.'
+                                                                    : 'Good morning! Your card today brings a special message about new paths.'}
+                                                            </p>
+                                                            <div className="flex items-center justify-end gap-0.5 mt-0.5">
+                                                                <span className="text-[3px] md:text-[7px] text-gray-400">08:00</span>
+                                                                <svg className="w-1 md:w-3 h-1 md:h-2 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Input Bar - at very bottom */}
+                                            <div className="bg-[#1f2c34] px-1.5 py-1.5 sm:px-2 sm:py-1.5 md:px-2 md:py-1.5 flex items-center gap-1 sm:gap-1.5 md:gap-2 flex-shrink-0">
+                                                <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+                                                </svg>
+                                                <div className="flex-1 bg-[#2a3942] rounded-full h-5 sm:h-6 md:h-7 px-2 sm:px-2.5 md:px-3 flex items-center min-w-0">
+                                                    <span className="text-gray-500 text-[6px] sm:text-[8px] md:text-[10px] truncate">
+                                                        {isPortuguese ? 'Mensagem' : 'Message'}
+                                                    </span>
+                                                </div>
+                                                <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
+                                                </svg>
                                             </div>
                                         </div>
-                                        <span className="text-sm text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
-                                            {isPortuguese
-                                                ? 'Concordo em receber mensagens de orientação mística e cartas do dia via WhatsApp. Posso cancelar a qualquer momento.'
-                                                : 'I agree to receive mystic guidance messages and daily cards via WhatsApp. I can unsubscribe at any time.'}
-                                        </span>
-                                    </label>
-                                </div>
 
-                                {/* Submit Button */}
-                                <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
-                                    <button
-                                        className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-4 px-8 rounded-2xl shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all active:scale-[0.98]"
-                                        type="submit"
-                                    >
-                                        <span className="relative z-10 flex items-center justify-center gap-2 text-sm uppercase tracking-widest">
-                                            {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
-                                            <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                        </span>
-                                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                    </button>
-                                    <div className="flex items-center gap-2 text-[11px] text-gray-500 uppercase tracking-[0.2em] px-4">
-                                        <span className="material-symbols-outlined text-[16px]">lock</span>
-                                        <p>{isPortuguese ? 'Dados protegidos' : 'Protected data'}</p>
+                                        {/* Home Indicator */}
+                                        <div className="hidden md:block absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/30 rounded-full"></div>
                                     </div>
                                 </div>
-                            </form>
+
+                                {/* Decorative Elements */}
+                                <div className="absolute top-4 sm:top-6 md:top-8 right-4 sm:right-6 md:right-8 text-primary/20 block md:block">
+                                    <span className="material-symbols-outlined text-3xl sm:text-4xl md:text-5xl">stars</span>
+                                </div>
+                                <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-4 sm:left-6 md:left-8 text-yellow-500/20 block md:block">
+                                    <span className="material-symbols-outlined text-4xl sm:text-5xl md:text-6xl">auto_awesome</span>
+                                </div>
+                            </div>
                         </div>
 
-                        {/* iPhone Mockup - WhatsApp Style */}
-                        <div className="lg:w-[380px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-6 lg:p-10 order-1 lg:order-2 relative overflow-hidden">
-                            <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
-                            <div className="relative z-10">
-                                {/* iPhone Frame */}
-                                <div className="relative w-[220px] h-[460px] bg-black rounded-[2.5rem] p-[8px] shadow-[0_0_50px_rgba(168,85,247,0.25),0_20px_40px_rgba(0,0,0,0.5)]">
-                                    {/* Dynamic Island */}
-                                    <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-30"></div>
-
-                                    {/* Screen */}
-                                    <div className="w-full h-full rounded-[2rem] overflow-hidden bg-[#0b141a] flex flex-col">
-                                        {/* Status Bar */}
-                                        <div className="h-6 bg-[#0b141a] flex items-center justify-between px-4 pt-1 flex-shrink-0">
-                                            <span className="text-white text-[9px] font-semibold">9:41</span>
-                                            <div className="flex items-center gap-[3px]">
-                                                <svg className="w-[12px] h-[9px] text-white" viewBox="0 0 18 12" fill="currentColor">
-                                                    <rect x="0" y="8" width="3" height="4" rx="0.5" />
-                                                    <rect x="4" y="5" width="3" height="7" rx="0.5" />
-                                                    <rect x="8" y="2" width="3" height="10" rx="0.5" />
-                                                    <rect x="12" y="0" width="3" height="12" rx="0.5" />
-                                                </svg>
-                                                <div className="flex items-center">
-                                                    <div className="w-[20px] h-[9px] border border-white rounded-[2px] flex items-center p-[1px]">
-                                                        <div className="w-[14px] h-[5px] bg-white rounded-[1px]"></div>
-                                                    </div>
-                                                    <div className="w-[1px] h-[3px] bg-white rounded-r ml-[1px]"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* WhatsApp Header */}
-                                        <div className="bg-[#1f2c34] px-2 py-1 flex items-center gap-1 flex-shrink-0">
-                                            <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                            </svg>
-                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-white text-[10px]">auto_awesome</span>
-                                            </div>
-                                            <div className="flex-1 ml-1">
-                                                <h4 className="text-white text-[10px] font-medium leading-tight">Mystic Tarot</h4>
-                                                <p className="text-emerald-400 text-[8px]">online</p>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <svg className="w-3 h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M17 12c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm3 7h-2v2h-2v-2h-2v-2h2v-2h2v2h2v2zM18 6c0-1.1-.9-2-2-2H8C5.79 4 4 5.79 4 8v10c0 1.1.9 2 2 2h5c0-.73.1-1.43.28-2.1-.34.06-.69.1-1.05.1-2.79 0-5.06-2.27-5.06-5.06 0-1.51.66-2.86 1.71-3.78L12 3.97l5.12 5.19c.5.44.88 1 1.09 1.62.55-.5 1.17-.91 1.85-1.22C20.02 8.42 20 7.22 20 6h-2z" />
-                                                </svg>
-                                                <svg className="w-3 h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                                                </svg>
-                                            </div>
-                                        </div>
-
-                                        {/* Chat Background Pattern - flex-1 to fill remaining space */}
-                                        <div className="flex-1 relative" style={{
-                                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                                            backgroundColor: '#0b141a'
-                                        }}>
-                                            <div className="absolute inset-0 p-2 overflow-hidden">
-                                                {/* Message Bubble */}
-                                                <div className="max-w-[95%] bg-[#1f2c34] rounded-lg rounded-tl-none shadow-lg">
-                                                    {/* Card Image */}
-                                                    <div className="p-1">
-                                                        <div className="relative rounded-md overflow-hidden">
-                                                            <img
-                                                                alt={cardName}
-                                                                className="w-full h-36 object-cover object-top"
-                                                                src={dailyCard.imageUrl}
-                                                                onError={handleImageError}
-                                                            />
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Message Text */}
-                                                    <div className="px-1.5 pb-1 pt-0.5">
-                                                        <p className="text-white/90 text-[9px] leading-relaxed font-normal">
-                                                            <span className="font-semibold text-yellow-400">{cardName}</span>
-                                                            <br /><br />
-                                                            {isPortuguese
-                                                                ? 'Bom dia! Sua carta de hoje traz uma mensagem especial sobre novos caminhos.'
-                                                                : 'Good morning! Your card today brings a special message about new paths.'}
-                                                        </p>
-                                                        <div className="flex items-center justify-end gap-1 mt-0.5">
-                                                            <span className="text-[7px] text-gray-400">08:00</span>
-                                                            <svg className="w-3 h-2 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                                                <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Input Bar - at very bottom */}
-                                        <div className="bg-[#1f2c34] px-2 py-2 flex items-center gap-1.5 flex-shrink-0">
-                                            <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
-                                            </svg>
-                                            <div className="flex-1 bg-[#2a3942] rounded-full h-7 px-2 flex items-center">
-                                                <span className="text-gray-500 text-[10px]">
-                                                    {isPortuguese ? 'Mensagem' : 'Message'}
-                                                </span>
-                                            </div>
-                                            <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
-                                            </svg>
-                                        </div>
-                                    </div>
-
-                                    {/* Home Indicator */}
-                                    <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/30 rounded-full"></div>
+                        {/* Circular Cards - Right Side */}
+                        <div className="hidden lg:flex flex-col items-center gap-4 md:gap-5 lg:gap-6 mt-12 lg:mt-20">
+                            {/* Card 1 - Circular */}
+                            <div className="flex flex-col items-center gap-3 group">
+                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
+                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">auto_awesome</span>
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        {isPortuguese ? 'Personalizada' : 'Personalized'}
+                                    </h3>
                                 </div>
                             </div>
 
-                            {/* Decorative Elements */}
-                            <div className="absolute top-8 right-8 text-primary/20 hidden lg:block">
-                                <span className="material-symbols-outlined text-5xl">stars</span>
+                            {/* Card 2 - Circular */}
+                            <div className="flex flex-col items-center gap-3 group">
+                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
+                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">schedule</span>
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
+                                    </h3>
+                                </div>
                             </div>
-                            <div className="absolute bottom-8 left-8 text-yellow-500/20 hidden lg:block">
-                                <span className="material-symbols-outlined text-6xl">auto_awesome</span>
+
+                            {/* Card 3 - Circular */}
+                            <div className="flex flex-col items-center gap-3 group">
+                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
+                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">chat</span>
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        {isPortuguese ? 'WhatsApp' : 'WhatsApp'}
+                                    </h3>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -48,20 +48,16 @@ const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
                             </button>
                         </nav>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1 sm:gap-2">
                             <LanguageToggle />
-
-                            <button className="p-2 rounded-lg">
-                                <span className="material-symbols-outlined text-gray-300">shopping_bag</span>
-                            </button>
 
                             <UserMenu onLoginClick={onLoginClick} />
 
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="md:hidden p-2 rounded-lg"
+                                className="md:hidden p-1.5 sm:p-2 rounded-lg"
                             >
-                                <span className="material-symbols-outlined text-white">{mobileMenuOpen ? 'close' : 'menu'}</span>
+                                <span className="material-symbols-outlined text-white text-xl sm:text-2xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
                             </button>
                         </div>
                     </div>
