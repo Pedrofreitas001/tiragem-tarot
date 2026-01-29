@@ -508,217 +508,95 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Pricing Comparison Section */}
-            <section className="relative z-10 py-4 md:py-12 px-4 md:px-6 overflow-x-hidden">
-                <div className="max-w-[1200px] mx-auto">
-                    <div className="text-center mb-12 md:mb-16">
-                        <p className="text-[#a77fd4] text-sm uppercase tracking-widest font-semibold mb-4">
-                            {isPortuguese ? 'Escolha seu caminho' : 'Choose your path'}
-                        </p>
-                        <h2 className="text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.0] tracking-tight text-gradient-gold mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Escolha sua jornada' : 'Choose your journey'}
-                        </h2>
-                        <p className="text-gray-400 text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">
-                            {isPortuguese
-                                ? 'Para sua jornada de descobertas e evolução espiritual'
-                                : 'For your discovery journey and spiritual evolution'}
-                        </p>
+            {/* Spread Selection - Premium Cards Style */}
+            <section id="spreads" className="py-16 md:py-24 px-4 md:px-6 relative">
+                <div className="max-w-[1200px] mx-auto relative">
+                    {/* Cosmic Flame Background */}
+                    <div className="absolute -right-40 -top-48 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
+                    <div className="absolute -right-32 -top-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
+
+                    {/* Subtle Star Dots */}
+                    <div className="absolute top-12 left-8 w-1 h-1 rounded-full bg-white/40 pointer-events-none"></div>
+                    <div className="absolute top-24 right-12 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
+                    <div className="absolute bottom-32 left-1/4 w-1 h-1 rounded-full bg-white/38 pointer-events-none"></div>
+                    <div className="absolute top-32 right-1/3 w-1 h-1 rounded-full bg-white/32 pointer-events-none"></div>
+                    <div className="absolute bottom-20 right-20 w-1 h-1 rounded-full bg-white/40 pointer-events-none"></div>
+                    <div className="absolute top-40 left-1/2 w-1 h-1 rounded-full bg-white/30 pointer-events-none"></div>
+                    <div className="absolute bottom-40 left-12 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
+                    <div className="absolute top-48 right-1/4 w-1 h-1 rounded-full bg-white/33 pointer-events-none"></div>
+                    <div className="absolute bottom-16 left-2/3 w-1 h-1 rounded-full bg-white/38 pointer-events-none"></div>
+                    <div className="absolute top-20 left-1/3 w-1 h-1 rounded-full bg-white/36 pointer-events-none"></div>
+                    <div className="absolute bottom-28 right-1/2 w-1 h-1 rounded-full bg-white/34 pointer-events-none"></div>
+                    <div className="absolute top-56 right-8 w-1 h-1 rounded-full bg-white/32 pointer-events-none"></div>
+                    <div className="absolute top-16 right-1/2 w-1 h-1 rounded-full bg-white/37 pointer-events-none"></div>
+                    <div className="absolute bottom-24 left-1/3 w-1 h-1 rounded-full bg-white/31 pointer-events-none"></div>
+                    <div className="absolute top-36 left-1/4 w-1 h-1 rounded-full bg-white/39 pointer-events-none"></div>
+                    <div className="absolute bottom-36 right-1/4 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
+                    <div className="absolute top-44 right-40 w-1 h-1 rounded-full bg-white/33 pointer-events-none"></div>
+                    <div className="absolute bottom-12 left-1/2 w-1 h-1 rounded-full bg-white/37 pointer-events-none"></div>
+                    <div className="absolute top-28 left-2/3 w-1 h-1 rounded-full bg-white/34 pointer-events-none"></div>
+                    <div className="absolute bottom-44 right-1/3 w-1 h-1 rounded-full bg-white/36 pointer-events-none"></div>
+                    <div className="absolute top-52 left-1/2 w-1 h-1 rounded-full bg-white/32 pointer-events-none"></div>
+                    <div className="absolute bottom-8 right-1/3 w-1 h-1 rounded-full bg-white/38 pointer-events-none"></div>
+                    <div className="absolute top-14 right-1/4 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
+                    <div className="absolute bottom-48 left-1/2 w-1 h-1 rounded-full bg-white/33 pointer-events-none"></div>
+
+                    <div className="text-center md:text-left mb-10 md:mb-14 px-2">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{t.home.chooseReading}</h2>
+                        <p className="text-gray-400 text-lg md:text-xl max-w-xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>{t.home.chooseReadingSubtitle}</p>
                     </div>
 
-                    {/* Plans Grid - Large Cards with Premium Design */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                        {/* Free Plan Card */}
-                        <button
-                            onClick={() => setSelectedPlan('free')}
-                            className={`group relative overflow-hidden transition-all duration-500 transform text-left rounded-3xl ${selectedPlan === 'free'
-                                ? 'scale-100 ring-2 ring-[#a77fd4]'
-                                : 'hover:scale-102 ring-2 ring-white/10 hover:ring-[#875faf]'
-                                }`}
-                            style={{ minHeight: '420px' }}
-                        >
-                            {/* Background Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#1a1628]/80 via-[#2a1f3d]/60 to-[#0d0512] rounded-3xl" />
-
-                            {/* Decorative glow */}
-                            {selectedPlan === 'free' && (
-                                <div className="absolute -top-32 -right-32 w-64 h-64 bg-[#a77fd4]/20 rounded-full blur-3xl" />
-                            )}
-
-                            {/* Border effect */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-[#a77fd4]/10 via-transparent to-transparent pointer-events-none rounded-3xl" />
-
-                            {/* Content */}
-                            <div className="relative z-10 p-6 md:p-8 h-full flex flex-col rounded-3xl border border-[#a77fd4]/30 bg-gradient-to-br from-[#a77fd4]/5 via-transparent to-transparent">
-                                {/* Price Section */}
-                                <div className="mb-6">
-                                    <p className="text-[#a77fd4] text-sm uppercase tracking-widest font-semibold mb-3">
-                                        {isPortuguese ? 'Exploração Livre' : 'Free Exploration'}
-                                    </p>
-                                    <h3 className="text-5xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        {isPortuguese ? 'Gratuito' : 'Free'}
-                                    </h3>
-                                    <div className="text-4xl font-light text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        R$ 0<span className="text-lg text-gray-400 font-normal">/sempre</span>
-                                    </div>
-                                    <p className="text-gray-400 text-sm">{isPortuguese ? 'Para começar sua prática' : 'To start your practice'}</p>
-                                </div>
-
-                                {/* Features */}
-                                <div className="flex-1 space-y-4 mb-10">
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">1 {isPortuguese ? 'tirada por dia' : 'reading per day'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Acesso básico às cartas' : 'Basic card access'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">7 {isPortuguese ? 'cartas do arquivo' : 'archive cards'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Tarot tradicional' : 'Traditional tarot'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Histórico de 3 leituras' : 'History of 3 readings'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Acompanhamento básico' : 'Basic tracking'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-400 text-sm flex items-start gap-3 opacity-60">
-                                        <span className="text-gray-600 font-bold mt-0.5 text-lg">✕</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}</p>
-                                            <p className="text-xs text-gray-600">{isPortuguese ? 'Interpretação avançada' : 'Advanced interpretation'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-400 text-sm flex items-start gap-3 opacity-60">
-                                        <span className="text-gray-600 font-bold mt-0.5 text-lg">✕</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern Analysis'}</p>
-                                            <p className="text-xs text-gray-600">{isPortuguese ? 'Insights personalizados' : 'Custom insights'}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Selection indicator */}
-                                {selectedPlan === 'free' && (
-                                    <div className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-[#a77fd4]/20 border border-[#a77fd4]/40 text-[#a77fd4] text-xs font-semibold mb-4">
-                                        ✓ {isPortuguese ? 'Selecionado' : 'Selected'}
-                                    </div>
-                                )}
-
-                                {/* Button */}
-                                <button
-                                    onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="w-full px-6 py-4 rounded-lg font-semibold transition-all text-base uppercase tracking-widest bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white hover:shadow-lg hover:shadow-[#875faf]/40"
-                                    style={{ fontFamily: "'Crimson Text', serif" }}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 px-2 relative z-10">
+                        {SPREADS.map((spread) => {
+                            const translation = getSpreadTranslation(spread.id);
+                            const spreadImages: Record<string, string> = {
+                                'three_card': '/images/spreads/three_card.png',
+                                'celtic_cross': '/images/spreads/celtic_cross.png',
+                                'love_check': '/images/spreads/love_check.png',
+                                'yes_no': '/images/spreads/yes_no.png',
+                                'card_of_day': '/images/spreads/card_of_day.png',
+                            };
+                            return (
+                                <div
+                                    key={spread.id}
+                                    onClick={() => handleSelectSpread(spread)}
+                                    className="group relative flex flex-col h-[300px] md:h-[340px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
                                 >
-                                    {isPortuguese ? 'Começar Agora' : 'Start Now'}
-                                </button>
-                            </div>
-                        </button>
+                                    {/* Background Image with subtle Zoom */}
+                                    <div
+                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                        style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }}
+                                    />
 
-                        {/* Premium Plan Card */}
-                        <button
-                            onClick={() => setSelectedPlan('premium')}
-                            className={`group relative overflow-hidden transition-all duration-500 transform text-left rounded-3xl ${selectedPlan === 'premium'
-                                ? 'scale-100 ring-2 ring-[#d4af37]'
-                                : 'hover:scale-102 ring-2 ring-white/10 hover:ring-[#d4af37]'
-                                }`}
-                            style={{ minHeight: '420px' }}
-                        >
-                            {/* Premium Badge */}
-                            <div className="absolute top-0 right-0 z-20">
-                                <div className="bg-gradient-to-r from-[#d4af37] to-[#c9a961] text-black px-6 py-2 rounded-bl-3xl font-semibold text-xs uppercase tracking-widest">
-                                    ⭐ {isPortuguese ? 'Recomendado' : 'Recommended'}
-                                </div>
-                            </div>
+                                    {/* Gradient Overlay - Dark red to purple */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d14] via-[#1a0f1e]/90 to-transparent group-hover:via-[#1a0f1e]/70 transition-colors duration-500" />
 
-                            {/* Background Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#2a1f3d]/80 via-[#1a1628]/60 to-[#0d0512] rounded-3xl" />
+                                    {/* Content */}
+                                    <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col justify-end">
+                                        <div className="flex flex-col gap-3">
+                                            <div className="flex items-center gap-2">
+                                                <span className="px-2.5 py-1 rounded-md bg-gradient-to-r from-[#875faf] to-[#a77fd4] backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10 shadow-lg shadow-purple-900/30">
+                                                    {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
+                                                </span>
+                                            </div>
 
-                            {/* Decorative glow */}
-                            {selectedPlan === 'premium' && (
-                                <div className="absolute -top-32 -left-32 w-64 h-64 bg-[#d4af37]/20 rounded-full blur-3xl" />
-                            )}
+                                            <h3 className="text-white text-2xl md:text-3xl font-bold tracking-tight">
+                                                {translation.name}
+                                            </h3>
 
-                            {/* Border effect */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-[#d4af37]/10 via-transparent to-transparent pointer-events-none rounded-3xl" />
+                                            <p className="text-gray-300 text-sm md:text-base leading-relaxed opacity-90">
+                                                {translation.description}
+                                            </p>
 
-                            {/* Content */}
-                            <div className="relative z-10 p-6 md:p-8 h-full flex flex-col rounded-3xl border border-[#d4af37]/30 bg-gradient-to-br from-[#d4af37]/5 via-transparent to-transparent">
-                                {/* Price Section */}
-                                <div className="mb-6">
-                                    <p className="text-[#d4af37] text-sm uppercase tracking-widest font-semibold mb-3">
-                                        {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
-                                    </p>
-                                    <h3 className="text-5xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        {isPortuguese ? 'Premium' : 'Premium'}
-                                    </h3>
-                                    <div className="text-4xl font-light text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        R$ 19<span className="text-lg text-gray-400 font-normal">,90/mês</span>
-                                    </div>
-                                    <p className="text-gray-400 text-sm">{isPortuguese ? 'Para praticantes dedicados' : 'For dedicated practitioners'}</p>
-                                </div>
-
-                                {/* Features */}
-                                <div className="flex-1 space-y-4 mb-10">
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Quantas vezes quiser' : 'As many times as you want'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Receba previsões direto no app' : 'Receive predictions directly on app'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Interpretação avançada e personalizada' : 'Advanced custom interpretation'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Histórico completo' : 'Full history'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Todas as suas leituras salvas' : 'All your readings saved'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-gray-300 text-sm flex items-start gap-3">
-                                        <span className="text-[#d4af37] font-bold mt-0.5 text-lg">✓</span>
-                                        <div>
-                                            <p className="font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern Analysis'}</p>
-                                            <p className="text-xs text-gray-500">{isPortuguese ? 'Descubra tendências na sua jornada' : 'Discover trends in your journey'}</p>
+                                            <div className="mt-3 flex items-center text-[#a77fd4] group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
+                                                {t.home.start}
+                                                <span className="material-symbols-outlined text-[18px] ml-2 transform group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Selection indicator */}
-                                {selectedPlan === 'premium' && (
-                                    <div className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/40 text-[#d4af37] text-xs font-semibold mb-4">
-                                        ✓ {isPortuguese ? 'Selecionado' : 'Selected'}
-                                    </div>
-                                )}
-
-                                {/* Button */}
-                                <button
-                                    onClick={() => navigate('/checkout')}
-                                    className="w-full px-6 py-4 rounded-lg font-semibold transition-all text-base uppercase tracking-widest bg-gradient-to-r from-[#d4af37] to-[#c9a961] text-black hover:shadow-lg hover:shadow-[#d4af37]/40"
-                                    style={{ fontFamily: "'Crimson Text', serif" }}
-                                >
-                                    {isPortuguese ? 'Acessar Premium' : 'Access Premium'}
-                                </button>
-                            </div>
-                        </button>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
@@ -892,99 +770,6 @@ const Home = () => {
                                 </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Spread Selection - Premium Cards Style */}
-            <section id="spreads" className="py-16 md:py-24 px-4 md:px-6 relative">
-                <div className="max-w-[1200px] mx-auto relative">
-                    {/* Cosmic Flame Background */}
-                    <div className="absolute -right-40 -top-48 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
-                    <div className="absolute -right-32 -top-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
-
-                    {/* Subtle Star Dots */}
-                    <div className="absolute top-12 left-8 w-1 h-1 rounded-full bg-white/40 pointer-events-none"></div>
-                    <div className="absolute top-24 right-12 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
-                    <div className="absolute bottom-32 left-1/4 w-1 h-1 rounded-full bg-white/38 pointer-events-none"></div>
-                    <div className="absolute top-32 right-1/3 w-1 h-1 rounded-full bg-white/32 pointer-events-none"></div>
-                    <div className="absolute bottom-20 right-20 w-1 h-1 rounded-full bg-white/40 pointer-events-none"></div>
-                    <div className="absolute top-40 left-1/2 w-1 h-1 rounded-full bg-white/30 pointer-events-none"></div>
-                    <div className="absolute bottom-40 left-12 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
-                    <div className="absolute top-48 right-1/4 w-1 h-1 rounded-full bg-white/33 pointer-events-none"></div>
-                    <div className="absolute bottom-16 left-2/3 w-1 h-1 rounded-full bg-white/38 pointer-events-none"></div>
-                    <div className="absolute top-20 left-1/3 w-1 h-1 rounded-full bg-white/36 pointer-events-none"></div>
-                    <div className="absolute bottom-28 right-1/2 w-1 h-1 rounded-full bg-white/34 pointer-events-none"></div>
-                    <div className="absolute top-56 right-8 w-1 h-1 rounded-full bg-white/32 pointer-events-none"></div>
-                    <div className="absolute top-16 right-1/2 w-1 h-1 rounded-full bg-white/37 pointer-events-none"></div>
-                    <div className="absolute bottom-24 left-1/3 w-1 h-1 rounded-full bg-white/31 pointer-events-none"></div>
-                    <div className="absolute top-36 left-1/4 w-1 h-1 rounded-full bg-white/39 pointer-events-none"></div>
-                    <div className="absolute bottom-36 right-1/4 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
-                    <div className="absolute top-44 right-40 w-1 h-1 rounded-full bg-white/33 pointer-events-none"></div>
-                    <div className="absolute bottom-12 left-1/2 w-1 h-1 rounded-full bg-white/37 pointer-events-none"></div>
-                    <div className="absolute top-28 left-2/3 w-1 h-1 rounded-full bg-white/34 pointer-events-none"></div>
-                    <div className="absolute bottom-44 right-1/3 w-1 h-1 rounded-full bg-white/36 pointer-events-none"></div>
-                    <div className="absolute top-52 left-1/2 w-1 h-1 rounded-full bg-white/32 pointer-events-none"></div>
-                    <div className="absolute bottom-8 right-1/3 w-1 h-1 rounded-full bg-white/38 pointer-events-none"></div>
-                    <div className="absolute top-14 right-1/4 w-1 h-1 rounded-full bg-white/35 pointer-events-none"></div>
-                    <div className="absolute bottom-48 left-1/2 w-1 h-1 rounded-full bg-white/33 pointer-events-none"></div>
-
-                    <div className="text-center md:text-left mb-10 md:mb-14 px-2">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{t.home.chooseReading}</h2>
-                        <p className="text-gray-400 text-lg md:text-xl max-w-xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>{t.home.chooseReadingSubtitle}</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 px-2 relative z-10">
-                        {SPREADS.map((spread) => {
-                            const translation = getSpreadTranslation(spread.id);
-                            const spreadImages: Record<string, string> = {
-                                'three_card': '/images/spreads/three_card.png',
-                                'celtic_cross': '/images/spreads/celtic_cross.png',
-                                'love_check': '/images/spreads/love_check.png',
-                                'yes_no': '/images/spreads/yes_no.png',
-                                'card_of_day': '/images/spreads/card_of_day.png',
-                            };
-                            return (
-                                <div
-                                    key={spread.id}
-                                    onClick={() => handleSelectSpread(spread)}
-                                    className="group relative flex flex-col h-[300px] md:h-[340px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
-                                >
-                                    {/* Background Image with subtle Zoom */}
-                                    <div
-                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                                        style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }}
-                                    />
-
-                                    {/* Gradient Overlay - Dark red to purple */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d14] via-[#1a0f1e]/90 to-transparent group-hover:via-[#1a0f1e]/70 transition-colors duration-500" />
-
-                                    {/* Content */}
-                                    <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col justify-end">
-                                        <div className="flex flex-col gap-3">
-                                            <div className="flex items-center gap-2">
-                                                <span className="px-2.5 py-1 rounded-md bg-gradient-to-r from-[#875faf] to-[#a77fd4] backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10 shadow-lg shadow-purple-900/30">
-                                                    {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
-                                                </span>
-                                            </div>
-
-                                            <h3 className="text-white text-2xl md:text-3xl font-bold tracking-tight">
-                                                {translation.name}
-                                            </h3>
-
-                                            <p className="text-gray-300 text-sm md:text-base leading-relaxed opacity-90">
-                                                {translation.description}
-                                            </p>
-
-                                            <div className="mt-3 flex items-center text-[#a77fd4] group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
-                                                {t.home.start}
-                                                <span className="material-symbols-outlined text-[18px] ml-2 transform group-hover:translate-x-2 transition-transform">arrow_forward</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
                     </div>
                 </div>
             </section>
