@@ -476,7 +476,7 @@ const Home = () => {
 
             {/* Interactive Stats Banner */}
             <section className="py-3 md:py-4 px-4 md:px-6 relative overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
-                <div className="absolute inset-0 border-y border-[#875faf]/20"></div>
+                <div className="absolute inset-0 border-y border-transparent"></div>
                 <div className="max-w-[1200px] mx-auto relative z-10">
                     <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 md:gap-8">
                         <div className="text-center group">
