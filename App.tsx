@@ -155,7 +155,7 @@ const Header = () => {
         <>
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
                 <div className="flex flex-col w-full max-w-[1200px]">
-                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
+                    <div className="flex items-center justify-between whitespace-nowrap px-2 py-2 sm:px-4 sm:py-3 lg:px-10 lg:py-4 gap-2">
                         <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
                             <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Mystic Tarot</h2>
                         </div>
@@ -487,30 +487,30 @@ const Home = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-[#875faf]/10 via-[#a77fd4]/5 to-[#875faf]/10"></div>
                 <div className="absolute inset-0 border-y border-[#875faf]/20"></div>
                 <div className="max-w-[1200px] mx-auto relative z-10">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+                    <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 md:gap-8">
                         <div className="text-center group">
                             <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 1.247
                             </div>
-                            <div className="text-gray-400 text-xs md:text-sm">{isPortuguese ? 'Jornadas Ativas' : 'Active Journeys'}</div>
+                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Jornadas Ativas' : 'Active Journeys'}</div>
                         </div>
                         <div className="text-center group">
                             <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 8.432
                             </div>
-                            <div className="text-gray-400 text-xs md:text-sm">{isPortuguese ? 'Leituras Realizadas' : 'Readings Performed'}</div>
+                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Leituras Realizadas' : 'Readings Performed'}</div>
                         </div>
                         <div className="text-center group">
                             <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 78
                             </div>
-                            <div className="text-gray-400 text-xs md:text-sm">{isPortuguese ? 'Arcanos Disponíveis' : 'Available Arcana'}</div>
+                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Arcanos Disponíveis' : 'Available Arcana'}</div>
                         </div>
                         <div className="text-center group">
                             <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 24/7
                             </div>
-                            <div className="text-gray-400 text-xs md:text-sm">{isPortuguese ? 'Disponível Sempre' : 'Always Available'}</div>
+                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Disponível Sempre' : 'Always Available'}</div>
                         </div>
                     </div>
                 </div>
@@ -992,52 +992,52 @@ const Home = () => {
                             </div>
 
                             {/* iPhone Mockup - WhatsApp Style */}
-                            <div className="lg:w-[380px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-6 lg:p-10 order-1 lg:order-2 relative overflow-hidden">
+                            <div className="lg:w-[380px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-3 sm:p-6 lg:p-10 order-1 lg:order-2 relative overflow-hidden">
                                 <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
                                 <div className="relative z-10">
                                     {/* iPhone Frame */}
-                                    <div className="relative w-[220px] h-[460px] bg-black rounded-[2.5rem] p-[8px] shadow-[0_0_50px_rgba(168,85,247,0.25),0_20px_40px_rgba(0,0,0,0.5)]">
+                                    <div className="relative w-[140px] sm:w-[180px] md:w-[220px] h-[295px] sm:h-[380px] md:h-[460px] bg-black rounded-[1.5rem] sm:rounded-[2rem] lg:rounded-[2.5rem] p-[5px] sm:p-[6px] lg:p-[8px] shadow-[0_0_50px_rgba(168,85,247,0.25),0_20px_40px_rgba(0,0,0,0.5)]">
                                         {/* Dynamic Island */}
-                                        <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-30"></div>
+                                        <div className="absolute top-1 sm:top-1.5 md:top-2 left-1/2 -translate-x-1/2 w-12 sm:w-16 md:w-20 h-2.5 sm:h-3.5 md:h-5 bg-black rounded-full z-10"></div>
 
                                         {/* Screen */}
                                         <div className="w-full h-full rounded-[2rem] overflow-hidden bg-[#0b141a] flex flex-col">
                                             {/* Status Bar */}
                                             <div className="h-6 bg-[#0b141a] flex items-center justify-between px-4 pt-1 flex-shrink-0">
                                                 <span className="text-white text-[9px] font-semibold">9:41</span>
-                                                <div className="flex items-center gap-[3px]">
-                                                    <svg className="w-[12px] h-[9px] text-white" viewBox="0 0 18 12" fill="currentColor">
+                                                <div className="flex items-center gap-[2px] sm:gap-[3px]">
+                                                    <svg className="w-[9px] sm:w-[12px] h-[7px] sm:h-[9px] text-white" viewBox="0 0 18 12" fill="currentColor">
                                                         <rect x="0" y="8" width="3" height="4" rx="0.5" />
                                                         <rect x="4" y="5" width="3" height="7" rx="0.5" />
                                                         <rect x="8" y="2" width="3" height="10" rx="0.5" />
                                                         <rect x="12" y="0" width="3" height="12" rx="0.5" />
                                                     </svg>
                                                     <div className="flex items-center">
-                                                        <div className="w-[20px] h-[9px] border border-white rounded-[2px] flex items-center p-[1px]">
-                                                            <div className="w-[14px] h-[5px] bg-white rounded-[1px]"></div>
+                                                        <div className="w-[16px] sm:w-[20px] h-[7px] sm:h-[9px] border border-white rounded-[2px] flex items-center p-[1px]">
+                                                            <div className="w-[10px] sm:w-[14px] h-[3px] sm:h-[5px] bg-white rounded-[1px]"></div>
                                                         </div>
-                                                        <div className="w-[1px] h-[3px] bg-white rounded-r ml-[1px]"></div>
+                                                        <div className="w-[1px] h-[2px] sm:h-[3px] bg-white rounded-r ml-[1px]"></div>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             {/* WhatsApp Header */}
-                                            <div className="bg-[#1f2c34] px-2 py-1 flex items-center gap-1 flex-shrink-0">
-                                                <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div className="bg-[#1f2c34] px-1 sm:px-1.5 md:px-2 py-0.5 sm:py-1 flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+                                                <svg className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                                 </svg>
-                                                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-                                                    <span className="material-symbols-outlined text-white text-[10px]">auto_awesome</span>
+                                                <div className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-white text-[6px] sm:text-[8px] md:text-[10px]">auto_awesome</span>
                                                 </div>
-                                                <div className="flex-1 ml-1">
-                                                    <h4 className="text-white text-[10px] font-medium leading-tight">Mystic Tarot</h4>
-                                                    <p className="text-emerald-400 text-[8px]">online</p>
+                                                <div className="flex-1 ml-0.5 sm:ml-1">
+                                                    <h4 className="text-white text-[7px] sm:text-[9px] md:text-[10px] font-medium leading-tight">Mystic Tarot</h4>
+                                                    <p className="text-emerald-400 text-[6px] sm:text-[7px] md:text-[8px]">online</p>
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    <svg className="w-3 h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                                <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
+                                                    <svg className="w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
                                                         <path d="M17 12c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm3 7h-2v2h-2v-2h-2v-2h2v-2h2v2h2v2zM18 6c0-1.1-.9-2-2-2H8C5.79 4 4 5.79 4 8v10c0 1.1.9 2 2 2h5c0-.73.1-1.43.28-2.1-.34.06-.69.1-1.05.1-2.79 0-5.06-2.27-5.06-5.06 0-1.51.66-2.86 1.71-3.78L12 3.97l5.12 5.19c.5.44.88 1 1.09 1.62.55-.5 1.17-.91 1.85-1.22C20.02 8.42 20 7.22 20 6h-2z" />
                                                     </svg>
-                                                    <svg className="w-3 h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                                    <svg className="w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
                                                         <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                                                     </svg>
                                                 </div>
@@ -1048,15 +1048,15 @@ const Home = () => {
                                                 backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
                                                 backgroundColor: '#0b141a'
                                             }}>
-                                                <div className="absolute inset-0 p-2 overflow-hidden flex flex-col items-start">
+                                                <div className="absolute inset-0 p-2 pb-12 sm:pb-5 md:pb-4 overflow-hidden flex flex-col items-start">
                                                     {/* Message Bubble - Vertical Layout */}
                                                     <div className="max-w-[95%] bg-[#1f2c34] rounded-lg rounded-tl-none shadow-lg overflow-hidden">
                                                         {/* Card Image - Smaller */}
-                                                        <div className="p-2">
+                                                        <div className="p-1 sm:p-1.5 md:p-2">
                                                             <div className="relative rounded-md overflow-hidden">
                                                                 <img
                                                                     alt="Sacerdotisa"
-                                                                    className="w-32 h-44 object-cover object-center"
+                                                                    className="w-16 sm:w-24 md:w-32 h-20 sm:h-32 md:h-44 object-cover object-center"
                                                                     src="/sarcedo.jpg"
                                                                     onError={handleImageError}
                                                                 />
@@ -1064,17 +1064,17 @@ const Home = () => {
                                                         </div>
 
                                                         {/* Message Text - Below Image */}
-                                                        <div className="px-2 pb-2">
-                                                            <p className="text-white/90 text-[8px] leading-relaxed font-normal">
-                                                                <span className="font-semibold text-yellow-400 text-[9px]">{cardName}</span>
+                                                        <div className="px-1 sm:px-1.5 md:px-2 pb-1 sm:pb-1.5 md:pb-2">
+                                                            <p className="text-white/90 text-[5px] sm:text-[6px] md:text-[8px] leading-relaxed font-normal">
+                                                                <span className="font-semibold text-yellow-400 text-[6px] sm:text-[7px] md:text-[9px]">{cardName}</span>
                                                                 <br /><br />
                                                                 {isPortuguese
                                                                     ? 'Bom dia! Sua carta de hoje traz uma mensagem especial sobre novos caminhos.'
                                                                     : 'Good morning! Your card today brings a special message about new paths.'}
                                                             </p>
-                                                            <div className="flex items-center justify-end gap-1 mt-1">
-                                                                <span className="text-[7px] text-gray-400">08:00</span>
-                                                                <svg className="w-3 h-2 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                                                            <div className="flex items-center justify-end gap-0.5 mt-0.5">
+                                                                <span className="text-[3px] md:text-[7px] text-gray-400">08:00</span>
+                                                                <svg className="w-1 md:w-3 h-1 md:h-2 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
                                                                     <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" />
                                                                 </svg>
                                                             </div>
@@ -1084,32 +1084,32 @@ const Home = () => {
                                             </div>
 
                                             {/* Input Bar - at very bottom */}
-                                            <div className="bg-[#1f2c34] px-2 py-2 flex items-center gap-1.5 flex-shrink-0">
-                                                <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                            <div className="bg-[#1f2c34] px-1 py-1 sm:px-1.5 sm:py-1 md:px-2 md:py-1 flex items-center gap-0.5 sm:gap-1 md:gap-1.5 flex-shrink-0">
+                                                <svg className="w-2 sm:w-3 md:w-5 h-2 sm:h-3 md:h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
                                                 </svg>
-                                                <div className="flex-1 bg-[#2a3942] rounded-full h-7 px-2 flex items-center">
-                                                    <span className="text-gray-500 text-[10px]">
+                                                <div className="flex-1 bg-[#2a3942] rounded-full h-4 sm:h-5 md:h-7 px-1 sm:px-1.5 md:px-2 flex items-center">
+                                                    <span className="text-gray-500 text-[4px] sm:text-[6px] md:text-[10px]">
                                                         {isPortuguese ? 'Mensagem' : 'Message'}
                                                     </span>
                                                 </div>
-                                                <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-2 sm:w-3 md:w-5 h-2 sm:h-3 md:h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
                                                 </svg>
                                             </div>
                                         </div>
 
                                         {/* Home Indicator */}
-                                        <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/30 rounded-full"></div>
+                                        <div className="hidden md:block absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/30 rounded-full"></div>
                                     </div>
                                 </div>
 
                                 {/* Decorative Elements */}
-                                <div className="absolute top-8 right-8 text-primary/20 hidden lg:block">
-                                    <span className="material-symbols-outlined text-5xl">stars</span>
+                                <div className="absolute top-4 sm:top-6 md:top-8 right-4 sm:right-6 md:right-8 text-primary/20 block md:block">
+                                    <span className="material-symbols-outlined text-3xl sm:text-4xl md:text-5xl">stars</span>
                                 </div>
-                                <div className="absolute bottom-8 left-8 text-yellow-500/20 hidden lg:block">
-                                    <span className="material-symbols-outlined text-6xl">auto_awesome</span>
+                                <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-4 sm:left-6 md:left-8 text-yellow-500/20 block md:block">
+                                    <span className="material-symbols-outlined text-4xl sm:text-5xl md:text-6xl">auto_awesome</span>
                                 </div>
                             </div>
                         </div>
@@ -1336,8 +1336,8 @@ const Home = () => {
 
                                         <div className="relative w-full max-w-3xl mx-auto">
                                             {/* Outer Orbits - Responsive */}
-                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] aspect-square border border-primary/10 rounded-full orbit-rotate"></div>
-                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[75vw] max-w-[420px] aspect-square border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
+                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[90vw] max-w-[550px] aspect-square border border-primary/10 rounded-full orbit-rotate"></div>
+                                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[82vw] sm:w-[75vw] max-w-[460px] aspect-square border border-primary/20 rounded-full border-dashed orbit-rotate" style={{ animationDirection: 'reverse', animationDuration: '180s' }}></div>
 
                                             {/* The Mandala Body - Responsive */}
                                             <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
