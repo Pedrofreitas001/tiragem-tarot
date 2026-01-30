@@ -436,13 +436,22 @@ const Spreads = () => {
                                                             </div>
 
                                                             {/* CTA Button */}
-                                                            <button
-                                                                onClick={() => handleStartReading(selectedSpread)}
-                                                                className="w-full px-5 py-3 bg-gradient-to-r from-[#875faf] via-[#9968ba] to-[#a77fd4] text-white font-bold text-sm md:text-base rounded-xl shadow-2xl shadow-purple-900/50 hover:shadow-purple-900/70 active:scale-95 flex items-center justify-center gap-2 border border-[#a77fd4]/30 transition-all group"
-                                                            >
-                                                                <span className="material-symbols-outlined text-lg group-hover:rotate-180 transition-transform duration-500">stars</span>
-                                                                {isPortuguese ? 'Iniciar Leitura' : 'Start Reading'}
-                                                            </button>
+                                                            <div className="flex flex-col md:flex-row gap-3 w-full">
+                                                                <button
+                                                                    onClick={() => handleStartReading(selectedSpread)}
+                                                                    className="flex-1 px-5 py-3 bg-gradient-to-r from-[#875faf] via-[#9968ba] to-[#a77fd4] text-white font-bold text-sm md:text-base rounded-xl shadow-2xl shadow-purple-900/50 hover:shadow-purple-900/70 active:scale-95 flex items-center justify-center gap-2 border border-[#a77fd4]/30 transition-all group"
+                                                                >
+                                                                    <span className="material-symbols-outlined text-lg group-hover:rotate-180 transition-transform duration-500">stars</span>
+                                                                    {isPortuguese ? 'Iniciar Leitura' : 'Start Reading'}
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => navigate('/checkout')}
+                                                                    className="flex-1 px-5 py-3 bg-transparent border border-yellow-500/40 rounded-xl text-yellow-300 font-bold text-sm md:text-base shadow-2xl shadow-yellow-900/10 hover:bg-yellow-500/5 hover:border-yellow-500 hover:text-yellow-400 active:scale-95 flex items-center justify-center gap-2 transition-all group"
+                                                                >
+                                                                    <span className="material-symbols-outlined text-lg">star</span>
+                                                                    {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                                                </button>
+                                                            </div>
                                                         </div>
 
                                                         {/* Column 3: Positions - 5 cols */}

@@ -30,9 +30,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onLoginClick }) => {
     return (
       <button
         onClick={onLoginClick}
-        className="flex items-center gap-2 px-4 py-2 bg-[#875faf] hover:bg-[#a77fd4] rounded-lg text-white text-sm font-medium transition-colors"
+        className="flex items-center gap-1 px-2.5 py-1.5 bg-[#875faf] hover:bg-[#a77fd4] rounded-md text-white text-xs font-medium transition-colors"
       >
-        <span className="material-symbols-outlined text-lg">account_circle</span>
+        <span className="material-symbols-outlined text-base">account_circle</span>
         {t.signIn}
       </button>
     );

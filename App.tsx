@@ -181,7 +181,7 @@ const Header = () => {
                             </button>
                         </nav>
 
-                        <div className="flex items-center gap-1 sm:gap-2">
+                        <div className="flex items-center gap-4 sm:gap-6">
                             <LanguageToggle />
 
                             <UserMenu onLoginClick={() => setShowAuthModal(true)} />
@@ -405,10 +405,10 @@ const Home = () => {
                                     : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
                             </p>
 
-                            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                            <div className="flex md:flex-row gap-4 pt-4 justify-center items-center">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="group relative px-6 py-3 bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-sm"
+                                    className="group relative px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
                                     <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2">
@@ -418,7 +418,7 @@ const Home = () => {
                                 </button>
                                 <button
                                     onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
-                                    className="group px-6 py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-sm"
+                                    className="group px-6 py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-xs"
                                 >
                                     <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400">
                                         {isPortuguese ? 'Explorar o Arquivo Arcano' : 'Explore the Arcane Archive'}
@@ -430,7 +430,7 @@ const Home = () => {
 
                         {/* Right Column - Arcane Symbol (Mobile: appears first) */}
                         <div className="flex items-center justify-center lg:justify-end order-1 lg:order-2">
-                            <div className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
+                            <div className="relative w-[300px] h-[300px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
                                 {/* Outer Ring */}
                                 <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.45)" strokeWidth="1" fill="none" />
@@ -476,8 +476,10 @@ const Home = () => {
             </section>
 
             {/* Interactive Stats Banner */}
-            <section className="py-3 md:py-4 px-4 md:px-6 relative overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
+            <section className="py-3 md:py-4 px-4 md:px-6 relative overflow-hidden">
                 <div className="absolute inset-0 border-y border-transparent"></div>
+                {/* Glassmorphism background */}
+                <div className="absolute inset-0 z-0 bg-white/10 backdrop-blur-sm border border-white/10" style={{ boxShadow: '0 1px 4px 0 rgba(0,0,0,0.01)' }}></div>
                 <div className="max-w-[1200px] mx-auto relative z-10">
                     <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 md:gap-8">
                         <div className="text-center group">
@@ -641,7 +643,7 @@ const Home = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-16 items-start">
 
                         {/* LEFT COLUMN - Banner Image */}
-                        <div className="flex justify-center items-center order-1 lg:order-1 min-h-[450px] lg:min-h-[520px] mt-4 lg:mt-16 -translate-y-4 md:-translate-y-6 lg:-translate-y-10 relative overflow-visible">
+                        <div className="flex justify-center items-center order-1 lg:order-1 min-h-[450px] lg:min-h-[520px] mt-6 md:mt-8 lg:mt-16 -translate-y-4 md:-translate-y-6 lg:-translate-y-10 relative overflow-visible mb-10 md:mb-16 lg:mb-0">
                             {/* Cosmic Flame Background - Golden */}
                             <div className="absolute inset-0 flex justify-center items-center pointer-events-none -inset-20">
                                 <div className="absolute w-[300px] lg:w-[480px] h-[300px] lg:h-[480px] bg-gradient-to-r from-yellow-600/30 via-amber-500/25 to-yellow-400/15 rounded-full blur-3xl" style={{ marginTop: '80px' }}></div>
@@ -659,7 +661,7 @@ const Home = () => {
                         </div>
 
                         {/* RIGHT COLUMN - Content */}
-                        <div className="flex flex-col space-y-8 order-2 lg:order-2 mt-4 lg:mt-16 -translate-y-24 md:-translate-y-4 lg:translate-y-0">
+                        <div className="flex flex-col space-y-8 order-2 lg:order-2 mt-16 md:mt-8 lg:mt-16 -translate-y-24 md:-translate-y-4 lg:translate-y-0">
                             {/* Features Grid - 2 columns */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
@@ -1149,7 +1151,9 @@ const Home = () => {
             </section>
 
             {/* Journey Section - A Jornada do Herói */}
-            <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} onOpenAuthModal={() => setShowAuthModal(true)} />
+            <div className="mt-[30rem] sm:mt-[38rem] md:mt-[32rem] lg:mt-[36rem] xl:mt-[40rem]">
+                <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} onOpenAuthModal={() => setShowAuthModal(true)} />
+            </div>
 
             {/* Cosmic Mandala Animation Section - HIDDEN (kept for future use) */}
             <div style={{ display: 'none' }}>
@@ -2514,7 +2518,7 @@ const History = () => {
             updated.add(readingId);
             try {
                 localStorage.setItem(VIEWED_READINGS_KEY, JSON.stringify([...updated]));
-            } catch {}
+            } catch { }
             return updated;
         });
     };
@@ -4791,7 +4795,7 @@ const Interpretacao = () => {
             setError(ti?.selectSpreadType || 'Select the spread type');
             return;
         }
-
+        { ti.title || (isPortuguese ? 'Interpretação de Tiragem' : 'Physical Reading Interpretation') }
         const filledCards = selectedCards.filter(c => c.trim() !== '');
         if (filledCards.length === 0) {
             setError(ti?.addMinCards || 'Add at least one card');
@@ -4901,8 +4905,9 @@ const Interpretacao = () => {
                             </div>
 
                             {/* Golden Title */}
+
                             <h1
-                                className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight"
+                                className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight break-words whitespace-pre-line"
                                 style={{
                                     fontFamily: "'Crimson Text', serif",
                                     background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
@@ -4911,68 +4916,58 @@ const Interpretacao = () => {
                                     backgroundClip: 'text',
                                 }}
                             >
-                                {ti.title || (isPortuguese ? 'Interpretação de Tiragem Física' : 'Physical Reading Interpretation')}
+                                {isPortuguese ? 'Interpretação de Tiragem' : 'Reading Interpretation'}
                             </h1>
 
                             {/* Subtitle */}
-                            <p className="text-gray-300 text-lg md:text-xl max-w-xl leading-relaxed mb-3">
-                                {ti.subtitle || (isPortuguese ? 'Transforme sua tiragem real em uma leitura clara e objetiva com IA' : 'Transform your real spread into a clear and objective reading with AI')}
+                            <p className="text-gray-300 text-lg md:text-xl max-w-xl leading-relaxed mb-3 break-words whitespace-pre-line">
+                                {(ti.subtitle || (isPortuguese ? 'Transforme sua tiragem real em uma\nleitura clara e objetiva com IA' : 'Transform your real spread into a clear\nand objective reading with AI'))}
                             </p>
 
                             {/* Description */}
-                            <p className="text-gray-500 text-sm max-w-lg mb-6">
-                                {ti.heroDescription || (isPortuguese ? 'Fez uma tiragem física com seu baralho? Insira as cartas que saíram e receba uma interpretação profissional.' : 'Did a physical spread with your deck? Enter the cards that came up and receive a professional interpretation.')}
+                            <p className="text-gray-500 text-sm max-w-lg mb-6 break-words whitespace-pre-line">
+                                {(ti.heroDescription || (isPortuguese
+                                    ? 'Fez uma tiragem física com seu baralho?\nInsira as cartas que saíram e receba uma interpretação profissional.'
+                                    : 'Did a physical spread with your deck?\nEnter the cards that came up and receive a professional interpretation.'))}
                             </p>
 
                             {/* CTA Button */}
-                            <button
-                                onClick={() => document.getElementById('interpretation-form')?.scrollIntoView({ behavior: 'smooth' })}
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
-                            >
-                                <span className="material-symbols-outlined text-lg">edit_note</span>
-                                {isPortuguese ? 'Começar Interpretação' : 'Start Interpretation'}
-                            </button>
+                            <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
+                                <button
+                                    onClick={() => document.getElementById('interpretation-form')?.scrollIntoView({ behavior: 'smooth' })}
+                                    className="flex-1 inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all justify-center text-sm md:text-base"
+                                >
+                                    <span className="material-symbols-outlined text-base">edit_note</span>
+                                    {isPortuguese ? 'Começar Interpretação' : 'Start Interpretation'}
+                                </button>
+                                <button
+                                    onClick={() => navigate('/checkout')}
+                                    className="flex-1 inline-flex items-center gap-2 px-4 py-2.5 bg-transparent border border-yellow-500/40 rounded-xl text-yellow-300 font-bold transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:text-yellow-400 justify-center text-sm md:text-base"
+                                >
+                                    <span className="material-symbols-outlined text-base">star</span>
+                                    {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                </button>
+                            </div>
                         </div>
 
-                        {/* Right Side - Tarot Cards Display */}
+                        {/* Right Side - Tarot Cards Display (fixed, usando imageUrl do TAROT_CARDS) */}
                         <div className="relative w-full lg:w-auto lg:flex-shrink-0">
                             <div className="relative w-[300px] h-[320px] md:w-[360px] md:h-[380px] mx-auto">
-                                {/* Card 1 - Far left */}
-                                <div
-                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
-                                    style={{ left: '0%', top: '25%', transform: 'rotate(-25deg)', zIndex: 1 }}
-                                >
-                                    <img src="/images/cards/major/00-the-fool.webp" alt="The Fool" className="w-full h-full object-cover" />
-                                </div>
-                                {/* Card 2 */}
-                                <div
-                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
-                                    style={{ left: '12%', top: '8%', transform: 'rotate(-12deg)', zIndex: 2 }}
-                                >
-                                    <img src="/images/cards/major/01-the-magician.webp" alt="The Magician" className="w-full h-full object-cover" />
-                                </div>
-                                {/* Card 3 - Center top */}
-                                <div
-                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-amber-500/30"
-                                    style={{ left: '32%', top: '0%', transform: 'rotate(0deg)', zIndex: 5 }}
-                                >
-                                    <img src="/images/cards/major/02-the-high-priestess.webp" alt="The High Priestess" className="w-full h-full object-cover" />
-                                </div>
-                                {/* Card 4 */}
-                                <div
-                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
-                                    style={{ left: '52%', top: '8%', transform: 'rotate(12deg)', zIndex: 3 }}
-                                >
-                                    <img src="/images/cards/major/03-the-empress.webp" alt="The Empress" className="w-full h-full object-cover" />
-                                </div>
-                                {/* Card 5 - Far right */}
-                                <div
-                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
-                                    style={{ left: '64%', top: '25%', transform: 'rotate(25deg)', zIndex: 1 }}
-                                >
-                                    <img src="/images/cards/major/04-the-emperor.webp" alt="The Emperor" className="w-full h-full object-cover" />
-                                </div>
-
+                                {/* Cartas fixas, usando imageUrl do TAROT_CARDS */}
+                                {['maj_0', 'maj_1', 'maj_2', 'maj_3', 'maj_4'].map((id, idx) => {
+                                    const card = TAROT_CARDS.find(c => c.id === id);
+                                    const angle = (idx - 2) * 15;
+                                    const left = 32 + (idx - 2) * 20;
+                                    return card ? (
+                                        <div
+                                            key={id}
+                                            className={`absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 ${idx === 2 ? 'border-amber-500/30' : 'border-white/10'}`}
+                                            style={{ left: `${left}%`, top: `${Math.abs(angle) * 0.5}%`, transform: `rotate(${angle}deg)`, zIndex: 10 + idx }}
+                                        >
+                                            <img src={card.imageUrl} alt={card.name} className="w-full h-full object-cover" />
+                                        </div>
+                                    ) : null;
+                                })}
                                 {/* Glow effect behind cards */}
                                 <div className="absolute inset-0 -z-10">
                                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-purple-500/20 rounded-full blur-[80px]" />
