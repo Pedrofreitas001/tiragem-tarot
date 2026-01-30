@@ -476,7 +476,7 @@ const Home = () => {
             </section>
 
             {/* Interactive Stats Banner */}
-            <section className="py-3 md:py-4 px-4 md:px-6 relative overflow-hidden">
+            <section className="mt-24 md:mt-32 py-3 md:py-4 px-4 md:px-6 relative overflow-hidden">
                 <div className="absolute inset-0 border-y border-transparent"></div>
                 {/* Glassmorphism background */}
                 <div className="absolute inset-0 z-0 bg-white/10 backdrop-blur-sm border border-white/10" style={{ boxShadow: '0 1px 4px 0 rgba(0,0,0,0.01)' }}></div>
@@ -777,7 +777,7 @@ const Home = () => {
             </section>
 
             {/* WhatsApp Daily Card Subscription Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark pb-32 md:pb-48 lg:pb-64">
                 <style>{`
                     .home-glass-card {
                         background: rgba(255, 255, 255, 0.04);
@@ -1151,7 +1151,7 @@ const Home = () => {
             </section>
 
             {/* Journey Section - A Jornada do Herói */}
-            <div className="mt-[30rem] sm:mt-[38rem] md:mt-[32rem] lg:mt-[36rem] xl:mt-[40rem]">
+            <div>
                 <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} onOpenAuthModal={() => setShowAuthModal(true)} />
             </div>
 

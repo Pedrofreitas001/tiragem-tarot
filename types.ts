@@ -14,11 +14,14 @@ export enum Suit {
 export interface TarotCard {
   id: string;
   name: string;
+  name_pt?: string;
+  slug?: string;
+  slug_pt?: string;
   number: number;
   arcana: ArcanaType;
   suit: Suit;
   description: string;
-  imageSeed: string; // Kept for fallbacks or effects
+  imageSeed?: string; // Kept for fallbacks or effects
   imageUrl: string;  // Direct link to the card image
 }
 
