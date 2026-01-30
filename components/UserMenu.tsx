@@ -110,7 +110,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onLoginClick }) => {
                 <button
                   onClick={() => {
                     setIsOpen(false);
-                    // TODO: Abrir modal de upgrade
+                    navigate('/checkout');
                   }}
                   className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#a77fd4] hover:bg-[#875faf]/10 transition-colors text-sm"
                 >
@@ -118,6 +118,17 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onLoginClick }) => {
                   {t.upgrade}
                 </button>
               )}
+
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate('/settings');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-colors text-sm"
+              >
+                <span className="material-symbols-outlined text-lg">settings</span>
+                {isPortuguese ? 'Configurações' : 'Settings'}
+              </button>
 
               <button
                 onClick={() => {

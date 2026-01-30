@@ -13,6 +13,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AuthModal } from './components/AuthModal';
 import { UserMenu } from './components/UserMenu';
 import { PaywallModal, usePaywall } from './components/PaywallModal';
+import WhatsAppModal from './components/WhatsAppModal';
 import { JourneySection } from './components/journey';
 import { DailyCard } from './components/DailyCard';
 import { HistoryFiltered } from './components/HistoryFiltered';
@@ -21,6 +22,7 @@ import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import Spreads from './pages/Spreads';
 import Checkout from './pages/Checkout';
+import Settings from './pages/Settings';
 import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
@@ -275,11 +277,40 @@ const Home = () => {
     const { checkAccess, readingsRemaining } = usePaywall();
     const [showPaywall, setShowPaywall] = useState(false);
     const [showPaywallForm, setShowPaywallForm] = useState(false);
+    const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
-    const { user, incrementReadingCount } = useAuth();
+    const { user, incrementReadingCount, tier } = useAuth();
     const { isPortuguese: langIsPortuguese } = useLanguage();
     const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium'>('premium');
+    const [whatsappSubscribed, setWhatsappSubscribed] = useState(false);
+
+    // Carregar status da inscrição do WhatsApp
+    useEffect(() => {
+        const loadWhatsAppStatus = async () => {
+            if (!user) {
+                setWhatsappSubscribed(false);
+                return;
+            }
+
+            try {
+                const { supabase } = await import('./lib/supabase');
+                if (!supabase) return;
+
+                const { data } = await (supabase as any)
+                    .from('whatsapp_subscriptions')
+                    .select('is_active')
+                    .eq('user_id', user.id)
+                    .single();
+
+                setWhatsappSubscribed(data?.is_active || false);
+            } catch (err) {
+                console.error('Error loading WhatsApp status:', err);
+            }
+        };
+
+        loadWhatsAppStatus();
+    }, [user]);
 
     // Carta do dia coletiva - mesma para todos no dia
     const getDailyCard = () => {
@@ -395,7 +426,7 @@ const Home = () => {
 
                         {/* Left Column - Content (Mobile: appears after orbit) */}
                         <div className="space-y-8 lg:pr-8 order-2 lg:order-1 text-center lg:text-left">
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
                             </h1>
 
@@ -405,14 +436,14 @@ const Home = () => {
                                     : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
                             </p>
 
-                            <div className="flex md:flex-row gap-4 pt-4 justify-center items-center">
+                            <div className="flex md:flex-row gap-4 pt-4 justify-center lg:justify-start items-center lg:items-start">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
                                     className="group relative px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
                                     <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2">
-                                        {isPortuguese ? 'Iniciar Abertura' : 'Begin Opening'}
+                                        {isPortuguese ? 'Abrir Tarot' : 'Open Tarot'}
                                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                     </span>
                                 </button>
@@ -429,7 +460,7 @@ const Home = () => {
                         </div>
 
                         {/* Right Column - Arcane Symbol (Mobile: appears first) */}
-                        <div className="flex items-center justify-center lg:justify-end order-1 lg:order-2">
+                        <div className="flex items-center justify-end order-1 lg:order-2 pr-0 lg:pr-12">
                             <div className="relative w-[300px] h-[300px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
                                 {/* Outer Ring */}
                                 <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -761,15 +792,17 @@ const Home = () => {
                                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                     </span>
                                 </button>
-                                <button
-                                    onClick={() => navigate('/checkout')}
-                                    className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
-                                >
-                                    <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
-                                        {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
-                                        <span className="material-symbols-outlined text-sm">star</span>
-                                    </span>
-                                </button>
+                                {tier === 'free' && (
+                                    <button
+                                        onClick={() => navigate('/checkout')}
+                                        className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
+                                    >
+                                        <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
+                                            {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                            <span className="material-symbols-outlined text-sm">star</span>
+                                        </span>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -966,14 +999,34 @@ const Home = () => {
                                         <button
                                             onClick={(e) => {
                                                 e.preventDefault();
+
+                                                // Usuários FREE: mostrar modal de upgrade para premium
+                                                if (tier === 'free') {
+                                                    setShowPaywallForm(true);
+                                                    return;
+                                                }
+
+                                                // Usuários PREMIUM: abrir modal de configuração do WhatsApp
+                                                if (tier === 'premium') {
+                                                    setShowWhatsAppModal(true);
+                                                    return;
+                                                }
+
+                                                // Guests/não logados: criar conta
                                                 setShowPaywallForm(true);
                                             }}
                                             className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
                                             type="button"
                                         >
                                             <span className="relative z-10 flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
-                                                {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
-                                                <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                                {tier === 'premium'
+                                                    ? (whatsappSubscribed
+                                                        ? (isPortuguese ? 'Inscrito' : 'Subscribed')
+                                                        : (isPortuguese ? 'Não Cadastrado' : 'Not Registered'))
+                                                    : (isPortuguese ? 'Começar a Receber' : 'Start Receiving')}
+                                                <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
+                                                    {tier === 'premium' ? 'settings' : 'arrow_forward'}
+                                                </span>
                                             </span>
                                             <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                         </button>
@@ -1455,6 +1508,31 @@ const Home = () => {
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
+            />
+
+            {/* WhatsApp Configuration Modal */}
+            <WhatsAppModal
+                isOpen={showWhatsAppModal}
+                onClose={() => {
+                    setShowWhatsAppModal(false);
+                    // Recarregar status após fechar
+                    const loadStatus = async () => {
+                        if (!user) return;
+                        try {
+                            const { supabase } = await import('./lib/supabase');
+                            if (!supabase) return;
+                            const { data } = await (supabase as any)
+                                .from('whatsapp_subscriptions')
+                                .select('is_active')
+                                .eq('user_id', user.id)
+                                .single();
+                            setWhatsappSubscribed(data?.is_active || false);
+                        } catch (err) {
+                            console.error('Error reloading WhatsApp status:', err);
+                        }
+                    };
+                    loadStatus();
+                }}
             />
 
             {/* Auth Modal */}
@@ -2487,8 +2565,6 @@ const ReadingModal = ({
 };
 
 // History Page
-const VIEWED_READINGS_KEY = 'tarot-viewed-readings';
-
 const History = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
@@ -2500,38 +2576,39 @@ const History = () => {
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const [filteredReadings, setFilteredReadings] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [displayCount, setDisplayCount] = useState(9); // Mostrar 9 itens inicialmente (3x3 grid)
 
-    // Track viewed readings
-    const [viewedReadings, setViewedReadings] = useState<Set<string | number>>(() => {
-        try {
-            const stored = localStorage.getItem(VIEWED_READINGS_KEY);
-            return stored ? new Set(JSON.parse(stored)) : new Set();
-        } catch {
-            return new Set();
-        }
-    });
-
-    // Mark a reading as viewed
-    const markAsViewed = (readingId: string | number) => {
-        setViewedReadings(prev => {
-            const updated = new Set(prev);
-            updated.add(readingId);
-            try {
-                localStorage.setItem(VIEWED_READINGS_KEY, JSON.stringify([...updated]));
-            } catch { }
-            return updated;
-        });
+    // Check if a reading is unviewed (baseado em viewed_at do banco)
+    const isUnviewed = (reading: any) => {
+        return !reading.viewed_at;
     };
 
-    // Check if a reading is unviewed
-    const isUnviewed = (readingId: string | number) => {
-        return !viewedReadings.has(readingId);
-    };
-
-    // Handle opening a reading (marks it as viewed)
-    const handleOpenReading = (reading: any) => {
-        markAsViewed(reading.id);
+    // Handle opening a reading (marks it as viewed in Supabase)
+    const handleOpenReading = async (reading: any) => {
         setSelectedReading(reading);
+
+        // Se a leitura ainda não foi visualizada, marcar como visualizada no Supabase
+        if (!reading.viewed_at && user) {
+            try {
+                const { supabase } = await import('./lib/supabase');
+                if (!supabase) return;
+
+                await (supabase as any)
+                    .from('readings')
+                    .update({ viewed_at: new Date().toISOString() })
+                    .eq('id', reading.id);
+
+                // Atualizar localmente
+                setSavedReadings(prev =>
+                    prev.map(r => r.id === reading.id ? { ...r, viewed_at: new Date().toISOString() } : r)
+                );
+                setFilteredReadings(prev =>
+                    prev.map(r => r.id === reading.id ? { ...r, viewed_at: new Date().toISOString() } : r)
+                );
+            } catch (err) {
+                console.error('Error marking reading as viewed:', err);
+            }
+        }
     };
 
     const [savedReadings, setSavedReadings] = useState<any[]>(() => {
@@ -2578,8 +2655,14 @@ const History = () => {
 
     // Limitar leituras visíveis baseado no tier
     const historyLimit = getHistoryLimit();
-    const visibleReadings = isPremium ? filteredReadings : filteredReadings.slice(0, historyLimit);
+    const availableReadings = isPremium ? filteredReadings : filteredReadings.slice(0, historyLimit);
+    const visibleReadings = availableReadings.slice(0, displayCount);
+    const hasMoreToLoad = visibleReadings.length < availableReadings.length;
     const hasMoreReadings = filteredReadings.length > historyLimit && !isPremium;
+
+    const loadMore = () => {
+        setDisplayCount(prev => prev + 9); // Carregar mais 9 itens
+    };
 
     const deleteReading = async (id: number, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -2641,6 +2724,13 @@ const History = () => {
                                     -webkit-background-clip: text;
                                     -webkit-text-fill-color: transparent;
                                     background-clip: text;
+                                }
+                                .scrollbar-hide::-webkit-scrollbar {
+                                    display: none;
+                                }
+                                .scrollbar-hide {
+                                    -ms-overflow-style: none;
+                                    scrollbar-width: none;
                                 }
                             `}</style>
                             <h2 className="text-4xl md:text-5xl font-bold text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>{t.history.title}</h2>
@@ -2707,28 +2797,30 @@ const History = () => {
                                 />
                             </div>
 
-                            {/* Readings List */}
-                            <div className="space-y-4">
-                                {visibleReadings.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className={`bg-card-dark rounded-xl border transition-all overflow-hidden ${isUnviewed(item.id) ? 'border-green-500/40 ring-1 ring-green-500/20' : 'border-border-dark hover:border-primary/30'}`}
-                                    >
-                                        <div className="flex flex-col md:flex-row">
-                                            {/* Cards Preview */}
-                                            <div className="relative flex gap-2 p-4 md:p-5 bg-surface-dark/50 overflow-x-auto">
-                                                {/* Unviewed Indicator */}
-                                                {isUnviewed(item.id) && (
-                                                    <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/20 border border-green-500/30">
-                                                        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                                                        <span className="text-green-400 text-[10px] font-bold uppercase">
-                                                            {isPortuguese ? 'Nova' : 'New'}
-                                                        </span>
-                                                    </div>
-                                                )}
+                            {/* Readings Grid */}
+                            <div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {visibleReadings.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            onClick={() => handleOpenReading(item)}
+                                            className={`group relative bg-card-dark rounded-xl border transition-all overflow-hidden cursor-pointer hover:scale-[1.02] ${isUnviewed(item) ? 'border-green-500/40 ring-1 ring-green-500/20' : 'border-border-dark hover:border-primary/30'}`}
+                                        >
+                                            {/* Unviewed Badge */}
+                                            {isUnviewed(item) && (
+                                                <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/20 border border-green-500/30 backdrop-blur-sm">
+                                                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                                                    <span className="text-green-400 text-[10px] font-bold uppercase">
+                                                        {isPortuguese ? 'Nova' : 'New'}
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            {/* Cards Preview - Horizontal Scroll */}
+                                            <div className="relative flex gap-1.5 p-3 bg-surface-dark/50 overflow-x-auto scrollbar-hide">
                                                 {item.previewCards?.slice(0, 5).map((cardUrl: string, idx: number) => (
-                                                    <div key={idx} className="flex-shrink-0 w-14 md:w-16">
-                                                        <div className="aspect-[2/3] rounded-lg overflow-hidden border border-white/10 shadow-md">
+                                                    <div key={idx} className="flex-shrink-0 w-12">
+                                                        <div className="aspect-[2/3] rounded-md overflow-hidden border border-white/10 shadow-md">
                                                             <img
                                                                 src={cardUrl}
                                                                 alt={`Card ${idx + 1}`}
@@ -2741,65 +2833,77 @@ const History = () => {
                                                     </div>
                                                 ))}
                                                 {(item.previewCards?.length || 0) > 5 && (
-                                                    <div className="flex-shrink-0 w-14 md:w-16 flex items-center justify-center">
-                                                        <span className="text-gray-500 text-sm">+{item.previewCards.length - 5}</span>
+                                                    <div className="flex-shrink-0 w-12 flex items-center justify-center">
+                                                        <span className="text-gray-500 text-xs">+{item.previewCards.length - 5}</span>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Info */}
-                                            <div className="flex-1 p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4">
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-3 mb-2">
-                                                        <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${item.typeColor}`}>
-                                                            {item.typeBadge}
+                                            {/* Card Info */}
+                                            <div className="p-4 space-y-2">
+                                                {/* Type and Date */}
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${item.typeColor}`}>
+                                                        {item.typeBadge}
+                                                    </span>
+                                                    <span className="text-gray-500 text-[10px]">{item.date}</span>
+                                                </div>
+
+                                                {/* Spread Name */}
+                                                <h3 className="text-white font-bold text-sm line-clamp-1">{item.spreadName}</h3>
+
+                                                {/* Rating */}
+                                                <div className="flex gap-0.5">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <span key={star} className={`material-symbols-outlined text-xs ${star <= (item.rating || 0) ? 'text-yellow-400' : 'text-gray-600'}`}>
+                                                            {star <= (item.rating || 0) ? 'star' : 'star_outline'}
                                                         </span>
-                                                        <span className="text-gray-500 text-xs">{item.date}</span>
-                                                    </div>
-                                                    <h3 className="text-white font-bold text-lg mb-1">{item.spreadName}</h3>
-
-                                                    {/* Rating */}
-                                                    <div className="mb-2">
-                                                        {renderStars(item.rating)}
-                                                    </div>
-
-                                                    {/* Comment Preview */}
-                                                    {item.comment ? (
-                                                        <p className="text-gray-400 text-sm line-clamp-2 italic">"{item.comment}"</p>
-                                                    ) : (
-                                                        <p className="text-gray-600 text-sm italic">
-                                                            {isPortuguese ? 'Sem anotações' : 'No notes'}
-                                                        </p>
-                                                    )}
+                                                    ))}
                                                 </div>
 
-                                                {/* Actions */}
-                                                <div className="flex gap-2 md:flex-col">
-                                                    <button
-                                                        onClick={() => handleOpenReading(item)}
-                                                        className={`flex-1 md:flex-none px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-colors ${isUnviewed(item.id) ? 'bg-green-500/20 hover:bg-green-500/30 text-green-400' : 'bg-primary/10 hover:bg-primary/20 text-primary'}`}
-                                                    >
-                                                        <span className="material-symbols-outlined text-lg">visibility</span>
-                                                        {isPortuguese ? 'Ver' : 'View'}
-                                                    </button>
-                                                    <button
-                                                        onClick={(e) => deleteReading(item.id, e)}
-                                                        className="px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm flex items-center justify-center gap-1 transition-colors"
-                                                    >
-                                                        <span className="material-symbols-outlined text-lg">delete</span>
-                                                    </button>
-                                                </div>
+                                                {/* Comment Preview */}
+                                                {item.comment ? (
+                                                    <p className="text-gray-400 text-xs line-clamp-2 italic">"{item.comment}"</p>
+                                                ) : (
+                                                    <p className="text-gray-600 text-xs italic">
+                                                        {isPortuguese ? 'Sem anotações' : 'No notes'}
+                                                    </p>
+                                                )}
                                             </div>
-                                        </div>
-                                    </div>
-                                ))}
 
-                                {/* Mostrar prompt de upgrade se houver mais leituras */}
+                                            {/* Hover Overlay */}
+                                            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+                                            {/* Delete Button */}
+                                            <button
+                                                onClick={(e) => deleteReading(item.id, e)}
+                                                className="absolute top-2 left-2 z-10 p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <span className="material-symbols-outlined text-sm">delete</span>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Load More Button */}
+                                {hasMoreToLoad && (
+                                    <div className="mt-6 flex justify-center">
+                                        <button
+                                            onClick={loadMore}
+                                            className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg text-white font-medium flex items-center gap-2 transition-all"
+                                        >
+                                            <span className="material-symbols-outlined text-lg">expand_more</span>
+                                            {isPortuguese ? 'Carregar Mais' : 'Load More'}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Mostrar prompt de upgrade se houver mais leituras bloqueadas */}
                                 {hasMoreReadings && (
                                     <div className="mt-6 p-6 bg-gradient-to-r from-[#875faf]/20 to-[#1a1628] border border-[#875faf]/30 rounded-xl text-center">
                                         <span className="material-symbols-outlined text-4xl text-[#a77fd4] mb-3">lock</span>
                                         <h3 className="text-white font-bold text-lg mb-2">
-                                            {isPortuguese ? `+${savedReadings.length - historyLimit} tiragens bloqueadas` : `+${savedReadings.length - historyLimit} readings locked`}
+                                            {isPortuguese ? `+${filteredReadings.length - historyLimit} tiragens bloqueadas` : `+${filteredReadings.length - historyLimit} readings locked`}
                                         </h3>
                                         <p className="text-gray-400 text-sm mb-4">
                                             {isPortuguese ? 'Faça upgrade para Premium para acessar todo o seu histórico.' : 'Upgrade to Premium to access your full history.'}
@@ -3593,7 +3697,7 @@ const Explore = () => {
                         return (
                             <div
                                 key={card.id}
-                                onClick={() => handleCardClick(card, index)}
+                                onClick={() => handleCardClick(card as unknown as TarotCard, index)}
                                 className={`group relative aspect-[2/3.4] rounded-lg overflow-hidden border bg-surface-dark transition-all cursor-pointer shadow-lg ${isLocked || isGuestLocked
                                     ? 'border-white/5 opacity-60 hover:opacity-80'
                                     : 'border-white/5 hover:border-primary/50 hover:-translate-y-2 hover:shadow-primary/20'
@@ -4788,6 +4892,61 @@ const Interpretacao = () => {
         setSelectedCards(newCards);
     };
 
+    // Render individual card
+    const renderCard = (index: number, position: string) => {
+        const cardName = selectedCards[index];
+        const cardData = cardName ? TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName) : null;
+
+        return (
+            <div key={index} className="relative flex flex-col">
+                <div
+                    onClick={() => openCardSearch(index)}
+                    className={`aspect-[2/3] rounded-xl overflow-hidden cursor-pointer transition-all ${cardName
+                        ? 'border-2 border-primary/50'
+                        : 'border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50'
+                        }`}
+                >
+                    {cardName && cardData ? (
+                        <div className="relative w-full h-full">
+                            <img
+                                src={cardData.imageUrl}
+                                alt={cardName}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
+                                }}
+                            />
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2">
+                                <span className="text-white text-[10px] text-center font-medium leading-tight block">{cardName}</span>
+                            </div>
+                        </div>
+                    ) : cardName ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center p-2 bg-primary/10">
+                            <span className="material-symbols-outlined text-primary text-2xl mb-1">style</span>
+                            <span className="text-white text-xs text-center font-medium leading-tight">{cardName}</span>
+                        </div>
+                    ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center p-2">
+                            <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add</span>
+                            <span className="text-gray-500 text-xs text-center">{position}</span>
+                        </div>
+                    )}
+                </div>
+                {cardName && (
+                    <button
+                        onClick={(e) => { e.stopPropagation(); removeCard(index); }}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors z-10"
+                    >
+                        <span className="material-symbols-outlined text-white text-sm">close</span>
+                    </button>
+                )}
+                <div className="mt-2 text-center">
+                    <span className="text-xs text-yellow-400 font-semibold">{position}</span>
+                </div>
+            </div>
+        );
+    };
+
     // Submit interpretation request
     const handleSubmit = async () => {
         const ti = (t as any).interpretation;
@@ -4891,58 +5050,61 @@ const Interpretacao = () => {
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
 
             {/* Hero Section - Home Page Style */}
-            <section className="relative pt-20 pb-8 md:pb-12 px-6 md:px-12 overflow-hidden z-10">
-                <div className="relative max-w-[1200px] mx-auto z-10">
-                    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+            <section className="relative pt-12 pb-8 md:pb-10 px-6 md:px-12 overflow-hidden z-10">
+                <div className="relative max-w-[1200px] z-10">
+                    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-32">
                         {/* Left Side - Text Content */}
-                        <div className="flex-1 text-center lg:text-left">
-                            {/* Premium Badge */}
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/30 mb-6">
-                                <span className="material-symbols-outlined text-amber-400 text-sm">auto_awesome</span>
-                                <span className="text-amber-300 text-xs font-bold uppercase tracking-wider">
-                                    {isPortuguese ? 'Premium' : 'Premium Feature'}
-                                </span>
+                        <div className="flex-1 text-left lg:ml-8">
+                            {/* Text Wrapper - Moved Up */}
+                            <div className="lg:-mt-12">
+                                {/* Premium Badge */}
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/30 mb-4">
+                                    <span className="material-symbols-outlined text-amber-400 text-sm">auto_awesome</span>
+                                    <span className="text-amber-300 text-xs font-bold uppercase tracking-wider">
+                                        {isPortuguese ? 'Premium' : 'Premium Feature'}
+                                    </span>
+                                </div>
+
+                                {/* Golden Title */}
+
+                                <h1
+                                    className="text-4xl md:text-5xl lg:text-6xl font-black mb-2 leading-tight whitespace-nowrap"
+                                    style={{
+                                        fontFamily: "'Crimson Text', serif",
+                                        background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        backgroundClip: 'text',
+                                    }}
+                                >
+                                    {isPortuguese ? 'Interpretação de Tiragem' : 'Reading Interpretation'}
+                                </h1>
+
+                                {/* Subtitle */}
+                                <p className="text-gray-300 text-lg md:text-xl max-w-xl leading-relaxed mb-2 break-words">
+                                    {(ti.subtitle || (isPortuguese ? 'Transforme sua tiragem real em uma leitura clara e objetiva com IA' : 'Transform your real spread into a clear and objective reading with AI'))}
+                                </p>
+
+                                {/* Description */}
+                                <p className="text-gray-500 text-sm max-w-lg mb-4 break-words">
+                                    {(ti.heroDescription || (isPortuguese
+                                        ? 'Fez uma tiragem física com seu baralho? Insira as cartas que saíram e receba uma interpretação profissional.'
+                                        : 'Did a physical spread with your deck? Enter the cards that came up and receive a professional interpretation.'))}
+                                </p>
                             </div>
-
-                            {/* Golden Title */}
-
-                            <h1
-                                className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight break-words whitespace-pre-line"
-                                style={{
-                                    fontFamily: "'Crimson Text', serif",
-                                    background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
-                                    WebkitBackgroundClip: 'text',
-                                    WebkitTextFillColor: 'transparent',
-                                    backgroundClip: 'text',
-                                }}
-                            >
-                                {isPortuguese ? 'Interpretação de Tiragem' : 'Reading Interpretation'}
-                            </h1>
-
-                            {/* Subtitle */}
-                            <p className="text-gray-300 text-lg md:text-xl max-w-xl leading-relaxed mb-3 break-words whitespace-pre-line">
-                                {(ti.subtitle || (isPortuguese ? 'Transforme sua tiragem real em uma\nleitura clara e objetiva com IA' : 'Transform your real spread into a clear\nand objective reading with AI'))}
-                            </p>
-
-                            {/* Description */}
-                            <p className="text-gray-500 text-sm max-w-lg mb-6 break-words whitespace-pre-line">
-                                {(ti.heroDescription || (isPortuguese
-                                    ? 'Fez uma tiragem física com seu baralho?\nInsira as cartas que saíram e receba uma interpretação profissional.'
-                                    : 'Did a physical spread with your deck?\nEnter the cards that came up and receive a professional interpretation.'))}
-                            </p>
 
                             {/* CTA Button */}
                             <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
                                 <button
                                     onClick={() => document.getElementById('interpretation-form')?.scrollIntoView({ behavior: 'smooth' })}
-                                    className="flex-1 inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all justify-center text-sm md:text-base"
+                                    className="flex-1 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all justify-center text-xs md:text-sm"
                                 >
                                     <span className="material-symbols-outlined text-base">edit_note</span>
                                     {isPortuguese ? 'Começar Interpretação' : 'Start Interpretation'}
                                 </button>
                                 <button
                                     onClick={() => navigate('/checkout')}
-                                    className="flex-1 inline-flex items-center gap-2 px-4 py-2.5 bg-transparent border border-yellow-500/40 rounded-xl text-yellow-300 font-bold transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:text-yellow-400 justify-center text-sm md:text-base"
+                                    className="flex-1 inline-flex items-center gap-2 px-4 py-2 bg-transparent border border-yellow-500/40 rounded-xl text-yellow-300 font-bold transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:text-yellow-400 justify-center text-xs md:text-sm"
                                 >
                                     <span className="material-symbols-outlined text-base">star</span>
                                     {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
@@ -4951,7 +5113,7 @@ const Interpretacao = () => {
                         </div>
 
                         {/* Right Side - Tarot Cards Display (fixed, usando imageUrl do TAROT_CARDS) */}
-                        <div className="relative w-full lg:w-auto lg:flex-shrink-0">
+                        <div className="relative w-full lg:w-auto lg:flex-shrink-0 lg:ml-40 lg:mt-8">
                             <div className="relative w-[300px] h-[320px] md:w-[360px] md:h-[380px] mx-auto">
                                 {/* Cartas fixas, usando imageUrl do TAROT_CARDS */}
                                 {['maj_0', 'maj_1', 'maj_2', 'maj_3', 'maj_4'].map((id, idx) => {
@@ -4970,8 +5132,8 @@ const Interpretacao = () => {
                                 })}
                                 {/* Glow effect behind cards */}
                                 <div className="absolute inset-0 -z-10">
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-purple-500/20 rounded-full blur-[80px]" />
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] bg-amber-500/15 rounded-full blur-[60px]" />
+                                    <div className="absolute top-1/2 left-2/3 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-purple-500/20 rounded-full blur-[80px]" />
+                                    <div className="absolute top-1/2 left-2/3 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] bg-amber-500/15 rounded-full blur-[60px]" />
                                 </div>
                             </div>
                         </div>
@@ -4981,164 +5143,232 @@ const Interpretacao = () => {
 
             {/* Main Content */}
             <section id="interpretation-form" className="px-6 md:px-12 pb-20 relative">
-                {/* Purple Blur Background - Behind Form Only */}
+                {/* Blue Blur Background - Behind Form Only */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[150px]" />
-                    <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-violet-500/12 rounded-full blur-[180px]" />
-                    <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-purple-700/10 rounded-full blur-[120px]" />
+                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[150px]" />
+                    <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-cyan-500/8 rounded-full blur-[180px]" />
+                    <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-blue-700/8 rounded-full blur-[120px]" />
                 </div>
 
-                <div className="max-w-[900px] mx-auto relative z-10">
+                <div className="max-w-full mx-auto relative z-10">
                     {!interpretation ? (
-                        <div className="bg-gradient-to-br from-surface-dark/80 to-card-dark/60 backdrop-blur-sm rounded-2xl border border-border-dark p-6 md:p-8">
-                            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                                <span className="material-symbols-outlined text-primary">style</span>
-                                {ti.formTitle || 'Your Spread'}
-                            </h2>
+                        <div className="home-glass-card rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative p-6 md:p-10 before:absolute before:inset-0 before:bg-black/40 before:-z-10 backdrop-blur-md bg-gray-900/50">
+                            <div className="relative z-10">
+                                <div className="mb-16">
+                                    <h2 className="text-3xl font-bold text-yellow-500 mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        {ti.formTitle || 'Your Spread'}
+                                    </h2>
+                                    <p className="text-gray-300 text-sm leading-relaxed">
+                                        {isPortuguese
+                                            ? 'Selecione o tipo de tiragem, adicione as cartas que saíram e receba uma interpretação profunda e personalizada pela IA.'
+                                            : 'Select the spread type, add the cards that came up and receive a deep and personalized interpretation by AI.'}
+                                    </p>
+                                </div>
 
-                            {/* Spread Type Selector */}
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    {ti.spreadTypeLabel || 'Spread Type'}
-                                </label>
-                                <select
-                                    value={spreadType}
-                                    onChange={(e) => handleSpreadTypeChange(e.target.value)}
-                                    className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white focus:outline-none focus:border-primary transition-colors"
-                                >
-                                    <option value="">{ti.selectSpreadType || 'Select spread type...'}</option>
-                                    <option value="yes_no">{ti.spreadTypes?.yes_no || 'Yes or No (1 card)'}</option>
-                                    <option value="three_card">{ti.spreadTypes?.three_card || '3 cards (Past / Present / Future)'}</option>
-                                    <option value="five_card">{ti.spreadTypes?.five_card || '5 cards (Simple Cross)'}</option>
-                                    <option value="seven_card">{ti.spreadTypes?.seven_card || '7 cards'}</option>
-                                    <option value="celtic_cross">{ti.spreadTypes?.celtic_cross || 'Celtic Cross (10 cards)'}</option>
-                                    <option value="custom">{ti.spreadTypes?.custom || 'Other (custom)'}</option>
-                                </select>
-                            </div>
-
-                            {/* Card Selection */}
-                            {spreadType && (
-                                <div className="mb-6">
-                                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                                        {ti.cardsLabel || 'Spread Cards'}
+                                {/* Spread Type Selector */}
+                                <div className="mb-8">
+                                    <label className="block text-base font-semibold text-white mb-3">
+                                        {ti.spreadTypeLabel || 'Spread Type'}
                                     </label>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                                        {selectedCards.map((cardName, index) => {
-                                            const position = spreadConfigs[spreadType]?.positions?.[index] || `${ti.cardPosition || 'Card'} ${index + 1}`;
-                                            // Find card data to get imageUrl
-                                            const cardData = cardName ? TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName) : null;
-                                            return (
-                                                <div key={index} className="relative">
-                                                    <div
-                                                        onClick={() => openCardSearch(index)}
-                                                        className={`aspect-[2/3] rounded-xl overflow-hidden cursor-pointer transition-all ${cardName
-                                                            ? 'border-2 border-primary/50'
-                                                            : 'border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50'
-                                                            }`}
-                                                    >
-                                                        {cardName && cardData ? (
-                                                            <div className="relative w-full h-full">
-                                                                <img
-                                                                    src={cardData.imageUrl}
-                                                                    alt={cardName}
-                                                                    className="w-full h-full object-cover"
-                                                                    onError={(e) => {
-                                                                        e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
-                                                                    }}
-                                                                />
-                                                                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2">
-                                                                    <span className="text-white text-[10px] text-center font-medium leading-tight block">{cardName}</span>
-                                                                </div>
-                                                            </div>
-                                                        ) : cardName ? (
-                                                            <div className="w-full h-full flex flex-col items-center justify-center p-2 bg-primary/10">
-                                                                <span className="material-symbols-outlined text-primary text-2xl mb-1">style</span>
-                                                                <span className="text-white text-xs text-center font-medium leading-tight">{cardName}</span>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="w-full h-full flex flex-col items-center justify-center p-2">
-                                                                <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add</span>
-                                                                <span className="text-gray-500 text-xs text-center">{position}</span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    {cardName && (
-                                                        <button
-                                                            onClick={(e) => { e.stopPropagation(); removeCard(index); }}
-                                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors z-10"
-                                                        >
-                                                            <span className="material-symbols-outlined text-white text-sm">close</span>
-                                                        </button>
-                                                    )}
+                                    <select
+                                        value={spreadType}
+                                        onChange={(e) => handleSpreadTypeChange(e.target.value)}
+                                        className="w-full px-4 py-3 bg-surface-dark/90 border-2 border-border-dark/60 hover:border-primary/50 rounded-xl text-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all font-medium"
+                                    >
+                                        <option value="">{ti.selectSpreadType || 'Select spread type...'}</option>
+                                        <option value="yes_no">{ti.spreadTypes?.yes_no || 'Yes or No (1 card)'}</option>
+                                        <option value="three_card">{ti.spreadTypes?.three_card || '3 cards (Past / Present / Future)'}</option>
+                                        <option value="five_card">{ti.spreadTypes?.five_card || '5 cards (Simple Cross)'}</option>
+                                        <option value="seven_card">{ti.spreadTypes?.seven_card || '7 cards'}</option>
+                                        <option value="custom">{ti.spreadTypes?.custom || 'Other (custom)'}</option>
+                                    </select>
+                                </div>
+
+                                {/* Card Selection */}
+                                {spreadType && (
+                                    <div className="mb-8">
+                                        <label className="block text-base font-semibold text-white mb-4">
+                                            {ti.cardsLabel || 'Spread Cards'}
+                                        </label>
+
+                                        {/* Yes/No - 1 card centered */}
+                                        {spreadType === 'yes_no' && (
+                                            <div className="flex justify-center">
+                                                <div className="w-28">
+                                                    {renderCard(0, spreadConfigs[spreadType].positions[0])}
                                                 </div>
-                                            );
-                                        })}
-                                        {spreadType === 'custom' && selectedCards.length < 15 && (
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedCards([...selectedCards, '']);
-                                                    openCardSearch(selectedCards.length);
-                                                }}
-                                                className="aspect-[2/3] rounded-xl border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer transition-all"
-                                            >
-                                                <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add_circle</span>
-                                                <span className="text-gray-500 text-xs">{ti.addCard || 'Add Card'}</span>
-                                            </button>
+                                            </div>
+                                        )}
+
+                                        {/* Three Card - Past | Present | Future in line */}
+                                        {spreadType === 'three_card' && (
+                                            <div className="flex justify-center gap-6">
+                                                <div className="w-28">{renderCard(0, spreadConfigs[spreadType].positions[0])}</div>
+                                                <div className="w-28">{renderCard(1, spreadConfigs[spreadType].positions[1])}</div>
+                                                <div className="w-28">{renderCard(2, spreadConfigs[spreadType].positions[2])}</div>
+                                            </div>
+                                        )}
+
+                                        {/* Five Card - Simple Cross Layout */}
+                                        {/* Layout:     [Coroa/4]
+                                                   [Passado/2] [Centro/0] [Futuro/3]
+                                                        [Base/1]           */}
+                                        {spreadType === 'five_card' && (
+                                            <div className="flex flex-col items-center gap-4">
+                                                <div className="w-28">{renderCard(4, spreadConfigs[spreadType].positions[4])}</div>
+                                                <div className="flex justify-center gap-6">
+                                                    <div className="w-28">{renderCard(2, spreadConfigs[spreadType].positions[2])}</div>
+                                                    <div className="w-28">{renderCard(0, spreadConfigs[spreadType].positions[0])}</div>
+                                                    <div className="w-28">{renderCard(3, spreadConfigs[spreadType].positions[3])}</div>
+                                                </div>
+                                                <div className="w-28">{renderCard(1, spreadConfigs[spreadType].positions[1])}</div>
+                                            </div>
+                                        )}
+
+                                        {/* Seven Card - Horseshoe/Arc Layout */}
+                                        {spreadType === 'seven_card' && (
+                                            <div className="flex flex-col items-center gap-4">
+                                                <div className="flex justify-center gap-4">
+                                                    <div className="w-24">{renderCard(0, spreadConfigs[spreadType].positions[0])}</div>
+                                                    <div className="w-24">{renderCard(1, spreadConfigs[spreadType].positions[1])}</div>
+                                                    <div className="w-24">{renderCard(2, spreadConfigs[spreadType].positions[2])}</div>
+                                                    <div className="w-24">{renderCard(3, spreadConfigs[spreadType].positions[3])}</div>
+                                                </div>
+                                                <div className="flex justify-center gap-4">
+                                                    <div className="w-24">{renderCard(4, spreadConfigs[spreadType].positions[4])}</div>
+                                                    <div className="w-24">{renderCard(5, spreadConfigs[spreadType].positions[5])}</div>
+                                                    <div className="w-24">{renderCard(6, spreadConfigs[spreadType].positions[6])}</div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Celtic Cross - Custom Layout for our site */}
+                                        {spreadType === 'celtic_cross' && (
+                                            <div className="w-full max-w-4xl mx-auto">
+                                                {/* Two sections side by side */}
+                                                <div className="flex flex-col lg:flex-row justify-center items-start gap-8 lg:gap-16">
+
+                                                    {/* Section 1: The Cross (cards 0-5) */}
+                                                    <div className="flex-shrink-0">
+                                                        <h4 className="text-sm text-gray-400 text-center mb-4 font-medium">{isPortuguese ? 'A Cruz' : 'The Cross'}</h4>
+                                                        <div className="grid grid-cols-3 gap-3 justify-items-center" style={{ gridTemplateRows: 'auto auto auto' }}>
+                                                            {/* Row 1: Crown (4) in center */}
+                                                            <div className="col-start-2 w-20">{renderCard(4, spreadConfigs[spreadType].positions[4])}</div>
+
+                                                            {/* Row 2: Past (3) - Center (0) - Future (5) */}
+                                                            <div className="w-20">{renderCard(3, spreadConfigs[spreadType].positions[3])}</div>
+                                                            <div className="w-20">{renderCard(0, spreadConfigs[spreadType].positions[0])}</div>
+                                                            <div className="w-20">{renderCard(5, spreadConfigs[spreadType].positions[5])}</div>
+
+                                                            {/* Row 3: Crossing (1) in center */}
+                                                            <div className="col-start-2 w-20">{renderCard(1, spreadConfigs[spreadType].positions[1])}</div>
+
+                                                            {/* Row 4: Foundation (2) in center */}
+                                                            <div className="col-start-2 w-20">{renderCard(2, spreadConfigs[spreadType].positions[2])}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Section 2: The Staff/Pillar (cards 6-9) */}
+                                                    <div className="flex-shrink-0">
+                                                        <h4 className="text-sm text-gray-400 text-center mb-4 font-medium">{isPortuguese ? 'O Pilar' : 'The Staff'}</h4>
+                                                        <div className="grid grid-cols-2 gap-3">
+                                                            {/* Top row: Self (6) - Environment (7) */}
+                                                            <div className="w-20">{renderCard(6, spreadConfigs[spreadType].positions[6])}</div>
+                                                            <div className="w-20">{renderCard(7, spreadConfigs[spreadType].positions[7])}</div>
+
+                                                            {/* Bottom row: Hopes (8) - Outcome (9) */}
+                                                            <div className="w-20">{renderCard(8, spreadConfigs[spreadType].positions[8])}</div>
+                                                            <div className="w-20">{renderCard(9, spreadConfigs[spreadType].positions[9])}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Custom - Flexible grid */}
+                                        {spreadType === 'custom' && (
+                                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                                                {selectedCards.map((cardName, index) => {
+                                                    const position = `${ti.cardPosition || 'Card'} ${index + 1}`;
+                                                    return <div key={index} className="w-full">{renderCard(index, position)}</div>;
+                                                })}
+                                                {selectedCards.length < 15 && (
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedCards([...selectedCards, '']);
+                                                            openCardSearch(selectedCards.length);
+                                                        }}
+                                                        className="aspect-[2/3] rounded-xl border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer transition-all"
+                                                    >
+                                                        <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add_circle</span>
+                                                        <span className="text-gray-500 text-xs">{ti.addCard || 'Add Card'}</span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {spreadType !== 'custom' && spreadType !== 'yes_no' && spreadType !== 'three_card' && spreadType !== 'five_card' && spreadType !== 'seven_card' && spreadType !== 'celtic_cross' && (
+                                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                                                {selectedCards.map((cardName, index) => {
+                                                    const position = spreadConfigs[spreadType]?.positions?.[index] || `${ti.cardPosition || 'Card'} ${index + 1}`;
+                                                    return renderCard(index, position);
+                                                })}
+                                            </div>
                                         )}
                                     </div>
-                                </div>
-                            )}
-
-                            {/* Question Input */}
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    {ti.questionLabel || 'Question asked to the Tarot'}
-                                </label>
-                                <textarea
-                                    value={question}
-                                    onChange={(e) => setQuestion(e.target.value)}
-                                    placeholder={ti.questionPlaceholder || 'What question did you ask during the spread?'}
-                                    rows={3}
-                                    className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors resize-none"
-                                />
-                                <p className="text-gray-500 text-xs mt-1">
-                                    {ti.questionHint || 'The question helps contextualize the interpretation'}
-                                </p>
-                            </div>
-
-                            {/* Error Message */}
-                            {error && (
-                                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
-                                    <span className="material-symbols-outlined text-red-400">error</span>
-                                    <span className="text-red-400">{error}</span>
-                                </div>
-                            )}
-
-                            {/* Submit Button */}
-                            <button
-                                onClick={handleSubmit}
-                                disabled={isLoading || !spreadType || selectedCards.filter(c => c).length === 0}
-                                className="w-full py-4 bg-gradient-to-r from-primary to-purple-600 hover:from-primary-hover hover:to-purple-700 text-white font-bold rounded-xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <span className="material-symbols-outlined animate-spin">progress_activity</span>
-                                        {ti.interpreting || 'Interpreting...'}
-                                    </>
-                                ) : (
-                                    <>
-                                        <span className="material-symbols-outlined">auto_awesome</span>
-                                        {ti.submitButton || 'Interpret My Spread'}
-                                    </>
                                 )}
-                            </button>
 
-                            {tier !== 'premium' && (
-                                <p className="text-center text-amber-400/70 text-sm mt-4 flex items-center justify-center gap-2">
-                                    <span className="material-symbols-outlined text-sm">workspace_premium</span>
-                                    {ti.premiumFeature || 'Premium Feature'}
-                                </p>
-                            )}
+                                {/* Question Input */}
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        {ti.questionLabel || 'Question asked to the Tarot'}
+                                    </label>
+                                    <textarea
+                                        value={question}
+                                        onChange={(e) => setQuestion(e.target.value)}
+                                        placeholder={ti.questionPlaceholder || 'What question did you ask during the spread?'}
+                                        rows={3}
+                                        className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors resize-none"
+                                    />
+                                    <p className="text-gray-500 text-xs mt-1">
+                                        {ti.questionHint || 'The question helps contextualize the interpretation'}
+                                    </p>
+                                </div>
+
+                                {/* Error Message */}
+                                {error && (
+                                    <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
+                                        <span className="material-symbols-outlined text-red-400">error</span>
+                                        <span className="text-red-400">{error}</span>
+                                    </div>
+                                )}
+
+                                {/* Submit Button */}
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={isLoading || !spreadType || selectedCards.filter(c => c).length === 0}
+                                    className="w-full py-4 bg-gradient-to-r from-primary to-purple-600 hover:from-primary-hover hover:to-purple-700 text-white font-bold rounded-xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                                            {ti.interpreting || 'Interpreting...'}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="material-symbols-outlined">auto_awesome</span>
+                                            {ti.submitButton || 'Interpret My Spread'}
+                                        </>
+                                    )}
+                                </button>
+
+                                {tier !== 'premium' && (
+                                    <p className="text-center text-amber-400/70 text-sm mt-4 flex items-center justify-center gap-2">
+                                        <span className="material-symbols-outlined text-sm">workspace_premium</span>
+                                        {ti.premiumFeature || 'Premium Feature'}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -5210,93 +5440,95 @@ const Interpretacao = () => {
                         </div>
                     )}
                 </div>
-            </section>
+            </section >
 
             {/* Card Search Modal */}
-            {showCardSearch && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <div className="w-full max-w-4xl max-h-[85vh] bg-card-dark rounded-2xl border border-border-dark overflow-hidden flex flex-col">
-                        <div className="p-4 border-b border-border-dark">
-                            <div className="flex items-center gap-3">
-                                <span className="material-symbols-outlined text-gray-400">search</span>
-                                <input
-                                    ref={searchInputRef}
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder={ti.cardsPlaceholder || 'Search card...'}
-                                    className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none"
-                                />
-                                <button
-                                    onClick={() => { setShowCardSearch(false); setActiveCardIndex(null); }}
-                                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                                >
-                                    <span className="material-symbols-outlined text-gray-400">close</span>
-                                </button>
+            {
+                showCardSearch && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                        <div className="w-full max-w-4xl max-h-[85vh] bg-card-dark rounded-2xl border border-border-dark overflow-hidden flex flex-col">
+                            <div className="p-4 border-b border-border-dark">
+                                <div className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-gray-400">search</span>
+                                    <input
+                                        ref={searchInputRef}
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder={ti.cardsPlaceholder || 'Search card...'}
+                                        className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none"
+                                    />
+                                    <button
+                                        onClick={() => { setShowCardSearch(false); setActiveCardIndex(null); }}
+                                        className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-gray-400">close</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto p-4">
+                                {groupedCards.length > 0 ? (
+                                    groupedCards.map((group, groupIndex) => (
+                                        <div key={groupIndex} className="mb-8 last:mb-0">
+                                            <h4 className="text-sm font-medium text-primary mb-4 sticky top-0 bg-card-dark py-2 z-10">
+                                                {group.title}
+                                            </h4>
+                                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                                                {group.cards.map((card) => {
+                                                    const cardName = isPortuguese ? card.name_pt : card.name;
+                                                    const isSelected = selectedCards.includes(cardName);
+                                                    return (
+                                                        <button
+                                                            key={card.id}
+                                                            onClick={() => !isSelected && handleCardSelect(card)}
+                                                            disabled={isSelected}
+                                                            className={`group flex flex-col items-center rounded-xl p-2 transition-all ${isSelected
+                                                                ? 'opacity-40 cursor-not-allowed'
+                                                                : 'hover:bg-primary/10 hover:scale-105'
+                                                                }`}
+                                                        >
+                                                            <div className={`relative w-full aspect-[2/3] rounded-lg overflow-hidden border-2 transition-all ${isSelected
+                                                                ? 'border-gray-600'
+                                                                : 'border-border-dark group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(147,17,212,0.3)]'
+                                                                }`}>
+                                                                <img
+                                                                    src={card.imageUrl}
+                                                                    alt={cardName}
+                                                                    className="w-full h-full object-cover"
+                                                                    onError={(e) => {
+                                                                        e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
+                                                                    }}
+                                                                />
+                                                                {isSelected && (
+                                                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                                                        <span className="material-symbols-outlined text-white text-2xl">check_circle</span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <span className={`mt-2 text-xs text-center font-medium leading-tight ${isSelected ? 'text-gray-500' : 'text-white'}`}>
+                                                                {cardName}
+                                                            </span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-8">
+                                        <span className="material-symbols-outlined text-gray-500 text-4xl mb-2">search_off</span>
+                                        <p className="text-gray-500">{ti.noCardsFound || 'No cards found'}</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
-
-                        <div className="flex-1 overflow-y-auto p-4">
-                            {groupedCards.length > 0 ? (
-                                groupedCards.map((group, groupIndex) => (
-                                    <div key={groupIndex} className="mb-8 last:mb-0">
-                                        <h4 className="text-sm font-medium text-primary mb-4 sticky top-0 bg-card-dark py-2 z-10">
-                                            {group.title}
-                                        </h4>
-                                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
-                                            {group.cards.map((card) => {
-                                                const cardName = isPortuguese ? card.name_pt : card.name;
-                                                const isSelected = selectedCards.includes(cardName);
-                                                return (
-                                                    <button
-                                                        key={card.id}
-                                                        onClick={() => !isSelected && handleCardSelect(card)}
-                                                        disabled={isSelected}
-                                                        className={`group flex flex-col items-center rounded-xl p-2 transition-all ${isSelected
-                                                            ? 'opacity-40 cursor-not-allowed'
-                                                            : 'hover:bg-primary/10 hover:scale-105'
-                                                            }`}
-                                                    >
-                                                        <div className={`relative w-full aspect-[2/3] rounded-lg overflow-hidden border-2 transition-all ${isSelected
-                                                            ? 'border-gray-600'
-                                                            : 'border-border-dark group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(147,17,212,0.3)]'
-                                                            }`}>
-                                                            <img
-                                                                src={card.imageUrl}
-                                                                alt={cardName}
-                                                                className="w-full h-full object-cover"
-                                                                onError={(e) => {
-                                                                    e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
-                                                                }}
-                                                            />
-                                                            {isSelected && (
-                                                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                                                                    <span className="material-symbols-outlined text-white text-2xl">check_circle</span>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <span className={`mt-2 text-xs text-center font-medium leading-tight ${isSelected ? 'text-gray-500' : 'text-white'}`}>
-                                                            {cardName}
-                                                        </span>
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-8">
-                                    <span className="material-symbols-outlined text-gray-500 text-4xl mb-2">search_off</span>
-                                    <p className="text-gray-500">{ti.noCardsFound || 'No cards found'}</p>
-                                </div>
-                            )}
-                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             <Footer />
-        </div>
+        </div >
     );
 };
 
@@ -5338,6 +5570,8 @@ const App = () => {
                             <Route path="/daily-card" element={<DailyCard />} />
                             <Route path="/charts-demo" element={<SideBySideExample />} />
                             <Route path="/checkout" element={<Checkout />} />
+                            <Route path="/settings" element={<Settings />} />
+                            <Route path="/configuracoes" element={<Settings />} />
                         </Routes>
                     </Router>
                 </CartProvider>
