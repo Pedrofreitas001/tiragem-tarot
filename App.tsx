@@ -280,7 +280,7 @@ const Home = () => {
     const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
-    const { user, incrementReadingCount, tier } = useAuth();
+    const { user, incrementReadingCount, tier, isGuest } = useAuth();
     const { isPortuguese: langIsPortuguese } = useLanguage();
     const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium'>('premium');
     const [whatsappSubscribed, setWhatsappSubscribed] = useState(false);
@@ -460,7 +460,7 @@ const Home = () => {
                         </div>
 
                         {/* Right Column - Arcane Symbol (Mobile: appears first) */}
-                        <div className="flex items-center justify-end order-1 lg:order-2 pr-0 lg:pr-12">
+                        <div className="flex items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-12">
                             <div className="relative w-[300px] h-[300px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
                                 {/* Outer Ring */}
                                 <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -792,9 +792,31 @@ const Home = () => {
                                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                     </span>
                                 </button>
-                                {tier === 'free' && (
+                                {isGuest && (
+                                    <button
+                                        onClick={() => { setAuthModalMode('register'); setShowAuthModal(true); }}
+                                        className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
+                                    >
+                                        <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
+                                            {isPortuguese ? 'Criar Conta' : 'Create Account'}
+                                            <span className="material-symbols-outlined text-sm">person_add</span>
+                                        </span>
+                                    </button>
+                                )}
+                                {!isGuest && tier === 'free' && (
                                     <button
                                         onClick={() => navigate('/checkout')}
+                                        className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
+                                    >
+                                        <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
+                                            {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                            <span className="material-symbols-outlined text-sm">star</span>
+                                        </span>
+                                    </button>
+                                )}
+                                {!isGuest && tier !== 'free' && (
+                                    <button
+                                        onClick={() => { navigate('/'); window.scrollTo(0, 0); }}
                                         className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
                                     >
                                         <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
