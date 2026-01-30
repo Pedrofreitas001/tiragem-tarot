@@ -15,6 +15,7 @@ import { UserMenu } from './components/UserMenu';
 import { PaywallModal, usePaywall } from './components/PaywallModal';
 import WhatsAppModal from './components/WhatsAppModal';
 import { JourneySection } from './components/journey';
+import HeroJourneyStories from './components/journey/HeroJourneyStories';
 import { DailyCard } from './components/DailyCard';
 import { HistoryFiltered } from './components/HistoryFiltered';
 import { SideBySideExample } from './components/Charts/SideBySideExample';
@@ -279,6 +280,7 @@ const Home = () => {
     const [showPaywallForm, setShowPaywallForm] = useState(false);
     const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showJourneyStories, setShowJourneyStories] = useState(false);
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const { user, incrementReadingCount, tier, isGuest } = useAuth();
     const { isPortuguese: langIsPortuguese } = useLanguage();
@@ -635,7 +637,7 @@ const Home = () => {
             </section>
 
             {/* Features Presentation Section */}
-            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark overflow-hidden">
+            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/5 to-background-dark overflow-hidden">
                 {/* Decorative Stars */}
                 <div className="absolute inset-0 pointer-events-none">
                     {/* Around Image - Top */}
@@ -832,7 +834,7 @@ const Home = () => {
             </section>
 
             {/* WhatsApp Daily Card Subscription Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark pb-32 md:pb-48 lg:pb-64">
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/5 to-background-dark pb-32 md:pb-48 lg:pb-64">
                 <style>{`
                     .home-glass-card {
                         background: rgba(255, 255, 255, 0.04);
@@ -871,9 +873,9 @@ const Home = () => {
 
                     {/* Form Card + Feature Circles */}
                     <div className="flex flex-col lg:flex-row items-start gap-6 md:gap-8 lg:gap-10 relative">
-                        {/* Cosmic Flame Background */}
-                        <div className="absolute -left-40 -top-48 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
-                        <div className="absolute -left-32 -top-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
+                        {/* Cosmic Flame Background - menos intenso e mais baixo */}
+                        <div className="absolute -left-40 -top-36 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -left-32 -top-28 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
 
                         {/* Form Card - Left Side */}
                         <div className="home-glass-card w-full lg:flex-1 rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
@@ -1225,9 +1227,18 @@ const Home = () => {
                 </div>
             </section>
 
+
             {/* Journey Section - A Jornada do Herói */}
-            <div>
-                <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} onOpenAuthModal={() => setShowAuthModal(true)} />
+            <div className="relative">
+                <JourneySection
+                    onStartReading={() => handleSelectSpread(SPREADS[0])}
+                    onOpenAuthModal={() => setShowAuthModal(true)}
+                    showJourneyButton={!showJourneyStories}
+                    onToggleJourney={() => setShowJourneyStories(true)}
+                />
+
+                {/* Sessão interativa de histórias da jornada */}
+                {showJourneyStories && <HeroJourneyStories />}
             </div>
 
             {/* Cosmic Mandala Animation Section - HIDDEN (kept for future use) */}

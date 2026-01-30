@@ -10,9 +10,12 @@ import { TAROT_CARDS } from '../../tarotData';
  * Com suporte a diferentes níveis de acesso: guest, registered, subscriber
  */
 
-interface JourneySectionProps { }
+interface JourneySectionProps {
+  showJourneyButton?: boolean;
+  onToggleJourney?: () => void;
+}
 
-const JourneySection: React.FC<JourneySectionProps> = () => {
+const JourneySection: React.FC<JourneySectionProps> = ({ showJourneyButton = false, onToggleJourney }) => {
   // Animation: reveal bullets on scroll
   const bulletRefs = useRef<(HTMLLIElement | null)[]>([]);
   useEffect(() => {
@@ -62,6 +65,9 @@ const JourneySection: React.FC<JourneySectionProps> = () => {
             <span style={{ position: 'absolute', top: '15%', left: '50%', width: 2, height: 2, background: '#fff', borderRadius: '50%', opacity: 0.6, boxShadow: '0 0 3px #fff' }} />
           </div>
         </div>
+        <p className="text-gray-300 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-medium text-center mb-8">
+          O Tarot é um mapa simbólico da experiência humana. Cada Arcano Maior representa uma etapa da jornada que todos atravessamos — do início ao despertar, da crise à realização.
+        </p>
         <div className="relative w-full max-w-5xl h-[320px] md:h-[420px] flex items-end justify-center select-none" style={{ pointerEvents: 'none' }}>
           {arcanaList.map((card, idx) => {
             const total = arcanaList.length;
@@ -88,6 +94,22 @@ const JourneySection: React.FC<JourneySectionProps> = () => {
             );
           })}
         </div>
+
+        {/* Botão Ver História Completa */}
+        {showJourneyButton && onToggleJourney && (
+          <div className="relative z-10 flex justify-center mt-2">
+            <button
+              onClick={onToggleJourney}
+              className="group relative px-4 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition-all duration-300 border border-gray-700/50 hover:border-purple-500/50 bg-black/20 hover:bg-purple-900/20 backdrop-blur-sm"
+              style={{ fontFamily: 'Inter, sans-serif' }}
+            >
+              <span className="relative flex items-center gap-2">
+                {isPortuguese ? 'Ver história completa' : 'See full story'}
+                <span className="material-symbols-outlined text-sm opacity-70 group-hover:opacity-100">expand_more</span>
+              </span>
+            </button>
+          </div>
+        )}
 
       </div>
     </section>
