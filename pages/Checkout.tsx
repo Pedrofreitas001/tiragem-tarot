@@ -97,7 +97,8 @@ export const Checkout: React.FC = () => {
             const { error: signUpError } = await signUp(
                 formData.email,
                 formData.password,
-                formData.fullName
+                formData.fullName,
+                'premium' // Tier premium após pagamento
             );
 
             if (signUpError) {

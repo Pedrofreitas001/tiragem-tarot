@@ -35,7 +35,7 @@ const findCardImageByName = (cardName: string): string => {
         const nameParts = card.name_pt.toLowerCase().split(' ');
         const inputParts = normalizedName.split(' ');
         return nameParts.some(part => inputParts.includes(part) && part.length > 2) ||
-               inputParts.some(part => nameParts.includes(part) && part.length > 2);
+            inputParts.some(part => nameParts.includes(part) && part.length > 2);
     });
 
     return keywordMatch?.imageUrl || '';
@@ -207,7 +207,7 @@ export const saveReadingToSupabase = async (
             return false;
         }
 
-                return true;
+        return true;
     } catch (err) {
         // Exception saving reading
         return false;
@@ -283,9 +283,9 @@ const getSpreadDisplayInfo = (spreadType: string, isPortuguese: boolean = true) 
             color: 'text-green-400 bg-green-500/10',
             positions: isPortuguese
                 ? ['O Significador', 'O Cruzamento', 'A Base', 'Passado Recente', 'A Coroa',
-                   'Futuro Próximo', 'O Eu', 'O Ambiente', 'Esperanças e Medos', 'O Resultado']
+                    'Futuro Próximo', 'O Eu', 'O Ambiente', 'Esperanças e Medos', 'O Resultado']
                 : ['The Significator', 'The Crossing', 'The Foundation', 'The Recent Past', 'The Crown',
-                   'The Near Future', 'The Self', 'The Environment', 'Hopes & Fears', 'The Outcome']
+                    'The Near Future', 'The Self', 'The Environment', 'Hopes & Fears', 'The Outcome']
         },
         // Physical reading types
         'physical_yes_no': {
@@ -380,7 +380,8 @@ export const transformSupabaseReading = (reading: any, isPortuguese: boolean = t
         positions: spreadInfo.positions.slice(0, cards.length),
         notes: reading.synthesis || reading.notes || '',
         comment: reading.notes || '',
-        rating: reading.rating || 0
+        rating: reading.rating || 0,
+        viewed_at: reading.viewed_at || null
     };
 };
 
@@ -437,7 +438,7 @@ export const updateReadingInSupabase = async (
             return false;
         }
 
-                return true;
+        return true;
     } catch (err) {
         // Exception updating reading
         return false;
@@ -464,7 +465,7 @@ export const deleteReadingFromSupabase = async (readingId: string | number): Pro
             return false;
         }
 
-                return true;
+        return true;
     } catch (err) {
         // Exception deleting reading
         return false;

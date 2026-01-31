@@ -51,7 +51,7 @@ const Header = () => {
                             </button>
                         </nav>
 
-                        <div className="flex items-center gap-1 sm:gap-2">
+                        <div className="flex items-center gap-4 sm:gap-6">
                             <LanguageToggle />
 
                             <UserMenu onLoginClick={() => setShowAuthModal(true)} />
@@ -526,7 +526,7 @@ export const DailyCard = () => {
 
             {/* Energias do Dia - Clean & Professional */}
             <section className="relative py-20 md:py-28 px-4 md:px-8 bg-[#0d0812] border-y border-white/5">
-                <div className="max-w-6xl mx-auto">
+                <div className="max-w-6xl mx-auto pb-32 md:pb-48 lg:pb-64">
                     {/* Section Title */}
                     <div className="text-center mb-12 md:mb-16">
                         <h2 className="text-white text-3xl md:text-4xl font-light mb-3" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.02em' }}>

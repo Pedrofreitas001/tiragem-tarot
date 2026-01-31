@@ -126,6 +126,38 @@ export interface Database {
           created_at?: string
         }
       }
+      whatsapp_subscriptions: {
+        Row: {
+          id: string
+          user_id: string
+          phone_number: string
+          country_code: string
+          is_active: boolean
+          last_sent_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          phone_number: string
+          country_code?: string
+          is_active?: boolean
+          last_sent_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          phone_number?: string
+          country_code?: string
+          is_active?: boolean
+          last_sent_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -153,6 +185,10 @@ export type ReadingUpdate = Database['public']['Tables']['readings']['Update']
 export type Subscription = Database['public']['Tables']['subscriptions']['Row']
 export type SubscriptionInsert = Database['public']['Tables']['subscriptions']['Insert']
 export type SubscriptionUpdate = Database['public']['Tables']['subscriptions']['Update']
+
+export type WhatsappSubscription = Database['public']['Tables']['whatsapp_subscriptions']['Row']
+export type WhatsappSubscriptionInsert = Database['public']['Tables']['whatsapp_subscriptions']['Insert']
+export type WhatsappSubscriptionUpdate = Database['public']['Tables']['whatsapp_subscriptions']['Update']
 
 export type SubscriptionTier = 'free' | 'premium'
 export type SubscriptionStatus = 'active' | 'cancelled' | 'expired' | 'pending'

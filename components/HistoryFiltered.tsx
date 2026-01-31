@@ -244,18 +244,19 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
             }
         });
 
-        // Sort by date and return last 7 days
+        // Sort by date and return last 7 days (most recent on the right)
         return Object.entries(dayMap)
             .sort(([dateA], [dateB]) => {
                 try {
                     const a = new Date(dateA.replace(/(\d{2})\/(\d{2})/, '$2/$1'));
                     const b = new Date(dateB.replace(/(\d{2})\/(\d{2})/, '$2/$1'));
-                    return a.getTime() - b.getTime();
+                    return b.getTime() - a.getTime(); // Reversed: newest first
                 } catch {
                     return 0;
                 }
             })
-            .slice(-7)
+            .slice(0, 7) // Take first 7 (most recent)
+            .reverse() // Reverse to show oldest on left, newest on right
             .map(([day, types]) => ({
                 day,
                 total: Object.values(types).reduce((a, b) => a + b, 0),

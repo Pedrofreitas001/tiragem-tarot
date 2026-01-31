@@ -13,7 +13,9 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AuthModal } from './components/AuthModal';
 import { UserMenu } from './components/UserMenu';
 import { PaywallModal, usePaywall } from './components/PaywallModal';
+import WhatsAppModal from './components/WhatsAppModal';
 import { JourneySection } from './components/journey';
+import HeroJourneyStories from './components/journey/HeroJourneyStories';
 import { DailyCard } from './components/DailyCard';
 import { HistoryFiltered } from './components/HistoryFiltered';
 import { SideBySideExample } from './components/Charts/SideBySideExample';
@@ -21,6 +23,7 @@ import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import Spreads from './pages/Spreads';
 import Checkout from './pages/Checkout';
+import Settings from './pages/Settings';
 import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
@@ -181,7 +184,7 @@ const Header = () => {
                             </button>
                         </nav>
 
-                        <div className="flex items-center gap-1 sm:gap-2">
+                        <div className="flex items-center gap-4 sm:gap-6">
                             <LanguageToggle />
 
                             <UserMenu onLoginClick={() => setShowAuthModal(true)} />
@@ -275,11 +278,41 @@ const Home = () => {
     const { checkAccess, readingsRemaining } = usePaywall();
     const [showPaywall, setShowPaywall] = useState(false);
     const [showPaywallForm, setShowPaywallForm] = useState(false);
+    const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showJourneyStories, setShowJourneyStories] = useState(false);
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
-    const { user, incrementReadingCount } = useAuth();
+    const { user, incrementReadingCount, tier, isGuest } = useAuth();
     const { isPortuguese: langIsPortuguese } = useLanguage();
     const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium'>('premium');
+    const [whatsappSubscribed, setWhatsappSubscribed] = useState(false);
+
+    // Carregar status da inscrição do WhatsApp
+    useEffect(() => {
+        const loadWhatsAppStatus = async () => {
+            if (!user) {
+                setWhatsappSubscribed(false);
+                return;
+            }
+
+            try {
+                const { supabase } = await import('./lib/supabase');
+                if (!supabase) return;
+
+                const { data } = await (supabase as any)
+                    .from('whatsapp_subscriptions')
+                    .select('is_active')
+                    .eq('user_id', user.id)
+                    .single();
+
+                setWhatsappSubscribed(data?.is_active || false);
+            } catch (err) {
+                console.error('Error loading WhatsApp status:', err);
+            }
+        };
+
+        loadWhatsAppStatus();
+    }, [user]);
 
     // Carta do dia coletiva - mesma para todos no dia
     const getDailyCard = () => {
@@ -395,7 +428,7 @@ const Home = () => {
 
                         {/* Left Column - Content (Mobile: appears after orbit) */}
                         <div className="space-y-8 lg:pr-8 order-2 lg:order-1 text-center lg:text-left">
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
                             </h1>
 
@@ -405,20 +438,20 @@ const Home = () => {
                                     : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
                             </p>
 
-                            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                            <div className="flex md:flex-row gap-4 pt-4 justify-center lg:justify-start items-center lg:items-start">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="group relative px-6 py-3 bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-sm"
+                                    className="group relative px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
                                     <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2">
-                                        {isPortuguese ? 'Iniciar Abertura' : 'Begin Opening'}
+                                        {isPortuguese ? 'Abrir Tarot' : 'Open Tarot'}
                                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                     </span>
                                 </button>
                                 <button
                                     onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
-                                    className="group px-6 py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-sm"
+                                    className="group px-6 py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-xs"
                                 >
                                     <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400">
                                         {isPortuguese ? 'Explorar o Arquivo Arcano' : 'Explore the Arcane Archive'}
@@ -429,8 +462,8 @@ const Home = () => {
                         </div>
 
                         {/* Right Column - Arcane Symbol (Mobile: appears first) */}
-                        <div className="flex items-center justify-center lg:justify-end order-1 lg:order-2">
-                            <div className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
+                        <div className="flex items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-12">
+                            <div className="relative w-[300px] h-[300px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
                                 {/* Outer Ring */}
                                 <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.45)" strokeWidth="1" fill="none" />
@@ -476,8 +509,10 @@ const Home = () => {
             </section>
 
             {/* Interactive Stats Banner */}
-            <section className="py-3 md:py-4 px-4 md:px-6 relative overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
+            <section className="mt-24 md:mt-32 py-3 md:py-4 px-4 md:px-6 relative overflow-hidden">
                 <div className="absolute inset-0 border-y border-transparent"></div>
+                {/* Glassmorphism background */}
+                <div className="absolute inset-0 z-0 bg-white/10 backdrop-blur-sm border border-white/10" style={{ boxShadow: '0 1px 4px 0 rgba(0,0,0,0.01)' }}></div>
                 <div className="max-w-[1200px] mx-auto relative z-10">
                     <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 md:gap-8">
                         <div className="text-center group">
@@ -602,7 +637,7 @@ const Home = () => {
             </section>
 
             {/* Features Presentation Section */}
-            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark overflow-hidden">
+            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/5 to-background-dark overflow-hidden">
                 {/* Decorative Stars */}
                 <div className="absolute inset-0 pointer-events-none">
                     {/* Around Image - Top */}
@@ -641,7 +676,7 @@ const Home = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-16 items-start">
 
                         {/* LEFT COLUMN - Banner Image */}
-                        <div className="flex justify-center items-center order-1 lg:order-1 min-h-[450px] lg:min-h-[520px] mt-4 lg:mt-16 -translate-y-4 md:-translate-y-6 lg:-translate-y-10 relative overflow-visible">
+                        <div className="flex justify-center items-center order-1 lg:order-1 min-h-[450px] lg:min-h-[520px] mt-6 md:mt-8 lg:mt-16 -translate-y-4 md:-translate-y-6 lg:-translate-y-10 relative overflow-visible mb-10 md:mb-16 lg:mb-0">
                             {/* Cosmic Flame Background - Golden */}
                             <div className="absolute inset-0 flex justify-center items-center pointer-events-none -inset-20">
                                 <div className="absolute w-[300px] lg:w-[480px] h-[300px] lg:h-[480px] bg-gradient-to-r from-yellow-600/30 via-amber-500/25 to-yellow-400/15 rounded-full blur-3xl" style={{ marginTop: '80px' }}></div>
@@ -659,7 +694,7 @@ const Home = () => {
                         </div>
 
                         {/* RIGHT COLUMN - Content */}
-                        <div className="flex flex-col space-y-8 order-2 lg:order-2 mt-4 lg:mt-16 -translate-y-24 md:-translate-y-4 lg:translate-y-0">
+                        <div className="flex flex-col space-y-8 order-2 lg:order-2 mt-16 md:mt-8 lg:mt-16 -translate-y-24 md:-translate-y-4 lg:translate-y-0">
                             {/* Features Grid - 2 columns */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
@@ -759,15 +794,39 @@ const Home = () => {
                                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                     </span>
                                 </button>
-                                <button
-                                    onClick={() => navigate('/checkout')}
-                                    className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
-                                >
-                                    <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
-                                        {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
-                                        <span className="material-symbols-outlined text-sm">star</span>
-                                    </span>
-                                </button>
+                                {isGuest && (
+                                    <button
+                                        onClick={() => { setAuthModalMode('register'); setShowAuthModal(true); }}
+                                        className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
+                                    >
+                                        <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
+                                            {isPortuguese ? 'Criar Conta' : 'Create Account'}
+                                            <span className="material-symbols-outlined text-sm">person_add</span>
+                                        </span>
+                                    </button>
+                                )}
+                                {!isGuest && tier === 'free' && (
+                                    <button
+                                        onClick={() => navigate('/checkout')}
+                                        className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
+                                    >
+                                        <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
+                                            {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                            <span className="material-symbols-outlined text-sm">star</span>
+                                        </span>
+                                    </button>
+                                )}
+                                {!isGuest && tier !== 'free' && (
+                                    <button
+                                        onClick={() => { navigate('/'); window.scrollTo(0, 0); }}
+                                        className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
+                                    >
+                                        <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
+                                            {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                            <span className="material-symbols-outlined text-sm">star</span>
+                                        </span>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -775,7 +834,7 @@ const Home = () => {
             </section>
 
             {/* WhatsApp Daily Card Subscription Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/5 to-background-dark pb-32 md:pb-48 lg:pb-64">
                 <style>{`
                     .home-glass-card {
                         background: rgba(255, 255, 255, 0.04);
@@ -814,9 +873,9 @@ const Home = () => {
 
                     {/* Form Card + Feature Circles */}
                     <div className="flex flex-col lg:flex-row items-start gap-6 md:gap-8 lg:gap-10 relative">
-                        {/* Cosmic Flame Background */}
-                        <div className="absolute -left-40 -top-48 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
-                        <div className="absolute -left-32 -top-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
+                        {/* Cosmic Flame Background - menos intenso e mais baixo */}
+                        <div className="absolute -left-40 -top-36 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -left-32 -top-28 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
 
                         {/* Form Card - Left Side */}
                         <div className="home-glass-card w-full lg:flex-1 rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
@@ -964,14 +1023,34 @@ const Home = () => {
                                         <button
                                             onClick={(e) => {
                                                 e.preventDefault();
+
+                                                // Usuários FREE: mostrar modal de upgrade para premium
+                                                if (tier === 'free') {
+                                                    setShowPaywallForm(true);
+                                                    return;
+                                                }
+
+                                                // Usuários PREMIUM: abrir modal de configuração do WhatsApp
+                                                if (tier === 'premium') {
+                                                    setShowWhatsAppModal(true);
+                                                    return;
+                                                }
+
+                                                // Guests/não logados: criar conta
                                                 setShowPaywallForm(true);
                                             }}
                                             className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
                                             type="button"
                                         >
                                             <span className="relative z-10 flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
-                                                {isPortuguese ? 'Começar a Receber' : 'Start Receiving'}
-                                                <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                                {tier === 'premium'
+                                                    ? (whatsappSubscribed
+                                                        ? (isPortuguese ? 'Inscrito' : 'Subscribed')
+                                                        : (isPortuguese ? 'Não Cadastrado' : 'Not Registered'))
+                                                    : (isPortuguese ? 'Começar a Receber' : 'Start Receiving')}
+                                                <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
+                                                    {tier === 'premium' ? 'settings' : 'arrow_forward'}
+                                                </span>
                                             </span>
                                             <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                         </button>
@@ -1148,8 +1227,19 @@ const Home = () => {
                 </div>
             </section>
 
+
             {/* Journey Section - A Jornada do Herói */}
-            <JourneySection onStartReading={() => handleSelectSpread(SPREADS[0])} onOpenAuthModal={() => setShowAuthModal(true)} />
+            <div className="relative">
+                <JourneySection
+                    onStartReading={() => handleSelectSpread(SPREADS[0])}
+                    onOpenAuthModal={() => setShowAuthModal(true)}
+                    showJourneyButton={!showJourneyStories}
+                    onToggleJourney={() => setShowJourneyStories(true)}
+                />
+
+                {/* Sessão interativa de histórias da jornada */}
+                {showJourneyStories && <HeroJourneyStories />}
+            </div>
 
             {/* Cosmic Mandala Animation Section - HIDDEN (kept for future use) */}
             <div style={{ display: 'none' }}>
@@ -1451,6 +1541,31 @@ const Home = () => {
                     setShowAuthModal(true);
                 }}
                 onCheckout={() => navigate('/checkout')}
+            />
+
+            {/* WhatsApp Configuration Modal */}
+            <WhatsAppModal
+                isOpen={showWhatsAppModal}
+                onClose={() => {
+                    setShowWhatsAppModal(false);
+                    // Recarregar status após fechar
+                    const loadStatus = async () => {
+                        if (!user) return;
+                        try {
+                            const { supabase } = await import('./lib/supabase');
+                            if (!supabase) return;
+                            const { data } = await (supabase as any)
+                                .from('whatsapp_subscriptions')
+                                .select('is_active')
+                                .eq('user_id', user.id)
+                                .single();
+                            setWhatsappSubscribed(data?.is_active || false);
+                        } catch (err) {
+                            console.error('Error reloading WhatsApp status:', err);
+                        }
+                    };
+                    loadStatus();
+                }}
             />
 
             {/* Auth Modal */}
@@ -2483,8 +2598,6 @@ const ReadingModal = ({
 };
 
 // History Page
-const VIEWED_READINGS_KEY = 'tarot-viewed-readings';
-
 const History = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
@@ -2496,38 +2609,39 @@ const History = () => {
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const [filteredReadings, setFilteredReadings] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [displayCount, setDisplayCount] = useState(9); // Mostrar 9 itens inicialmente (3x3 grid)
 
-    // Track viewed readings
-    const [viewedReadings, setViewedReadings] = useState<Set<string | number>>(() => {
-        try {
-            const stored = localStorage.getItem(VIEWED_READINGS_KEY);
-            return stored ? new Set(JSON.parse(stored)) : new Set();
-        } catch {
-            return new Set();
-        }
-    });
-
-    // Mark a reading as viewed
-    const markAsViewed = (readingId: string | number) => {
-        setViewedReadings(prev => {
-            const updated = new Set(prev);
-            updated.add(readingId);
-            try {
-                localStorage.setItem(VIEWED_READINGS_KEY, JSON.stringify([...updated]));
-            } catch {}
-            return updated;
-        });
+    // Check if a reading is unviewed (baseado em viewed_at do banco)
+    const isUnviewed = (reading: any) => {
+        return !reading.viewed_at;
     };
 
-    // Check if a reading is unviewed
-    const isUnviewed = (readingId: string | number) => {
-        return !viewedReadings.has(readingId);
-    };
-
-    // Handle opening a reading (marks it as viewed)
-    const handleOpenReading = (reading: any) => {
-        markAsViewed(reading.id);
+    // Handle opening a reading (marks it as viewed in Supabase)
+    const handleOpenReading = async (reading: any) => {
         setSelectedReading(reading);
+
+        // Se a leitura ainda não foi visualizada, marcar como visualizada no Supabase
+        if (!reading.viewed_at && user) {
+            try {
+                const { supabase } = await import('./lib/supabase');
+                if (!supabase) return;
+
+                await (supabase as any)
+                    .from('readings')
+                    .update({ viewed_at: new Date().toISOString() })
+                    .eq('id', reading.id);
+
+                // Atualizar localmente
+                setSavedReadings(prev =>
+                    prev.map(r => r.id === reading.id ? { ...r, viewed_at: new Date().toISOString() } : r)
+                );
+                setFilteredReadings(prev =>
+                    prev.map(r => r.id === reading.id ? { ...r, viewed_at: new Date().toISOString() } : r)
+                );
+            } catch (err) {
+                console.error('Error marking reading as viewed:', err);
+            }
+        }
     };
 
     const [savedReadings, setSavedReadings] = useState<any[]>(() => {
@@ -2574,8 +2688,14 @@ const History = () => {
 
     // Limitar leituras visíveis baseado no tier
     const historyLimit = getHistoryLimit();
-    const visibleReadings = isPremium ? filteredReadings : filteredReadings.slice(0, historyLimit);
+    const availableReadings = isPremium ? filteredReadings : filteredReadings.slice(0, historyLimit);
+    const visibleReadings = availableReadings.slice(0, displayCount);
+    const hasMoreToLoad = visibleReadings.length < availableReadings.length;
     const hasMoreReadings = filteredReadings.length > historyLimit && !isPremium;
+
+    const loadMore = () => {
+        setDisplayCount(prev => prev + 9); // Carregar mais 9 itens
+    };
 
     const deleteReading = async (id: number, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -2637,6 +2757,13 @@ const History = () => {
                                     -webkit-background-clip: text;
                                     -webkit-text-fill-color: transparent;
                                     background-clip: text;
+                                }
+                                .scrollbar-hide::-webkit-scrollbar {
+                                    display: none;
+                                }
+                                .scrollbar-hide {
+                                    -ms-overflow-style: none;
+                                    scrollbar-width: none;
                                 }
                             `}</style>
                             <h2 className="text-4xl md:text-5xl font-bold text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>{t.history.title}</h2>
@@ -2703,28 +2830,30 @@ const History = () => {
                                 />
                             </div>
 
-                            {/* Readings List */}
-                            <div className="space-y-4">
-                                {visibleReadings.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className={`bg-card-dark rounded-xl border transition-all overflow-hidden ${isUnviewed(item.id) ? 'border-green-500/40 ring-1 ring-green-500/20' : 'border-border-dark hover:border-primary/30'}`}
-                                    >
-                                        <div className="flex flex-col md:flex-row">
-                                            {/* Cards Preview */}
-                                            <div className="relative flex gap-2 p-4 md:p-5 bg-surface-dark/50 overflow-x-auto">
-                                                {/* Unviewed Indicator */}
-                                                {isUnviewed(item.id) && (
-                                                    <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/20 border border-green-500/30">
-                                                        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                                                        <span className="text-green-400 text-[10px] font-bold uppercase">
-                                                            {isPortuguese ? 'Nova' : 'New'}
-                                                        </span>
-                                                    </div>
-                                                )}
+                            {/* Readings Grid */}
+                            <div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {visibleReadings.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            onClick={() => handleOpenReading(item)}
+                                            className={`group relative bg-card-dark rounded-xl border transition-all overflow-hidden cursor-pointer hover:scale-[1.02] ${isUnviewed(item) ? 'border-amber-500/40 ring-1 ring-amber-500/20' : 'border-border-dark hover:border-primary/30'}`}
+                                        >
+                                            {/* Unviewed Badge */}
+                                            {isUnviewed(item) && (
+                                                <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 backdrop-blur-sm">
+                                                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                                                    <span className="text-amber-400 text-[10px] font-bold uppercase">
+                                                        {isPortuguese ? 'Nova' : 'New'}
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            {/* Cards Preview - Horizontal Scroll */}
+                                            <div className="relative flex gap-1.5 p-3 bg-surface-dark/50 overflow-x-auto scrollbar-hide">
                                                 {item.previewCards?.slice(0, 5).map((cardUrl: string, idx: number) => (
-                                                    <div key={idx} className="flex-shrink-0 w-14 md:w-16">
-                                                        <div className="aspect-[2/3] rounded-lg overflow-hidden border border-white/10 shadow-md">
+                                                    <div key={idx} className="flex-shrink-0 w-12">
+                                                        <div className="aspect-[2/3] rounded-md overflow-hidden border border-white/10 shadow-md">
                                                             <img
                                                                 src={cardUrl}
                                                                 alt={`Card ${idx + 1}`}
@@ -2737,65 +2866,78 @@ const History = () => {
                                                     </div>
                                                 ))}
                                                 {(item.previewCards?.length || 0) > 5 && (
-                                                    <div className="flex-shrink-0 w-14 md:w-16 flex items-center justify-center">
-                                                        <span className="text-gray-500 text-sm">+{item.previewCards.length - 5}</span>
+                                                    <div className="flex-shrink-0 w-12 flex items-center justify-center">
+                                                        <span className="text-gray-500 text-xs">+{item.previewCards.length - 5}</span>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Info */}
-                                            <div className="flex-1 p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4">
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-3 mb-2">
-                                                        <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${item.typeColor}`}>
-                                                            {item.typeBadge}
+                                            {/* Card Info */}
+                                            <div className="p-4 space-y-2">
+                                                {/* Type and Date */}
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${item.typeColor}`}>
+                                                        {item.typeBadge}
+                                                    </span>
+                                                    <span className="text-gray-500 text-[10px]">{item.date}</span>
+                                                </div>
+
+                                                {/* Spread Name */}
+                                                <h3 className="text-white font-bold text-sm line-clamp-1">{item.spreadName}</h3>
+
+                                                {/* Rating */}
+                                                <div className="flex gap-0.5">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <span key={star} className={`material-symbols-outlined text-xs ${star <= (item.rating || 0) ? 'text-yellow-400' : 'text-gray-600'}`}>
+                                                            {star <= (item.rating || 0) ? 'star' : 'star_outline'}
                                                         </span>
-                                                        <span className="text-gray-500 text-xs">{item.date}</span>
-                                                    </div>
-                                                    <h3 className="text-white font-bold text-lg mb-1">{item.spreadName}</h3>
-
-                                                    {/* Rating */}
-                                                    <div className="mb-2">
-                                                        {renderStars(item.rating)}
-                                                    </div>
-
-                                                    {/* Comment Preview */}
-                                                    {item.comment ? (
-                                                        <p className="text-gray-400 text-sm line-clamp-2 italic">"{item.comment}"</p>
-                                                    ) : (
-                                                        <p className="text-gray-600 text-sm italic">
-                                                            {isPortuguese ? 'Sem anotações' : 'No notes'}
-                                                        </p>
-                                                    )}
+                                                    ))}
                                                 </div>
 
-                                                {/* Actions */}
-                                                <div className="flex gap-2 md:flex-col">
-                                                    <button
-                                                        onClick={() => handleOpenReading(item)}
-                                                        className={`flex-1 md:flex-none px-4 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-colors ${isUnviewed(item.id) ? 'bg-green-500/20 hover:bg-green-500/30 text-green-400' : 'bg-primary/10 hover:bg-primary/20 text-primary'}`}
-                                                    >
-                                                        <span className="material-symbols-outlined text-lg">visibility</span>
-                                                        {isPortuguese ? 'Ver' : 'View'}
-                                                    </button>
-                                                    <button
-                                                        onClick={(e) => deleteReading(item.id, e)}
-                                                        className="px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm flex items-center justify-center gap-1 transition-colors"
-                                                    >
-                                                        <span className="material-symbols-outlined text-lg">delete</span>
-                                                    </button>
-                                                </div>
+                                                {/* Comment Preview */}
+                                                {item.comment ? (
+                                                    <p className="text-gray-400 text-xs line-clamp-2 italic">"{item.comment}"</p>
+                                                ) : (
+                                                    <p className="text-gray-600 text-xs italic">
+                                                        {isPortuguese ? 'Sem anotações' : 'No notes'}
+                                                    </p>
+                                                )}
                                             </div>
-                                        </div>
-                                    </div>
-                                ))}
 
-                                {/* Mostrar prompt de upgrade se houver mais leituras */}
+                                            {/* Hover Overlay */}
+                                            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+                                            {/* Delete Button */}
+                                            <button
+                                                onClick={(e) => deleteReading(item.id, e)}
+                                                className="absolute bottom-3 right-3 z-10 p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-300 opacity-100 transition-all"
+                                                title={isPortuguese ? 'Excluir leitura' : 'Delete reading'}
+                                            >
+                                                <span className="material-symbols-outlined text-base">delete</span>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Load More Button */}
+                                {hasMoreToLoad && (
+                                    <div className="mt-6 flex justify-center">
+                                        <button
+                                            onClick={loadMore}
+                                            className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-lg text-white font-medium flex items-center gap-2 transition-all"
+                                        >
+                                            <span className="material-symbols-outlined text-lg">expand_more</span>
+                                            {isPortuguese ? 'Carregar Mais' : 'Load More'}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Mostrar prompt de upgrade se houver mais leituras bloqueadas */}
                                 {hasMoreReadings && (
                                     <div className="mt-6 p-6 bg-gradient-to-r from-[#875faf]/20 to-[#1a1628] border border-[#875faf]/30 rounded-xl text-center">
                                         <span className="material-symbols-outlined text-4xl text-[#a77fd4] mb-3">lock</span>
                                         <h3 className="text-white font-bold text-lg mb-2">
-                                            {isPortuguese ? `+${savedReadings.length - historyLimit} tiragens bloqueadas` : `+${savedReadings.length - historyLimit} readings locked`}
+                                            {isPortuguese ? `+${filteredReadings.length - historyLimit} tiragens bloqueadas` : `+${filteredReadings.length - historyLimit} readings locked`}
                                         </h3>
                                         <p className="text-gray-400 text-sm mb-4">
                                             {isPortuguese ? 'Faça upgrade para Premium para acessar todo o seu histórico.' : 'Upgrade to Premium to access your full history.'}
@@ -3589,7 +3731,7 @@ const Explore = () => {
                         return (
                             <div
                                 key={card.id}
-                                onClick={() => handleCardClick(card, index)}
+                                onClick={() => handleCardClick(card as unknown as TarotCard, index)}
                                 className={`group relative aspect-[2/3.4] rounded-lg overflow-hidden border bg-surface-dark transition-all cursor-pointer shadow-lg ${isLocked || isGuestLocked
                                     ? 'border-white/5 opacity-60 hover:opacity-80'
                                     : 'border-white/5 hover:border-primary/50 hover:-translate-y-2 hover:shadow-primary/20'
@@ -3671,7 +3813,7 @@ const Session = () => {
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
     const { checkAccess } = usePaywall();
-    const { incrementReadingCount } = useAuth();
+    const { user, incrementReadingCount } = useAuth();
     const spread = (location.state as any)?.spread as Spread;
 
     const [deck, setDeck] = useState<TarotCard[]>([]);
@@ -3758,18 +3900,19 @@ const Session = () => {
         }, 800);
     }, [spread, navigate]);
 
-    const handleCardClick = async (card: TarotCard) => {
+    const handleCardClick = (card: TarotCard) => {
         if (selectedCards.length >= spread.cardCount) return;
         if (selectedCards.find(c => c.card.id === card.id)) return;
 
-        // Check paywall access on FIRST card click
-        if (selectedCards.length === 0) {
+        // Check paywall access on FIRST card click (only for logged users)
+        if (selectedCards.length === 0 && user) {
+            // Only check limits for logged users
             if (!checkAccess('readings')) {
                 setShowPaywall(true);
                 return;
             }
-            // Increment reading count only when user actually starts picking cards
-            await incrementReadingCount();
+            // Increment reading count only when user actually starts picking cards (non-blocking)
+            incrementReadingCount().catch(err => console.error('Failed to increment reading count:', err));
         }
 
         // Efeito sonoro de escolha
@@ -3916,7 +4059,7 @@ const Session = () => {
 
             {selectedCards.length > 0 && (
                 <div className="px-4 md:px-12 py-4 max-w-[1200px] mx-auto w-full">
-                    <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-3xl mx-auto">
+                    <div className="flex flex-wrap justify-center gap-3 md:gap-4 mx-auto">
                         {Array(spread.cardCount).fill(null).map((_, idx) => {
                             const selected = selectedCards[idx];
                             const positionName = spread.positions[idx]?.name || `Card ${idx + 1}`;
@@ -3926,7 +4069,8 @@ const Session = () => {
                                     key={idx}
                                     className="flex flex-col items-center gap-2"
                                     style={{
-                                        animation: selected ? `cardAppear 0.5s ease-out ${idx * 0.15}s both` : 'none'
+                                        animation: selected ? `cardAppear 0.5s ease-out ${idx * 0.15}s both` : 'none',
+                                        width: spread.cardCount >= 10 ? '90px' : spread.cardCount > 5 ? '100px' : spread.cardCount > 3 ? '120px' : '140px'
                                     }}
                                 >
                                     <style dangerouslySetInnerHTML={{
@@ -3934,11 +4078,11 @@ const Session = () => {
                                         @keyframes cardAppear {
                                             from {
                                                 opacity: 0;
-                                                transform: translateY(-30px) scale(0.8);
+                                                transform: scale(0.8);
                                             }
                                             to {
                                                 opacity: 1;
-                                                transform: translateY(0) scale(1);
+                                                transform: scale(1);
                                             }
                                         }
                                         `
@@ -3967,17 +4111,22 @@ const Session = () => {
                                                     <img src={selected.card.imageUrl} alt={getCardName(selected.card.id, isPortuguese)} onError={handleImageError} className="relative w-full h-full object-cover z-10" />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-20"></div>
                                                     <div className="absolute bottom-3 left-0 right-0 text-center z-30">
-                                                        <h3 className="text-white font-bold text-sm md:text-base">{getCardName(selected.card.id, isPortuguese)}</h3>
+                                                        <h3 className="text-white font-bold text-[10px] md:text-xs">{getCardName(selected.card.id, isPortuguese)}</h3>
                                                     </div>
                                                 </div>
                                             </div>
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
-                                                <span className="text-gray-600 text-4xl font-bold">{idx + 1}</span>
+                                                <span className="text-gray-600 text-2xl font-bold">{idx + 1}</span>
                                             </div>
                                         )}
                                     </div>
-                                    <span className="uppercase tracking-widest text-xs font-bold text-primary">{positionName}</span>
+                                    <span className="uppercase tracking-widest text-[9px] md:text-[10px] font-bold text-primary text-center">
+                                        {isPortuguese
+                                            ? (spread.positions[idx]?.name_pt || positionName)
+                                            : positionName
+                                        }
+                                    </span>
                                 </div>
                             );
                         })}
@@ -4165,6 +4314,11 @@ const Result = () => {
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const fetchedRef = useRef(false); // Prevent duplicate API calls
 
+    // Reset paywall on mount
+    useEffect(() => {
+        setShowPaywall(false);
+    }, []);
+
     // Reset hasSavedRef when state changes significantly
     useEffect(() => {
         // Only reset if this is a actually a new session (different cards or different timestamp)
@@ -4201,7 +4355,15 @@ const Result = () => {
                 date: new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US')
             };
 
-            // Fetch structured synthesis from Gemini (single API call)
+            // Se é guest, NÃO gerar síntese - apenas mostrar resultado sem salvar
+            if (!user) {
+                // Guest mode: mostrar resultado, sem síntese, sem salvar
+                setStructuredSynthesis(null);
+                setIsLoading(false);
+                return;
+            }
+
+            // Fetch structured synthesis from Gemini (single API call) - ONLY for logged users
             const rawSynthesis = isGeminiConfigured()
                 ? await getStructuredSynthesis(session, isPortuguese)
                 : null;
@@ -4215,10 +4377,8 @@ const Result = () => {
             setStructuredSynthesis(synthesis);
             setIsLoading(false);
 
-            // Verificar se o usuário atingiu o limite de tiragens
-            if (!checkAccess('readings')) {
-                setShowPaywall(true);
-            }
+            // Guests can always view - no paywall on result page
+            // Paywall should only be shown during reading creation, not on results
 
             // Save to history (both localStorage and Supabase if logged in)
             try {
@@ -4300,7 +4460,7 @@ const Result = () => {
                         const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
                         localStorage.setItem('tarot-history', JSON.stringify(updated));
 
-                        // Save to Supabase if user is logged in, or to localStorage if guest
+                        // Save to Supabase (only for logged users - guests are handled earlier)
                         if (user) {
                             // Usar nova função que formata resumo completo automaticamente
                             await saveReadingWithSummary(
@@ -4311,18 +4471,6 @@ const Result = () => {
                                 state.question || '',
                                 isPortuguese
                             );
-                        } else {
-                            // Save guest reading for later recovery
-                            const summary = extractSummaryFromSynthesis(rawSynthesis, state.question);
-                            const formattedSynthesis = formatReadingSummary(summary, state.spread.id, isPortuguese);
-                            saveGuestReading({
-                                spreadType: state.spread.id,
-                                cards: state.cards,
-                                question: state.question || '',
-                                synthesis: formattedSynthesis,
-                                rawSynthesis: rawSynthesis,
-                                createdAt: new Date().toISOString()
-                            });
                         }
                     }
                 }
@@ -4403,20 +4551,71 @@ const Result = () => {
                                         <div className="h-4 bg-white/10 rounded w-4/5"></div>
                                         <p className="text-primary text-xs mt-4">{t.result.loading}</p>
                                     </div>
-                                ) : structuredSynthesis ? (
-                                    <>
-                                        {/* Tema Central Badge */}
-                                        <div className="flex items-center gap-2 mb-4">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${structuredSynthesis.energia_geral === 'positiva' ? 'bg-green-500/20 text-green-400' :
-                                                structuredSynthesis.energia_geral === 'desafiadora' ? 'bg-orange-500/20 text-orange-400' :
-                                                    'bg-blue-500/20 text-blue-400'
-                                                }`}>
-                                                {structuredSynthesis.energia_geral === 'positiva' ? (isPortuguese ? '✨ Energia Positiva' : '✨ Positive Energy') :
-                                                    structuredSynthesis.energia_geral === 'desafiadora' ? (isPortuguese ? '🔥 Energia Desafiadora' : '🔥 Challenging Energy') :
-                                                        (isPortuguese ? '⚖️ Energia Neutra' : '⚖️ Neutral Energy')}
-                                            </span>
+                                ) : !user && !structuredSynthesis ? (
+                                    /* Guest Banner - Create account to unlock synthesis */
+                                    <div className="space-y-4">
+                                        <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500/20 to-yellow-600/10 border border-amber-500/30">
+                                            <div className="flex items-start gap-3 mb-3">
+                                                <span className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center flex-shrink-0">
+                                                    <span className="material-symbols-outlined text-white text-lg">auto_awesome</span>
+                                                </span>
+                                                <div>
+                                                    <h3 className="text-amber-300 font-bold text-lg">
+                                                        {isPortuguese ? 'Desbloqueie sua Síntese!' : 'Unlock your Synthesis!'}
+                                                    </h3>
+                                                    <p className="text-gray-300 text-sm mt-1">
+                                                        {isPortuguese
+                                                            ? 'Crie uma conta gratuita para receber a interpretação completa desta tiragem com Inteligência Artificial.'
+                                                            : 'Create a free account to receive the complete AI interpretation of this reading.'}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2 mt-4 mb-4">
+                                                <div className="flex items-center gap-2 text-sm text-gray-300">
+                                                    <span className="material-symbols-outlined text-green-400 text-base">check_circle</span>
+                                                    {isPortuguese ? 'Síntese detalhada com IA' : 'Detailed AI synthesis'}
+                                                </div>
+                                                <div className="flex items-center gap-2 text-sm text-gray-300">
+                                                    <span className="material-symbols-outlined text-green-400 text-base">check_circle</span>
+                                                    {isPortuguese ? '1 tiragem grátis por dia' : '1 free reading per day'}
+                                                </div>
+                                                <div className="flex items-center gap-2 text-sm text-gray-300">
+                                                    <span className="material-symbols-outlined text-green-400 text-base">check_circle</span>
+                                                    {isPortuguese ? 'Histórico das suas jogadas' : 'History of your readings'}
+                                                </div>
+                                            </div>
+
+                                            <button
+                                                onClick={() => {
+                                                    setAuthModalMode('register');
+                                                    setShowAuthModal(true);
+                                                }}
+                                                className="w-full py-3 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-white font-bold transition-all shadow-lg shadow-amber-900/30 flex items-center justify-center gap-2"
+                                            >
+                                                <span className="material-symbols-outlined">person_add</span>
+                                                {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    setAuthModalMode('login');
+                                                    setShowAuthModal(true);
+                                                }}
+                                                className="w-full mt-2 py-2 text-amber-300 hover:text-white text-sm font-medium transition-colors"
+                                            >
+                                                {isPortuguese ? 'Já tenho uma conta' : 'I already have an account'}
+                                            </button>
                                         </div>
 
+                                        <p className="text-gray-500 text-xs text-center">
+                                            {isPortuguese
+                                                ? 'Suas cartas estão salvas. Crie sua conta e a síntese será gerada automaticamente!'
+                                                : 'Your cards are saved. Create your account and the synthesis will be generated automatically!'}
+                                        </p>
+                                    </div>
+                                ) : structuredSynthesis ? (
+                                    <>
                                         {/* Tema Central */}
                                         <div className="mb-4 p-3 rounded-lg bg-white/5 border border-white/10">
                                             <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Tema Central' : 'Central Theme'}</span>
@@ -4630,49 +4829,6 @@ const Result = () => {
             {/* Apply overflow hidden when paywall is open */}
             {showPaywall && <style>{`body { overflow: hidden; }`}</style>}
 
-            {/* Guest Conversion Banner */}
-            {!user && !isLoading && structuredSynthesis && (
-                <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-purple-900/95 via-purple-800/95 to-purple-900/95 backdrop-blur-md border-t border-purple-500/30 px-4 py-4 md:py-5">
-                    <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-3 text-center md:text-left">
-                            <span className="hidden md:flex w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 items-center justify-center">
-                                <span className="material-symbols-outlined text-white text-2xl">auto_awesome</span>
-                            </span>
-                            <div>
-                                <p className="text-white font-bold text-lg">
-                                    {isPortuguese ? 'Salve sua leitura para sempre!' : 'Save your reading forever!'}
-                                </p>
-                                <p className="text-purple-200 text-sm">
-                                    {isPortuguese
-                                        ? 'Crie uma conta grátis para acessar seu histórico e desbloquear mais recursos'
-                                        : 'Create a free account to access your history and unlock more features'}
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => {
-                                    setAuthModalMode('login');
-                                    setShowAuthModal(true);
-                                }}
-                                className="px-5 py-2.5 rounded-lg border border-white/20 text-white text-sm font-bold hover:bg-white/10 transition-colors"
-                            >
-                                {isPortuguese ? 'Entrar' : 'Sign In'}
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setAuthModalMode('register');
-                                    setShowAuthModal(true);
-                                }}
-                                className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 text-white text-sm font-bold hover:from-yellow-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-900/30"
-                            >
-                                {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <Footer />
         </div>
     );
@@ -4683,7 +4839,7 @@ const Interpretacao = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
     const { user, tier } = useAuth();
-    const { checkAccess } = usePaywall();
+    const { checkAccess, isPremium } = usePaywall();
 
     // State
     const [spreadType, setSpreadType] = useState<string>('');
@@ -4784,6 +4940,61 @@ const Interpretacao = () => {
         setSelectedCards(newCards);
     };
 
+    // Render individual card
+    const renderCard = (index: number, position: string) => {
+        const cardName = selectedCards[index];
+        const cardData = cardName ? TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName) : null;
+
+        return (
+            <div key={index} className="relative flex flex-col">
+                <div
+                    onClick={() => openCardSearch(index)}
+                    className={`aspect-[2/3] rounded-xl overflow-hidden cursor-pointer transition-all ${cardName
+                        ? 'border-2 border-primary/50'
+                        : 'border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50'
+                        }`}
+                >
+                    {cardName && cardData ? (
+                        <div className="relative w-full h-full">
+                            <img
+                                src={cardData.imageUrl}
+                                alt={cardName}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
+                                }}
+                            />
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2">
+                                <span className="text-white text-[10px] text-center font-medium leading-tight block">{cardName}</span>
+                            </div>
+                        </div>
+                    ) : cardName ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center p-2 bg-primary/10">
+                            <span className="material-symbols-outlined text-primary text-2xl mb-1">style</span>
+                            <span className="text-white text-xs text-center font-medium leading-tight">{cardName}</span>
+                        </div>
+                    ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center p-2">
+                            <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add</span>
+                            <span className="text-gray-500 text-xs text-center">{position}</span>
+                        </div>
+                    )}
+                </div>
+                {cardName && (
+                    <button
+                        onClick={(e) => { e.stopPropagation(); removeCard(index); }}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors z-10"
+                    >
+                        <span className="material-symbols-outlined text-white text-sm">close</span>
+                    </button>
+                )}
+                <div className="mt-2 text-center">
+                    <span className="text-xs text-yellow-400 font-semibold">{position}</span>
+                </div>
+            </div>
+        );
+    };
+
     // Submit interpretation request
     const handleSubmit = async () => {
         const ti = (t as any).interpretation;
@@ -4791,7 +5002,7 @@ const Interpretacao = () => {
             setError(ti?.selectSpreadType || 'Select the spread type');
             return;
         }
-
+        { ti.title || (isPortuguese ? 'Interpretação de Tiragem' : 'Physical Reading Interpretation') }
         const filledCards = selectedCards.filter(c => c.trim() !== '');
         if (filledCards.length === 0) {
             setError(ti?.addMinCards || 'Add at least one card');
@@ -4887,96 +5098,90 @@ const Interpretacao = () => {
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} initialMode={authModalMode} />
 
             {/* Hero Section - Home Page Style */}
-            <section className="relative pt-20 pb-8 md:pb-12 px-6 md:px-12 overflow-hidden z-10">
-                <div className="relative max-w-[1200px] mx-auto z-10">
-                    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+            <section className="relative pt-12 pb-8 md:pb-10 px-6 md:px-12 overflow-hidden z-10">
+                <div className="relative max-w-[1200px] z-10">
+                    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
                         {/* Left Side - Text Content */}
-                        <div className="flex-1 text-center lg:text-left">
-                            {/* Premium Badge */}
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/30 mb-6">
-                                <span className="material-symbols-outlined text-amber-400 text-sm">auto_awesome</span>
-                                <span className="text-amber-300 text-xs font-bold uppercase tracking-wider">
-                                    {isPortuguese ? 'Premium' : 'Premium Feature'}
-                                </span>
+                        <div className="flex-1 text-left pl-4 md:pl-12 lg:pl-20">
+                            {/* Text Wrapper - Moved Up */}
+                            <div className="lg:-mt-12">
+                                {/* Premium Badge */}
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/30 mb-4">
+                                    <span className="material-symbols-outlined text-amber-400 text-sm">auto_awesome</span>
+                                    <span className="text-amber-300 text-xs font-bold uppercase tracking-wider">
+                                        {isPortuguese ? 'Premium' : 'Premium Feature'}
+                                    </span>
+                                </div>
+
+                                {/* Golden Title */}
+
+                                <h1
+                                    className="text-4xl md:text-5xl lg:text-6xl font-black mb-2 leading-tight whitespace-nowrap"
+                                    style={{
+                                        fontFamily: "'Crimson Text', serif",
+                                        background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        backgroundClip: 'text',
+                                    }}
+                                >
+                                    {isPortuguese ? 'Interpretação de Tiragem' : 'Reading Interpretation'}
+                                </h1>
+
+                                {/* Subtitle */}
+                                <p className="text-gray-300 text-lg md:text-xl max-w-xl leading-relaxed mb-2 break-words">
+                                    {(ti.subtitle || (isPortuguese ? 'Transforme sua tiragem real em uma leitura clara e objetiva com IA' : 'Transform your real spread into a clear and objective reading with AI'))}
+                                </p>
+
+                                {/* Description */}
+                                <p className="text-gray-500 text-sm max-w-lg mb-4 break-words">
+                                    {(ti.heroDescription || (isPortuguese
+                                        ? 'Fez uma tiragem física com seu baralho? Insira as cartas que saíram e receba uma interpretação profissional.'
+                                        : 'Did a physical spread with your deck? Enter the cards that came up and receive a professional interpretation.'))}
+                                </p>
                             </div>
 
-                            {/* Golden Title */}
-                            <h1
-                                className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight"
-                                style={{
-                                    fontFamily: "'Crimson Text', serif",
-                                    background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
-                                    WebkitBackgroundClip: 'text',
-                                    WebkitTextFillColor: 'transparent',
-                                    backgroundClip: 'text',
-                                }}
-                            >
-                                {ti.title || (isPortuguese ? 'Interpretação de Tiragem Física' : 'Physical Reading Interpretation')}
-                            </h1>
-
-                            {/* Subtitle */}
-                            <p className="text-gray-300 text-lg md:text-xl max-w-xl leading-relaxed mb-3">
-                                {ti.subtitle || (isPortuguese ? 'Transforme sua tiragem real em uma leitura clara e objetiva com IA' : 'Transform your real spread into a clear and objective reading with AI')}
-                            </p>
-
-                            {/* Description */}
-                            <p className="text-gray-500 text-sm max-w-lg mb-6">
-                                {ti.heroDescription || (isPortuguese ? 'Fez uma tiragem física com seu baralho? Insira as cartas que saíram e receba uma interpretação profissional.' : 'Did a physical spread with your deck? Enter the cards that came up and receive a professional interpretation.')}
-                            </p>
-
                             {/* CTA Button */}
-                            <button
-                                onClick={() => document.getElementById('interpretation-form')?.scrollIntoView({ behavior: 'smooth' })}
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
-                            >
-                                <span className="material-symbols-outlined text-lg">edit_note</span>
-                                {isPortuguese ? 'Começar Interpretação' : 'Start Interpretation'}
-                            </button>
+                            <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
+                                <button
+                                    onClick={() => document.getElementById('interpretation-form')?.scrollIntoView({ behavior: 'smooth' })}
+                                    className="flex-1 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all justify-center text-xs md:text-sm"
+                                >
+                                    <span className="material-symbols-outlined text-base">edit_note</span>
+                                    {isPortuguese ? 'Começar Interpretação' : 'Start Interpretation'}
+                                </button>
+                                <button
+                                    onClick={() => navigate(isPremium ? '/' : '/checkout')}
+                                    className="flex-1 inline-flex items-center gap-2 px-4 py-2 bg-transparent border border-yellow-500/40 rounded-xl text-yellow-300 font-bold transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:text-yellow-400 justify-center text-xs md:text-sm"
+                                >
+                                    <span className="material-symbols-outlined text-base">star</span>
+                                    {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                </button>
+                            </div>
                         </div>
 
-                        {/* Right Side - Tarot Cards Display */}
-                        <div className="relative w-full lg:w-auto lg:flex-shrink-0">
+                        {/* Right Side - Tarot Cards Display (fixed, usando imageUrl do TAROT_CARDS) */}
+                        <div className="relative w-full lg:w-auto lg:flex-shrink-0 mt-8 md:mt-10 lg:mt-8">
                             <div className="relative w-[300px] h-[320px] md:w-[360px] md:h-[380px] mx-auto">
-                                {/* Card 1 - Far left */}
-                                <div
-                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
-                                    style={{ left: '0%', top: '25%', transform: 'rotate(-25deg)', zIndex: 1 }}
-                                >
-                                    <img src="/images/cards/major/00-the-fool.webp" alt="The Fool" className="w-full h-full object-cover" />
-                                </div>
-                                {/* Card 2 */}
-                                <div
-                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
-                                    style={{ left: '12%', top: '8%', transform: 'rotate(-12deg)', zIndex: 2 }}
-                                >
-                                    <img src="/images/cards/major/01-the-magician.webp" alt="The Magician" className="w-full h-full object-cover" />
-                                </div>
-                                {/* Card 3 - Center top */}
-                                <div
-                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-amber-500/30"
-                                    style={{ left: '32%', top: '0%', transform: 'rotate(0deg)', zIndex: 5 }}
-                                >
-                                    <img src="/images/cards/major/02-the-high-priestess.webp" alt="The High Priestess" className="w-full h-full object-cover" />
-                                </div>
-                                {/* Card 4 */}
-                                <div
-                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
-                                    style={{ left: '52%', top: '8%', transform: 'rotate(12deg)', zIndex: 3 }}
-                                >
-                                    <img src="/images/cards/major/03-the-empress.webp" alt="The Empress" className="w-full h-full object-cover" />
-                                </div>
-                                {/* Card 5 - Far right */}
-                                <div
-                                    className="absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
-                                    style={{ left: '64%', top: '25%', transform: 'rotate(25deg)', zIndex: 1 }}
-                                >
-                                    <img src="/images/cards/major/04-the-emperor.webp" alt="The Emperor" className="w-full h-full object-cover" />
-                                </div>
-
+                                {/* Cartas fixas, usando imageUrl do TAROT_CARDS */}
+                                {['maj_0', 'maj_1', 'maj_2', 'maj_3', 'maj_4'].map((id, idx) => {
+                                    const card = TAROT_CARDS.find(c => c.id === id);
+                                    const angle = (idx - 2) * 15;
+                                    const left = 32 + (idx - 2) * 20;
+                                    return card ? (
+                                        <div
+                                            key={id}
+                                            className={`absolute w-[100px] md:w-[120px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-2 ${idx === 2 ? 'border-amber-500/30' : 'border-white/10'}`}
+                                            style={{ left: `${left}%`, top: `${Math.abs(angle) * 0.5}%`, transform: `rotate(${angle}deg)`, zIndex: 10 + idx }}
+                                        >
+                                            <img src={card.imageUrl} alt={card.name} className="w-full h-full object-cover" />
+                                        </div>
+                                    ) : null;
+                                })}
                                 {/* Glow effect behind cards */}
                                 <div className="absolute inset-0 -z-10">
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-purple-500/20 rounded-full blur-[80px]" />
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] bg-amber-500/15 rounded-full blur-[60px]" />
+                                    <div className="absolute top-1/2 left-2/3 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-purple-500/20 rounded-full blur-[80px]" />
+                                    <div className="absolute top-1/2 left-2/3 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] bg-amber-500/15 rounded-full blur-[60px]" />
                                 </div>
                             </div>
                         </div>
@@ -4986,164 +5191,232 @@ const Interpretacao = () => {
 
             {/* Main Content */}
             <section id="interpretation-form" className="px-6 md:px-12 pb-20 relative">
-                {/* Purple Blur Background - Behind Form Only */}
+                {/* Blue Blur Background - Behind Form Only */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[150px]" />
-                    <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-violet-500/12 rounded-full blur-[180px]" />
-                    <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-purple-700/10 rounded-full blur-[120px]" />
+                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[150px]" />
+                    <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-cyan-500/8 rounded-full blur-[180px]" />
+                    <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-blue-700/8 rounded-full blur-[120px]" />
                 </div>
 
-                <div className="max-w-[900px] mx-auto relative z-10">
+                <div className="max-w-full mx-auto relative z-10">
                     {!interpretation ? (
-                        <div className="bg-gradient-to-br from-surface-dark/80 to-card-dark/60 backdrop-blur-sm rounded-2xl border border-border-dark p-6 md:p-8">
-                            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                                <span className="material-symbols-outlined text-primary">style</span>
-                                {ti.formTitle || 'Your Spread'}
-                            </h2>
+                        <div className="home-glass-card rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative p-6 md:p-10 before:absolute before:inset-0 before:bg-black/40 before:-z-10 backdrop-blur-md bg-gray-900/50">
+                            <div className="relative z-10">
+                                <div className="mb-16">
+                                    <h2 className="text-3xl font-bold text-yellow-500 mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        {ti.formTitle || 'Your Spread'}
+                                    </h2>
+                                    <p className="text-gray-300 text-sm leading-relaxed">
+                                        {isPortuguese
+                                            ? 'Selecione o tipo de tiragem, adicione as cartas que saíram e receba uma interpretação profunda e personalizada pela IA.'
+                                            : 'Select the spread type, add the cards that came up and receive a deep and personalized interpretation by AI.'}
+                                    </p>
+                                </div>
 
-                            {/* Spread Type Selector */}
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    {ti.spreadTypeLabel || 'Spread Type'}
-                                </label>
-                                <select
-                                    value={spreadType}
-                                    onChange={(e) => handleSpreadTypeChange(e.target.value)}
-                                    className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white focus:outline-none focus:border-primary transition-colors"
-                                >
-                                    <option value="">{ti.selectSpreadType || 'Select spread type...'}</option>
-                                    <option value="yes_no">{ti.spreadTypes?.yes_no || 'Yes or No (1 card)'}</option>
-                                    <option value="three_card">{ti.spreadTypes?.three_card || '3 cards (Past / Present / Future)'}</option>
-                                    <option value="five_card">{ti.spreadTypes?.five_card || '5 cards (Simple Cross)'}</option>
-                                    <option value="seven_card">{ti.spreadTypes?.seven_card || '7 cards'}</option>
-                                    <option value="celtic_cross">{ti.spreadTypes?.celtic_cross || 'Celtic Cross (10 cards)'}</option>
-                                    <option value="custom">{ti.spreadTypes?.custom || 'Other (custom)'}</option>
-                                </select>
-                            </div>
-
-                            {/* Card Selection */}
-                            {spreadType && (
-                                <div className="mb-6">
-                                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                                        {ti.cardsLabel || 'Spread Cards'}
+                                {/* Spread Type Selector */}
+                                <div className="mb-8">
+                                    <label className="block text-base font-semibold text-white mb-3">
+                                        {ti.spreadTypeLabel || 'Spread Type'}
                                     </label>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                                        {selectedCards.map((cardName, index) => {
-                                            const position = spreadConfigs[spreadType]?.positions?.[index] || `${ti.cardPosition || 'Card'} ${index + 1}`;
-                                            // Find card data to get imageUrl
-                                            const cardData = cardName ? TAROT_CARDS.find(c => c.name === cardName || c.name_pt === cardName) : null;
-                                            return (
-                                                <div key={index} className="relative">
-                                                    <div
-                                                        onClick={() => openCardSearch(index)}
-                                                        className={`aspect-[2/3] rounded-xl overflow-hidden cursor-pointer transition-all ${cardName
-                                                            ? 'border-2 border-primary/50'
-                                                            : 'border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50'
-                                                            }`}
-                                                    >
-                                                        {cardName && cardData ? (
-                                                            <div className="relative w-full h-full">
-                                                                <img
-                                                                    src={cardData.imageUrl}
-                                                                    alt={cardName}
-                                                                    className="w-full h-full object-cover"
-                                                                    onError={(e) => {
-                                                                        e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
-                                                                    }}
-                                                                />
-                                                                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2">
-                                                                    <span className="text-white text-[10px] text-center font-medium leading-tight block">{cardName}</span>
-                                                                </div>
-                                                            </div>
-                                                        ) : cardName ? (
-                                                            <div className="w-full h-full flex flex-col items-center justify-center p-2 bg-primary/10">
-                                                                <span className="material-symbols-outlined text-primary text-2xl mb-1">style</span>
-                                                                <span className="text-white text-xs text-center font-medium leading-tight">{cardName}</span>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="w-full h-full flex flex-col items-center justify-center p-2">
-                                                                <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add</span>
-                                                                <span className="text-gray-500 text-xs text-center">{position}</span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    {cardName && (
-                                                        <button
-                                                            onClick={(e) => { e.stopPropagation(); removeCard(index); }}
-                                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors z-10"
-                                                        >
-                                                            <span className="material-symbols-outlined text-white text-sm">close</span>
-                                                        </button>
-                                                    )}
+                                    <select
+                                        value={spreadType}
+                                        onChange={(e) => handleSpreadTypeChange(e.target.value)}
+                                        className="w-full px-4 py-3 bg-surface-dark/90 border-2 border-border-dark/60 hover:border-primary/50 rounded-xl text-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all font-medium"
+                                    >
+                                        <option value="">{ti.selectSpreadType || 'Select spread type...'}</option>
+                                        <option value="yes_no">{ti.spreadTypes?.yes_no || 'Yes or No (1 card)'}</option>
+                                        <option value="three_card">{ti.spreadTypes?.three_card || '3 cards (Past / Present / Future)'}</option>
+                                        <option value="five_card">{ti.spreadTypes?.five_card || '5 cards (Simple Cross)'}</option>
+                                        <option value="seven_card">{ti.spreadTypes?.seven_card || '7 cards'}</option>
+                                        <option value="custom">{ti.spreadTypes?.custom || 'Other (custom)'}</option>
+                                    </select>
+                                </div>
+
+                                {/* Card Selection */}
+                                {spreadType && (
+                                    <div className="mb-8">
+                                        <label className="block text-base font-semibold text-white mb-4">
+                                            {ti.cardsLabel || 'Spread Cards'}
+                                        </label>
+
+                                        {/* Yes/No - 1 card centered */}
+                                        {spreadType === 'yes_no' && (
+                                            <div className="flex justify-center">
+                                                <div className="w-28">
+                                                    {renderCard(0, spreadConfigs[spreadType].positions[0])}
                                                 </div>
-                                            );
-                                        })}
-                                        {spreadType === 'custom' && selectedCards.length < 15 && (
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedCards([...selectedCards, '']);
-                                                    openCardSearch(selectedCards.length);
-                                                }}
-                                                className="aspect-[2/3] rounded-xl border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer transition-all"
-                                            >
-                                                <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add_circle</span>
-                                                <span className="text-gray-500 text-xs">{ti.addCard || 'Add Card'}</span>
-                                            </button>
+                                            </div>
+                                        )}
+
+                                        {/* Three Card - Past | Present | Future in line */}
+                                        {spreadType === 'three_card' && (
+                                            <div className="flex justify-center gap-6">
+                                                <div className="w-28">{renderCard(0, spreadConfigs[spreadType].positions[0])}</div>
+                                                <div className="w-28">{renderCard(1, spreadConfigs[spreadType].positions[1])}</div>
+                                                <div className="w-28">{renderCard(2, spreadConfigs[spreadType].positions[2])}</div>
+                                            </div>
+                                        )}
+
+                                        {/* Five Card - Simple Cross Layout */}
+                                        {/* Layout:     [Coroa/4]
+                                                   [Passado/2] [Centro/0] [Futuro/3]
+                                                        [Base/1]           */}
+                                        {spreadType === 'five_card' && (
+                                            <div className="flex flex-col items-center gap-4">
+                                                <div className="w-28">{renderCard(4, spreadConfigs[spreadType].positions[4])}</div>
+                                                <div className="flex justify-center gap-6">
+                                                    <div className="w-28">{renderCard(2, spreadConfigs[spreadType].positions[2])}</div>
+                                                    <div className="w-28">{renderCard(0, spreadConfigs[spreadType].positions[0])}</div>
+                                                    <div className="w-28">{renderCard(3, spreadConfigs[spreadType].positions[3])}</div>
+                                                </div>
+                                                <div className="w-28">{renderCard(1, spreadConfigs[spreadType].positions[1])}</div>
+                                            </div>
+                                        )}
+
+                                        {/* Seven Card - Horseshoe/Arc Layout */}
+                                        {spreadType === 'seven_card' && (
+                                            <div className="flex flex-col items-center gap-4">
+                                                <div className="flex justify-center gap-4">
+                                                    <div className="w-24">{renderCard(0, spreadConfigs[spreadType].positions[0])}</div>
+                                                    <div className="w-24">{renderCard(1, spreadConfigs[spreadType].positions[1])}</div>
+                                                    <div className="w-24">{renderCard(2, spreadConfigs[spreadType].positions[2])}</div>
+                                                    <div className="w-24">{renderCard(3, spreadConfigs[spreadType].positions[3])}</div>
+                                                </div>
+                                                <div className="flex justify-center gap-4">
+                                                    <div className="w-24">{renderCard(4, spreadConfigs[spreadType].positions[4])}</div>
+                                                    <div className="w-24">{renderCard(5, spreadConfigs[spreadType].positions[5])}</div>
+                                                    <div className="w-24">{renderCard(6, spreadConfigs[spreadType].positions[6])}</div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Celtic Cross - Custom Layout for our site */}
+                                        {spreadType === 'celtic_cross' && (
+                                            <div className="w-full max-w-4xl mx-auto">
+                                                {/* Two sections side by side */}
+                                                <div className="flex flex-col lg:flex-row justify-center items-start gap-8 lg:gap-16">
+
+                                                    {/* Section 1: The Cross (cards 0-5) */}
+                                                    <div className="flex-shrink-0">
+                                                        <h4 className="text-sm text-gray-400 text-center mb-4 font-medium">{isPortuguese ? 'A Cruz' : 'The Cross'}</h4>
+                                                        <div className="grid grid-cols-3 gap-3 justify-items-center" style={{ gridTemplateRows: 'auto auto auto' }}>
+                                                            {/* Row 1: Crown (4) in center */}
+                                                            <div className="col-start-2 w-20">{renderCard(4, spreadConfigs[spreadType].positions[4])}</div>
+
+                                                            {/* Row 2: Past (3) - Center (0) - Future (5) */}
+                                                            <div className="w-20">{renderCard(3, spreadConfigs[spreadType].positions[3])}</div>
+                                                            <div className="w-20">{renderCard(0, spreadConfigs[spreadType].positions[0])}</div>
+                                                            <div className="w-20">{renderCard(5, spreadConfigs[spreadType].positions[5])}</div>
+
+                                                            {/* Row 3: Crossing (1) in center */}
+                                                            <div className="col-start-2 w-20">{renderCard(1, spreadConfigs[spreadType].positions[1])}</div>
+
+                                                            {/* Row 4: Foundation (2) in center */}
+                                                            <div className="col-start-2 w-20">{renderCard(2, spreadConfigs[spreadType].positions[2])}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Section 2: The Staff/Pillar (cards 6-9) */}
+                                                    <div className="flex-shrink-0">
+                                                        <h4 className="text-sm text-gray-400 text-center mb-4 font-medium">{isPortuguese ? 'O Pilar' : 'The Staff'}</h4>
+                                                        <div className="grid grid-cols-2 gap-3">
+                                                            {/* Top row: Self (6) - Environment (7) */}
+                                                            <div className="w-20">{renderCard(6, spreadConfigs[spreadType].positions[6])}</div>
+                                                            <div className="w-20">{renderCard(7, spreadConfigs[spreadType].positions[7])}</div>
+
+                                                            {/* Bottom row: Hopes (8) - Outcome (9) */}
+                                                            <div className="w-20">{renderCard(8, spreadConfigs[spreadType].positions[8])}</div>
+                                                            <div className="w-20">{renderCard(9, spreadConfigs[spreadType].positions[9])}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Custom - Flexible grid */}
+                                        {spreadType === 'custom' && (
+                                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                                                {selectedCards.map((cardName, index) => {
+                                                    const position = `${ti.cardPosition || 'Card'} ${index + 1}`;
+                                                    return <div key={index} className="w-full">{renderCard(index, position)}</div>;
+                                                })}
+                                                {selectedCards.length < 15 && (
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedCards([...selectedCards, '']);
+                                                            openCardSearch(selectedCards.length);
+                                                        }}
+                                                        className="aspect-[2/3] rounded-xl border-2 border-dashed border-border-dark hover:border-primary/30 bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer transition-all"
+                                                    >
+                                                        <span className="material-symbols-outlined text-gray-500 text-2xl mb-1">add_circle</span>
+                                                        <span className="text-gray-500 text-xs">{ti.addCard || 'Add Card'}</span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {spreadType !== 'custom' && spreadType !== 'yes_no' && spreadType !== 'three_card' && spreadType !== 'five_card' && spreadType !== 'seven_card' && spreadType !== 'celtic_cross' && (
+                                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                                                {selectedCards.map((cardName, index) => {
+                                                    const position = spreadConfigs[spreadType]?.positions?.[index] || `${ti.cardPosition || 'Card'} ${index + 1}`;
+                                                    return renderCard(index, position);
+                                                })}
+                                            </div>
                                         )}
                                     </div>
-                                </div>
-                            )}
-
-                            {/* Question Input */}
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    {ti.questionLabel || 'Question asked to the Tarot'}
-                                </label>
-                                <textarea
-                                    value={question}
-                                    onChange={(e) => setQuestion(e.target.value)}
-                                    placeholder={ti.questionPlaceholder || 'What question did you ask during the spread?'}
-                                    rows={3}
-                                    className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors resize-none"
-                                />
-                                <p className="text-gray-500 text-xs mt-1">
-                                    {ti.questionHint || 'The question helps contextualize the interpretation'}
-                                </p>
-                            </div>
-
-                            {/* Error Message */}
-                            {error && (
-                                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
-                                    <span className="material-symbols-outlined text-red-400">error</span>
-                                    <span className="text-red-400">{error}</span>
-                                </div>
-                            )}
-
-                            {/* Submit Button */}
-                            <button
-                                onClick={handleSubmit}
-                                disabled={isLoading || !spreadType || selectedCards.filter(c => c).length === 0}
-                                className="w-full py-4 bg-gradient-to-r from-primary to-purple-600 hover:from-primary-hover hover:to-purple-700 text-white font-bold rounded-xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <span className="material-symbols-outlined animate-spin">progress_activity</span>
-                                        {ti.interpreting || 'Interpreting...'}
-                                    </>
-                                ) : (
-                                    <>
-                                        <span className="material-symbols-outlined">auto_awesome</span>
-                                        {ti.submitButton || 'Interpret My Spread'}
-                                    </>
                                 )}
-                            </button>
 
-                            {tier !== 'premium' && (
-                                <p className="text-center text-amber-400/70 text-sm mt-4 flex items-center justify-center gap-2">
-                                    <span className="material-symbols-outlined text-sm">workspace_premium</span>
-                                    {ti.premiumFeature || 'Premium Feature'}
-                                </p>
-                            )}
+                                {/* Question Input */}
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        {ti.questionLabel || 'Question asked to the Tarot'}
+                                    </label>
+                                    <textarea
+                                        value={question}
+                                        onChange={(e) => setQuestion(e.target.value)}
+                                        placeholder={ti.questionPlaceholder || 'What question did you ask during the spread?'}
+                                        rows={3}
+                                        className="w-full px-4 py-3 bg-surface-dark border border-border-dark rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors resize-none"
+                                    />
+                                    <p className="text-gray-500 text-xs mt-1">
+                                        {ti.questionHint || 'The question helps contextualize the interpretation'}
+                                    </p>
+                                </div>
+
+                                {/* Error Message */}
+                                {error && (
+                                    <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
+                                        <span className="material-symbols-outlined text-red-400">error</span>
+                                        <span className="text-red-400">{error}</span>
+                                    </div>
+                                )}
+
+                                {/* Submit Button */}
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={isLoading || !spreadType || selectedCards.filter(c => c).length === 0}
+                                    className="w-full py-4 bg-gradient-to-r from-primary to-purple-600 hover:from-primary-hover hover:to-purple-700 text-white font-bold rounded-xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                                            {ti.interpreting || 'Interpreting...'}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="material-symbols-outlined">auto_awesome</span>
+                                            {ti.submitButton || 'Interpret My Spread'}
+                                        </>
+                                    )}
+                                </button>
+
+                                {tier !== 'premium' && (
+                                    <p className="text-center text-amber-400/70 text-sm mt-4 flex items-center justify-center gap-2">
+                                        <span className="material-symbols-outlined text-sm">workspace_premium</span>
+                                        {ti.premiumFeature || 'Premium Feature'}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -5215,93 +5488,95 @@ const Interpretacao = () => {
                         </div>
                     )}
                 </div>
-            </section>
+            </section >
 
             {/* Card Search Modal */}
-            {showCardSearch && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <div className="w-full max-w-4xl max-h-[85vh] bg-card-dark rounded-2xl border border-border-dark overflow-hidden flex flex-col">
-                        <div className="p-4 border-b border-border-dark">
-                            <div className="flex items-center gap-3">
-                                <span className="material-symbols-outlined text-gray-400">search</span>
-                                <input
-                                    ref={searchInputRef}
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder={ti.cardsPlaceholder || 'Search card...'}
-                                    className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none"
-                                />
-                                <button
-                                    onClick={() => { setShowCardSearch(false); setActiveCardIndex(null); }}
-                                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                                >
-                                    <span className="material-symbols-outlined text-gray-400">close</span>
-                                </button>
+            {
+                showCardSearch && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                        <div className="w-full max-w-4xl max-h-[85vh] bg-card-dark rounded-2xl border border-border-dark overflow-hidden flex flex-col">
+                            <div className="p-4 border-b border-border-dark">
+                                <div className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-gray-400">search</span>
+                                    <input
+                                        ref={searchInputRef}
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder={ti.cardsPlaceholder || 'Search card...'}
+                                        className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none"
+                                    />
+                                    <button
+                                        onClick={() => { setShowCardSearch(false); setActiveCardIndex(null); }}
+                                        className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-gray-400">close</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto p-4">
+                                {groupedCards.length > 0 ? (
+                                    groupedCards.map((group, groupIndex) => (
+                                        <div key={groupIndex} className="mb-8 last:mb-0">
+                                            <h4 className="text-sm font-medium text-primary mb-4 sticky top-0 bg-card-dark py-2 z-10">
+                                                {group.title}
+                                            </h4>
+                                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                                                {group.cards.map((card) => {
+                                                    const cardName = isPortuguese ? card.name_pt : card.name;
+                                                    const isSelected = selectedCards.includes(cardName);
+                                                    return (
+                                                        <button
+                                                            key={card.id}
+                                                            onClick={() => !isSelected && handleCardSelect(card)}
+                                                            disabled={isSelected}
+                                                            className={`group flex flex-col items-center rounded-xl p-2 transition-all ${isSelected
+                                                                ? 'opacity-40 cursor-not-allowed'
+                                                                : 'hover:bg-primary/10 hover:scale-105'
+                                                                }`}
+                                                        >
+                                                            <div className={`relative w-full aspect-[2/3] rounded-lg overflow-hidden border-2 transition-all ${isSelected
+                                                                ? 'border-gray-600'
+                                                                : 'border-border-dark group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(147,17,212,0.3)]'
+                                                                }`}>
+                                                                <img
+                                                                    src={card.imageUrl}
+                                                                    alt={cardName}
+                                                                    className="w-full h-full object-cover"
+                                                                    onError={(e) => {
+                                                                        e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
+                                                                    }}
+                                                                />
+                                                                {isSelected && (
+                                                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                                                        <span className="material-symbols-outlined text-white text-2xl">check_circle</span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <span className={`mt-2 text-xs text-center font-medium leading-tight ${isSelected ? 'text-gray-500' : 'text-white'}`}>
+                                                                {cardName}
+                                                            </span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-8">
+                                        <span className="material-symbols-outlined text-gray-500 text-4xl mb-2">search_off</span>
+                                        <p className="text-gray-500">{ti.noCardsFound || 'No cards found'}</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
-
-                        <div className="flex-1 overflow-y-auto p-4">
-                            {groupedCards.length > 0 ? (
-                                groupedCards.map((group, groupIndex) => (
-                                    <div key={groupIndex} className="mb-8 last:mb-0">
-                                        <h4 className="text-sm font-medium text-primary mb-4 sticky top-0 bg-card-dark py-2 z-10">
-                                            {group.title}
-                                        </h4>
-                                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
-                                            {group.cards.map((card) => {
-                                                const cardName = isPortuguese ? card.name_pt : card.name;
-                                                const isSelected = selectedCards.includes(cardName);
-                                                return (
-                                                    <button
-                                                        key={card.id}
-                                                        onClick={() => !isSelected && handleCardSelect(card)}
-                                                        disabled={isSelected}
-                                                        className={`group flex flex-col items-center rounded-xl p-2 transition-all ${isSelected
-                                                            ? 'opacity-40 cursor-not-allowed'
-                                                            : 'hover:bg-primary/10 hover:scale-105'
-                                                            }`}
-                                                    >
-                                                        <div className={`relative w-full aspect-[2/3] rounded-lg overflow-hidden border-2 transition-all ${isSelected
-                                                            ? 'border-gray-600'
-                                                            : 'border-border-dark group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(147,17,212,0.3)]'
-                                                            }`}>
-                                                            <img
-                                                                src={card.imageUrl}
-                                                                alt={cardName}
-                                                                className="w-full h-full object-cover"
-                                                                onError={(e) => {
-                                                                    e.currentTarget.src = 'https://placehold.co/150x260/1c1022/9311d4?text=Tarot';
-                                                                }}
-                                                            />
-                                                            {isSelected && (
-                                                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                                                                    <span className="material-symbols-outlined text-white text-2xl">check_circle</span>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <span className={`mt-2 text-xs text-center font-medium leading-tight ${isSelected ? 'text-gray-500' : 'text-white'}`}>
-                                                            {cardName}
-                                                        </span>
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-8">
-                                    <span className="material-symbols-outlined text-gray-500 text-4xl mb-2">search_off</span>
-                                    <p className="text-gray-500">{ti.noCardsFound || 'No cards found'}</p>
-                                </div>
-                            )}
-                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             <Footer />
-        </div>
+        </div >
     );
 };
 
@@ -5343,6 +5618,8 @@ const App = () => {
                             <Route path="/daily-card" element={<DailyCard />} />
                             <Route path="/charts-demo" element={<SideBySideExample />} />
                             <Route path="/checkout" element={<Checkout />} />
+                            <Route path="/settings" element={<Settings />} />
+                            <Route path="/configuracoes" element={<Settings />} />
                         </Routes>
                     </Router>
                 </CartProvider>

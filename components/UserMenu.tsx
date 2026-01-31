@@ -30,9 +30,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onLoginClick }) => {
     return (
       <button
         onClick={onLoginClick}
-        className="flex items-center gap-2 px-4 py-2 bg-[#875faf] hover:bg-[#a77fd4] rounded-lg text-white text-sm font-medium transition-colors"
+        className="flex items-center gap-1 px-2.5 py-1.5 bg-[#875faf] hover:bg-[#a77fd4] rounded-md text-white text-xs font-medium transition-colors"
       >
-        <span className="material-symbols-outlined text-lg">account_circle</span>
+        <span className="material-symbols-outlined text-base">account_circle</span>
         {t.signIn}
       </button>
     );
@@ -110,7 +110,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onLoginClick }) => {
                 <button
                   onClick={() => {
                     setIsOpen(false);
-                    // TODO: Abrir modal de upgrade
+                    navigate('/checkout');
                   }}
                   className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#a77fd4] hover:bg-[#875faf]/10 transition-colors text-sm"
                 >
@@ -118,6 +118,17 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onLoginClick }) => {
                   {t.upgrade}
                 </button>
               )}
+
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate('/settings');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-colors text-sm"
+              >
+                <span className="material-symbols-outlined text-lg">settings</span>
+                {isPortuguese ? 'Configurações' : 'Settings'}
+              </button>
 
               <button
                 onClick={() => {

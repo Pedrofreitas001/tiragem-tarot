@@ -57,7 +57,7 @@ interface AuthContextType {
   readingsToday: number;
   canDoReading: boolean;
   isGuest: boolean;
-  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: AuthError | null }>;
+  signUp: (email: string, password: string, fullName?: string, subscriptionTier?: SubscriptionTier) => Promise<{ error: AuthError | null }>;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null; profile?: Profile | null }>;
   signInWithGoogle: () => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
@@ -207,18 +207,45 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const computeTier = useCallback((): SubscriptionTier | 'guest' => {
     // Se usuário não está logado, é guest
     if (isGuest) return 'guest';
-    // Se profile ainda não carregou, retornar 'free' temporário (não 'guest'!)
-    if (!profile) return 'free';
+    // Se profile ainda não carregou, tentar carregar do cache local
+    if (!profile) {
+      try {
+        const cached = localStorage.getItem('tarot-user-tier');
+        if (cached) {
+          const tierData = JSON.parse(cached);
+          if (tierData.userId === user?.id && tierData.tier) {
+            return tierData.tier;
+          }
+        }
+      } catch (e) {
+        // Ignore cache errors
+      }
+      return 'free';
+    }
 
     const subTier = profile.subscription_tier;
     const expiresAt = profile.subscription_expires_at;
 
+    let computedTier: SubscriptionTier | 'guest' = 'free';
     if (subTier === 'premium') {
-      return isSubscriptionExpired(expiresAt) ? 'free' : 'premium';
+      computedTier = isSubscriptionExpired(expiresAt) ? 'free' : 'premium';
+    } else {
+      computedTier = (subTier as SubscriptionTier) || 'free';
     }
 
-    return (subTier as SubscriptionTier) || 'free';
-  }, [isGuest, profile]);
+    // Cache the tier for faster future loads
+    try {
+      localStorage.setItem('tarot-user-tier', JSON.stringify({
+        userId: user?.id,
+        tier: computedTier,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Ignore storage errors
+    }
+
+    return computedTier;
+  }, [isGuest, profile, user?.id]);
 
   const tier = computeTier();
   const limits = tier === 'premium' ? PREMIUM_TIER_LIMITS : (tier === 'guest' ? GUEST_LIMITS : FREE_TIER_LIMITS);
@@ -244,9 +271,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setProfileLoading(true);
 
     try {
-      // Timeout de 5 segundos
+      // Primeiro, verificar se há profile no cache
+      const cacheKey = `tarot-profile-${userId}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          const cachedProfile = JSON.parse(cached);
+          const cacheAge = Date.now() - (cachedProfile._cacheTime || 0);
+          // Use cache se tiver menos de 5 minutos
+          if (cacheAge < 300000) {
+            setProfile(cachedProfile);
+            setProfileLoading(false);
+            // Fetch em background para atualizar
+            fetchProfileFromDB(userId, cacheKey);
+            return cachedProfile;
+          }
+        } catch (e) {
+          // Ignore cache errors
+        }
+      }
+
+      // Fetch do banco de dados
+      return await fetchProfileFromDB(userId, cacheKey);
+    } catch {
+      setProfileLoading(false);
+      return null;
+    }
+  }, []);
+
+  // Função auxiliar para buscar do DB
+  const fetchProfileFromDB = async (userId: string, cacheKey: string): Promise<Profile | null> => {
+    if (!supabase) return null;
+
+    try {
+      // Timeout de 3 segundos (reduzido de 5)
       const timeoutPromise = new Promise<{ data: null; error: any }>((resolve) => {
-        setTimeout(() => resolve({ data: null, error: { message: 'Query timeout' } }), 5000);
+        setTimeout(() => resolve({ data: null, error: { message: 'Query timeout' } }), 3000);
       });
 
       const queryPromise = supabase
@@ -298,22 +358,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return null;
       }
 
-      // Resetar contador se for um novo dia
+      // Cache o perfil
+      try {
+        const profileWithCache = { ...data, _cacheTime: Date.now() };
+        localStorage.setItem(cacheKey, JSON.stringify(profileWithCache));
+      } catch (e) {
+        // Ignore storage errors
+      }
+
+      // Resetar contador se for um novo dia (fazer em background, não bloquear)
       if (data && isNewDay(data.last_reading_date)) {
-        const { data: updated } = await supabase
+        // Atualizar imediatamente no estado com contador zerado
+        const resetProfile = {
+          ...data,
+          readings_today: 0,
+          last_reading_date: new Date().toISOString().split('T')[0],
+        };
+        setProfile(resetProfile);
+        setProfileLoading(false);
+
+        // Atualizar no banco em background (não await)
+        supabase
           .from('profiles')
           .update({
             readings_today: 0,
             last_reading_date: new Date().toISOString().split('T')[0],
           })
           .eq('id', userId)
-          .select()
-          .single();
+          .then(() => {
+            // Atualizar cache após update
+            try {
+              const profileWithCache = { ...resetProfile, _cacheTime: Date.now() };
+              localStorage.setItem(cacheKey, JSON.stringify(profileWithCache));
+            } catch (e) {
+              // Ignore
+            }
+          });
 
-        const finalProfile = updated || data;
-        setProfile(finalProfile);
-        setProfileLoading(false);
-        return finalProfile;
+        return resetProfile;
       } else {
         setProfile(data);
         setProfileLoading(false);
@@ -323,7 +405,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setProfileLoading(false);
       return null;
     }
-  }, []);
+  };
 
   // Inicializar autenticação
   useEffect(() => {
@@ -388,19 +470,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [isConfigured, fetchProfile]);
 
   // Cadastro
-  const signUp = async (email: string, password: string, fullName?: string) => {
+  const signUp = async (email: string, password: string, fullName?: string, subscriptionTier: SubscriptionTier = 'free') => {
     if (!supabase) {
       return { error: { message: 'Supabase not configured' } as AuthError };
     }
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
+          subscription_tier: subscriptionTier,
         },
       },
     });
+
+    // Se a conta foi criada com sucesso e é premium, atualizar o perfil
+    if (!error && data?.user && subscriptionTier === 'premium') {
+      // Aguardar um momento para o trigger criar o profile
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Atualizar o tier para premium
+      const expiresAt = new Date();
+      expiresAt.setMonth(expiresAt.getMonth() + 1);
+
+      await supabase
+        .from('profiles')
+        .update({
+          subscription_tier: 'premium',
+          subscription_expires_at: expiresAt.toISOString(),
+        })
+        .eq('id', data.user.id);
+    }
+
     return { error };
   };
 
