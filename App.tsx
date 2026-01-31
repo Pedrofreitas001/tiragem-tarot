@@ -3813,7 +3813,7 @@ const Session = () => {
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
     const { checkAccess } = usePaywall();
-    const { incrementReadingCount } = useAuth();
+    const { user, incrementReadingCount } = useAuth();
     const spread = (location.state as any)?.spread as Spread;
 
     const [deck, setDeck] = useState<TarotCard[]>([]);
@@ -3900,18 +3900,19 @@ const Session = () => {
         }, 800);
     }, [spread, navigate]);
 
-    const handleCardClick = async (card: TarotCard) => {
+    const handleCardClick = (card: TarotCard) => {
         if (selectedCards.length >= spread.cardCount) return;
         if (selectedCards.find(c => c.card.id === card.id)) return;
 
-        // Check paywall access on FIRST card click
-        if (selectedCards.length === 0) {
+        // Check paywall access on FIRST card click (only for logged users)
+        if (selectedCards.length === 0 && user) {
+            // Only check limits for logged users
             if (!checkAccess('readings')) {
                 setShowPaywall(true);
                 return;
             }
-            // Increment reading count only when user actually starts picking cards
-            await incrementReadingCount();
+            // Increment reading count only when user actually starts picking cards (non-blocking)
+            incrementReadingCount().catch(err => console.error('Failed to increment reading count:', err));
         }
 
         // Efeito sonoro de escolha
@@ -4313,6 +4314,11 @@ const Result = () => {
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const fetchedRef = useRef(false); // Prevent duplicate API calls
 
+    // Reset paywall on mount
+    useEffect(() => {
+        setShowPaywall(false);
+    }, []);
+
     // Reset hasSavedRef when state changes significantly
     useEffect(() => {
         // Only reset if this is a actually a new session (different cards or different timestamp)
@@ -4349,7 +4355,15 @@ const Result = () => {
                 date: new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US')
             };
 
-            // Fetch structured synthesis from Gemini (single API call)
+            // Se é guest, NÃO gerar síntese - apenas mostrar resultado sem salvar
+            if (!user) {
+                // Guest mode: mostrar resultado, sem síntese, sem salvar
+                setStructuredSynthesis(null);
+                setIsLoading(false);
+                return;
+            }
+
+            // Fetch structured synthesis from Gemini (single API call) - ONLY for logged users
             const rawSynthesis = isGeminiConfigured()
                 ? await getStructuredSynthesis(session, isPortuguese)
                 : null;
@@ -4363,10 +4377,8 @@ const Result = () => {
             setStructuredSynthesis(synthesis);
             setIsLoading(false);
 
-            // Verificar se o usuário atingiu o limite de tiragens
-            if (!checkAccess('readings')) {
-                setShowPaywall(true);
-            }
+            // Guests can always view - no paywall on result page
+            // Paywall should only be shown during reading creation, not on results
 
             // Save to history (both localStorage and Supabase if logged in)
             try {
@@ -4448,7 +4460,7 @@ const Result = () => {
                         const updated = [historyItem, ...existing].slice(0, 20); // Keep last 20
                         localStorage.setItem('tarot-history', JSON.stringify(updated));
 
-                        // Save to Supabase if user is logged in, or to localStorage if guest
+                        // Save to Supabase (only for logged users - guests are handled earlier)
                         if (user) {
                             // Usar nova função que formata resumo completo automaticamente
                             await saveReadingWithSummary(
@@ -4459,18 +4471,6 @@ const Result = () => {
                                 state.question || '',
                                 isPortuguese
                             );
-                        } else {
-                            // Save guest reading for later recovery
-                            const summary = extractSummaryFromSynthesis(rawSynthesis, state.question);
-                            const formattedSynthesis = formatReadingSummary(summary, state.spread.id, isPortuguese);
-                            saveGuestReading({
-                                spreadType: state.spread.id,
-                                cards: state.cards,
-                                question: state.question || '',
-                                synthesis: formattedSynthesis,
-                                rawSynthesis: rawSynthesis,
-                                createdAt: new Date().toISOString()
-                            });
                         }
                     }
                 }
@@ -4550,6 +4550,69 @@ const Result = () => {
                                         <div className="h-4 bg-white/10 rounded w-5/6"></div>
                                         <div className="h-4 bg-white/10 rounded w-4/5"></div>
                                         <p className="text-primary text-xs mt-4">{t.result.loading}</p>
+                                    </div>
+                                ) : !user && !structuredSynthesis ? (
+                                    /* Guest Banner - Create account to unlock synthesis */
+                                    <div className="space-y-4">
+                                        <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500/20 to-yellow-600/10 border border-amber-500/30">
+                                            <div className="flex items-start gap-3 mb-3">
+                                                <span className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center flex-shrink-0">
+                                                    <span className="material-symbols-outlined text-white text-lg">auto_awesome</span>
+                                                </span>
+                                                <div>
+                                                    <h3 className="text-amber-300 font-bold text-lg">
+                                                        {isPortuguese ? 'Desbloqueie sua Síntese!' : 'Unlock your Synthesis!'}
+                                                    </h3>
+                                                    <p className="text-gray-300 text-sm mt-1">
+                                                        {isPortuguese
+                                                            ? 'Crie uma conta gratuita para receber a interpretação completa desta tiragem com Inteligência Artificial.'
+                                                            : 'Create a free account to receive the complete AI interpretation of this reading.'}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2 mt-4 mb-4">
+                                                <div className="flex items-center gap-2 text-sm text-gray-300">
+                                                    <span className="material-symbols-outlined text-green-400 text-base">check_circle</span>
+                                                    {isPortuguese ? 'Síntese detalhada com IA' : 'Detailed AI synthesis'}
+                                                </div>
+                                                <div className="flex items-center gap-2 text-sm text-gray-300">
+                                                    <span className="material-symbols-outlined text-green-400 text-base">check_circle</span>
+                                                    {isPortuguese ? '1 tiragem grátis por dia' : '1 free reading per day'}
+                                                </div>
+                                                <div className="flex items-center gap-2 text-sm text-gray-300">
+                                                    <span className="material-symbols-outlined text-green-400 text-base">check_circle</span>
+                                                    {isPortuguese ? 'Histórico das suas jogadas' : 'History of your readings'}
+                                                </div>
+                                            </div>
+
+                                            <button
+                                                onClick={() => {
+                                                    setAuthModalMode('register');
+                                                    setShowAuthModal(true);
+                                                }}
+                                                className="w-full py-3 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-white font-bold transition-all shadow-lg shadow-amber-900/30 flex items-center justify-center gap-2"
+                                            >
+                                                <span className="material-symbols-outlined">person_add</span>
+                                                {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    setAuthModalMode('login');
+                                                    setShowAuthModal(true);
+                                                }}
+                                                className="w-full mt-2 py-2 text-amber-300 hover:text-white text-sm font-medium transition-colors"
+                                            >
+                                                {isPortuguese ? 'Já tenho uma conta' : 'I already have an account'}
+                                            </button>
+                                        </div>
+
+                                        <p className="text-gray-500 text-xs text-center">
+                                            {isPortuguese
+                                                ? 'Suas cartas estão salvas. Crie sua conta e a síntese será gerada automaticamente!'
+                                                : 'Your cards are saved. Create your account and the synthesis will be generated automatically!'}
+                                        </p>
                                     </div>
                                 ) : structuredSynthesis ? (
                                     <>
@@ -4765,49 +4828,6 @@ const Result = () => {
 
             {/* Apply overflow hidden when paywall is open */}
             {showPaywall && <style>{`body { overflow: hidden; }`}</style>}
-
-            {/* Guest Conversion Banner */}
-            {!user && !isLoading && structuredSynthesis && (
-                <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-purple-900/95 via-purple-800/95 to-purple-900/95 backdrop-blur-md border-t border-purple-500/30 px-4 py-4 md:py-5">
-                    <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-3 text-center md:text-left">
-                            <span className="hidden md:flex w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 items-center justify-center">
-                                <span className="material-symbols-outlined text-white text-2xl">auto_awesome</span>
-                            </span>
-                            <div>
-                                <p className="text-white font-bold text-lg">
-                                    {isPortuguese ? 'Salve sua leitura para sempre!' : 'Save your reading forever!'}
-                                </p>
-                                <p className="text-purple-200 text-sm">
-                                    {isPortuguese
-                                        ? 'Crie uma conta grátis para acessar seu histórico e desbloquear mais recursos'
-                                        : 'Create a free account to access your history and unlock more features'}
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => {
-                                    setAuthModalMode('login');
-                                    setShowAuthModal(true);
-                                }}
-                                className="px-5 py-2.5 rounded-lg border border-white/20 text-white text-sm font-bold hover:bg-white/10 transition-colors"
-                            >
-                                {isPortuguese ? 'Entrar' : 'Sign In'}
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setAuthModalMode('register');
-                                    setShowAuthModal(true);
-                                }}
-                                className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 text-white text-sm font-bold hover:from-yellow-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-900/30"
-                            >
-                                {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             <Footer />
         </div>
