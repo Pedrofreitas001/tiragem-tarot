@@ -51,7 +51,7 @@ const Header = () => {
                             </button>
                         </nav>
 
-                        <div className="flex items-center gap-1 sm:gap-2">
+                        <div className="flex items-center gap-4 sm:gap-6">
                             <LanguageToggle />
 
                             <UserMenu onLoginClick={() => setShowAuthModal(true)} />

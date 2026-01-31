@@ -96,7 +96,7 @@ export const getStructuredSynthesis = async (
   isPortuguese: boolean = true
 ): Promise<AnySynthesis | null> => {
   try {
-    console.log("📡 Chamando Backend para síntese estruturada...");
+    console.log("📡 Chamando Backend para síntese estruturada...", { spreadId: session.spread.id, cardCount: session.cards.length });
 
     const result = await retryWithBackoff(async () => {
       const response = await fetch('/api/tarot', {
@@ -111,22 +111,32 @@ export const getStructuredSynthesis = async (
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Proxy Error: ${JSON.stringify(errorData)}`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error("❌ API Error:", response.status, errorData);
+        throw new Error(`Proxy Error (${response.status}): ${JSON.stringify(errorData)}`);
       }
 
       return await response.json();
     });
 
-    if (!result || !result.text) {
-      console.error("❌ Falha ao obter resposta do backend");
+    console.log("📦 Result recebido:", result);
+
+    if (!result) {
+      console.error("❌ Result é null ou undefined");
       return null;
     }
 
-    const text = result.text;
-    console.log("📦 Resposta Gemini recebida via Proxy");
+    // result.text pode ser string JSON ou já um objeto
+    let text = result.text;
+    if (!text) {
+      console.error("❌ result.text não existe:", Object.keys(result));
+      return null;
+    }
 
-    const parsed = JSON.parse(text) as AnySynthesis;
+    console.log("📦 Resposta Gemini (text):", text.substring(0, 200));
+
+    // Se já é um objeto, usar diretamente; se é string, fazer parse
+    const parsed = typeof text === 'string' ? JSON.parse(text) : text;
     console.log("✅ Síntese parseada:", parsed);
     return parsed;
 

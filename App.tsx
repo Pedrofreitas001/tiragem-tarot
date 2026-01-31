@@ -2837,13 +2837,13 @@ const History = () => {
                                         <div
                                             key={item.id}
                                             onClick={() => handleOpenReading(item)}
-                                            className={`group relative bg-card-dark rounded-xl border transition-all overflow-hidden cursor-pointer hover:scale-[1.02] ${isUnviewed(item) ? 'border-green-500/40 ring-1 ring-green-500/20' : 'border-border-dark hover:border-primary/30'}`}
+                                            className={`group relative bg-card-dark rounded-xl border transition-all overflow-hidden cursor-pointer hover:scale-[1.02] ${isUnviewed(item) ? 'border-amber-500/40 ring-1 ring-amber-500/20' : 'border-border-dark hover:border-primary/30'}`}
                                         >
                                             {/* Unviewed Badge */}
                                             {isUnviewed(item) && (
-                                                <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/20 border border-green-500/30 backdrop-blur-sm">
-                                                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                                                    <span className="text-green-400 text-[10px] font-bold uppercase">
+                                                <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 backdrop-blur-sm">
+                                                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                                                    <span className="text-amber-400 text-[10px] font-bold uppercase">
                                                         {isPortuguese ? 'Nova' : 'New'}
                                                     </span>
                                                 </div>
@@ -2910,9 +2910,10 @@ const History = () => {
                                             {/* Delete Button */}
                                             <button
                                                 onClick={(e) => deleteReading(item.id, e)}
-                                                className="absolute top-2 left-2 z-10 p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                className="absolute bottom-3 right-3 z-10 p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-300 opacity-100 transition-all"
+                                                title={isPortuguese ? 'Excluir leitura' : 'Delete reading'}
                                             >
-                                                <span className="material-symbols-outlined text-sm">delete</span>
+                                                <span className="material-symbols-outlined text-base">delete</span>
                                             </button>
                                         </div>
                                     ))}
@@ -4057,7 +4058,7 @@ const Session = () => {
 
             {selectedCards.length > 0 && (
                 <div className="px-4 md:px-12 py-4 max-w-[1200px] mx-auto w-full">
-                    <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-3xl mx-auto">
+                    <div className="flex flex-wrap justify-center gap-3 md:gap-4 mx-auto">
                         {Array(spread.cardCount).fill(null).map((_, idx) => {
                             const selected = selectedCards[idx];
                             const positionName = spread.positions[idx]?.name || `Card ${idx + 1}`;
@@ -4067,7 +4068,8 @@ const Session = () => {
                                     key={idx}
                                     className="flex flex-col items-center gap-2"
                                     style={{
-                                        animation: selected ? `cardAppear 0.5s ease-out ${idx * 0.15}s both` : 'none'
+                                        animation: selected ? `cardAppear 0.5s ease-out ${idx * 0.15}s both` : 'none',
+                                        width: spread.cardCount >= 10 ? '90px' : spread.cardCount > 5 ? '100px' : spread.cardCount > 3 ? '120px' : '140px'
                                     }}
                                 >
                                     <style dangerouslySetInnerHTML={{
@@ -4075,11 +4077,11 @@ const Session = () => {
                                         @keyframes cardAppear {
                                             from {
                                                 opacity: 0;
-                                                transform: translateY(-30px) scale(0.8);
+                                                transform: scale(0.8);
                                             }
                                             to {
                                                 opacity: 1;
-                                                transform: translateY(0) scale(1);
+                                                transform: scale(1);
                                             }
                                         }
                                         `
@@ -4108,17 +4110,22 @@ const Session = () => {
                                                     <img src={selected.card.imageUrl} alt={getCardName(selected.card.id, isPortuguese)} onError={handleImageError} className="relative w-full h-full object-cover z-10" />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-20"></div>
                                                     <div className="absolute bottom-3 left-0 right-0 text-center z-30">
-                                                        <h3 className="text-white font-bold text-sm md:text-base">{getCardName(selected.card.id, isPortuguese)}</h3>
+                                                        <h3 className="text-white font-bold text-[10px] md:text-xs">{getCardName(selected.card.id, isPortuguese)}</h3>
                                                     </div>
                                                 </div>
                                             </div>
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
-                                                <span className="text-gray-600 text-4xl font-bold">{idx + 1}</span>
+                                                <span className="text-gray-600 text-2xl font-bold">{idx + 1}</span>
                                             </div>
                                         )}
                                     </div>
-                                    <span className="uppercase tracking-widest text-xs font-bold text-primary">{positionName}</span>
+                                    <span className="uppercase tracking-widest text-[9px] md:text-[10px] font-bold text-primary text-center">
+                                        {isPortuguese
+                                            ? (spread.positions[idx]?.name_pt || positionName)
+                                            : positionName
+                                        }
+                                    </span>
                                 </div>
                             );
                         })}
@@ -4546,18 +4553,6 @@ const Result = () => {
                                     </div>
                                 ) : structuredSynthesis ? (
                                     <>
-                                        {/* Tema Central Badge */}
-                                        <div className="flex items-center gap-2 mb-4">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${structuredSynthesis.energia_geral === 'positiva' ? 'bg-green-500/20 text-green-400' :
-                                                structuredSynthesis.energia_geral === 'desafiadora' ? 'bg-orange-500/20 text-orange-400' :
-                                                    'bg-blue-500/20 text-blue-400'
-                                                }`}>
-                                                {structuredSynthesis.energia_geral === 'positiva' ? (isPortuguese ? '✨ Energia Positiva' : '✨ Positive Energy') :
-                                                    structuredSynthesis.energia_geral === 'desafiadora' ? (isPortuguese ? '🔥 Energia Desafiadora' : '🔥 Challenging Energy') :
-                                                        (isPortuguese ? '⚖️ Energia Neutra' : '⚖️ Neutral Energy')}
-                                            </span>
-                                        </div>
-
                                         {/* Tema Central */}
                                         <div className="mb-4 p-3 rounded-lg bg-white/5 border border-white/10">
                                             <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Tema Central' : 'Central Theme'}</span>
@@ -4824,7 +4819,7 @@ const Interpretacao = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
     const { user, tier } = useAuth();
-    const { checkAccess } = usePaywall();
+    const { checkAccess, isPremium } = usePaywall();
 
     // State
     const [spreadType, setSpreadType] = useState<string>('');
@@ -5085,9 +5080,9 @@ const Interpretacao = () => {
             {/* Hero Section - Home Page Style */}
             <section className="relative pt-12 pb-8 md:pb-10 px-6 md:px-12 overflow-hidden z-10">
                 <div className="relative max-w-[1200px] z-10">
-                    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-32">
+                    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
                         {/* Left Side - Text Content */}
-                        <div className="flex-1 text-left lg:ml-8">
+                        <div className="flex-1 text-left pl-4 md:pl-12 lg:pl-20">
                             {/* Text Wrapper - Moved Up */}
                             <div className="lg:-mt-12">
                                 {/* Premium Badge */}
@@ -5136,7 +5131,7 @@ const Interpretacao = () => {
                                     {isPortuguese ? 'Começar Interpretação' : 'Start Interpretation'}
                                 </button>
                                 <button
-                                    onClick={() => navigate('/checkout')}
+                                    onClick={() => navigate(isPremium ? '/' : '/checkout')}
                                     className="flex-1 inline-flex items-center gap-2 px-4 py-2 bg-transparent border border-yellow-500/40 rounded-xl text-yellow-300 font-bold transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:text-yellow-400 justify-center text-xs md:text-sm"
                                 >
                                     <span className="material-symbols-outlined text-base">star</span>
@@ -5146,7 +5141,7 @@ const Interpretacao = () => {
                         </div>
 
                         {/* Right Side - Tarot Cards Display (fixed, usando imageUrl do TAROT_CARDS) */}
-                        <div className="relative w-full lg:w-auto lg:flex-shrink-0 lg:ml-40 lg:mt-8">
+                        <div className="relative w-full lg:w-auto lg:flex-shrink-0 mt-8 md:mt-10 lg:mt-8">
                             <div className="relative w-[300px] h-[320px] md:w-[360px] md:h-[380px] mx-auto">
                                 {/* Cartas fixas, usando imageUrl do TAROT_CARDS */}
                                 {['maj_0', 'maj_1', 'maj_2', 'maj_3', 'maj_4'].map((id, idx) => {

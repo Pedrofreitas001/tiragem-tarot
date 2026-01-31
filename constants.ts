@@ -47,9 +47,9 @@ export const SPREADS: Spread[] = [
     difficulty: 'Beginner',
     cardCount: 3,
     positions: [
-      { index: 0, name: 'The Past', description: 'Influences from the past affecting the situation.' },
-      { index: 1, name: 'The Present', description: 'The current state of affairs.' },
-      { index: 2, name: 'The Future', description: 'The likely outcome if things continue.' }
+      { index: 0, name: 'The Past', name_pt: 'O Passado', description: 'Influences from the past affecting the situation.' },
+      { index: 1, name: 'The Present', name_pt: 'O Presente', description: 'The current state of affairs.' },
+      { index: 2, name: 'The Future', name_pt: 'O Futuro', description: 'The likely outcome if things continue.' }
     ]
   },
   {
@@ -59,16 +59,16 @@ export const SPREADS: Spread[] = [
     difficulty: 'Advanced',
     cardCount: 10,
     positions: [
-      { index: 0, name: 'The Significator', description: 'The heart of the matter.' },
-      { index: 1, name: 'The Crossing', description: 'What opposes or helps you.' },
-      { index: 2, name: 'The Foundation', description: 'Root cause or subconscious influence.' },
-      { index: 3, name: 'The Recent Past', description: 'Events just passing.' },
-      { index: 4, name: 'The Crown', description: 'Higher goals or best outcome.' },
-      { index: 5, name: 'The Near Future', description: 'Immediate next steps.' },
-      { index: 6, name: 'The Self', description: 'How you see yourself.' },
-      { index: 7, name: 'The Environment', description: 'How others see you or the situation.' },
-      { index: 8, name: 'Hopes & Fears', description: 'Psychological state.' },
-      { index: 9, name: 'The Outcome', description: 'The final result.' }
+      { index: 0, name: 'The Significator', name_pt: 'O Significador', description: 'The heart of the matter.' },
+      { index: 1, name: 'The Crossing', name_pt: 'O Cruzamento', description: 'What opposes or helps you.' },
+      { index: 2, name: 'The Foundation', name_pt: 'A Base', description: 'Root cause or subconscious influence.' },
+      { index: 3, name: 'The Recent Past', name_pt: 'O Passado Recente', description: 'Events just passing.' },
+      { index: 4, name: 'The Crown', name_pt: 'A Coroa', description: 'Higher goals or best outcome.' },
+      { index: 5, name: 'The Near Future', name_pt: 'O Futuro Próximo', description: 'Immediate next steps.' },
+      { index: 6, name: 'The Self', name_pt: 'O Eu', description: 'How you see yourself.' },
+      { index: 7, name: 'The Environment', name_pt: 'O Ambiente', description: 'How others see you or the situation.' },
+      { index: 8, name: 'Hopes & Fears', name_pt: 'Esperanças & Medos', description: 'Psychological state.' },
+      { index: 9, name: 'The Outcome', name_pt: 'O Resultado', description: 'The final result.' }
     ]
   },
   {
@@ -78,11 +78,11 @@ export const SPREADS: Spread[] = [
     difficulty: 'Intermediate',
     cardCount: 5,
     positions: [
-      { index: 0, name: 'You', description: 'Your role in the relationship.' },
-      { index: 1, name: 'Them', description: 'Their role and feelings.' },
-      { index: 2, name: 'Relationship', description: 'The current state of the bond.' },
-      { index: 3, name: 'Challenge', description: 'What is blocking harmony.' },
-      { index: 4, name: 'Advice', description: 'How to proceed.' }
+      { index: 0, name: 'You', name_pt: 'Você', description: 'Your role in the relationship.' },
+      { index: 1, name: 'Them', name_pt: 'Eles', description: 'Their role and feelings.' },
+      { index: 2, name: 'Relationship', name_pt: 'Relacionamento', description: 'The current state of the bond.' },
+      { index: 3, name: 'Challenge', name_pt: 'Desafio', description: 'What is blocking harmony.' },
+      { index: 4, name: 'Advice', name_pt: 'Conselho', description: 'How to proceed.' }
     ]
   },
   {
@@ -92,7 +92,7 @@ export const SPREADS: Spread[] = [
     difficulty: 'Beginner',
     cardCount: 1,
     positions: [
-      { index: 0, name: 'Answer', description: 'The universe\'s response to your question.' }
+      { index: 0, name: 'Answer', name_pt: 'Resposta', description: 'The universe\'s response to your question.' }
     ]
   },
   {
@@ -102,7 +102,7 @@ export const SPREADS: Spread[] = [
     difficulty: 'Beginner',
     cardCount: 1,
     positions: [
-      { index: 0, name: 'Today\'s Energy', description: 'The main theme and lesson for your day.' }
+      { index: 0, name: 'Today\'s Energy', name_pt: 'Energia do Dia', description: 'The main theme and lesson for your day.' }
     ]
   }
 ];

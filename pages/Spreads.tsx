@@ -48,7 +48,7 @@ const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
                             </button>
                         </nav>
 
-                        <div className="flex items-center gap-1 sm:gap-2">
+                        <div className="flex items-center gap-4 sm:gap-6">
                             <LanguageToggle />
 
                             <UserMenu onLoginClick={onLoginClick} />
@@ -160,7 +160,7 @@ const Footer = () => {
 const Spreads = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
-    const { checkAccess } = usePaywall();
+    const { checkAccess, isPremium } = usePaywall();
     const { incrementReadingCount } = useAuth();
     const [selectedSpread, setSelectedSpread] = useState<Spread | null>(null);
     const [showPaywall, setShowPaywall] = useState(false);
@@ -436,19 +436,19 @@ const Spreads = () => {
                                                             </div>
 
                                                             {/* CTA Button */}
-                                                            <div className="flex flex-col md:flex-row gap-3 w-full">
+                                                            <div className="flex flex-col md:flex-row gap-2 w-full">
                                                                 <button
                                                                     onClick={() => handleStartReading(selectedSpread)}
-                                                                    className="flex-1 px-5 py-3 bg-gradient-to-r from-[#875faf] via-[#9968ba] to-[#a77fd4] text-white font-bold text-sm md:text-base rounded-xl shadow-2xl shadow-purple-900/50 hover:shadow-purple-900/70 active:scale-95 flex items-center justify-center gap-2 border border-[#a77fd4]/30 transition-all group"
+                                                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-[#875faf] via-[#9968ba] to-[#a77fd4] text-white font-bold text-xs rounded-lg shadow-lg shadow-purple-900/30 hover:shadow-purple-900/50 active:scale-95 flex items-center justify-center gap-2 border border-[#a77fd4]/30 transition-all group whitespace-nowrap"
                                                                 >
-                                                                    <span className="material-symbols-outlined text-lg group-hover:rotate-180 transition-transform duration-500">stars</span>
+                                                                    <span className="material-symbols-outlined text-base group-hover:rotate-180 transition-transform duration-500">stars</span>
                                                                     {isPortuguese ? 'Iniciar Leitura' : 'Start Reading'}
                                                                 </button>
                                                                 <button
-                                                                    onClick={() => navigate('/checkout')}
-                                                                    className="flex-1 px-5 py-3 bg-transparent border border-yellow-500/40 rounded-xl text-yellow-300 font-bold text-sm md:text-base shadow-2xl shadow-yellow-900/10 hover:bg-yellow-500/5 hover:border-yellow-500 hover:text-yellow-400 active:scale-95 flex items-center justify-center gap-2 transition-all group"
+                                                                    onClick={() => navigate(isPremium ? '/' : '/checkout')}
+                                                                    className="flex-1 px-4 py-2.5 bg-transparent border border-yellow-500/40 rounded-lg text-yellow-300 font-bold text-xs shadow-lg shadow-yellow-900/10 hover:bg-yellow-500/5 hover:border-yellow-500 hover:text-yellow-400 active:scale-95 flex items-center justify-center gap-2 transition-all group whitespace-nowrap"
                                                                 >
-                                                                    <span className="material-symbols-outlined text-lg">star</span>
+                                                                    <span className="material-symbols-outlined text-base">star</span>
                                                                     {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
                                                                 </button>
                                                             </div>
