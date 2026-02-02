@@ -1,5 +1,5 @@
 -- ============================================
--- MYSTIC TAROT - SUPABASE DATABASE SCHEMA
+-- ZAYA TAROT - SUPABASE DATABASE SCHEMA
 -- ============================================
 -- Execute este script no SQL Editor do Supabase
 -- para criar todas as tabelas necessárias.

@@ -1,4 +1,4 @@
-# Plano de Tradução Completo - Mystic Tarot
+# Plano de Tradução Completo - Zaya Tarot
 
 ## Status Atual da Internacionalização
 

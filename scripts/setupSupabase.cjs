@@ -57,7 +57,7 @@ async function testAuth() {
 
 async function main() {
   console.log('========================================');
-  console.log('  MYSTIC TAROT - Setup Supabase');
+  console.log('  ZAYA TAROT - Setup Supabase');
   console.log('========================================\n');
 
   console.log(`📍 Projeto: jhqcvkukzzztlubqdlrl`);

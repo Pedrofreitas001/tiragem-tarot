@@ -107,7 +107,7 @@ export const Checkout: React.FC = () => {
             }
 
             // Pagamento bem-sucedido e conta criada
-            alert(isPortuguese ? 'Bem-vindo ao Mystic Tarot Premium! Seu acesso foi ativado.' : 'Welcome to Mystic Tarot Premium! Your access has been activated.');
+            alert(isPortuguese ? 'Bem-vindo ao Zaya Tarot Premium! Seu acesso foi ativado.' : 'Welcome to Zaya Tarot Premium! Your access has been activated.');
             navigate('/');
         } catch (err: any) {
             setError(isPortuguese ? 'Erro no pagamento' : 'Payment error');
@@ -125,7 +125,7 @@ export const Checkout: React.FC = () => {
                         onClick={() => navigate('/')}
                         className="text-white text-lg font-bold leading-tight tracking-tight"
                     >
-                        Mystic Tarot
+                        Zaya Tarot
                     </button>
                     <button
                         onClick={() => navigate('/')}
@@ -745,7 +745,7 @@ export const Checkout: React.FC = () => {
                 <div className="max-w-6xl mx-auto px-4 md:px-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
                         <div>
-                            <h3 className="text-white font-bold text-sm mb-2">Mystic Tarot</h3>
+                            <h3 className="text-white font-bold text-sm mb-2">Zaya Tarot</h3>
                             <p className="text-xs text-gray-500">{isPortuguese ? 'Sua jornada de descoberta espiritual' : 'Your spiritual discovery journey'}</p>
                         </div>
                         <div>
@@ -761,7 +761,7 @@ export const Checkout: React.FC = () => {
                         </div>
                     </div>
                     <div className="border-t border-white/10 pt-6 text-center text-xs text-gray-600">
-                        <p>© 2026 Mystic Tarot. {isPortuguese ? 'Todos os direitos reservados.' : 'All rights reserved.'}</p>
+                        <p>© 2026 Zaya Tarot. {isPortuguese ? 'Todos os direitos reservados.' : 'All rights reserved.'}</p>
                     </div>
                 </div>
             </footer>

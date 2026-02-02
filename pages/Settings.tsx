@@ -183,7 +183,7 @@ export const Settings: React.FC = () => {
                         onClick={() => navigate('/')}
                         className="text-white text-lg font-bold leading-tight tracking-tight hover:text-[#a77fd4] transition-colors"
                     >
-                        Mystic Tarot
+                        Zaya Tarot
                     </button>
                     <button
                         onClick={() => navigate('/')}
