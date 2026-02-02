@@ -142,7 +142,11 @@ export const DailyCard = () => {
     const [showPaywall, setShowPaywall] = useState(false);
     const [aiSynthesis, setAiSynthesis] = useState<DailyCardSynthesis | null>(null);
     const [isLoadingAI, setIsLoadingAI] = useState(false);
-    const [showAuthModal, setShowAuthModal] = useState(false); // Add this line
+    const [showAuthModal, setShowAuthModal] = useState(false);
+
+    // Estados para rotação dinâmica dos módulos
+    const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
+    const [isTransitioning, setIsTransitioning] = useState(false);
     // CSS para órbitas planetárias - estáticas e estilos dos botões
     const orbitStyles = `
         @keyframes spin {
@@ -407,6 +411,65 @@ export const DailyCard = () => {
         fetchAISynthesis();
     }, [dailyCard.id, isPortuguese]);
 
+    // Rotação automática dos módulos dinâmicos
+    useEffect(() => {
+        if (!aiSynthesis) return;
+
+        const interval = setInterval(() => {
+            setIsTransitioning(true);
+            setTimeout(() => {
+                setCurrentModuleIndex((prev) => (prev + 1) % 4); // 4 módulos
+                setIsTransitioning(false);
+            }, 200); // Tempo da transição
+        }, 8000); // Troca a cada 8 segundos
+
+        return () => clearInterval(interval);
+    }, [aiSynthesis]);
+
+    // Definir módulos dinâmicos para rotação
+    const getDynamicModules = () => {
+        if (!aiSynthesis) return [];
+
+        return [
+            {
+                title: isPortuguese ? 'Consciência Coletiva' : 'Collective Consciousness',
+                content: aiSynthesis.consciência_coletiva,
+                color: 'purple',
+                borderColor: 'border-purple-500/20',
+                dotColor: 'bg-purple-500/30 border-purple-400/50',
+                textColor: 'text-white',
+                contentColor: 'text-purple-50'
+            },
+            {
+                title: isPortuguese ? 'Energia Emocional' : 'Emotional Energy',
+                content: aiSynthesis.energia_emocional,
+                color: 'pink',
+                borderColor: 'border-pink-500/20',
+                dotColor: 'bg-pink-500/30 border-pink-400/50',
+                textColor: 'text-white',
+                contentColor: 'text-pink-50'
+            },
+            {
+                title: isPortuguese ? 'Movimento Planetário' : 'Planetary Movement',
+                content: aiSynthesis.movimento_planetário,
+                color: 'cyan',
+                borderColor: 'border-cyan-500/20',
+                dotColor: 'bg-cyan-500/30 border-cyan-400/50',
+                textColor: 'text-white',
+                contentColor: 'text-cyan-50'
+            },
+            {
+                title: isPortuguese ? 'Influência Espiritual' : 'Spiritual Influence',
+                content: aiSynthesis.influência_espiritual,
+                color: 'indigo',
+                borderColor: 'border-indigo-500/20',
+                dotColor: 'bg-indigo-500/30 border-indigo-400/50',
+                textColor: 'text-white',
+                contentColor: 'text-indigo-50'
+            }
+        ];
+    };
+
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
         e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=Tarot";
         e.currentTarget.onerror = null;
@@ -524,9 +587,48 @@ export const DailyCard = () => {
                 </div>
             </main>
 
-            {/* Energias do Dia - Clean & Professional */}
-            <section className="relative py-20 md:py-28 px-4 md:px-8 bg-[#0d0812] border-y border-white/5">
-                <div className="max-w-6xl mx-auto pb-32 md:pb-48 lg:pb-64">
+            {/* Energias do Dia - Layout da Síntese */}
+            <section className="relative py-20 md:py-28 px-4 md:px-6 lg:px-8 bg-[#0d0812] border-y border-white/5 overflow-hidden">
+                {/* Fundo de estrelas sutis */}
+                <div className="absolute inset-0 opacity-20">
+                    <div className="absolute top-[10%] left-[15%] w-1 h-1 bg-white rounded-full animate-pulse"></div>
+                    <div className="absolute top-[25%] left-[80%] w-0.5 h-0.5 bg-white rounded-full"></div>
+                    <div className="absolute top-[40%] left-[30%] w-1.5 h-1.5 bg-white rounded-full opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                    <div className="absolute top-[60%] left-[70%] w-0.5 h-0.5 bg-white rounded-full"></div>
+                    <div className="absolute top-[75%] left-[20%] w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+                    <div className="absolute top-[20%] left-[60%] w-0.5 h-0.5 bg-white rounded-full opacity-80"></div>
+                    <div className="absolute top-[85%] left-[85%] w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+                    <div className="absolute top-[35%] left-[10%] w-0.5 h-0.5 bg-white rounded-full"></div>
+                    <div className="absolute top-[55%] left-[90%] w-1.5 h-1.5 bg-white rounded-full opacity-40"></div>
+                    <div className="absolute top-[15%] left-[45%] w-0.5 h-0.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                    <div className="absolute top-[70%] left-[50%] w-1 h-1 bg-white rounded-full opacity-70"></div>
+                    <div className="absolute top-[90%] left-[35%] w-0.5 h-0.5 bg-white rounded-full"></div>
+                </div>
+
+                <div className="max-w-7xl mx-auto relative z-10">
+                    {/* Chamas douradas decorativas nas quinas do container */}
+                    <div className="absolute inset-0 pointer-events-none">
+                        {/* Chama superior esquerda */}
+                        <div className="absolute -top-12 -left-12 w-48 h-64 opacity-30">
+                            <div className="w-full h-full bg-gradient-to-t from-yellow-600/50 via-yellow-400/70 to-yellow-300/40 rounded-full blur-3xl transform rotate-45"></div>
+                            <div className="absolute top-8 left-4 w-32 h-40 bg-gradient-to-t from-yellow-500/70 via-yellow-300/50 to-transparent rounded-full blur-2xl"></div>
+                        </div>
+                        {/* Chama superior direita */}
+                        <div className="absolute -top-12 -right-12 w-48 h-64 opacity-30">
+                            <div className="w-full h-full bg-gradient-to-t from-yellow-600/50 via-yellow-400/70 to-yellow-300/40 rounded-full blur-3xl transform -rotate-45"></div>
+                            <div className="absolute top-8 right-4 w-32 h-40 bg-gradient-to-t from-yellow-500/70 via-yellow-300/50 to-transparent rounded-full blur-2xl"></div>
+                        </div>
+                        {/* Chama inferior esquerda */}
+                        <div className="absolute -bottom-12 -left-12 w-48 h-64 opacity-30">
+                            <div className="w-full h-full bg-gradient-to-t from-yellow-600/50 via-yellow-400/70 to-yellow-300/40 rounded-full blur-3xl transform -rotate-45"></div>
+                            <div className="absolute top-8 left-4 w-32 h-40 bg-gradient-to-t from-yellow-500/70 via-yellow-300/50 to-transparent rounded-full blur-2xl"></div>
+                        </div>
+                        {/* Chama inferior direita */}
+                        <div className="absolute -bottom-12 -right-12 w-48 h-64 opacity-30">
+                            <div className="w-full h-full bg-gradient-to-t from-yellow-600/50 via-yellow-400/70 to-yellow-300/40 rounded-full blur-3xl transform rotate-45"></div>
+                            <div className="absolute top-8 right-4 w-32 h-40 bg-gradient-to-t from-yellow-500/70 via-yellow-300/50 to-transparent rounded-full blur-2xl"></div>
+                        </div>
+                    </div>
                     {/* Section Title */}
                     <div className="text-center mb-12 md:mb-16">
                         <h2 className="text-white text-3xl md:text-4xl font-light mb-3" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.02em' }}>
@@ -535,103 +637,272 @@ export const DailyCard = () => {
                         <div className="w-16 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto opacity-60" />
                     </div>
 
-                    {/* AI Message or Static Meaning */}
-                    <div className="mb-20 md:mb-28 text-center px-4">
-                        {isLoadingAI ? (
-                            <div className="flex flex-col items-center justify-center gap-4">
-                                <div className="w-8 h-8 border-2 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin"></div>
-                                <p className="text-gray-400 text-sm">{isPortuguese ? 'Consultando os astros...' : 'Consulting the stars...'}</p>
+                    {/* AI Loading State */}
+                    {isLoadingAI ? (
+                        <div className="flex flex-col items-center justify-center gap-4 py-20">
+                            <div className="w-8 h-8 border-2 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin"></div>
+                            <p className="text-gray-400 text-sm">{isPortuguese ? 'Consultando os astros...' : 'Consulting the stars...'}</p>
+                        </div>
+                    ) : (
+                        <div className="bg-gradient-to-br from-[#1a1230]/80 to-[#12091a]/80 backdrop-blur-sm border border-white/10 rounded-2xl p-8 md:p-12 lg:p-16 space-y-12 lg:space-y-16 max-w-6xl mx-auto">
+                            {/* Ornamento decorativo superior */}
+                            <div className="flex justify-center mb-6">
+                                <div className="w-32 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
                             </div>
-                        ) : aiSynthesis ? (
-                            <div className="space-y-6">
-                                <p className="text-gray-100 text-2xl md:text-3xl font-light leading-relaxed max-w-3xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                    "{aiSynthesis.mensagem}"
-                                </p>
-                                <div className="flex justify-center">
-                                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 border border-yellow-500/30">
-                                        <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
-                                        <span className="text-yellow-400 text-sm font-medium">{aiSynthesis.energia}</span>
-                                    </span>
-                                </div>
-                            </div>
-                        ) : (
-                            <p className="text-gray-100 text-2xl md:text-3xl font-light leading-relaxed max-w-3xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                "{meaning}"
-                            </p>
-                        )}
-                    </div>
 
-                    {/* Three Columns - Sophisticated Layout */}
-                    <div className="grid md:grid-cols-3 gap-8 md:gap-10 max-w-6xl mx-auto md:grid-rows-1">
-                        {/* Palavras-Chave */}
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">stars</span>
+                            {/* Vibração Universal - Tema Central */}
+                            {aiSynthesis?.vibração_universal && (
+                                <div className="text-center space-y-3 mb-8">
+                                    <h3 className="text-3xl md:text-4xl font-bold font-serif italic leading-relaxed px-4" style={{
+                                        fontFamily: "'Crimson Text', serif",
+                                        background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        backgroundClip: 'text',
+                                    }}>
+                                        {aiSynthesis.vibração_universal}
+                                    </h3>
+                                </div>
+                            )}
+
+                            {/* Mensagem Coletiva - Narrativa principal */}
+                            <div className="prose prose-invert max-w-none space-y-6">
+                                {aiSynthesis?.mensagem_coletiva && aiSynthesis.mensagem_coletiva.includes('.') ? (
+                                    <div className="text-center">
+                                        <p className="text-white text-base md:text-lg leading-relaxed font-light max-w-4xl mx-auto" style={{
+                                            fontFamily: "'Crimson Text', serif"
+                                        }}>
+                                            {aiSynthesis.mensagem_coletiva.split(/\.\s+/).slice(1).join('. ').trim()}
+                                        </p>
                                     </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Palavras-Chave' : 'Keywords'}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                ) : (
+                                    <p className="text-white text-center text-base md:text-lg leading-relaxed font-light max-w-4xl mx-auto" style={{
+                                        fontFamily: "'Crimson Text', serif"
+                                    }}>
+                                        {`"${meaning}"`}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Separador místico */}
+                            <div className="flex items-center justify-center gap-3 py-4">
+                                <div className="w-16 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
+                                <span className="material-symbols-outlined text-yellow-400/40 text-sm">auto_awesome</span>
+                                <div className="w-16 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
+                            </div>
+
+                            {/* Carta em Miniatura */}
+                            <div className="flex justify-center py-8">
+                                <div className="relative group">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 blur-lg rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <div className="relative bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-yellow-500/20 rounded-lg p-3">
+                                        <img
+                                            src={dailyCard.imageUrl}
+                                            alt={cardName}
+                                            onError={handleImageError}
+                                            className="w-32 h-56 md:w-40 md:h-70 object-cover rounded border border-white/10 transition-transform duration-300 group-hover:scale-105 shadow-lg"
+                                        />
+                                        <p className="text-center text-white/80 text-sm mt-3 font-medium" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                            {cardName}
+                                        </p>
                                     </div>
                                 </div>
-                                <div className="space-y-3 flex-1">
-                                    {keywords.slice(0, 5).map((keyword, i) => (
-                                        <div key={i} className="flex items-center gap-3">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-yellow-500/50 flex-shrink-0" />
-                                            <span className="text-gray-300 text-sm font-light leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {keyword}
+                            </div>
+
+                            {/* Módulo Dinâmico - Rota entre os 4 automaticamente */}
+                            {aiSynthesis && getDynamicModules().length > 0 && (
+                                <div className="relative min-h-[140px]">
+                                    <div
+                                        className={`transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-0 transform scale-95' : 'opacity-100 transform scale-100'
+                                            }`}
+                                    >
+                                        {(() => {
+                                            const modules = getDynamicModules();
+                                            const currentModule = modules[currentModuleIndex];
+                                            if (!currentModule) return null;
+
+                                            return (
+                                                <div className={`relative pl-6 border-l-2 ${currentModule.borderColor}`}>
+                                                    <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full ${currentModule.dotColor} border-2`}></div>
+                                                    <div className="mb-4">
+                                                        <span className={`${currentModule.textColor} text-sm font-semibold uppercase tracking-wider`}>
+                                                            {currentModule.title}
+                                                        </span>
+                                                    </div>
+                                                    <p className={`${currentModule.contentColor} text-lg leading-relaxed ${currentModule.color === 'cyan' ? 'italic' : ''}`}>
+                                                        {currentModule.content}
+                                                    </p>
+                                                </div>
+                                            );
+                                        })()}
+                                    </div>
+
+                                    {/* Controles discretos */}
+                                    <div className="flex items-center justify-between mt-8 px-2">
+                                        {/* Botões de navegação discretos */}
+                                        <div className="flex items-center space-x-2">
+                                            <button
+                                                onClick={() => {
+                                                    setIsTransitioning(true);
+                                                    setTimeout(() => {
+                                                        setCurrentModuleIndex((prev) => (prev - 1 + 4) % 4);
+                                                        setIsTransitioning(false);
+                                                    }, 200);
+                                                }}
+                                                className="group flex items-center justify-center w-7 h-7 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300"
+                                                title={isPortuguese ? "Anterior" : "Previous"}
+                                            >
+                                                <span className="material-symbols-outlined text-white/60 group-hover:text-white/90 text-sm">chevron_left</span>
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    setIsTransitioning(true);
+                                                    setTimeout(() => {
+                                                        setCurrentModuleIndex((prev) => (prev + 1) % 4);
+                                                        setIsTransitioning(false);
+                                                    }, 200);
+                                                }}
+                                                className="group flex items-center justify-center w-7 h-7 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300"
+                                                title={isPortuguese ? "Próximo" : "Next"}
+                                            >
+                                                <span className="material-symbols-outlined text-white/60 group-hover:text-white/90 text-sm">chevron_right</span>
+                                            </button>
+                                        </div>
+
+                                        {/* Indicadores de posição melhorados */}
+                                        <div className="flex items-center space-x-3">
+                                            {getDynamicModules().map((module, index) => (
+                                                <button
+                                                    key={index}
+                                                    onClick={() => {
+                                                        setIsTransitioning(true);
+                                                        setTimeout(() => {
+                                                            setCurrentModuleIndex(index);
+                                                            setIsTransitioning(false);
+                                                        }, 200);
+                                                    }}
+                                                    className={`relative group transition-all duration-300 ${index === currentModuleIndex
+                                                        ? 'w-6 h-2'
+                                                        : 'w-2 h-2 hover:w-3'
+                                                        }`}
+                                                    title={module.title}
+                                                >
+                                                    <div className={`absolute inset-0 rounded-full transition-all duration-300 ${index === currentModuleIndex
+                                                        ? `bg-${module.color}-400 shadow-md`
+                                                        : 'bg-white/20 group-hover:bg-white/40'
+                                                        }`} />
+                                                    {index === currentModuleIndex && (
+                                                        <div className="absolute inset-0 rounded-full bg-white/20 animate-pulse" />
+                                                    )}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Timer discreto */}
+                                        <div className="flex items-center space-x-1 text-white/30">
+                                            <span className="material-symbols-outlined text-xs">schedule</span>
+                                            <span className="text-xs font-mono">8s</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+
+
+                            {/* Mantra Diário - Destaque Especial */}
+                            {aiSynthesis?.mantra_diário && (
+                                <div className="mt-10 text-center space-y-4">
+                                    <div className="flex items-center justify-center gap-3">
+                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
+                                        <span className="material-symbols-outlined text-yellow-400/50 text-lg">self_improvement</span>
+                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
+                                    </div>
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 via-yellow-400/5 to-yellow-500/10 blur-xl rounded-2xl"></div>
+                                        <div className="relative bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-yellow-500/20 rounded-xl p-6">
+                                            <p className="text-yellow-100 text-2xl md:text-3xl font-medium leading-relaxed max-w-2xl mx-auto" style={{
+                                                fontFamily: "'Crimson Text', serif",
+                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                backgroundClip: 'text',
+                                            }}>
+                                                "{aiSynthesis.mantra_diário}"
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Cards lado a lado - Compactos */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-20">
+                                {/* Chamado Universal ou Palavras-Chave */}
+                                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-900/20 via-transparent to-transparent border border-orange-500/10 p-4">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl"></div>
+                                    <div className="relative">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="material-symbols-outlined text-orange-300 text-base">campaign</span>
+                                            <span className="text-white text-xs font-semibold uppercase tracking-wider">
+                                                {aiSynthesis?.chamado_universal ? (isPortuguese ? 'Chamado Universal' : 'Universal Call') : (isPortuguese ? 'Palavras-Chave' : 'Keywords')}
                                             </span>
                                         </div>
-                                    ))}
+                                        {aiSynthesis?.chamado_universal ? (
+                                            <p className="text-orange-50 text-sm leading-relaxed">
+                                                {aiSynthesis.chamado_universal}
+                                            </p>
+                                        ) : (
+                                            <div className="space-y-1">
+                                                {keywords.slice(0, 4).map((keyword, i) => (
+                                                    <div key={i} className="flex items-center gap-2">
+                                                        <div className="w-1 h-1 rounded-full bg-orange-400/60" />
+                                                        <span className="text-orange-100/90 text-xs">{keyword}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        {/* Foco do Dia (IA) ou Reflexão (estático) */}
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">psychology</span>
-                                    </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {aiSynthesis ? (isPortuguese ? 'Foco do Dia' : 'Focus Today') : (isPortuguese ? 'Reflexão' : 'Reflection')}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
+                                {/* Portal de Transformação ou Conselho */}
+                                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-900/20 via-transparent to-transparent border border-emerald-500/10 p-4">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl"></div>
+                                    <div className="relative">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="material-symbols-outlined text-emerald-300 text-base">transform</span>
+                                            <span className="text-white text-xs font-semibold uppercase tracking-wider">
+                                                {aiSynthesis?.portal_transformação ? (isPortuguese ? 'Portal Transformação' : 'Transformation Portal') : (isPortuguese ? 'Conselho' : 'Advice')}
+                                            </span>
+                                        </div>
+                                        <p className="text-emerald-50 text-sm leading-relaxed font-medium italic">
+                                            {aiSynthesis?.portal_transformação || advice}
+                                        </p>
                                     </div>
                                 </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {aiSynthesis ? aiSynthesis.foco : description}
-                                </p>
                             </div>
-                        </div>
 
-                        {/* Reflexão (IA) ou Orientação (estático) */}
-                        <div className="relative h-full">
-                            <div className="relative h-full bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col">
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-700/10 flex-shrink-0">
-                                        <span className="material-symbols-outlined text-yellow-500 text-[20px]">explore</span>
+                            {/* Reflexão Final - se houver IA */}
+                            {aiSynthesis?.reflexão_coletiva && (
+                                <div className="mt-10 text-center space-y-4">
+                                    <div className="flex items-center justify-center gap-3">
+                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
+                                        <span className="material-symbols-outlined text-purple-400/50 text-lg">psychology</span>
+                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
                                     </div>
-                                    <div className="flex-1 pt-1">
-                                        <h3 className="text-white text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {aiSynthesis ? (isPortuguese ? 'Pergunta Reflexiva' : 'Reflective Question') : (isPortuguese ? 'Orientação' : 'Guidance')}
-                                        </h3>
-                                        <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mt-2" />
-                                    </div>
+                                    <p className="text-purple-100 text-xl md:text-2xl font-medium italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        {aiSynthesis.reflexão_coletiva}
+                                    </p>
                                 </div>
-                                <p className="text-gray-300 text-sm leading-loose font-light flex-1 italic" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                    {aiSynthesis ? aiSynthesis.reflexao : advice}
-                                </p>
+                            )}
+
+                            {/* Ornamento decorativo inferior */}
+                            <div className="flex justify-center mt-8">
+                                <div className="w-32 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
-            </section >
+            </section>
 
             {/* WhatsApp Daily Card Subscription Section */}
             <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">

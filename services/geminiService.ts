@@ -54,12 +54,18 @@ export interface YesNoSynthesis extends BaseSynthesis {
   condicao: string;
 }
 
-// Carta do Dia
+// Carta do Dia - Energia Coletiva
 export interface DailyCardSynthesis {
-  mensagem: string;
-  energia: string;
-  foco: string;
-  reflexao: string;
+  mensagem_coletiva: string;        // Mensagem sobre a energia coletiva do dia
+  vibração_universal: string;       // A vibração que permeia o universo hoje
+  consciência_coletiva: string;     // Como a humanidade deve direcionar sua consciência
+  movimento_planetário: string;     // A energia em movimento no planeta hoje
+  chamado_universal: string;        // O chamado que o universo faz à humanidade
+  reflexão_coletiva: string;        // Pergunta reflexiva para a humanidade
+  energia_emocional: string;        // A energia emocional predominante no coletivo
+  influência_espiritual: string;    // Como as forças espirituais influenciam o mundo
+  portal_transformação: string;     // Oportunidade de transformação disponível
+  mantra_diário: string;            // Afirmação ou mantra para sintonizar com a energia
 }
 
 // Tipo legado para compatibilidade

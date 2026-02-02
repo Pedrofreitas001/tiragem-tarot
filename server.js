@@ -18,6 +18,21 @@ const RATE_LIMIT_MAX = 10; // 10 requests por minuto
 const readingsCache = new Map();
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 horas
 
+const BASE_SYSTEM_PROMPT = `Você é um tarólogo experiente especializado em energias coletivas. 
+
+MISSÃO: Canalizar a energia coletiva do dia através da carta sorteada, oferecendo insights profundos sobre as vibrações universais que afetam toda a humanidade neste dia.
+
+ABORDAGEM:
+- Focque na energia COLETIVA, não individual
+- Conecte a carta com as tendências universais do dia
+- Tom místico, elevado, mas prático
+- Linguagem poética sem ser rebuscada
+- Sem clichês ou obviedades
+- Sem mencionar IA/sistema
+- Máximo 3 parágrafos por campo
+
+PERSPECTIVA: Esta carta representa as energias que permeiam o universo hoje, influenciando toda a humanidade de forma sutil mas poderosa.`;
+
 // Limpar cache expirado a cada hora
 setInterval(() => {
     const now = Date.now();
@@ -412,8 +427,8 @@ app.post('/api/daily-card', checkRateLimit, async (req, res) => {
         const lang = isPortuguese ? 'português' : 'English';
         const today = new Date().toISOString().split('T')[0];
 
-        // Cache por dia + carta
-        const cacheKey = `daily_${card.name}_${today}_${lang}`;
+        // Cache por dia + carta com nova versão
+        const cacheKey = `daily_v2_${card.name}_${today}_${lang}`;
         if (readingsCache.has(cacheKey)) {
             console.log('📦 Cache hit (daily)!');
             return res.json({ text: readingsCache.get(cacheKey).data });
@@ -421,20 +436,63 @@ app.post('/api/daily-card', checkRateLimit, async (req, res) => {
 
         const prompt = `${BASE_SYSTEM_PROMPT}
 
-Carta do Dia: ${card.name}
-Idioma: ${lang}
+CARTA DO DIA: ${card.name}
+IDIOMA: ${lang}
+DATA: ${today}
 
-Crie uma mensagem inspiradora e prática para o dia. Responda em JSON válido.`;
+Como tarólogo conectado às energias universais, canalize a energia coletiva que ${card.name} traz para toda a humanidade hoje.
+
+Crie uma interpretação completa focada na ENERGIA COLETIVA do dia. 
+
+IMPORTANTE: Forneça TODOS os 10 campos solicitados no JSON. Cada campo deve ter conteúdo significativo e único.
+
+Responda EXCLUSIVAMENTE em JSON válido com todos os campos obrigatórios preenchidos.`;
 
         const schema = {
             type: "object",
             properties: {
-                mensagem: { type: "string", description: "Mensagem do dia (máx 80 palavras)" },
-                energia: { type: "string", description: "Energia do dia (3-5 palavras)" },
-                foco: { type: "string", description: "Foco sugerido (máx 25 palavras)" },
-                reflexao: { type: "string", description: "Pergunta reflexiva (máx 15 palavras)" }
+                mensagem_coletiva: {
+                    type: "string",
+                    description: "Mensagem poética sobre a energia coletiva do dia (máx 100 palavras)"
+                },
+                vibração_universal: {
+                    type: "string",
+                    description: "A vibração que permeia o universo hoje (3-6 palavras)"
+                },
+                consciência_coletiva: {
+                    type: "string",
+                    description: "Como a humanidade deve direcionir sua consciência hoje (máx 45 palavras)"
+                },
+                movimento_planetário: {
+                    type: "string",
+                    description: "A energia cósmica em movimento no planeta hoje (máx 40 palavras)"
+                },
+                chamado_universal: {
+                    type: "string",
+                    description: "O chamado sagrado que o universo faz à humanidade hoje (máx 35 palavras)"
+                },
+                reflexão_coletiva: {
+                    type: "string",
+                    description: "Pergunta profunda para reflexão coletiva da humanidade (máx 25 palavras)"
+                },
+                energia_emocional: {
+                    type: "string",
+                    description: "A energia emocional predominante no coletivo hoje (máx 30 palavras)"
+                },
+                influência_espiritual: {
+                    type: "string",
+                    description: "Como as forças espirituais influenciam o mundo hoje (máx 35 palavras)"
+                },
+                portal_transformação: {
+                    type: "string",
+                    description: "Oportunidade de transformação disponível para todos hoje (máx 30 palavras)"
+                },
+                mantra_diário: {
+                    type: "string",
+                    description: "Uma afirmação ou mantra para sintonizar com a energia do dia (máx 15 palavras)"
+                }
             },
-            required: ["mensagem", "energia", "foco", "reflexao"]
+            required: ["mensagem_coletiva", "vibração_universal", "consciência_coletiva", "movimento_planetário", "chamado_universal", "reflexão_coletiva", "energia_emocional", "influência_espiritual", "portal_transformação", "mantra_diário"]
         };
 
         const response = await fetch(
@@ -446,7 +504,7 @@ Crie uma mensagem inspiradora e prática para o dia. Responda em JSON válido.`;
                     contents: [{ role: "user", parts: [{ text: prompt }] }],
                     generationConfig: {
                         temperature: 0.8,
-                        maxOutputTokens: 400,
+                        maxOutputTokens: 600,
                         responseMimeType: 'application/json',
                         responseSchema: schema
                     }
@@ -458,9 +516,29 @@ Crie uma mensagem inspiradora e prática para o dia. Responda em JSON válido.`;
 
         if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
             const text = data.candidates[0].content.parts[0].text;
-            console.log('✅ Carta do dia gerada');
+            console.log('✅ Resposta da IA:', text);
 
-            // Cache por 24h
+            // Tentar parsear para validar se todos os campos estão presentes
+            try {
+                const parsed = JSON.parse(text);
+                console.log('📊 Campos retornados:', Object.keys(parsed));
+
+                // Validar se todos os campos obrigatórios estão presentes
+                const requiredFields = [
+                    'mensagem_coletiva', 'vibração_universal', 'consciência_coletiva',
+                    'movimento_planetário', 'chamado_universal', 'reflexão_coletiva',
+                    'energia_emocional', 'influência_espiritual', 'portal_transformação', 'mantra_diário'
+                ];
+
+                const missingFields = requiredFields.filter(field => !parsed[field]);
+                if (missingFields.length > 0) {
+                    console.warn('⚠️ Campos ausentes:', missingFields);
+                }
+            } catch (parseError) {
+                console.error('❌ Erro ao parsear resposta:', parseError);
+            }
+
+            // Cache por 24h com nova versão
             readingsCache.set(cacheKey, { data: text, timestamp: Date.now() });
 
             return res.json({ text });
