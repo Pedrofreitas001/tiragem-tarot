@@ -656,14 +656,14 @@ export const DailyCard = () => {
                                 <div className="w-32 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
                             </div>
 
-                            {/* Header: Título/Frase à esquerda, Carta à direita */}
-                            <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center lg:items-start">
+                            {/* Hero Header: Texto à esquerda, Carta à direita */}
+                            <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
                                 {/* Lado Esquerdo - Vibração Universal e Mensagem */}
-                                <div className="flex-1 space-y-6 text-center lg:text-left">
-                                    {/* Vibração Universal - Tema Central */}
+                                <div className="flex-1 flex flex-col justify-center text-center lg:text-left space-y-8">
+                                    {/* Vibração Universal - Título Principal */}
                                     {aiSynthesis?.vibração_universal && (
-                                        <div className="space-y-3">
-                                            <h3 className="text-3xl md:text-4xl font-bold font-serif italic leading-relaxed" style={{
+                                        <div>
+                                            <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight" style={{
                                                 fontFamily: "'Crimson Text', serif",
                                                 background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
                                                 WebkitBackgroundClip: 'text',
@@ -675,16 +675,23 @@ export const DailyCard = () => {
                                         </div>
                                     )}
 
-                                    {/* Mensagem Coletiva - Narrativa principal */}
-                                    <div className="prose prose-invert max-w-none">
+                                    {/* Divisor decorativo */}
+                                    <div className="flex items-center justify-center lg:justify-start gap-3">
+                                        <div className="w-12 h-px bg-gradient-to-r from-yellow-500/60 to-transparent"></div>
+                                        <div className="w-2 h-2 rounded-full bg-yellow-500/40"></div>
+                                        <div className="w-8 h-px bg-yellow-500/30"></div>
+                                    </div>
+
+                                    {/* Mensagem Coletiva - Subtexto */}
+                                    <div className="max-w-xl">
                                         {aiSynthesis?.mensagem_coletiva && aiSynthesis.mensagem_coletiva.includes('.') ? (
-                                            <p className="text-white text-base md:text-lg leading-relaxed font-light" style={{
+                                            <p className="text-gray-200 text-lg md:text-xl leading-relaxed font-light" style={{
                                                 fontFamily: "'Crimson Text', serif"
                                             }}>
                                                 {aiSynthesis.mensagem_coletiva.split(/\.\s+/).slice(1).join('. ').trim()}
                                             </p>
                                         ) : (
-                                            <p className="text-white text-base md:text-lg leading-relaxed font-light" style={{
+                                            <p className="text-gray-200 text-lg md:text-xl leading-relaxed font-light" style={{
                                                 fontFamily: "'Crimson Text', serif"
                                             }}>
                                                 {`"${meaning}"`}
@@ -694,19 +701,27 @@ export const DailyCard = () => {
                                 </div>
 
                                 {/* Lado Direito - Carta em Miniatura */}
-                                <div className="flex-shrink-0">
+                                <div className="flex-shrink-0 flex items-center justify-center">
                                     <div className="relative group">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 blur-lg rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                        <div className="relative bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-yellow-500/20 rounded-lg p-3">
+                                        {/* Glow effect */}
+                                        <div className="absolute -inset-4 bg-gradient-to-r from-yellow-500/20 via-yellow-400/10 to-yellow-500/20 blur-2xl rounded-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                                        {/* Card container */}
+                                        <div className="relative bg-gradient-to-br from-[#1a1230]/80 to-[#12091a]/80 backdrop-blur-sm border border-yellow-500/30 rounded-xl p-4 shadow-xl shadow-yellow-500/10">
                                             <img
                                                 src={dailyCard.imageUrl}
                                                 alt={cardName}
                                                 onError={handleImageError}
-                                                className="w-32 h-56 md:w-40 md:h-70 object-cover rounded border border-white/10 transition-transform duration-300 group-hover:scale-105 shadow-lg"
+                                                className="w-36 h-60 md:w-44 md:h-72 object-cover rounded-lg border border-white/10 transition-transform duration-300 group-hover:scale-[1.02] shadow-lg"
                                             />
-                                            <p className="text-center text-white/80 text-sm mt-3 font-medium" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                                {cardName}
-                                            </p>
+                                            <div className="mt-4 text-center">
+                                                <p className="text-white text-base md:text-lg font-medium" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                    {cardName}
+                                                </p>
+                                                <p className="text-yellow-500/60 text-xs mt-1 uppercase tracking-widest">
+                                                    {dailyCard.arcana === 'major' ? (isPortuguese ? 'Arcano Maior' : 'Major Arcana') : (isPortuguese ? 'Arcano Menor' : 'Minor Arcana')}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

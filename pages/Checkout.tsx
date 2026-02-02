@@ -22,8 +22,11 @@ const STRIPE_CONFIG = {
 
 export const Checkout: React.FC = () => {
     const { isPortuguese } = useLanguage();
-    const { user, isGuest, signUp } = useAuth();
+    const { user, isGuest, signUp, updateProfile, profile } = useAuth();
     const navigate = useNavigate();
+
+    // Verificar se o usuário está logado (não é visitante)
+    const isLoggedIn = !isGuest && !!user;
 
     const [phase, setPhase] = useState<Phase>('plans');
     const [selectedPlan, setSelectedPlan] = useState<Plan>('free');
@@ -36,6 +39,17 @@ export const Checkout: React.FC = () => {
         confirmPassword: '',
         phone: '',
     });
+
+    // Pré-preencher dados do usuário logado
+    useEffect(() => {
+        if (isLoggedIn && profile) {
+            setFormData(prev => ({
+                ...prev,
+                fullName: profile.full_name || '',
+                email: user?.email || '',
+            }));
+        }
+    }, [isLoggedIn, profile, user]);
 
     // Scroll to top quando a fase muda
     useEffect(() => {
@@ -99,22 +113,41 @@ export const Checkout: React.FC = () => {
             // Simula processamento de pagamento
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // AGORA cria a conta com status PREMIUM (após pagamento confirmado)
-            const { error: signUpError } = await signUp(
-                formData.email,
-                formData.password,
-                formData.fullName,
-                'premium' // Tier premium após pagamento
-            );
+            // Calcular data de expiração (1 mês a partir de hoje)
+            const expiresAt = new Date();
+            expiresAt.setMonth(expiresAt.getMonth() + 1);
 
-            if (signUpError) {
-                setError(signUpError.message);
-                return;
+            if (isLoggedIn) {
+                // USUÁRIO LOGADO: Atualizar perfil existente para premium
+                const { error: updateError } = await updateProfile({
+                    subscription_tier: 'premium',
+                    subscription_expires_at: expiresAt.toISOString(),
+                });
+
+                if (updateError) {
+                    setError(updateError.message);
+                    return;
+                }
+
+                // Redirecionar para página de sucesso
+                navigate('/checkout/success');
+            } else {
+                // NOVO USUÁRIO: Criar conta com status PREMIUM (após pagamento confirmado)
+                const { error: signUpError } = await signUp(
+                    formData.email,
+                    formData.password,
+                    formData.fullName,
+                    'premium' // Tier premium após pagamento
+                );
+
+                if (signUpError) {
+                    setError(signUpError.message);
+                    return;
+                }
+
+                // Redirecionar para página de sucesso
+                navigate('/checkout/success');
             }
-
-            // Pagamento bem-sucedido e conta criada
-            alert(isPortuguese ? 'Bem-vindo ao Zaya Tarot Premium! Seu acesso foi ativado.' : 'Welcome to Zaya Tarot Premium! Your access has been activated.');
-            navigate('/');
         } catch (err: any) {
             setError(isPortuguese ? 'Erro no pagamento' : 'Payment error');
         } finally {
@@ -368,7 +401,18 @@ export const Checkout: React.FC = () => {
                         {/* Continue Button */}
                         <div className="flex justify-center pt-8">
                             <button
-                                onClick={() => setPhase('account')}
+                                onClick={() => {
+                                    // Se usuário já está logado e selecionou premium, pula para pagamento
+                                    if (isLoggedIn && selectedPlan === 'premium') {
+                                        setPhase('payment');
+                                    } else if (isLoggedIn && selectedPlan === 'free') {
+                                        // Usuário logado selecionou free - já tem conta, volta para home
+                                        navigate('/');
+                                    } else {
+                                        // Visitante precisa criar conta
+                                        setPhase('account');
+                                    }
+                                }}
                                 className={`px-12 py-4 rounded-lg font-semibold transition-all text-base uppercase tracking-widest ${selectedPlan === 'premium'
                                     ? 'bg-gradient-to-r from-[#ffe066] to-[#ffd700] text-black hover:shadow-lg hover:shadow-[#ffe066]/40'
                                     : 'bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white hover:shadow-lg hover:shadow-[#875faf]/40'
@@ -583,23 +627,44 @@ export const Checkout: React.FC = () => {
                             {/* PAYMENT PHASE */}
                             {phase === 'payment' && (
                                 <form onSubmit={handlePayment} className="space-y-6">
-                                    {/* Progress bar */}
+                                    {/* Progress bar - adaptado para usuários logados */}
                                     <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/10">
                                         <div className="flex items-center gap-3 opacity-60">
                                             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/30 border border-green-500/60 text-green-400 text-sm font-bold">✓</div>
                                             <span className="text-xs text-gray-400 uppercase">{isPortuguese ? 'Plano' : 'Plan'}</span>
                                         </div>
                                         <div className="flex-1 mx-4 h-px bg-gradient-to-r from-green-500/60 to-green-500/30"></div>
-                                        <div className="flex items-center gap-3 opacity-60">
-                                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/30 border border-green-500/60 text-green-400 text-sm font-bold">✓</div>
-                                            <span className="text-xs text-gray-400 uppercase">{isPortuguese ? 'Conta' : 'Account'}</span>
-                                        </div>
-                                        <div className="flex-1 mx-4 h-px bg-gradient-to-r from-green-500/30 to-[#ffe066]/60"></div>
+                                        {!isLoggedIn && (
+                                            <>
+                                                <div className="flex items-center gap-3 opacity-60">
+                                                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/30 border border-green-500/60 text-green-400 text-sm font-bold">✓</div>
+                                                    <span className="text-xs text-gray-400 uppercase">{isPortuguese ? 'Conta' : 'Account'}</span>
+                                                </div>
+                                                <div className="flex-1 mx-4 h-px bg-gradient-to-r from-green-500/30 to-[#ffe066]/60"></div>
+                                            </>
+                                        )}
                                         <div className="flex items-center gap-3">
-                                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#ffe066] border border-[#ffd700] text-black text-sm font-bold">3</div>
+                                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#ffe066] border border-[#ffd700] text-black text-sm font-bold">{isLoggedIn ? '2' : '3'}</div>
                                             <span className="text-xs text-white uppercase">{isPortuguese ? 'Pagamento' : 'Payment'}</span>
                                         </div>
                                     </div>
+
+                                    {/* Mensagem de boas-vindas para usuário logado */}
+                                    {isLoggedIn && profile && (
+                                        <div className="flex items-center gap-4 p-4 bg-[#875faf]/10 border border-[#875faf]/30 rounded-xl mb-4">
+                                            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#875faf]/20">
+                                                <span className="material-symbols-outlined text-[#a77fd4]">person</span>
+                                            </div>
+                                            <div>
+                                                <p className="text-white text-sm font-medium">
+                                                    {isPortuguese ? `Olá, ${profile.full_name || user?.email?.split('@')[0]}!` : `Hi, ${profile.full_name || user?.email?.split('@')[0]}!`}
+                                                </p>
+                                                <p className="text-gray-400 text-xs">
+                                                    {isPortuguese ? 'Atualizando sua conta para Premium' : 'Upgrading your account to Premium'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Security Header Banner */}
                                     <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-green-500/10 via-green-500/5 to-emerald-500/10 border border-green-500/30 p-5">
@@ -786,7 +851,7 @@ export const Checkout: React.FC = () => {
                                     <div className="flex gap-3 pt-4">
                                         <button
                                             type="button"
-                                            onClick={() => setPhase('account')}
+                                            onClick={() => setPhase(isLoggedIn ? 'plans' : 'account')}
                                             className="flex-1 py-3 border border-white/10 rounded-xl text-gray-300 hover:bg-white/5 transition-colors font-medium flex items-center justify-center gap-2"
                                         >
                                             <span className="material-symbols-outlined text-sm">arrow_back</span>
