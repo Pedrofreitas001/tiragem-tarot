@@ -17,6 +17,8 @@ import WhatsAppModal from './components/WhatsAppModal';
 import { JourneySection } from './components/journey';
 import HeroJourneyStories from './components/journey/HeroJourneyStories';
 import { DailyCard } from './components/DailyCard';
+import { TarotPorSigno } from './components/TarotPorSigno';
+import { TarotPorSignoIndex } from './pages/TarotPorSignoIndex';
 import { HistoryFiltered } from './components/HistoryFiltered';
 import { SideBySideExample } from './components/Charts/SideBySideExample';
 import { PRODUCTS, getProductBySlug } from './data/products';
@@ -5874,6 +5876,10 @@ const App = () => {
                             <Route path="/cosmic" element={<CosmicCalendar />} />
                             <Route path="/carta-do-dia" element={<DailyCard />} />
                             <Route path="/daily-card" element={<DailyCard />} />
+                            <Route path="/tarot-por-signo" element={<TarotPorSignoIndex />} />
+                            <Route path="/tarot-by-sign" element={<TarotPorSignoIndex />} />
+                            <Route path="/tarot-por-signo/:signo" element={<TarotPorSigno />} />
+                            <Route path="/tarot-by-sign/:signo" element={<TarotPorSigno />} />
                             <Route path="/charts-demo" element={<SideBySideExample />} />
                             <Route path="/checkout" element={<Checkout />} />
                             <Route path="/checkout/success" element={<CheckoutSuccess />} />

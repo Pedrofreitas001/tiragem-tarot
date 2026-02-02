@@ -6,6 +6,12 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+// Tipo para signos do zodíaco
+export type ZodiacSignType =
+  | 'aries' | 'touro' | 'gemeos' | 'cancer'
+  | 'leao' | 'virgem' | 'libra' | 'escorpiao'
+  | 'sagitario' | 'capricornio' | 'aquario' | 'peixes';
+
 export interface Database {
   public: {
     Tables: {
@@ -15,6 +21,8 @@ export interface Database {
           email: string | null
           full_name: string | null
           avatar_url: string | null
+          birth_date: string | null
+          zodiac_sign: ZodiacSignType | null
           subscription_tier: 'free' | 'premium'
           subscription_expires_at: string | null
           readings_today: number
@@ -27,6 +35,8 @@ export interface Database {
           email?: string | null
           full_name?: string | null
           avatar_url?: string | null
+          birth_date?: string | null
+          zodiac_sign?: ZodiacSignType | null
           subscription_tier?: 'free' | 'premium'
           subscription_expires_at?: string | null
           readings_today?: number
@@ -39,6 +49,8 @@ export interface Database {
           email?: string | null
           full_name?: string | null
           avatar_url?: string | null
+          birth_date?: string | null
+          zodiac_sign?: ZodiacSignType | null
           subscription_tier?: 'free' | 'premium'
           subscription_expires_at?: string | null
           readings_today?: number
