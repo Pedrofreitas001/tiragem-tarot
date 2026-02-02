@@ -650,12 +650,7 @@ export const DailyCard = () => {
                             <p className="text-gray-400 text-sm">{isPortuguese ? 'Consultando os astros...' : 'Consulting the stars...'}</p>
                         </div>
                     ) : (
-                        <div className="bg-gradient-to-br from-[#1a1230]/80 to-[#12091a]/80 backdrop-blur-sm border border-white/10 rounded-2xl p-8 md:p-12 lg:p-16 space-y-12 lg:space-y-16 max-w-6xl mx-auto">
-                            {/* Ornamento decorativo superior */}
-                            <div className="flex justify-center mb-6">
-                                <div className="w-32 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
-                            </div>
-
+                        <div className="space-y-12 lg:space-y-16 max-w-6xl mx-auto">
                             {/* Hero Header: Texto à esquerda, Carta à direita */}
                             <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
                                 {/* Lado Esquerdo - Vibração Universal e Mensagem */}
@@ -707,7 +702,7 @@ export const DailyCard = () => {
                                         <div className="absolute -inset-4 bg-gradient-to-r from-yellow-500/20 via-yellow-400/10 to-yellow-500/20 blur-2xl rounded-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                                         {/* Card container */}
-                                        <div className="relative bg-gradient-to-br from-[#1a1230]/80 to-[#12091a]/80 backdrop-blur-sm border border-yellow-500/30 rounded-xl p-4 shadow-xl shadow-yellow-500/10">
+                                        <div className="relative bg-gradient-to-br from-[#1a1230]/80 to-[#12091a]/80 backdrop-blur-sm rounded-xl p-4 shadow-xl shadow-yellow-500/10">
                                             <img
                                                 src={dailyCard.imageUrl}
                                                 alt={cardName}
@@ -717,9 +712,6 @@ export const DailyCard = () => {
                                             <div className="mt-4 text-center">
                                                 <p className="text-white text-base md:text-lg font-medium" style={{ fontFamily: "'Crimson Text', serif" }}>
                                                     {cardName}
-                                                </p>
-                                                <p className="text-yellow-500/60 text-xs mt-1 uppercase tracking-widest">
-                                                    {dailyCard.arcana === 'major' ? (isPortuguese ? 'Arcano Maior' : 'Major Arcana') : (isPortuguese ? 'Arcano Menor' : 'Minor Arcana')}
                                                 </p>
                                             </div>
                                         </div>
@@ -920,10 +912,6 @@ export const DailyCard = () => {
                                 </div>
                             )}
 
-                            {/* Ornamento decorativo inferior */}
-                            <div className="flex justify-center mt-8">
-                                <div className="w-32 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
-                            </div>
                         </div>
                     )}
                 </div>
