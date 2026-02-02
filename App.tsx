@@ -23,6 +23,7 @@ import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import Spreads from './pages/Spreads';
 import Checkout from './pages/Checkout';
+import CheckoutSuccess from './pages/CheckoutSuccess';
 import Settings from './pages/Settings';
 import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
@@ -5875,6 +5876,7 @@ const App = () => {
                             <Route path="/daily-card" element={<DailyCard />} />
                             <Route path="/charts-demo" element={<SideBySideExample />} />
                             <Route path="/checkout" element={<Checkout />} />
+                            <Route path="/checkout/success" element={<CheckoutSuccess />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/configuracoes" element={<Settings />} />
                         </Routes>

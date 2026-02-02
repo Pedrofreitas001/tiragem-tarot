@@ -588,66 +588,95 @@ export const DailyCard = () => {
             </main>
 
             {/* Energias do Dia - Layout da Síntese */}
-            <section className="relative py-20 md:py-28 px-4 md:px-6 lg:px-8 bg-[#0d0812] border-y border-white/5 overflow-hidden">
+            <section className="relative py-20 md:py-28 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark overflow-hidden">
+                {/* Elegant gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-900/10 pointer-events-none" />
+
+                {/* Mystical ambient glow effects */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-purple-500/15 to-transparent rounded-full blur-3xl" />
+                    <div className="absolute -bottom-40 right-1/4 w-[500px] h-[500px] bg-gradient-to-tl from-primary/10 to-transparent rounded-full blur-3xl" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-yellow-500/5 via-purple-500/8 to-yellow-500/5 rounded-full blur-3xl opacity-60" />
+                </div>
+
                 {/* Fundo de estrelas sutis */}
-                <div className="absolute inset-0 opacity-20">
-                    <div className="absolute top-[10%] left-[15%] w-1 h-1 bg-white rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 opacity-30">
+                    <div className="absolute top-[10%] left-[15%] w-1 h-1 bg-purple-300 rounded-full animate-pulse"></div>
                     <div className="absolute top-[25%] left-[80%] w-0.5 h-0.5 bg-white rounded-full"></div>
-                    <div className="absolute top-[40%] left-[30%] w-1.5 h-1.5 bg-white rounded-full opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
-                    <div className="absolute top-[60%] left-[70%] w-0.5 h-0.5 bg-white rounded-full"></div>
+                    <div className="absolute top-[40%] left-[30%] w-1.5 h-1.5 bg-yellow-300 rounded-full opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                    <div className="absolute top-[60%] left-[70%] w-0.5 h-0.5 bg-purple-200 rounded-full"></div>
                     <div className="absolute top-[75%] left-[20%] w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
-                    <div className="absolute top-[20%] left-[60%] w-0.5 h-0.5 bg-white rounded-full opacity-80"></div>
-                    <div className="absolute top-[85%] left-[85%] w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+                    <div className="absolute top-[20%] left-[60%] w-0.5 h-0.5 bg-yellow-200 rounded-full opacity-80"></div>
+                    <div className="absolute top-[85%] left-[85%] w-1 h-1 bg-purple-300 rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
                     <div className="absolute top-[35%] left-[10%] w-0.5 h-0.5 bg-white rounded-full"></div>
-                    <div className="absolute top-[55%] left-[90%] w-1.5 h-1.5 bg-white rounded-full opacity-40"></div>
-                    <div className="absolute top-[15%] left-[45%] w-0.5 h-0.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                    <div className="absolute top-[55%] left-[90%] w-1.5 h-1.5 bg-yellow-300 rounded-full opacity-40"></div>
+                    <div className="absolute top-[15%] left-[45%] w-0.5 h-0.5 bg-purple-200 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
                     <div className="absolute top-[70%] left-[50%] w-1 h-1 bg-white rounded-full opacity-70"></div>
-                    <div className="absolute top-[90%] left-[35%] w-0.5 h-0.5 bg-white rounded-full"></div>
+                    <div className="absolute top-[90%] left-[35%] w-0.5 h-0.5 bg-yellow-200 rounded-full"></div>
                 </div>
 
                 <div className="max-w-7xl mx-auto relative z-10">
-                    {/* Chamas douradas decorativas nas quinas do container */}
+                    {/* Elegant corner accents */}
                     <div className="absolute inset-0 pointer-events-none">
-                        {/* Chama superior esquerda */}
-                        <div className="absolute -top-12 -left-12 w-48 h-64 opacity-30">
-                            <div className="w-full h-full bg-gradient-to-t from-yellow-600/50 via-yellow-400/70 to-yellow-300/40 rounded-full blur-3xl transform rotate-45"></div>
-                            <div className="absolute top-8 left-4 w-32 h-40 bg-gradient-to-t from-yellow-500/70 via-yellow-300/50 to-transparent rounded-full blur-2xl"></div>
+                        {/* Top left accent */}
+                        <div className="absolute -top-8 -left-8 w-40 h-40 opacity-40">
+                            <div className="w-full h-full bg-gradient-to-br from-primary/30 via-purple-500/20 to-transparent rounded-full blur-2xl"></div>
                         </div>
-                        {/* Chama superior direita */}
-                        <div className="absolute -top-12 -right-12 w-48 h-64 opacity-30">
-                            <div className="w-full h-full bg-gradient-to-t from-yellow-600/50 via-yellow-400/70 to-yellow-300/40 rounded-full blur-3xl transform -rotate-45"></div>
-                            <div className="absolute top-8 right-4 w-32 h-40 bg-gradient-to-t from-yellow-500/70 via-yellow-300/50 to-transparent rounded-full blur-2xl"></div>
+                        {/* Top right accent */}
+                        <div className="absolute -top-8 -right-8 w-40 h-40 opacity-40">
+                            <div className="w-full h-full bg-gradient-to-bl from-yellow-500/25 via-yellow-400/15 to-transparent rounded-full blur-2xl"></div>
                         </div>
-                        {/* Chama inferior esquerda */}
-                        <div className="absolute -bottom-12 -left-12 w-48 h-64 opacity-30">
-                            <div className="w-full h-full bg-gradient-to-t from-yellow-600/50 via-yellow-400/70 to-yellow-300/40 rounded-full blur-3xl transform -rotate-45"></div>
-                            <div className="absolute top-8 left-4 w-32 h-40 bg-gradient-to-t from-yellow-500/70 via-yellow-300/50 to-transparent rounded-full blur-2xl"></div>
+                        {/* Bottom left accent */}
+                        <div className="absolute -bottom-8 -left-8 w-40 h-40 opacity-40">
+                            <div className="w-full h-full bg-gradient-to-tr from-yellow-500/25 via-yellow-400/15 to-transparent rounded-full blur-2xl"></div>
                         </div>
-                        {/* Chama inferior direita */}
-                        <div className="absolute -bottom-12 -right-12 w-48 h-64 opacity-30">
-                            <div className="w-full h-full bg-gradient-to-t from-yellow-600/50 via-yellow-400/70 to-yellow-300/40 rounded-full blur-3xl transform rotate-45"></div>
-                            <div className="absolute top-8 right-4 w-32 h-40 bg-gradient-to-t from-yellow-500/70 via-yellow-300/50 to-transparent rounded-full blur-2xl"></div>
+                        {/* Bottom right accent */}
+                        <div className="absolute -bottom-8 -right-8 w-40 h-40 opacity-40">
+                            <div className="w-full h-full bg-gradient-to-tl from-primary/30 via-purple-500/20 to-transparent rounded-full blur-2xl"></div>
                         </div>
                     </div>
                     {/* Section Title */}
                     <div className="text-center mb-12 md:mb-16">
-                        <h2 className="text-white text-3xl md:text-4xl font-light mb-3" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.02em' }}>
+                        <div className="inline-flex items-center gap-3 mb-4 px-4 py-2 rounded-full bg-surface-dark/60 border border-border-dark/50 backdrop-blur-sm">
+                            <span className="material-symbols-outlined text-primary text-lg">auto_awesome</span>
+                            <span className="text-primary/80 text-xs uppercase tracking-widest font-semibold">
+                                {isPortuguese ? 'Mensagem do Universo' : 'Message from the Universe'}
+                            </span>
+                        </div>
+                        <h2 className="text-white text-4xl md:text-5xl font-light mb-4" style={{
+                            fontFamily: "'Crimson Text', serif",
+                            letterSpacing: '0.02em',
+                            background: 'linear-gradient(180deg, #ffffff 0%, #e8e0f0 50%, #c9b8d4 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                        }}>
                             {isPortuguese ? 'Energias do Dia' : 'Daily Energies'}
                         </h2>
-                        <div className="w-16 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto opacity-60" />
+                        <div className="flex items-center justify-center gap-3">
+                            <div className="w-12 h-px bg-gradient-to-r from-transparent to-primary/50" />
+                            <div className="w-2 h-2 rounded-full bg-primary/60" />
+                            <div className="w-12 h-px bg-gradient-to-l from-transparent to-primary/50" />
+                        </div>
                     </div>
 
                     {/* AI Loading State */}
                     {isLoadingAI ? (
                         <div className="flex flex-col items-center justify-center gap-4 py-20">
-                            <div className="w-8 h-8 border-2 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin"></div>
+                            <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
                             <p className="text-gray-400 text-sm">{isPortuguese ? 'Consultando os astros...' : 'Consulting the stars...'}</p>
                         </div>
                     ) : (
-                        <div className="bg-gradient-to-br from-[#1a1230]/80 to-[#12091a]/80 backdrop-blur-sm border border-white/10 rounded-2xl p-8 md:p-12 lg:p-16 space-y-12 lg:space-y-16 max-w-6xl mx-auto">
+                        <div className="relative bg-gradient-to-br from-surface-dark/90 via-card-dark/80 to-surface-dark/90 backdrop-blur-xl border border-border-dark/80 rounded-3xl p-8 md:p-12 lg:p-16 space-y-12 lg:space-y-16 max-w-6xl mx-auto shadow-2xl shadow-purple-900/20">
+                            {/* Inner glow effect */}
+                            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary/5 via-transparent to-yellow-500/5 pointer-events-none" />
                             {/* Ornamento decorativo superior */}
-                            <div className="flex justify-center mb-6">
-                                <div className="w-32 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
+                            <div className="relative flex justify-center mb-6">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-16 h-px bg-gradient-to-r from-transparent to-primary/40" />
+                                    <span className="material-symbols-outlined text-primary/50 text-xs">star</span>
+                                    <div className="w-16 h-px bg-gradient-to-l from-transparent to-primary/40" />
+                                </div>
                             </div>
 
                             {/* Vibração Universal - Tema Central */}
@@ -692,19 +721,30 @@ export const DailyCard = () => {
                             </div>
 
                             {/* Carta em Miniatura */}
-                            <div className="flex justify-center py-8">
+                            <div className="relative flex justify-center py-8">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-yellow-600/10 blur-lg rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                    <div className="relative bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-yellow-500/20 rounded-lg p-3">
+                                    {/* Glow effect on hover */}
+                                    <div className="absolute -inset-4 bg-gradient-to-r from-primary/30 via-purple-500/20 to-primary/30 blur-xl rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                                    {/* Card container */}
+                                    <div className="relative bg-gradient-to-br from-surface-highlight/80 to-surface-dark/80 backdrop-blur-sm border border-primary/20 rounded-2xl p-4 shadow-lg shadow-purple-900/30 group-hover:border-primary/40 transition-all duration-300">
+                                        {/* Inner glow */}
+                                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+
                                         <img
                                             src={dailyCard.imageUrl}
                                             alt={cardName}
                                             onError={handleImageError}
-                                            className="w-32 h-56 md:w-40 md:h-70 object-cover rounded border border-white/10 transition-transform duration-300 group-hover:scale-105 shadow-lg"
+                                            className="relative w-36 h-60 md:w-44 md:h-72 object-cover rounded-xl border border-border-dark/50 transition-all duration-300 group-hover:scale-[1.02] shadow-xl"
                                         />
-                                        <p className="text-center text-white/80 text-sm mt-3 font-medium" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                            {cardName}
-                                        </p>
+                                        <div className="mt-4 text-center">
+                                            <p className="text-white text-base font-medium" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                {cardName}
+                                            </p>
+                                            <p className="text-primary/60 text-xs mt-1 uppercase tracking-wider">
+                                                {isPortuguese ? 'Carta do Dia' : 'Card of the Day'}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -812,18 +852,23 @@ export const DailyCard = () => {
 
                             {/* Mantra Diário - Destaque Especial */}
                             {aiSynthesis?.mantra_diário && (
-                                <div className="mt-10 text-center space-y-4">
-                                    <div className="flex items-center justify-center gap-3">
-                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
-                                        <span className="material-symbols-outlined text-yellow-400/50 text-lg">self_improvement</span>
-                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
+                                <div className="relative mt-10 text-center space-y-4">
+                                    <div className="flex items-center justify-center gap-3 mb-2">
+                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-primary/40"></div>
+                                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-surface-highlight/80 border border-primary/30">
+                                            <span className="material-symbols-outlined text-primary text-lg">self_improvement</span>
+                                        </div>
+                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-primary/40"></div>
                                     </div>
-                                    <div className="relative">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 via-yellow-400/5 to-yellow-500/10 blur-xl rounded-2xl"></div>
-                                        <div className="relative bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-yellow-500/20 rounded-xl p-6">
-                                            <p className="text-yellow-100 text-2xl md:text-3xl font-medium leading-relaxed max-w-2xl mx-auto" style={{
+                                    <p className="text-primary/70 text-xs uppercase tracking-widest font-semibold mb-4">
+                                        {isPortuguese ? 'Mantra do Dia' : 'Daily Mantra'}
+                                    </p>
+                                    <div className="relative group">
+                                        <div className="absolute -inset-4 bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 blur-2xl rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                        <div className="relative bg-gradient-to-br from-surface-highlight/60 to-card-dark/60 backdrop-blur-sm border border-primary/20 rounded-2xl p-8 group-hover:border-primary/40 transition-all duration-300">
+                                            <p className="text-2xl md:text-3xl font-medium leading-relaxed max-w-2xl mx-auto" style={{
                                                 fontFamily: "'Crimson Text', serif",
-                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                background: 'linear-gradient(180deg, #ffffff 0%, #e8d4f0 40%, #c9a8d4 100%)',
                                                 WebkitBackgroundClip: 'text',
                                                 WebkitTextFillColor: 'transparent',
                                                 backgroundClip: 'text',
@@ -835,28 +880,30 @@ export const DailyCard = () => {
                                 </div>
                             )}
 
-                            {/* Cards lado a lado - Compactos */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-20">
+                            {/* Cards lado a lado - Premium Design */}
+                            <div className="relative grid grid-cols-1 md:grid-cols-2 gap-6 mt-20">
                                 {/* Chamado Universal ou Palavras-Chave */}
-                                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-900/20 via-transparent to-transparent border border-orange-500/10 p-4">
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl"></div>
+                                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-highlight/60 via-card-dark/40 to-surface-dark/60 border border-primary/15 p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                     <div className="relative">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="material-symbols-outlined text-orange-300 text-base">campaign</span>
-                                            <span className="text-white text-xs font-semibold uppercase tracking-wider">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/20 border border-primary/30">
+                                                <span className="material-symbols-outlined text-primary text-base">campaign</span>
+                                            </div>
+                                            <span className="text-white text-sm font-semibold uppercase tracking-wider">
                                                 {aiSynthesis?.chamado_universal ? (isPortuguese ? 'Chamado Universal' : 'Universal Call') : (isPortuguese ? 'Palavras-Chave' : 'Keywords')}
                                             </span>
                                         </div>
                                         {aiSynthesis?.chamado_universal ? (
-                                            <p className="text-orange-50 text-sm leading-relaxed">
+                                            <p className="text-gray-200 text-sm leading-relaxed">
                                                 {aiSynthesis.chamado_universal}
                                             </p>
                                         ) : (
-                                            <div className="space-y-1">
+                                            <div className="space-y-2">
                                                 {keywords.slice(0, 4).map((keyword, i) => (
-                                                    <div key={i} className="flex items-center gap-2">
-                                                        <div className="w-1 h-1 rounded-full bg-orange-400/60" />
-                                                        <span className="text-orange-100/90 text-xs">{keyword}</span>
+                                                    <div key={i} className="flex items-center gap-3">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                                                        <span className="text-gray-200 text-sm">{keyword}</span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -865,16 +912,18 @@ export const DailyCard = () => {
                                 </div>
 
                                 {/* Portal de Transformação ou Conselho */}
-                                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-900/20 via-transparent to-transparent border border-emerald-500/10 p-4">
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl"></div>
+                                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-highlight/60 via-card-dark/40 to-surface-dark/60 border border-yellow-500/15 p-6 transition-all duration-300 hover:border-yellow-500/30 hover:shadow-lg hover:shadow-yellow-500/10">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                     <div className="relative">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="material-symbols-outlined text-emerald-300 text-base">transform</span>
-                                            <span className="text-white text-xs font-semibold uppercase tracking-wider">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-yellow-500/20 border border-yellow-500/30">
+                                                <span className="material-symbols-outlined text-yellow-400 text-base">transform</span>
+                                            </div>
+                                            <span className="text-white text-sm font-semibold uppercase tracking-wider">
                                                 {aiSynthesis?.portal_transformação ? (isPortuguese ? 'Portal Transformação' : 'Transformation Portal') : (isPortuguese ? 'Conselho' : 'Advice')}
                                             </span>
                                         </div>
-                                        <p className="text-emerald-50 text-sm leading-relaxed font-medium italic">
+                                        <p className="text-gray-200 text-sm leading-relaxed italic">
                                             {aiSynthesis?.portal_transformação || advice}
                                         </p>
                                     </div>
@@ -883,21 +932,32 @@ export const DailyCard = () => {
 
                             {/* Reflexão Final - se houver IA */}
                             {aiSynthesis?.reflexão_coletiva && (
-                                <div className="mt-10 text-center space-y-4">
-                                    <div className="flex items-center justify-center gap-3">
-                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
-                                        <span className="material-symbols-outlined text-purple-400/50 text-lg">psychology</span>
-                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
+                                <div className="relative mt-12 text-center space-y-4">
+                                    <div className="flex items-center justify-center gap-3 mb-4">
+                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-primary/30"></div>
+                                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 border border-primary/20">
+                                            <span className="material-symbols-outlined text-primary/70 text-sm">psychology</span>
+                                        </div>
+                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-primary/30"></div>
                                     </div>
-                                    <p className="text-purple-100 text-xl md:text-2xl font-medium italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    <p className="text-xs text-primary/50 uppercase tracking-widest font-semibold mb-2">
+                                        {isPortuguese ? 'Reflexão' : 'Reflection'}
+                                    </p>
+                                    <p className="text-gray-200 text-lg md:text-xl font-light italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
                                         {aiSynthesis.reflexão_coletiva}
                                     </p>
                                 </div>
                             )}
 
                             {/* Ornamento decorativo inferior */}
-                            <div className="flex justify-center mt-8">
-                                <div className="w-32 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
+                            <div className="relative flex justify-center mt-12 pt-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-16 h-px bg-gradient-to-r from-transparent to-primary/30" />
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                                    <div className="w-8 h-px bg-primary/20" />
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                                    <div className="w-16 h-px bg-gradient-to-l from-transparent to-primary/30" />
+                                </div>
                             </div>
                         </div>
                     )}

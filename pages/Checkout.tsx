@@ -14,6 +14,12 @@ interface FormData {
 type Phase = 'plans' | 'account' | 'payment';
 type Plan = 'free' | 'premium';
 
+// Stripe configuration - will be set when credentials are provided
+const STRIPE_CONFIG = {
+    publishableKey: '', // Add your Stripe publishable key here
+    priceId: '', // Add your Stripe price ID for the premium plan
+};
+
 export const Checkout: React.FC = () => {
     const { isPortuguese } = useLanguage();
     const { user, isGuest, signUp } = useAuth();
@@ -373,27 +379,63 @@ export const Checkout: React.FC = () => {
                             </button>
                         </div>
 
-                        {/* Security Badges */}
+                        {/* Security & Trust Badges */}
                         <div className="flex justify-center pt-8">
-                            <div className="flex flex-col items-center gap-4 max-w-2xl">
-                                <div className="flex items-center justify-center gap-4 flex-wrap">
-                                    <div className="flex items-center gap-2 text-gray-400 text-xs">
-                                        <span className="text-lg">🔒</span>
-                                        <span>{isPortuguese ? 'Pagamento seguro' : 'Secure payment'}</span>
+                            <div className="flex flex-col items-center gap-6 max-w-3xl">
+                                {/* Main Security Badges */}
+                                <div className="flex items-center justify-center gap-6 md:gap-8 flex-wrap">
+                                    <div className="flex flex-col items-center gap-1.5 group">
+                                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-500/10 border border-green-500/30 group-hover:bg-green-500/20 transition-colors">
+                                            <span className="text-2xl">🔒</span>
+                                        </div>
+                                        <span className="text-gray-400 text-xs text-center">{isPortuguese ? 'Pagamento 100% Seguro' : '100% Secure Payment'}</span>
                                     </div>
-                                    <div className="w-px h-4 bg-gray-600"></div>
-                                    <div className="flex items-center gap-2 text-gray-400 text-xs">
-                                        <span className="text-lg">🛡️</span>
-                                        <span>SSL {isPortuguese ? 'Criptografado' : 'Encrypted'}</span>
+                                    <div className="flex flex-col items-center gap-1.5 group">
+                                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/30 group-hover:bg-blue-500/20 transition-colors">
+                                            <span className="text-2xl">🛡️</span>
+                                        </div>
+                                        <span className="text-gray-400 text-xs text-center">SSL 256-bit</span>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-1.5 group">
+                                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/10 border border-purple-500/30 group-hover:bg-purple-500/20 transition-colors">
+                                            <span className="text-2xl">✓</span>
+                                        </div>
+                                        <span className="text-gray-400 text-xs text-center">PCI DSS</span>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-1.5 group">
+                                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-500/10 border border-yellow-500/30 group-hover:bg-yellow-500/20 transition-colors">
+                                            <span className="text-2xl">⭐</span>
+                                        </div>
+                                        <span className="text-gray-400 text-xs text-center">{isPortuguese ? 'Garantia 7 dias' : '7-day Guarantee'}</span>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3 flex-wrap justify-center">
-                                    <span className="text-gray-500 text-xs">{isPortuguese ? 'Aceitamos:' : 'We accept:'}</span>
-                                    <div className="flex gap-2">
-                                        <div className="px-2 py-1 border border-gray-600 rounded text-xs text-gray-400">Visa</div>
-                                        <div className="px-2 py-1 border border-gray-600 rounded text-xs text-gray-400">Mastercard</div>
-                                        <div className="px-2 py-1 border border-gray-600 rounded text-xs text-gray-400">PIX</div>
+
+                                {/* Payment Methods */}
+                                <div className="flex flex-col items-center gap-3 pt-4 border-t border-white/10 w-full">
+                                    <span className="text-gray-500 text-xs uppercase tracking-wider">{isPortuguese ? 'Formas de Pagamento' : 'Payment Methods'}</span>
+                                    <div className="flex items-center gap-3 flex-wrap justify-center">
+                                        <div className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg">
+                                            <div className="w-8 h-5 bg-gradient-to-r from-blue-600 to-blue-800 rounded text-[8px] text-white flex items-center justify-center font-bold">VISA</div>
+                                        </div>
+                                        <div className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg">
+                                            <div className="w-8 h-5 bg-gradient-to-r from-red-500 to-yellow-500 rounded flex items-center justify-center">
+                                                <div className="w-3 h-3 bg-red-600 rounded-full opacity-80"></div>
+                                                <div className="w-3 h-3 bg-yellow-500 rounded-full -ml-1 opacity-80"></div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg">
+                                            <div className="w-8 h-5 bg-gradient-to-r from-green-400 to-teal-500 rounded text-[8px] text-white flex items-center justify-center font-bold">PIX</div>
+                                        </div>
+                                        <div className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg">
+                                            <div className="w-8 h-5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded text-[7px] text-white flex items-center justify-center font-bold">stripe</div>
+                                        </div>
                                     </div>
+                                </div>
+
+                                {/* Trust Message */}
+                                <div className="flex items-center gap-2 text-gray-500 text-xs">
+                                    <span className="material-symbols-outlined text-green-500 text-sm">verified</span>
+                                    <span>{isPortuguese ? 'Seus dados estão protegidos com criptografia de ponta a ponta' : 'Your data is protected with end-to-end encryption'}</span>
                                 </div>
                             </div>
                         </div>
@@ -544,184 +586,222 @@ export const Checkout: React.FC = () => {
                                     {/* Progress bar */}
                                     <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/10">
                                         <div className="flex items-center gap-3 opacity-60">
-                                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#ffe066]/30 border border-[#ffe066]/60 text-[#ffe066] text-sm font-bold">✓</div>
+                                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/30 border border-green-500/60 text-green-400 text-sm font-bold">✓</div>
                                             <span className="text-xs text-gray-400 uppercase">{isPortuguese ? 'Plano' : 'Plan'}</span>
                                         </div>
-                                        <div className="flex-1 mx-4 h-px bg-gradient-to-r from-[#ffe066]/60 to-transparent"></div>
+                                        <div className="flex-1 mx-4 h-px bg-gradient-to-r from-green-500/60 to-green-500/30"></div>
                                         <div className="flex items-center gap-3 opacity-60">
-                                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#ffe066]/30 border border-[#ffe066]/60 text-[#ffe066] text-sm font-bold">✓</div>
+                                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/30 border border-green-500/60 text-green-400 text-sm font-bold">✓</div>
                                             <span className="text-xs text-gray-400 uppercase">{isPortuguese ? 'Conta' : 'Account'}</span>
                                         </div>
-                                        <div className="flex-1 mx-4 h-px bg-gradient-to-r from-[#ffe066]/60 to-transparent"></div>
+                                        <div className="flex-1 mx-4 h-px bg-gradient-to-r from-green-500/30 to-[#ffe066]/60"></div>
                                         <div className="flex items-center gap-3">
                                             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#ffe066] border border-[#ffd700] text-black text-sm font-bold">3</div>
                                             <span className="text-xs text-white uppercase">{isPortuguese ? 'Pagamento' : 'Payment'}</span>
                                         </div>
                                     </div>
 
-                                    {/* Security Banner */}
-                                    <div className="grid grid-cols-3 gap-3 p-4 bg-gradient-to-r from-green-500/10 to-green-500/5 border border-green-500/30 rounded-lg">
-                                        <div className="flex flex-col items-center text-center">
-                                            <span className="text-2xl mb-2">🔒</span>
-                                            <p className="text-xs text-green-400 font-medium">{isPortuguese ? 'Criptografado' : 'Encrypted'}</p>
-                                        </div>
-                                        <div className="flex flex-col items-center text-center border-l border-r border-green-500/20">
-                                            <span className="text-2xl mb-2">🛡️</span>
-                                            <p className="text-xs text-green-400 font-medium">{isPortuguese ? 'PCI DSS' : 'PCI DSS'}</p>
-                                        </div>
-                                        <div className="flex flex-col items-center text-center">
-                                            <span className="text-2xl mb-2">✓</span>
-                                            <p className="text-xs text-green-400 font-medium">{isPortuguese ? 'Verificado' : 'Verified'}</p>
+                                    {/* Security Header Banner */}
+                                    <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-green-500/10 via-green-500/5 to-emerald-500/10 border border-green-500/30 p-5">
+                                        <div className="absolute -right-4 -top-4 w-24 h-24 bg-green-500/10 rounded-full blur-2xl"></div>
+                                        <div className="relative flex items-center justify-between">
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-500/20 border border-green-500/40">
+                                                    <span className="text-2xl">🔐</span>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-green-400 font-semibold text-sm">{isPortuguese ? 'Ambiente Seguro' : 'Secure Environment'}</h3>
+                                                    <p className="text-gray-400 text-xs">{isPortuguese ? 'Transação protegida por criptografia SSL 256-bit' : 'Transaction protected by 256-bit SSL encryption'}</p>
+                                                </div>
+                                            </div>
+                                            <div className="hidden md:flex items-center gap-3">
+                                                <div className="flex items-center gap-1 px-3 py-1 bg-white/5 rounded-full border border-green-500/20">
+                                                    <span className="material-symbols-outlined text-green-400 text-sm">verified</span>
+                                                    <span className="text-xs text-green-400">PCI DSS</span>
+                                                </div>
+                                                <div className="flex items-center gap-1 px-3 py-1 bg-white/5 rounded-full border border-green-500/20">
+                                                    <span className="material-symbols-outlined text-green-400 text-sm">lock</span>
+                                                    <span className="text-xs text-green-400">3D Secure</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    {/* Order Summary */}
-                                    <div className="bg-gradient-to-br from-[#ffe066]/10 to-[#ffd700]/5 border border-[#ffe066]/30 rounded-lg p-6">
-                                        <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-                                            <span className="text-lg">📋</span>
-                                            {isPortuguese ? 'Resumo da Assinatura' : 'Subscription Summary'}
-                                        </h3>
+                                    {/* Order Summary - More Clear */}
+                                    <div className="bg-gradient-to-br from-[#ffe066]/10 to-[#ffd700]/5 border border-[#ffe066]/30 rounded-xl p-6">
+                                        <div className="flex items-center gap-3 mb-5 pb-4 border-b border-[#ffe066]/20">
+                                            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[#ffe066]/20">
+                                                <span className="text-xl">✨</span>
+                                            </div>
+                                            <div>
+                                                <h3 className="text-white font-semibold">{isPortuguese ? 'Zaya Tarot Premium' : 'Zaya Tarot Premium'}</h3>
+                                                <p className="text-gray-400 text-xs">{isPortuguese ? 'Acesso completo a todas as funcionalidades' : 'Full access to all features'}</p>
+                                            </div>
+                                        </div>
                                         <div className="space-y-3">
                                             <div className="flex justify-between text-sm">
-                                                <span className="text-gray-400">{isPortuguese ? 'Plano' : 'Plan'}</span>
-                                                <span className="text-white font-medium">{isPortuguese ? 'Premium Arcano' : 'Premium Arcane'}</span>
-                                            </div>
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-gray-400">{isPortuguese ? 'Frequência' : 'Frequency'}</span>
+                                                <span className="text-gray-400 flex items-center gap-2">
+                                                    <span className="material-symbols-outlined text-xs">calendar_month</span>
+                                                    {isPortuguese ? 'Cobrança' : 'Billing'}
+                                                </span>
                                                 <span className="text-white font-medium">{isPortuguese ? 'Mensal' : 'Monthly'}</span>
                                             </div>
                                             <div className="flex justify-between text-sm">
-                                                <span className="text-gray-400">{isPortuguese ? 'Renovação' : 'Renewal'}</span>
+                                                <span className="text-gray-400 flex items-center gap-2">
+                                                    <span className="material-symbols-outlined text-xs">autorenew</span>
+                                                    {isPortuguese ? 'Renovação' : 'Renewal'}
+                                                </span>
                                                 <span className="text-white font-medium">{isPortuguese ? 'Automática' : 'Automatic'}</span>
                                             </div>
-                                            <div className="border-t border-[#ffe066]/20 pt-3 flex justify-between">
-                                                <span className="text-white font-bold">{isPortuguese ? 'Primeiro Mês' : 'First Month'}</span>
-                                                <span className="text-[#ffe066] font-bold text-lg">R$ 19,90</span>
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-gray-400 flex items-center gap-2">
+                                                    <span className="material-symbols-outlined text-xs">cancel</span>
+                                                    {isPortuguese ? 'Cancelamento' : 'Cancellation'}
+                                                </span>
+                                                <span className="text-green-400 font-medium">{isPortuguese ? 'A qualquer momento' : 'Anytime'}</span>
+                                            </div>
+                                            <div className="border-t border-[#ffe066]/20 pt-4 mt-4">
+                                                <div className="flex justify-between items-end">
+                                                    <div>
+                                                        <span className="text-gray-400 text-xs block">{isPortuguese ? 'Total hoje' : 'Total today'}</span>
+                                                        <span className="text-white font-bold text-2xl">R$ 19,90</span>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-500/20 border border-green-500/30 rounded-full text-xs text-green-400">
+                                                            <span className="material-symbols-outlined text-xs">verified</span>
+                                                            {isPortuguese ? '7 dias de garantia' : '7-day guarantee'}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <h2 className="text-2xl font-bold mb-6">{isPortuguese ? 'Informações de Pagamento' : 'Payment Information'}</h2>
-                                    </div>
-
-                                    <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-6">
-                                        <div className="flex justify-between mb-2 text-sm">
-                                            <span className="text-gray-300">Premium Mensal</span>
-                                            <span className="font-bold">R$ 19,90</span>
-                                        </div>
-                                        <div className="flex justify-between border-t border-white/10 pt-2 font-bold">
-                                            <span>{isPortuguese ? 'Total' : 'Total'}</span>
-                                            <span>R$ 19,90</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Card Section */}
+                                    {/* Payment Method Selection */}
                                     <div className="space-y-4">
-                                        <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                                            <span className="text-lg">💳</span>
-                                            {isPortuguese ? 'Cartão de Crédito' : 'Credit Card'}
-                                        </h3>
+                                        <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-primary">payment</span>
+                                            {isPortuguese ? 'Método de Pagamento' : 'Payment Method'}
+                                        </h2>
 
+                                        {/* Stripe Checkout Button - Primary */}
                                         <div className="relative">
-                                            <label className="text-sm text-gray-300 block mb-2">{isPortuguese ? 'Número do cartão' : 'Card number'}</label>
-                                            <input
-                                                type="text"
-                                                placeholder="0000 0000 0000 0000"
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#ffe066] outline-none transition-colors placeholder:text-gray-600"
-                                                maxLength={19}
-                                            />
-                                            <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                                <span>🔒</span>
-                                                {isPortuguese ? 'Dados do cartão não são armazenados' : 'Card data is not stored'}
+                                            <button
+                                                type="submit"
+                                                disabled={loading}
+                                                className="w-full py-4 bg-gradient-to-r from-[#ffe066] to-[#ffd700] text-black rounded-xl font-bold hover:shadow-lg hover:shadow-[#ffe066]/40 transition-all disabled:opacity-50 flex items-center justify-center gap-3 text-base"
+                                            >
+                                                {loading ? (
+                                                    <>
+                                                        <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+                                                        {isPortuguese ? 'Processando...' : 'Processing...'}
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <span className="material-symbols-outlined">lock</span>
+                                                        {isPortuguese ? 'Pagar com Segurança' : 'Pay Securely'}
+                                                        <span className="text-black/60">R$ 19,90</span>
+                                                    </>
+                                                )}
+                                            </button>
+                                            <p className="text-center text-gray-500 text-xs mt-2 flex items-center justify-center gap-1">
+                                                <span className="material-symbols-outlined text-xs">info</span>
+                                                {isPortuguese ? 'Você será redirecionado para o checkout seguro do Stripe' : 'You will be redirected to Stripe secure checkout'}
                                             </p>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="text-sm text-gray-300 block mb-2">{isPortuguese ? 'Vencimento' : 'Expiry'}</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="MM/YY"
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#ffe066] outline-none transition-colors placeholder:text-gray-600"
-                                                    maxLength={5}
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="text-sm text-gray-300 block mb-2">
-                                                    CVV
-                                                    <span className="text-gray-500 text-xs ml-1 cursor-help" title={isPortuguese ? '3 dígitos no verso do cartão' : '3 digits on the back of the card'}>?</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="000"
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#ffe066] outline-none transition-colors placeholder:text-gray-600"
-                                                    maxLength={3}
-                                                />
-                                            </div>
+                                        {/* Divider */}
+                                        <div className="flex items-center gap-4 py-2">
+                                            <div className="flex-1 h-px bg-white/10"></div>
+                                            <span className="text-gray-500 text-xs uppercase">{isPortuguese ? 'ou pague com' : 'or pay with'}</span>
+                                            <div className="flex-1 h-px bg-white/10"></div>
+                                        </div>
+
+                                        {/* Alternative Payment Methods */}
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <button
+                                                type="button"
+                                                className="flex items-center justify-center gap-2 py-3 px-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all group"
+                                            >
+                                                <div className="w-6 h-4 bg-gradient-to-r from-green-400 to-teal-500 rounded text-[7px] text-white flex items-center justify-center font-bold">PIX</div>
+                                                <span className="text-gray-300 text-sm group-hover:text-white transition-colors">PIX</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="flex items-center justify-center gap-2 py-3 px-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all group"
+                                            >
+                                                <span className="material-symbols-outlined text-gray-400 group-hover:text-white transition-colors text-lg">credit_card</span>
+                                                <span className="text-gray-300 text-sm group-hover:text-white transition-colors">{isPortuguese ? 'Débito' : 'Debit'}</span>
+                                            </button>
                                         </div>
                                     </div>
 
-                                    {/* Payment Methods */}
-                                    <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-3">
-                                        <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                                            <span className="text-lg">📱</span>
-                                            {isPortuguese ? 'Outros Métodos' : 'Other Methods'}
+                                    {/* Security Features - More Visual */}
+                                    <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+                                        <h3 className="text-xs font-semibold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-green-400 text-sm">shield</span>
+                                            {isPortuguese ? 'Sua Proteção' : 'Your Protection'}
                                         </h3>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <button type="button" className="py-2 px-3 border border-gray-600 rounded-lg text-xs hover:bg-white/5 transition-colors">Débito</button>
-                                            <button type="button" className="py-2 px-3 border border-gray-600 rounded-lg text-xs hover:bg-white/5 transition-colors">PIX</button>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="flex items-start gap-3">
+                                                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-green-500/10 flex-shrink-0">
+                                                    <span className="material-symbols-outlined text-green-400 text-sm">verified_user</span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-white text-xs font-medium">3D Secure</p>
+                                                    <p className="text-gray-500 text-xs">{isPortuguese ? 'Autenticação bancária' : 'Bank authentication'}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/10 flex-shrink-0">
+                                                    <span className="material-symbols-outlined text-blue-400 text-sm">https</span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-white text-xs font-medium">SSL 256-bit</p>
+                                                    <p className="text-gray-500 text-xs">{isPortuguese ? 'Criptografia total' : 'Full encryption'}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-purple-500/10 flex-shrink-0">
+                                                    <span className="material-symbols-outlined text-purple-400 text-sm">security</span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-white text-xs font-medium">PCI DSS</p>
+                                                    <p className="text-gray-500 text-xs">{isPortuguese ? 'Nível 1' : 'Level 1'}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-yellow-500/10 flex-shrink-0">
+                                                    <span className="material-symbols-outlined text-yellow-400 text-sm">workspace_premium</span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-white text-xs font-medium">{isPortuguese ? 'Garantia' : 'Guarantee'}</p>
+                                                    <p className="text-gray-500 text-xs">{isPortuguese ? '7 dias' : '7 days'}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    {/* Safety Info */}
-                                    <div className="border-t border-white/10 pt-6 space-y-2">
-                                        <h3 className="text-xs font-semibold text-white uppercase tracking-wider">{isPortuguese ? 'Sua Segurança' : 'Your Security'}:</h3>
-                                        <ul className="space-y-2 text-xs text-gray-400">
-                                            <li className="flex items-start gap-2">
-                                                <span className="text-green-400 mt-0.5">✓</span>
-                                                <span>{isPortuguese ? 'Verificação de segurança 3D Secure' : '3D Secure verification'}</span>
-                                            </li>
-                                            <li className="flex items-start gap-2">
-                                                <span className="text-green-400 mt-0.5">✓</span>
-                                                <span>{isPortuguese ? 'Certificado SSL 256-bit' : '256-bit SSL certificate'}</span>
-                                            </li>
-                                            <li className="flex items-start gap-2">
-                                                <span className="text-green-400 mt-0.5">✓</span>
-                                                <span>{isPortuguese ? 'Conformidade com PCI DSS nível 1' : 'PCI DSS Level 1 compliance'}</span>
-                                            </li>
-                                            <li className="flex items-start gap-2">
-                                                <span className="text-green-400 mt-0.5">✓</span>
-                                                <span>{isPortuguese ? 'Seu cartão não é armazenado' : 'Your card is not stored'}</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div className="flex gap-3 pt-6 border-t border-white/10">
+                                    {/* Back Button */}
+                                    <div className="flex gap-3 pt-4">
                                         <button
                                             type="button"
                                             onClick={() => setPhase('account')}
-                                            className="flex-1 py-3 border border-white/10 rounded-lg text-gray-300 hover:bg-white/5 transition-colors font-medium"
+                                            className="flex-1 py-3 border border-white/10 rounded-xl text-gray-300 hover:bg-white/5 transition-colors font-medium flex items-center justify-center gap-2"
                                         >
+                                            <span className="material-symbols-outlined text-sm">arrow_back</span>
                                             {isPortuguese ? 'Voltar' : 'Back'}
                                         </button>
-                                        <button
-                                            type="submit"
-                                            disabled={loading}
-                                            className="flex-1 py-3 bg-gradient-to-r from-[#ffe066] to-[#ffd700] text-black rounded-lg font-bold hover:shadow-lg hover:shadow-[#ffe066]/40 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                                        >
-                                            {loading ? (
-                                                <>
-                                                    <span className="animate-spin">⏳</span>
-                                                    {isPortuguese ? 'Processando...' : 'Processing...'}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <span>🔒</span>
-                                                    {isPortuguese ? 'Pagar com Segurança' : 'Pay Securely'}
-                                                </>
-                                            )}
-                                        </button>
+                                    </div>
+
+                                    {/* Trust Footer */}
+                                    <div className="text-center pt-4 border-t border-white/5">
+                                        <p className="text-gray-500 text-xs flex items-center justify-center gap-2">
+                                            <span className="material-symbols-outlined text-xs">lock</span>
+                                            {isPortuguese
+                                                ? 'Pagamento processado de forma segura pelo Stripe. Seus dados de cartão nunca são armazenados em nossos servidores.'
+                                                : 'Payment processed securely by Stripe. Your card details are never stored on our servers.'}
+                                        </p>
                                     </div>
                                 </form>
                             )}
