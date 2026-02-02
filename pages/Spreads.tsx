@@ -24,7 +24,7 @@ const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
                 <div className="flex flex-col w-full max-w-[1200px]">
                     <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
                         <div className="flex items-center text-white cursor-pointer" onClick={() => navigate('/')}>
-                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Mystic Tarot</h2>
+                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>
 
                         <nav className="hidden md:flex items-center gap-8">
@@ -113,7 +113,7 @@ const Footer = () => {
                             <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
                                 <span className="material-symbols-outlined text-lg">auto_awesome</span>
                             </div>
-                            <span className="font-bold text-lg">Mystic Tarot</span>
+                            <span className="font-bold text-lg">Zaya Tarot</span>
                         </div>
                         <p className="text-gray-500 text-sm leading-relaxed">{t.footer.description}</p>
                     </div>
@@ -146,7 +146,7 @@ const Footer = () => {
                 </div>
 
                 <div className="border-t border-border-dark pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-600 text-xs">© 2025 Mystic Tarot. {t.footer.copyright}</p>
+                    <p className="text-gray-600 text-xs">© 2025 Zaya Tarot. {t.footer.copyright}</p>
                     <div className="flex items-center gap-4">
                         <span className="text-gray-600 text-xs">Secure payments via</span>
                         <span className="text-green-500 font-bold text-sm">Mercado Pago</span>

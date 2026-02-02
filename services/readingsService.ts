@@ -226,19 +226,19 @@ export const saveReadingWithSummary = async (
     question?: string,
     isPortuguese: boolean = true
 ): Promise<boolean> => {
-    // Extrair resumo estruturado
+    // Salvar rawSynthesis como JSON string para preservar estrutura completa
+    const synthesisJSON = JSON.stringify(rawSynthesis);
+
+    // Extrair resumo estruturado para o campo summary (backup)
     const summary = extractSummaryFromSynthesis(rawSynthesis, question);
 
-    // Formatar para texto legível
-    const formattedSynthesis = formatReadingSummary(summary, spreadType, isPortuguese);
-
-    // Salvar com todos os dados
+    // Salvar com todos os dados - synthesis como JSON completo
     return saveReadingToSupabase(
         userId,
         spreadType,
         cards,
         question,
-        formattedSynthesis,
+        synthesisJSON, // Agora salva JSON completo em vez de texto formatado
         0,
         summary.tema_central || summary.energia || ''
     );

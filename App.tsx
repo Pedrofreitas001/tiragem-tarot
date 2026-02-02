@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
-import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured, AnySynthesis, convertToLegacySynthesis } from './services/geminiService';
+import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured, AnySynthesis, CanonicalSynthesis, convertToLegacySynthesis } from './services/geminiService';
 import StarsBackground from './components/StarsBackground';
 import { MinimalStarsBackground } from './components/MinimalStarsBackground';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
@@ -160,7 +160,7 @@ const Header = () => {
                 <div className="flex flex-col w-full max-w-[1200px]">
                     <div className="flex items-center justify-between whitespace-nowrap px-2 py-2 sm:px-4 sm:py-3 lg:px-10 lg:py-4 gap-2">
                         <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
-                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Mystic Tarot</h2>
+                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>
 
                         <nav className="hidden md:flex items-center gap-8">
@@ -232,7 +232,7 @@ const Footer = () => {
                             <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
                                 <span className="material-symbols-outlined text-lg">auto_awesome</span>
                             </div>
-                            <span className="font-bold text-lg">Mystic Tarot</span>
+                            <span className="font-bold text-lg">Zaya Tarot</span>
                         </div>
                         <p className="text-gray-500 text-sm leading-relaxed">{t.footer.description}</p>
                     </div>
@@ -258,7 +258,7 @@ const Footer = () => {
                 </div>
 
                 <div className="border-t border-border-dark pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-600 text-xs">© 2025 Mystic Tarot. {t.footer.copyright}</p>
+                    <p className="text-gray-600 text-xs">© 2025 Zaya Tarot. {t.footer.copyright}</p>
                     <div className="flex items-center gap-4">
                         <span className="text-gray-600 text-xs">Secure payments via</span>
                         <span className="text-green-500 font-bold text-sm">Mercado Pago</span>
@@ -1101,7 +1101,7 @@ const Home = () => {
                                                     <span className="material-symbols-outlined text-white text-[6px] sm:text-[8px] md:text-[10px]">auto_awesome</span>
                                                 </div>
                                                 <div className="flex-1 ml-0.5 sm:ml-1">
-                                                    <h4 className="text-white text-[7px] sm:text-[9px] md:text-[10px] font-medium leading-tight">Mystic Tarot</h4>
+                                                    <h4 className="text-white text-[7px] sm:text-[9px] md:text-[10px] font-medium leading-tight">Zaya Tarot</h4>
                                                     <p className="text-emerald-400 text-[6px] sm:text-[7px] md:text-[8px]">online</p>
                                                 </div>
                                                 <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
@@ -2374,7 +2374,7 @@ const ReadingModal = ({
     return (
         <>
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50" onClick={onClose} />
-            <div className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-2xl md:max-h-[90vh] bg-card-dark border border-border-dark rounded-2xl z-50 flex flex-col overflow-hidden">
+            <div className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-4xl md:max-h-[90vh] bg-card-dark border border-border-dark rounded-2xl z-50 flex flex-col overflow-hidden">
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-border-dark">
                     <div>
@@ -2393,137 +2393,232 @@ const ReadingModal = ({
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     {/* Cards Grid */}
                     <div>
-                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">
+                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 text-center">
                             {isPortuguese ? 'Cartas da Leitura' : 'Reading Cards'}
                         </h3>
-                        <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
-                            {reading.previewCards?.map((cardUrl: string, idx: number) => (
-                                <div key={idx} className="flex flex-col">
-                                    <div className="aspect-[2/3] rounded-lg overflow-hidden border border-white/10 shadow-lg bg-surface-dark">
-                                        <img
-                                            src={cardUrl}
-                                            alt={`Card ${idx + 1}`}
-                                            className="w-full h-full object-cover"
-                                            onError={(e) => {
-                                                e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=Tarot";
-                                            }}
-                                        />
-                                    </div>
-                                    <p className="text-center text-[10px] text-primary font-bold uppercase mt-2 truncate">
-                                        {reading.positions?.[idx] || `${isPortuguese ? 'Posição' : 'Position'} ${idx + 1}`}
-                                    </p>
-                                    <p className="text-center text-xs text-white font-medium truncate">
-                                        {reading.cardNames?.[idx] || `${isPortuguese ? 'Carta' : 'Card'} ${idx + 1}`}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                        <div className="bg-[#0a0612] rounded-xl p-6 border border-white/5 relative overflow-hidden">
+                            {/* Estrelas de fundo */}
+                            <div className="absolute inset-0 pointer-events-none opacity-60">
+                                {[...Array(40)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="absolute rounded-full bg-white"
+                                        style={{
+                                            width: Math.random() * 3 + 1.5 + 'px',
+                                            height: Math.random() * 3 + 1.5 + 'px',
+                                            top: Math.random() * 100 + '%',
+                                            left: Math.random() * 100 + '%',
+                                            opacity: Math.random() * 0.6 + 0.4
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                            <div className="flex flex-wrap justify-center gap-4 relative z-10">
+                                {reading.previewCards?.map((cardUrl: string, idx: number) => {
+                                    // Encontrar a carta pelo nome salvo para obter o ID
+                                    const cardName = reading.cardNames?.[idx];
+                                    const card = TAROT_CARDS.find(c => c.name === cardName);
 
-                    {/* Synthesis - Enhanced Layout */}
-                    {reading.notes && (
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                                <span className="material-symbols-outlined text-primary text-lg">auto_awesome</span>
-                                {isPortuguese ? 'Síntese da Leitura' : 'Reading Synthesis'}
-                            </h3>
-                            <div className="bg-gradient-to-br from-purple-900/30 to-surface-dark border border-purple-500/20 rounded-xl p-5 space-y-4">
-                                {/* Parse and display structured synthesis */}
-                                {reading.notes.split('\n').map((line: string, idx: number) => {
-                                    const trimmedLine = line.trim();
-                                    if (!trimmedLine) return null;
-
-                                    // Check for section headers
-                                    if (trimmedLine.startsWith('PERGUNTA:') || trimmedLine.startsWith('QUESTION:')) {
-                                        return (
-                                            <div key={idx} className="flex items-start gap-3 bg-blue-500/10 rounded-lg p-3 border border-blue-500/20">
-                                                <span className="material-symbols-outlined text-blue-400 text-lg mt-0.5">help_outline</span>
-                                                <p className="text-blue-200 text-sm italic">{trimmedLine.replace(/^(PERGUNTA|QUESTION):\s*/, '').replace(/^"|"$/g, '')}</p>
-                                            </div>
-                                        );
-                                    }
-                                    if (trimmedLine.startsWith('TEMA:') || trimmedLine.startsWith('THEME:')) {
-                                        return (
-                                            <div key={idx} className="flex items-center gap-2">
-                                                <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold uppercase">
-                                                    {trimmedLine.replace(/^(TEMA|THEME):\s*/, '')}
-                                                </span>
-                                            </div>
-                                        );
-                                    }
-                                    if (trimmedLine.startsWith('ENERGIA:') || trimmedLine.startsWith('ENERGY:')) {
-                                        const energia = trimmedLine.replace(/^(ENERGIA|ENERGY):\s*/, '').toLowerCase();
-                                        const isPositive = energia.includes('positiv') || energia.includes('favorável');
-                                        return (
-                                            <div key={idx} className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isPositive ? 'bg-green-500/15 border border-green-500/20' : 'bg-orange-500/15 border border-orange-500/20'}`}>
-                                                <span className={`material-symbols-outlined text-lg ${isPositive ? 'text-green-400' : 'text-orange-400'}`}>
-                                                    {isPositive ? 'sentiment_satisfied' : 'warning'}
-                                                </span>
-                                                <span className={`text-sm font-medium ${isPositive ? 'text-green-300' : 'text-orange-300'}`}>
-                                                    {trimmedLine.replace(/^(ENERGIA|ENERGY):\s*/, '')}
-                                                </span>
-                                            </div>
-                                        );
-                                    }
-                                    if (trimmedLine.startsWith('RESPOSTA:') || trimmedLine.startsWith('ANSWER:')) {
-                                        const answer = trimmedLine.replace(/^(RESPOSTA|ANSWER):\s*/, '');
-                                        const isYes = answer.toLowerCase().includes('sim') || answer.toLowerCase().includes('yes');
-                                        const isNo = answer.toLowerCase().includes('não') || answer.toLowerCase().includes('no');
-                                        return (
-                                            <div key={idx} className={`flex items-center justify-center gap-3 p-4 rounded-xl border ${isYes ? 'bg-green-500/20 border-green-500/30' : isNo ? 'bg-red-500/20 border-red-500/30' : 'bg-yellow-500/20 border-yellow-500/30'}`}>
-                                                <span className={`material-symbols-outlined text-3xl ${isYes ? 'text-green-400' : isNo ? 'text-red-400' : 'text-yellow-400'}`}>
-                                                    {isYes ? 'check_circle' : isNo ? 'cancel' : 'help'}
-                                                </span>
-                                                <span className={`text-2xl font-bold ${isYes ? 'text-green-300' : isNo ? 'text-red-300' : 'text-yellow-300'}`}>
-                                                    {answer}
-                                                </span>
-                                            </div>
-                                        );
-                                    }
-                                    if (trimmedLine.startsWith('CONSELHO:') || trimmedLine.startsWith('ADVICE:')) {
-                                        return (
-                                            <div key={idx} className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
-                                                <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase mb-2">
-                                                    <span className="material-symbols-outlined text-sm">lightbulb</span>
-                                                    {isPortuguese ? 'Conselho' : 'Advice'}
-                                                </div>
-                                                <p className="text-amber-100 text-sm">{trimmedLine.replace(/^(CONSELHO|ADVICE):\s*/, '')}</p>
-                                            </div>
-                                        );
-                                    }
-                                    if (trimmedLine.startsWith('REFLEXÃO:') || trimmedLine.startsWith('REFLECTION:')) {
-                                        return (
-                                            <div key={idx} className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
-                                                <div className="flex items-center gap-2 text-purple-400 text-xs font-bold uppercase mb-2">
-                                                    <span className="material-symbols-outlined text-sm">psychology</span>
-                                                    {isPortuguese ? 'Reflexão' : 'Reflection'}
-                                                </div>
-                                                <p className="text-purple-200 text-sm italic">{trimmedLine.replace(/^(REFLEXÃO|REFLECTION):\s*/, '')}</p>
-                                            </div>
-                                        );
-                                    }
-                                    if (trimmedLine.startsWith('ATENÇÃO:') || trimmedLine.startsWith('ATTENTION:') || trimmedLine.startsWith('DESAFIO:') || trimmedLine.startsWith('CHALLENGE:')) {
-                                        return (
-                                            <div key={idx} className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3">
-                                                <div className="flex items-center gap-2 text-orange-400 text-xs font-bold uppercase mb-2">
-                                                    <span className="material-symbols-outlined text-sm">warning</span>
-                                                    {isPortuguese ? 'Ponto de Atenção' : 'Attention Point'}
-                                                </div>
-                                                <p className="text-orange-200 text-sm">{trimmedLine.replace(/^(ATENÇÃO|ATTENTION|DESAFIO|CHALLENGE):\s*/, '')}</p>
-                                            </div>
-                                        );
-                                    }
-                                    if (trimmedLine.startsWith('--- CARTAS ---') || trimmedLine.startsWith('--- CARDS ---')) {
-                                        return null; // Skip this header
-                                    }
-                                    // Default: regular text
                                     return (
-                                        <p key={idx} className="text-gray-300 text-sm leading-relaxed">
-                                            {trimmedLine}
-                                        </p>
+                                        <div key={idx} className="flex flex-col items-center">
+                                            <div className="aspect-[2/3] w-24 sm:w-28 rounded-lg overflow-hidden border border-white/10 shadow-lg bg-surface-dark">
+                                                <img
+                                                    src={cardUrl}
+                                                    alt={`Card ${idx + 1}`}
+                                                    className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=Tarot";
+                                                    }}
+                                                />
+                                            </div>
+                                            <p className="text-center text-[10px] text-primary font-bold uppercase mt-2 truncate max-w-[100px]">
+                                                {reading.positions?.[idx] || `${isPortuguese ? 'Posição' : 'Position'} ${idx + 1}`}
+                                            </p>
+                                            <p className="text-center text-xs text-white font-medium truncate max-w-[100px]">
+                                                {card ? getCardName(card.id, isPortuguese) : (reading.cardNames?.[idx] || `${isPortuguese ? 'Carta' : 'Card'} ${idx + 1}`)}
+                                            </p>
+                                        </div>
                                     );
                                 })}
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Synthesis - Enhanced Layout with 7 Canonical Modules */}
+                    {reading.notes && (
+                        <div className="space-y-6">
+                            <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider flex items-center gap-2" style={{
+                                fontFamily: "'Crimson Text', serif",
+                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                            }}>
+                                <span className="material-symbols-outlined text-lg" style={{ color: '#e0c080' }}>auto_awesome</span>
+                                {isPortuguese ? 'Síntese da Leitura' : 'Reading Synthesis'}
+                            </h3>
+
+                            {(() => {
+                                try {
+                                    // Parsear se for string, ou usar diretamente se já for objeto
+                                    const synthesis: CanonicalSynthesis = typeof reading.notes === 'string'
+                                        ? JSON.parse(reading.notes)
+                                        : reading.notes;
+
+                                    return (
+                                        <div className="space-y-6 relative">
+                                            {/* Ornamento decorativo superior */}
+                                            <div className="flex justify-center">
+                                                <div className="w-24 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+                                            </div>
+
+                                            {/* Tema Central - Destaque místico */}
+                                            {synthesis.tema_central && (
+                                                <div className="text-center space-y-3 mb-6">
+                                                    <h3 className="text-2xl md:text-3xl font-bold font-serif italic leading-relaxed px-4" style={{
+                                                        fontFamily: "'Crimson Text', serif",
+                                                        background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                        WebkitBackgroundClip: 'text',
+                                                        WebkitTextFillColor: 'transparent',
+                                                        backgroundClip: 'text',
+                                                    }}>
+                                                        {synthesis.tema_central}
+                                                    </h3>
+                                                </div>
+                                            )}
+
+                                            {/* Síntese Geral */}
+                                            {synthesis.sintese_geral && (
+                                                <p className="text-white text-base md:text-lg leading-loose font-normal text-center" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                    {synthesis.sintese_geral}
+                                                </p>
+                                            )}
+
+                                            {/* Simbolismo das Cartas */}
+                                            {synthesis.simbolismo_cartas && (
+                                                <div className="relative pl-5 border-l-2 border-purple-500/20">
+                                                    <div className="absolute -left-[7px] top-0 w-3 h-3 rounded-full bg-purple-500/30 border-2 border-purple-400/50"></div>
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <span className="material-symbols-outlined text-purple-400/80 text-sm">palette</span>
+                                                        <span className="text-purple-300/60 text-[10px] uppercase tracking-wider">
+                                                            {isPortuguese ? 'Simbolismo' : 'Symbolism'}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-purple-100/90 text-sm leading-relaxed">
+                                                        {synthesis.simbolismo_cartas}
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            {/* Dinâmica das Cartas */}
+                                            {synthesis.dinamica_das_cartas && (
+                                                <div className="relative pl-5 border-l-2 border-cyan-500/20">
+                                                    <div className="absolute -left-[7px] top-0 w-3 h-3 rounded-full bg-cyan-500/30 border-2 border-cyan-400/50"></div>
+                                                    <p className="text-cyan-100/90 text-sm leading-relaxed italic">
+                                                        {synthesis.dinamica_das_cartas}
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            {/* Cards lado a lado: Observe e Aja */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {synthesis.ponto_de_atencao && (
+                                                    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-900/20 via-transparent to-transparent border border-orange-500/10 p-4">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <span className="material-symbols-outlined text-orange-400/80 text-base">visibility</span>
+                                                            <span className="text-orange-300/60 text-[10px] uppercase tracking-wider">
+                                                                {isPortuguese ? 'Observe' : 'Notice'}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-orange-100/80 text-sm leading-relaxed">
+                                                            {synthesis.ponto_de_atencao}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {synthesis.conselho_pratico && (
+                                                    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-amber-900/20 via-transparent to-transparent border border-amber-500/10 p-4">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <span className="material-symbols-outlined text-amber-400/80 text-base">tips_and_updates</span>
+                                                            <span className="text-amber-300/60 text-[10px] uppercase tracking-wider">
+                                                                {isPortuguese ? 'Aja' : 'Act'}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-amber-100/80 text-sm leading-relaxed font-medium">
+                                                            {synthesis.conselho_pratico}
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Reflexão Final */}
+                                            {synthesis.reflexao_final && (
+                                                <div className="text-center space-y-3 mt-6">
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        <div className="w-8 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
+                                                        <span className="material-symbols-outlined text-purple-400/50 text-sm">psychology</span>
+                                                        <div className="w-8 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
+                                                    </div>
+                                                    <p className="text-purple-200/90 text-base italic leading-relaxed" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                        {synthesis.reflexao_final}
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            {/* Ornamento decorativo inferior */}
+                                            <div className="flex justify-center">
+                                                <div className="w-24 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+                                            </div>
+                                        </div>
+                                    );
+                                } catch (error) {
+                                    // Fallback: Formato legado (parsing linha por linha)
+                                    return (
+                                        <div className="bg-gradient-to-br from-purple-900/30 to-surface-dark border border-purple-500/20 rounded-xl p-5 space-y-4">
+                                            {reading.notes.split('\n').map((line: string, idx: number) => {
+                                                const trimmedLine = line.trim();
+                                                if (!trimmedLine) return null;
+
+                                                // Check for section headers (formato legado)
+                                                if (trimmedLine.startsWith('PERGUNTA:') || trimmedLine.startsWith('QUESTION:')) {
+                                                    return (
+                                                        <div key={idx} className="flex items-start gap-3 bg-blue-500/10 rounded-lg p-3 border border-blue-500/20">
+                                                            <span className="material-symbols-outlined text-blue-400 text-lg mt-0.5">help_outline</span>
+                                                            <p className="text-blue-200 text-sm italic">{trimmedLine.replace(/^(PERGUNTA|QUESTION):\s*/, '').replace(/^"|"$/g, '')}</p>
+                                                        </div>
+                                                    );
+                                                }
+                                                if (trimmedLine.startsWith('TEMA:') || trimmedLine.startsWith('THEME:')) {
+                                                    return (
+                                                        <div key={idx} className="flex items-center gap-2">
+                                                            <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold uppercase">
+                                                                {trimmedLine.replace(/^(TEMA|THEME):\s*/, '')}
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                }
+                                                if (trimmedLine.startsWith('CONSELHO:') || trimmedLine.startsWith('ADVICE:')) {
+                                                    return (
+                                                        <div key={idx} className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                                                            <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase mb-2">
+                                                                <span className="material-symbols-outlined text-sm">lightbulb</span>
+                                                                {isPortuguese ? 'Conselho' : 'Advice'}
+                                                            </div>
+                                                            <p className="text-amber-100 text-sm">{trimmedLine.replace(/^(CONSELHO|ADVICE):\s*/, '')}</p>
+                                                        </div>
+                                                    );
+                                                }
+                                                // Default: regular text
+                                                return (
+                                                    <p key={idx} className="text-gray-300 text-sm leading-relaxed">
+                                                        {trimmedLine}
+                                                    </p>
+                                                );
+                                            })}
+                                        </div>
+                                    );
+                                }
+                            })()}
                         </div>
                     )}
 
@@ -4314,6 +4409,17 @@ const Result = () => {
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const fetchedRef = useRef(false); // Prevent duplicate API calls
 
+    const getSpreadTranslation = (spreadId: string) => {
+        switch (spreadId) {
+            case 'three_card': return t.spreads.threeCard;
+            case 'celtic_cross': return t.spreads.celticCross;
+            case 'love_check': return t.spreads.loveRelationship;
+            case 'yes_no': return t.spreads.yesNo;
+            case 'card_of_day': return t.spreads.cardOfDay;
+            default: return { name: '', description: '', difficulty: '' };
+        }
+    };
+
     // Reset paywall on mount
     useEffect(() => {
         setShowPaywall(false);
@@ -4355,7 +4461,10 @@ const Result = () => {
                 date: new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US')
             };
 
-            // Se é guest, NÃO gerar síntese - apenas mostrar resultado sem salvar
+            // Declarar rawSynthesis no escopo correto
+            let rawSynthesis: any = null;
+
+            // Se é guest, NÃO gerar síntese - apenas mostrar resultado sem salvar (PAYWALL)
             if (!user) {
                 // Guest mode: mostrar resultado, sem síntese, sem salvar
                 setStructuredSynthesis(null);
@@ -4363,18 +4472,16 @@ const Result = () => {
                 return;
             }
 
-            // Fetch structured synthesis from Gemini (single API call) - ONLY for logged users
-            const rawSynthesis = isGeminiConfigured()
+            // Fetch structured synthesis from Gemini (NOVA ESTRUTURA 7 MÓDULOS - APENAS PARA LOGADOS)
+            rawSynthesis = isGeminiConfigured()
                 ? await getStructuredSynthesis(session, isPortuguese)
                 : null;
 
-            // Converter para formato legado para compatibilidade com UI existente
-            const synthesis = rawSynthesis
-                ? convertToLegacySynthesis(rawSynthesis, state.spread.id)
-                : null;
+            console.log("🎯 Raw Synthesis recebida:", rawSynthesis);
 
-            setAnalysis(null); // No longer using the old analysis format
-            setStructuredSynthesis(synthesis);
+            // USAR DIRETAMENTE A NOVA ESTRUTURA (CanonicalSynthesis com 7 módulos)
+            setAnalysis(null);
+            setStructuredSynthesis(rawSynthesis as any);
             setIsLoading(false);
 
             // Guests can always view - no paywall on result page
@@ -4432,7 +4539,7 @@ const Result = () => {
                     previewCards: state.cards.map((c: TarotCard) => c.imageUrl),
                     cardNames: state.cards.map((c: TarotCard) => c.name),
                     positions: state.spread.positions.map((p: any) => p.name),
-                    notes: synthesis?.sintese || '',
+                    notes: rawSynthesis ? JSON.stringify(rawSynthesis) : '',
                     comment: '',
                     rating: 0
                 };
@@ -4504,13 +4611,19 @@ const Result = () => {
                 {/* Page Heading & Actions */}
                 <div className="flex flex-col md:flex-row flex-wrap justify-between gap-6 mb-10 items-start md:items-end">
                     <div className="flex flex-col gap-2 max-w-2xl">
-                        <div className="flex items-center gap-2 text-primary text-sm font-bold uppercase tracking-wider mb-1">
+                        <div className="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wider mb-1">
                             <span className="material-symbols-outlined text-sm">calendar_month</span>
                             <span>{new Date().toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight text-white" style={{ fontFamily: "'Crimson Text', serif" }}>{t.result.title}</h1>
+                        <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight" style={{
+                            fontFamily: "'Crimson Text', serif",
+                            background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                        }}>{t.result.title}</h1>
                         <p className="text-gray-400 text-lg font-normal leading-relaxed mt-1">
-                            {spread.name} {state.question && `— ${isPortuguese ? 'Foco' : 'Focus'}: ${state.question}`}
+                            {getSpreadTranslation(spread.id).name} {state.question && `— ${isPortuguese ? 'Foco' : 'Focus'}: ${state.question}`}
                         </p>
                     </div>
                     <div className="flex gap-3 w-full md:w-auto">
@@ -4531,17 +4644,79 @@ const Result = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-                    {/* Left Column: Synthesis & Cards Grid */}
-                    <div className="lg:col-span-5 flex flex-col gap-8 order-2 lg:order-1">
-                        {/* Synthesis Card */}
-                        <div className="bg-gradient-to-br from-primary/20 to-surface-dark border border-primary/30 rounded-xl p-6 md:p-8 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <span className="material-symbols-outlined text-[120px] text-primary">auto_awesome</span>
-                            </div>
+                {/* Cards Grid at Top - Full Width */}
+                <div className="px-4 md:px-12 max-w-[1400px] mx-auto w-full mb-8">
+                    <div className="bg-surface-dark rounded-xl p-6 border border-white/5 relative overflow-hidden">
+                        {/* Estrelas de fundo sutis */}
+                        <div className="absolute inset-0 pointer-events-none opacity-60">
+                            {[...Array(50)].map((_, i) => (
+                                <div
+                                    key={i}
+                                    className="absolute rounded-full bg-white"
+                                    style={{
+                                        width: Math.random() * 3 + 1.5 + 'px',
+                                        height: Math.random() * 3 + 1.5 + 'px',
+                                        top: Math.random() * 100 + '%',
+                                        left: Math.random() * 100 + '%',
+                                        opacity: Math.random() * 0.6 + 0.4
+                                    }}
+                                />
+                            ))}
+                        </div>
+                        <h3 className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-4 text-center relative z-10">
+                            {isPortuguese ? 'Mesa de Cartas' : 'Card Spread'}
+                        </h3>
+                        <div className={`flex flex-wrap justify-center gap-3 md:gap-4 max-w-4xl mx-auto relative z-10`}>
+                            {cards.map((card: TarotCard, idx: number) => {
+                                const position = spread.positions[idx];
+                                return (
+                                    <div key={card.id} className="flex flex-col items-center gap-2">
+                                        <div className="relative group cursor-pointer overflow-hidden rounded-lg border border-white/10 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-primary/20 w-32 sm:w-36 md:w-40 aspect-[2/3]">
+                                            {showPaywall ? (
+                                                <div className="w-full h-full bg-gradient-to-br from-[#1f1230] to-[#1a0f1e] flex items-center justify-center border border-[#a77fd4]/20">
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <span className="material-symbols-outlined text-[#a77fd4]/60 text-4xl">lock</span>
+                                                        <span className="text-[#a77fd4]/40 text-xs font-bold uppercase text-center px-2">{idx + 1}</span>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div
+                                                        className="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-105"
+                                                        style={{ backgroundImage: `url("${card.imageUrl}")` }}
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2 md:p-3">
+                                                        <span className="text-[10px] text-primary font-bold uppercase truncate">{idx + 1}. {position?.name}</span>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                        {!showPaywall && (
+                                            <p className="text-center text-xs text-white font-medium truncate w-32 sm:w-36 md:w-40">
+                                                {getCardName(card.id, isPortuguese)}
+                                            </p>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Single Column: Synthesis */}
+                <div className="px-4 md:px-12 max-w-[1400px] mx-auto w-full">
+                    <div className="flex flex-col gap-8">
+                        {/* Synthesis Content */}
+                        <div className="relative">
                             <div className="relative z-10">
-                                <h2 className="text-white text-2xl font-bold mb-4 flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary">psychology</span>
+                                <h2 className="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-2" style={{
+                                    fontFamily: "'Crimson Text', serif",
+                                    background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text',
+                                }}>
+                                    <span className="material-symbols-outlined" style={{ color: '#e0c080' }}>psychology</span>
                                     {t.result.synthesis}
                                 </h2>
                                 {isLoading ? (
@@ -4616,49 +4791,183 @@ const Result = () => {
                                     </div>
                                 ) : structuredSynthesis ? (
                                     <>
-                                        {/* Tema Central */}
-                                        <div className="mb-4 p-3 rounded-lg bg-white/5 border border-white/10">
-                                            <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Tema Central' : 'Central Theme'}</span>
-                                            <p className="text-white font-medium mt-1">{structuredSynthesis.tema_central}</p>
-                                        </div>
-
-                                        {/* Pergunta do Consulente e Resposta */}
-                                        {state?.question && state.question.trim() && (
-                                            <div className="mb-4 p-4 rounded-lg bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/20">
-                                                <div className="flex items-start gap-3 mb-3">
-                                                    <span className="material-symbols-outlined text-yellow-500 text-lg mt-0.5">help</span>
-                                                    <div>
-                                                        <span className="text-yellow-500 text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Sua Pergunta' : 'Your Question'}</span>
-                                                        <p className="text-white font-medium mt-1">"{state.question}"</p>
-                                                    </div>
+                                        {/* LAYOUT MÍSTICO INTEGRADO */}
+                                        {(structuredSynthesis as any).sintese_geral ? (
+                                            <div className="bg-gradient-to-br from-[#1a1230]/80 to-[#12091a]/80 backdrop-blur-sm border border-white/10 rounded-2xl p-8 md:p-10 space-y-10 relative">
+                                                {/* Ornamento decorativo superior */}
+                                                <div className="flex justify-center mb-6">
+                                                    <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
                                                 </div>
-                                                {structuredSynthesis.resposta_pergunta && (
-                                                    <div className="mt-3 pt-3 border-t border-yellow-500/20">
-                                                        <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'O que as Cartas Revelam' : 'What the Cards Reveal'}</span>
-                                                        <p className="text-gray-200 mt-1 leading-relaxed">{structuredSynthesis.resposta_pergunta}</p>
+
+                                                {/* Tema Central - Sem pill, apenas título */}
+                                                {(structuredSynthesis as any).tema_central && (
+                                                    <div className="text-center space-y-3 mb-8">
+                                                        <h3 className="text-3xl md:text-4xl font-bold font-serif italic leading-relaxed px-4" style={{
+                                                            fontFamily: "'Crimson Text', serif",
+                                                            background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                            WebkitBackgroundClip: 'text',
+                                                            WebkitTextFillColor: 'transparent',
+                                                            backgroundClip: 'text',
+                                                        }}>
+                                                            {(structuredSynthesis as any).tema_central}
+                                                        </h3>
                                                     </div>
                                                 )}
-                                            </div>
-                                        )}
 
-                                        {/* Síntese Principal */}
-                                        <p className="text-gray-200 leading-relaxed text-base mb-4">
-                                            {structuredSynthesis.sintese}
-                                        </p>
+                                                {/* Síntese Geral - Narrativa principal */}
+                                                <div className="prose prose-invert max-w-none">
+                                                    <p className="text-white text-lg md:text-xl leading-loose font-normal text-center" style={{
+                                                        fontFamily: "'Crimson Text', serif"
+                                                    }}>
+                                                        {(structuredSynthesis as any).sintese_geral}
+                                                    </p>
+                                                </div>
 
-                                        {/* Conexões */}
-                                        {structuredSynthesis.conexoes && structuredSynthesis.conexoes.length > 0 && (
-                                            <div className="mb-4">
-                                                <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Conexões entre as Cartas' : 'Card Connections'}</span>
-                                                <ul className="mt-2 space-y-1">
-                                                    {structuredSynthesis.conexoes.map((conexao, i) => (
-                                                        <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
-                                                            <span className="text-[#875faf] mt-0.5">•</span>
-                                                            {conexao}
-                                                        </li>
-                                                    ))}
-                                                </ul>
+                                                {/* Separador místico */}
+                                                <div className="flex items-center justify-center gap-3 py-4">
+                                                    <div className="w-16 h-px bg-gradient-to-r from-transparent to-primary/30"></div>
+                                                    <span className="material-symbols-outlined text-primary/40 text-sm">auto_awesome</span>
+                                                    <div className="w-16 h-px bg-gradient-to-l from-transparent to-primary/30"></div>
+                                                </div>
+
+                                                {/* Simbolismo das Cartas */}
+                                                {(structuredSynthesis as any).simbolismo_cartas && (
+                                                    <div className="relative pl-6 border-l-2 border-purple-500/20">
+                                                        <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-purple-500/30 border-2 border-purple-400/50"></div>
+                                                        <div className="mb-4">
+                                                            <span className="text-purple-200 text-sm font-semibold uppercase tracking-wider">
+                                                                {isPortuguese ? 'Simbolismo' : 'Symbolism'}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-purple-50 text-lg leading-relaxed">
+                                                            {(structuredSynthesis as any).simbolismo_cartas}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {/* Separador místico */}
+                                                <div className="flex items-center justify-center gap-3 py-4">
+                                                    <div className="w-16 h-px bg-gradient-to-r from-transparent to-primary/30"></div>
+                                                    <span className="material-symbols-outlined text-primary/40 text-sm">auto_awesome</span>
+                                                    <div className="w-16 h-px bg-gradient-to-l from-transparent to-primary/30"></div>
+                                                </div>
+
+                                                {/* Dinâmica das Cartas - Integrada ao texto */}
+                                                {(structuredSynthesis as any).dinamica_das_cartas && (
+                                                    <div className="relative pl-6 border-l-2 border-cyan-500/20">
+                                                        <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-cyan-500/30 border-2 border-cyan-400/50"></div>
+                                                        <p className="text-cyan-50 text-lg leading-relaxed italic">
+                                                            {(structuredSynthesis as any).dinamica_das_cartas}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {/* Cards lado a lado: Observe e Aja */}
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                                                    {/* Ponto de Atenção */}
+                                                    {(structuredSynthesis as any).ponto_de_atencao && (
+                                                        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-900/20 via-transparent to-transparent border border-orange-500/10 p-6">
+                                                            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full blur-3xl"></div>
+                                                            <div className="relative">
+                                                                <div className="flex items-center gap-2 mb-3">
+                                                                    <span className="material-symbols-outlined text-orange-300 text-xl">visibility</span>
+                                                                    <span className="text-orange-200 text-sm font-semibold uppercase tracking-wider">
+                                                                        {isPortuguese ? 'Observe' : 'Notice'}
+                                                                    </span>
+                                                                </div>
+                                                                <p className="text-orange-50 text-lg leading-relaxed">
+                                                                    {(structuredSynthesis as any).ponto_de_atencao}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Conselho Prático */}
+                                                    {(structuredSynthesis as any).conselho_pratico && (
+                                                        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-900/20 via-transparent to-transparent border border-amber-500/10 p-6">
+                                                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl"></div>
+                                                            <div className="relative">
+                                                                <div className="flex items-center gap-2 mb-3">
+                                                                    <span className="material-symbols-outlined text-amber-300 text-xl">tips_and_updates</span>
+                                                                    <span className="text-amber-200 text-sm font-semibold uppercase tracking-wider">
+                                                                        {isPortuguese ? 'Aja' : 'Act'}
+                                                                    </span>
+                                                                </div>
+                                                                <p className="text-amber-50 text-lg leading-relaxed font-medium">
+                                                                    {(structuredSynthesis as any).conselho_pratico}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Reflexão Final - Pergunta contemplativa */}
+                                                {(structuredSynthesis as any).reflexao_final && (
+                                                    <div className="mt-10 text-center space-y-4">
+                                                        <div className="flex items-center justify-center gap-3">
+                                                            <div className="w-12 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
+                                                            <span className="material-symbols-outlined text-purple-400/50 text-lg">psychology</span>
+                                                            <div className="w-12 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
+                                                        </div>
+                                                        <p className="text-purple-100 text-xl md:text-2xl font-medium italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                            {(structuredSynthesis as any).reflexao_final}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {/* Ornamento decorativo inferior */}
+                                                <div className="flex justify-center mt-8">
+                                                    <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+                                                </div>
                                             </div>
+                                        ) : (
+                                            <>
+                                                {/* FALLBACK: Formato Legado */}
+                                                {/* Tema Central */}
+                                                <div className="mb-4 p-3 rounded-lg bg-white/5 border border-white/10">
+                                                    <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Tema Central' : 'Central Theme'}</span>
+                                                    <p className="text-white font-medium mt-1">{structuredSynthesis.tema_central}</p>
+                                                </div>
+
+                                                {/* Pergunta do Consulente e Resposta */}
+                                                {state?.question && state.question.trim() && (
+                                                    <div className="mb-4 p-4 rounded-lg bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/20">
+                                                        <div className="flex items-start gap-3 mb-3">
+                                                            <span className="material-symbols-outlined text-yellow-500 text-lg mt-0.5">help</span>
+                                                            <div>
+                                                                <span className="text-yellow-500 text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Sua Pergunta' : 'Your Question'}</span>
+                                                                <p className="text-white font-medium mt-1">"{state.question}"</p>
+                                                            </div>
+                                                        </div>
+                                                        {structuredSynthesis.resposta_pergunta && (
+                                                            <div className="mt-3 pt-3 border-t border-yellow-500/20">
+                                                                <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'O que as Cartas Revelam' : 'What the Cards Reveal'}</span>
+                                                                <p className="text-gray-200 mt-1 leading-relaxed">{structuredSynthesis.resposta_pergunta}</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {/* Síntese Principal */}
+                                                <p className="text-gray-200 leading-relaxed text-base mb-4">
+                                                    {structuredSynthesis.sintese}
+                                                </p>
+
+                                                {/* Conexões */}
+                                                {structuredSynthesis.conexoes && structuredSynthesis.conexoes.length > 0 && (
+                                                    <div className="mb-4">
+                                                        <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Conexões entre as Cartas' : 'Card Connections'}</span>
+                                                        <ul className="mt-2 space-y-1">
+                                                            {structuredSynthesis.conexoes.map((conexao, i) => (
+                                                                <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
+                                                                    <span className="text-[#875faf] mt-0.5">•</span>
+                                                                    {conexao}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                            </>
                                         )}
 
                                         {/* Elementos em Destaque */}
@@ -4671,14 +4980,6 @@ const Result = () => {
                                                 ))}
                                             </div>
                                         )}
-
-                                        {/* Pergunta Reflexiva */}
-                                        <div className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/20">
-                                            <p className="text-primary text-sm font-medium flex items-start gap-2">
-                                                <span className="material-symbols-outlined text-lg mt-0.5">lightbulb</span>
-                                                {structuredSynthesis.pergunta_reflexiva}
-                                            </p>
-                                        </div>
                                     </>
                                 ) : (
                                     <>
@@ -4688,50 +4989,6 @@ const Result = () => {
                                     </>
                                 )}
                             </div>
-                        </div>
-
-                        {/* Visual Cards Grid */}
-                        <div className="bg-surface-dark rounded-xl p-6 border border-white/5">
-                            <h3 className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-4">
-                                {isPortuguese ? 'Mesa de Cartas' : 'Card Spread'}
-                            </h3>
-                            <div className={`grid gap-3 ${cards.length <= 3 ? 'grid-cols-3' : cards.length <= 5 ? 'grid-cols-3' : 'grid-cols-4'}`}>
-                                {cards.map((card: TarotCard, idx: number) => {
-                                    const position = spread.positions[idx];
-                                    return (
-                                        <div key={card.id} className="relative group cursor-pointer overflow-hidden rounded-lg border border-white/10 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-primary/20 aspect-[2/3]">
-                                            {showPaywall ? (
-                                                // Placeholder when paywall is active
-                                                <div className="w-full h-full bg-gradient-to-br from-[#1f1230] to-[#1a0f1e] flex items-center justify-center border border-[#a77fd4]/20">
-                                                    <div className="flex flex-col items-center gap-2">
-                                                        <span className="material-symbols-outlined text-[#a77fd4]/60 text-4xl">lock</span>
-                                                        <span className="text-[#a77fd4]/40 text-xs font-bold uppercase text-center px-2">{idx + 1}</span>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                // Show card image when paywall is not active
-                                                <>
-                                                    <div
-                                                        className="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-105"
-                                                        style={{ backgroundImage: `url("${card.imageUrl}")` }}
-                                                    />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2 md:p-3">
-                                                        <span className="text-[10px] text-primary font-bold uppercase truncate">{idx + 1}. {position?.name}</span>
-                                                        <span className="text-white font-bold text-xs md:text-sm truncate">{getCardName(card.id, isPortuguese)}</span>
-                                                    </div>
-                                                </>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right Column: Detailed Interpretation */}
-                    <div className="lg:col-span-7 flex flex-col gap-6 order-1 lg:order-2">
-                        <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                            <h2 className="text-white text-2xl font-bold">{t.result.interpretation}</h2>
                         </div>
 
                         {/* Card Detail Items */}

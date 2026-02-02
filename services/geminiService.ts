@@ -1,5 +1,23 @@
 import { ReadingSession, ReadingAnalysis } from "../types";
 
+// ============================================
+// NOVA ESTRUTURA: 7 MÓDULOS CANÔNICOS
+// ============================================
+
+export interface CanonicalSynthesis {
+  sintese_geral: string;          // Narrativa única integrando todas as cartas
+  tema_central: string;           // Eixo simbólico da leitura
+  simbolismo_cartas: string;      // Análise dos símbolos presentes nas cartas
+  dinamica_das_cartas: string;    // Como as cartas se relacionam
+  ponto_de_atencao: string;       // Onde o consulente pode se sabotar
+  conselho_pratico: string;       // Algo aplicável no dia-a-dia
+  reflexao_final: string;         // Pergunta reflexiva ou frase de fechamento
+}
+
+// ============================================
+// TIPOS LEGADOS (mantidos para compatibilidade)
+// ============================================
+
 // Tipos para síntese estruturada por tipo de jogo
 export interface BaseSynthesis {
   tema_central?: string;
@@ -56,7 +74,7 @@ export interface StructuredSynthesis {
 }
 
 // União de todos os tipos
-export type AnySynthesis = ThreeCardSynthesis | CelticCrossSynthesis | LoveSynthesis | YesNoSynthesis | DailyCardSynthesis;
+export type AnySynthesis = CanonicalSynthesis | ThreeCardSynthesis | CelticCrossSynthesis | LoveSynthesis | YesNoSynthesis | DailyCardSynthesis;
 
 // Verifica se a API está configurada
 export const isGeminiConfigured = (): boolean => {
@@ -94,7 +112,7 @@ const retryWithBackoff = async <T>(
 export const getStructuredSynthesis = async (
   session: ReadingSession,
   isPortuguese: boolean = true
-): Promise<AnySynthesis | null> => {
+): Promise<CanonicalSynthesis | AnySynthesis | null> => {
   try {
     console.log("📡 Chamando Backend para síntese estruturada...", { spreadId: session.spread.id, cardCount: session.cards.length });
 
@@ -133,12 +151,12 @@ export const getStructuredSynthesis = async (
       return null;
     }
 
-    console.log("📦 Resposta Gemini (text):", text.substring(0, 200));
+    console.log("📦 Resposta Gemini (text):", typeof text === 'string' ? text.substring(0, 200) : JSON.stringify(text).substring(0, 200));
 
     // Se já é um objeto, usar diretamente; se é string, fazer parse
     const parsed = typeof text === 'string' ? JSON.parse(text) : text;
-    console.log("✅ Síntese parseada:", parsed);
-    return parsed;
+    console.log("✅ Síntese parseada (NOVA ESTRUTURA 7 MÓDULOS):", parsed);
+    return parsed as CanonicalSynthesis;
 
   } catch (error) {
     console.error("❌ Erro no Gemini Proxy:", error);
