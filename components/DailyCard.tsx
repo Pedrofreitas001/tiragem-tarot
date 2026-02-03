@@ -43,8 +43,14 @@ const Header = () => {
                             <button onClick={() => navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign')} className={`text-sm font-medium transition-colors ${(isActive('/tarot-por-signo') || isActive('/tarot-by-sign')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
                             </button>
+                            <button onClick={() => navigate(isPortuguese ? '/interpretacao' : '/interpretation')} className={`text-sm font-medium transition-colors ${(isActive('/interpretacao') || isActive('/interpretation')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {isPortuguese ? 'Interpretação' : 'Interpretation'}
+                            </button>
                             <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.cardMeanings}
+                            </button>
+                            <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {t.nav.history}
                             </button>
                         </nav>
 
@@ -69,7 +75,9 @@ const Header = () => {
                             <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</button>
+                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
+                            <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
                         </nav>
                     )}
                 </div>
@@ -315,9 +323,9 @@ export const DailyCard = () => {
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background: radial-gradient(ellipse at center bottom,
-                rgba(255, 200, 50, 0.5) 0%,
-                rgba(255, 180, 40, 0.35) 25%,
-                rgba(255, 150, 30, 0.2) 50%,
+                rgba(255, 200, 50, 0.25) 0%,
+                rgba(255, 180, 40, 0.15) 25%,
+                rgba(255, 150, 30, 0.08) 50%,
                 transparent 70%);
             animation: flame-flicker 3s ease-in-out infinite;
         }
@@ -326,8 +334,8 @@ export const DailyCard = () => {
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background: radial-gradient(ellipse at center,
-                rgba(255, 215, 0, 0.25) 0%,
-                rgba(255, 180, 50, 0.15) 40%,
+                rgba(255, 215, 0, 0.12) 0%,
+                rgba(255, 180, 50, 0.06) 40%,
                 transparent 70%);
             animation: flame-pulse 4s ease-in-out infinite;
         }
@@ -336,19 +344,19 @@ export const DailyCard = () => {
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background: radial-gradient(ellipse at center,
-                rgba(255, 200, 80, 0.1) 0%,
-                rgba(255, 165, 0, 0.05) 50%,
+                rgba(255, 200, 80, 0.05) 0%,
+                rgba(255, 165, 0, 0.02) 50%,
                 transparent 70%);
         }
         @keyframes flame-flicker {
-            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
-            25% { opacity: 0.9; transform: translate(-50%, -51%) scale(1.02); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-            75% { opacity: 0.85; transform: translate(-50%, -49%) scale(1.01); }
+            0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+            25% { opacity: 0.7; transform: translate(-50%, -51%) scale(1.02); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.05); }
+            75% { opacity: 0.65; transform: translate(-50%, -49%) scale(1.01); }
         }
         @keyframes flame-pulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.7; }
         }
         .card-breathing {
             animation: float-subtle 6s ease-in-out infinite;
@@ -649,11 +657,8 @@ export const DailyCard = () => {
                                 {/* Lado Direito - Carta em Miniatura */}
                                 <div className="flex-shrink-0 flex items-center justify-center">
                                     <div className="relative group">
-                                        {/* Glow effect */}
-                                        <div className="absolute -inset-4 bg-gradient-to-r from-yellow-500/20 via-yellow-400/10 to-yellow-500/20 blur-2xl rounded-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
-
                                         {/* Card container */}
-                                        <div className="relative bg-gradient-to-br from-[#1a1230]/80 to-[#12091a]/80 backdrop-blur-sm rounded-xl p-4 shadow-xl shadow-yellow-500/10">
+                                        <div className="relative rounded-xl p-4">
                                             <img
                                                 src={dailyCard.imageUrl}
                                                 alt={cardName}
