@@ -593,6 +593,31 @@ export const DailyCard = () => {
 
             {/* Energias do Dia - Layout da Síntese */}
             <section className="relative py-20 md:py-28 px-4 md:px-6 lg:px-8 overflow-hidden">
+                {/* Background iluminado para leitura */}
+                <div className="absolute inset-0 pointer-events-none">
+                    {/* Base mais clara no centro - efeito pergaminho iluminado */}
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            background: 'radial-gradient(ellipse 80% 60% at 50% 30%, rgba(45, 35, 55, 0.95) 0%, rgba(26, 22, 40, 0.98) 50%, rgba(26, 22, 40, 1) 100%)'
+                        }}
+                    />
+                    {/* Brilho dourado sutil central */}
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            background: 'radial-gradient(ellipse 60% 40% at 50% 20%, rgba(255, 200, 100, 0.04) 0%, transparent 60%)'
+                        }}
+                    />
+                    {/* Vinheta suave nas bordas */}
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(13, 9, 15, 0.4) 100%)'
+                        }}
+                    />
+                </div>
+
                 <div className="max-w-7xl mx-auto relative z-10">
                     {/* Section Title */}
                     <div className="text-center mb-12 md:mb-16">
