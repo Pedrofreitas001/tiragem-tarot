@@ -392,33 +392,54 @@ export const TarotPorSigno = () => {
             </main>
 
             {/* Seção de Energias do Signo */}
-            <section className="relative py-20 md:py-28 px-4 md:px-6 lg:px-8 overflow-hidden">
-                {/* Background iluminado para leitura */}
-                <div className="absolute inset-0 pointer-events-none">
-                    {/* Base mais clara no centro - efeito pergaminho iluminado */}
+            <section className="relative py-16 md:py-24 px-4 md:px-6 lg:px-8">
+                {/* Container Premium com background claro */}
+                <div className="max-w-7xl mx-auto relative">
+                    {/* Card container com glassmorphism premium */}
                     <div
-                        className="absolute inset-0"
+                        className="relative rounded-3xl overflow-hidden"
                         style={{
-                            background: 'radial-gradient(ellipse 80% 60% at 50% 30%, rgba(45, 35, 55, 0.95) 0%, rgba(26, 22, 40, 0.98) 50%, rgba(26, 22, 40, 1) 100%)'
+                            background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.95) 0%, rgba(45, 38, 65, 0.98) 50%, rgba(55, 45, 75, 0.95) 100%)',
+                            boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.1), 0 25px 50px -12px rgba(0,0,0,0.5)'
                         }}
-                    />
-                    {/* Brilho dourado sutil central */}
-                    <div
-                        className="absolute inset-0"
-                        style={{
-                            background: 'radial-gradient(ellipse 60% 40% at 50% 20%, rgba(255, 200, 100, 0.04) 0%, transparent 60%)'
-                        }}
-                    />
-                    {/* Vinheta suave nas bordas */}
-                    <div
-                        className="absolute inset-0"
-                        style={{
-                            background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(13, 9, 15, 0.4) 100%)'
-                        }}
-                    />
-                </div>
+                    >
+                        {/* Borda dourada sutil no topo */}
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent" />
 
-                <div className="max-w-7xl mx-auto relative z-10">
+                        {/* Decoração de cantos - topo esquerdo */}
+                        <div className="absolute top-4 left-4 w-12 h-12 pointer-events-none">
+                            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-yellow-500/50 to-transparent" />
+                            <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-yellow-500/50 to-transparent" />
+                        </div>
+
+                        {/* Decoração de cantos - topo direito */}
+                        <div className="absolute top-4 right-4 w-12 h-12 pointer-events-none">
+                            <div className="absolute top-0 right-0 w-full h-px bg-gradient-to-l from-yellow-500/50 to-transparent" />
+                            <div className="absolute top-0 right-0 h-full w-px bg-gradient-to-b from-yellow-500/50 to-transparent" />
+                        </div>
+
+                        {/* Decoração de cantos - baixo esquerdo */}
+                        <div className="absolute bottom-4 left-4 w-12 h-12 pointer-events-none">
+                            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-yellow-500/50 to-transparent" />
+                            <div className="absolute bottom-0 left-0 h-full w-px bg-gradient-to-t from-yellow-500/50 to-transparent" />
+                        </div>
+
+                        {/* Decoração de cantos - baixo direito */}
+                        <div className="absolute bottom-4 right-4 w-12 h-12 pointer-events-none">
+                            <div className="absolute bottom-0 right-0 w-full h-px bg-gradient-to-l from-yellow-500/50 to-transparent" />
+                            <div className="absolute bottom-0 right-0 h-full w-px bg-gradient-to-t from-yellow-500/50 to-transparent" />
+                        </div>
+
+                        {/* Glow sutil central */}
+                        <div
+                            className="absolute inset-0 pointer-events-none"
+                            style={{
+                                background: 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(255, 215, 150, 0.06) 0%, transparent 70%)'
+                            }}
+                        />
+
+                        {/* Conteúdo com padding */}
+                        <div className="relative z-10 px-6 md:px-12 lg:px-16 py-12 md:py-16">
                     {/* Section Title */}
                     <div className="text-center mb-12 md:mb-16">
                         <h2 className="text-white text-3xl md:text-4xl font-light mb-3" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.02em' }}>
@@ -624,6 +645,8 @@ export const TarotPorSigno = () => {
                             )}
                         </div>
                     )}
+                        </div>
+                    </div>
                 </div>
             </section>
 
