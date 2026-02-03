@@ -384,14 +384,7 @@ export const TarotPorSigno = () => {
             </main>
 
             {/* Seção de Energias do Signo */}
-            <section className="relative py-20 md:py-28 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark overflow-hidden">
-                {/* Background effects */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-900/10 pointer-events-none" />
-                <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-purple-500/15 to-transparent rounded-full blur-3xl" />
-                    <div className="absolute -bottom-40 right-1/4 w-[500px] h-[500px] bg-gradient-to-tl from-primary/10 to-transparent rounded-full blur-3xl" />
-                </div>
-
+            <section className="relative py-20 md:py-28 px-4 md:px-6 lg:px-8 overflow-hidden">
                 <div className="max-w-7xl mx-auto relative z-10">
                     {/* Section Title */}
                     <div className="text-center mb-12 md:mb-16">

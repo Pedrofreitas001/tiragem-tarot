@@ -139,21 +139,6 @@ export const TarotPorSignoIndex = () => {
         navigate(route);
     };
 
-    // Agrupar signos por elemento
-    const signsByElement = {
-        fire: ZODIAC_ORDER.filter(s => ZODIAC_SIGNS[s].element === 'fire'),
-        earth: ZODIAC_ORDER.filter(s => ZODIAC_SIGNS[s].element === 'earth'),
-        air: ZODIAC_ORDER.filter(s => ZODIAC_SIGNS[s].element === 'air'),
-        water: ZODIAC_ORDER.filter(s => ZODIAC_SIGNS[s].element === 'water'),
-    };
-
-    const elementNames = {
-        fire: { pt: 'Fogo', en: 'Fire', icon: 'local_fire_department' },
-        earth: { pt: 'Terra', en: 'Earth', icon: 'landscape' },
-        air: { pt: 'Ar', en: 'Air', icon: 'air' },
-        water: { pt: 'Água', en: 'Water', icon: 'water_drop' },
-    };
-
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden" style={{
             backgroundColor: '#1a1628',
@@ -170,106 +155,63 @@ export const TarotPorSignoIndex = () => {
             <MinimalStarsBackground />
             <Header />
 
-            <main className="flex-grow flex flex-col items-center justify-start relative py-12 md:py-20">
+            <main className="flex-grow flex flex-col items-center justify-start relative py-8 md:py-12">
                 <div className="container mx-auto px-4 relative z-10">
                     {/* Hero Section */}
-                    <div className="text-center mb-16 max-w-3xl mx-auto">
-                        <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-medium tracking-wide text-gradient-gold drop-shadow-lg mb-6">
+                    <div className="text-center mb-8 max-w-3xl mx-auto">
+                        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-medium tracking-wide text-gradient-gold drop-shadow-lg mb-4">
                             {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
                         </h1>
-                        <p className="text-gray-300 text-lg md:text-xl font-light leading-relaxed mb-8">
+                        <p className="text-gray-300 text-base md:text-lg font-light leading-relaxed">
                             {isPortuguese
                                 ? 'Escolha seu signo e descubra as energias do tarot personalizadas para você hoje.'
                                 : 'Choose your sign and discover the personalized tarot energies for you today.'}
                         </p>
-
-                        {/* CTA para criar conta */}
-                        {isGuest && (
-                            <div className="bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-purple-500/10 border border-purple-500/20 rounded-xl p-6 mb-12">
-                                <p className="text-gray-300 text-sm mb-4">
-                                    {isPortuguese
-                                        ? 'Crie sua conta e informe sua data de nascimento para acessar automaticamente o tarot do seu signo.'
-                                        : 'Create your account and enter your birth date to automatically access your sign\'s tarot.'}
-                                </p>
-                                <button
-                                    onClick={() => setShowAuthModal(true)}
-                                    className="px-6 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
-                                >
-                                    {isPortuguese ? 'Criar Conta' : 'Create Account'}
-                                </button>
-                            </div>
-                        )}
                     </div>
 
-                    {/* Signos por Elemento */}
-                    <div className="max-w-5xl mx-auto space-y-12">
-                        {(['fire', 'earth', 'air', 'water'] as const).map((element) => {
-                            const colors = ELEMENT_COLORS[element];
-                            const elementName = elementNames[element];
-                            const signs = signsByElement[element];
+                    {/* Grid compacto de todos os signos */}
+                    <div className="max-w-4xl mx-auto">
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                            {ZODIAC_ORDER.map((sign) => {
+                                const signData = ZODIAC_SIGNS[sign];
+                                const colors = ELEMENT_COLORS[signData.element];
 
-                            return (
-                                <div key={element} className="space-y-4">
-                                    {/* Título do Elemento */}
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className={`flex items-center justify-center w-10 h-10 rounded-full ${colors.bg} border border-white/10`}>
-                                            <span className={`material-symbols-outlined ${colors.primary}`}>{elementName.icon}</span>
+                                return (
+                                    <button
+                                        key={sign}
+                                        onClick={() => handleSignClick(sign)}
+                                        className={`group relative overflow-hidden rounded-xl ${colors.bg} border border-white/10 p-4 text-center transition-all duration-300 hover:border-white/30 hover:scale-105`}
+                                    >
+                                        <div className="relative z-10">
+                                            <h3 className="text-white text-sm font-medium mb-1">
+                                                {isPortuguese ? signData.name.pt : signData.name.en}
+                                            </h3>
+                                            <p className="text-gray-500 text-[10px]">
+                                                {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
+                                            </p>
                                         </div>
-                                        <h2 className={`text-xl font-medium ${colors.primary}`}>
-                                            {isPortuguese ? elementName.pt : elementName.en}
-                                        </h2>
-                                        <div className="flex-1 h-px bg-gradient-to-r from-white/10 to-transparent"></div>
-                                    </div>
-
-                                    {/* Grid de Signos */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        {signs.map((sign) => {
-                                            const signData = ZODIAC_SIGNS[sign];
-
-                                            return (
-                                                <button
-                                                    key={sign}
-                                                    onClick={() => handleSignClick(sign)}
-                                                    className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${colors.gradient} border border-white/10 p-6 text-left transition-all duration-300 hover:border-white/20 hover:shadow-lg hover:shadow-${element === 'fire' ? 'orange' : element === 'earth' ? 'emerald' : element === 'air' ? 'cyan' : 'blue'}-500/10 hover:-translate-y-1`}
-                                                >
-                                                    {/* Background Glow */}
-                                                    <div className={`absolute -top-12 -right-12 w-32 h-32 ${colors.bg} rounded-full blur-3xl opacity-0 group-hover:opacity-50 transition-opacity duration-500`}></div>
-
-                                                    <div className="relative z-10">
-                                                        <div className="mb-3">
-                                                            <h3 className="text-white text-lg font-medium">
-                                                                {isPortuguese ? signData.name.pt : signData.name.en}
-                                                            </h3>
-                                                            <p className="text-gray-500 text-xs mt-1">
-                                                                {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
-                                                            </p>
-                                                        </div>
-
-                                                        <div className="flex flex-wrap gap-2 mt-4">
-                                                            {(isPortuguese ? signData.keywords.pt : signData.keywords.en).slice(0, 2).map((keyword, i) => (
-                                                                <span key={i} className="text-xs px-2 py-1 rounded-full bg-white/5 text-gray-400">
-                                                                    {keyword}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-
-                                                        <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
-                                                            <span className="text-xs text-gray-500">
-                                                                {isPortuguese ? `Regente: ${signData.ruler}` : `Ruler: ${signData.ruler}`}
-                                                            </span>
-                                                            <span className={`material-symbols-outlined ${colors.primary} text-sm opacity-0 group-hover:opacity-100 transition-opacity`}>
-                                                                arrow_forward
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            );
-                        })}
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
+
+                    {/* CTA para criar conta */}
+                    {isGuest && (
+                        <div className="max-w-md mx-auto mt-8 bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-purple-500/10 border border-purple-500/20 rounded-xl p-4 text-center">
+                            <p className="text-gray-300 text-sm mb-3">
+                                {isPortuguese
+                                    ? 'Crie sua conta para acessar automaticamente o tarot do seu signo.'
+                                    : 'Create your account to automatically access your sign\'s tarot.'}
+                            </p>
+                            <button
+                                onClick={() => setShowAuthModal(true)}
+                                className="px-5 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                            >
+                                {isPortuguese ? 'Criar Conta' : 'Create Account'}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </main>
 

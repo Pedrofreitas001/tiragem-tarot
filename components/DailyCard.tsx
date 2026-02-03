@@ -40,14 +40,11 @@ const Header = () => {
                             <button onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')} className={`text-sm font-medium transition-colors ${(isActive('/carta-do-dia') || isActive('/daily-card')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
                             </button>
-                            <button onClick={() => navigate(isPortuguese ? '/interpretacao' : '/interpretation')} className={`text-sm font-medium transition-colors ${(isActive('/interpretacao') || isActive('/interpretation')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                                {isPortuguese ? 'Interpretação' : 'Interpretation'}
+                            <button onClick={() => navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign')} className={`text-sm font-medium transition-colors ${(isActive('/tarot-por-signo') || isActive('/tarot-by-sign')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
                             </button>
                             <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.cardMeanings}
-                            </button>
-                            <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                                {t.nav.history}
                             </button>
                         </nav>
 
@@ -71,9 +68,8 @@ const Header = () => {
                             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
+                            <button onClick={() => { navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
-                            <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
                         </nav>
                     )}
                 </div>
@@ -588,53 +584,8 @@ export const DailyCard = () => {
             </main>
 
             {/* Energias do Dia - Layout da Síntese */}
-            <section className="relative py-20 md:py-28 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark overflow-hidden">
-                {/* Elegant gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-900/10 pointer-events-none" />
-
-                {/* Mystical ambient glow effects */}
-                <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    <div className="absolute -top-40 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-purple-500/15 to-transparent rounded-full blur-3xl" />
-                    <div className="absolute -bottom-40 right-1/4 w-[500px] h-[500px] bg-gradient-to-tl from-primary/10 to-transparent rounded-full blur-3xl" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-yellow-500/5 via-purple-500/8 to-yellow-500/5 rounded-full blur-3xl opacity-60" />
-                </div>
-
-                {/* Fundo de estrelas sutis */}
-                <div className="absolute inset-0 opacity-30">
-                    <div className="absolute top-[10%] left-[15%] w-1 h-1 bg-purple-300 rounded-full animate-pulse"></div>
-                    <div className="absolute top-[25%] left-[80%] w-0.5 h-0.5 bg-white rounded-full"></div>
-                    <div className="absolute top-[40%] left-[30%] w-1.5 h-1.5 bg-yellow-300 rounded-full opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
-                    <div className="absolute top-[60%] left-[70%] w-0.5 h-0.5 bg-purple-200 rounded-full"></div>
-                    <div className="absolute top-[75%] left-[20%] w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
-                    <div className="absolute top-[20%] left-[60%] w-0.5 h-0.5 bg-yellow-200 rounded-full opacity-80"></div>
-                    <div className="absolute top-[85%] left-[85%] w-1 h-1 bg-purple-300 rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-                    <div className="absolute top-[35%] left-[10%] w-0.5 h-0.5 bg-white rounded-full"></div>
-                    <div className="absolute top-[55%] left-[90%] w-1.5 h-1.5 bg-yellow-300 rounded-full opacity-40"></div>
-                    <div className="absolute top-[15%] left-[45%] w-0.5 h-0.5 bg-purple-200 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                    <div className="absolute top-[70%] left-[50%] w-1 h-1 bg-white rounded-full opacity-70"></div>
-                    <div className="absolute top-[90%] left-[35%] w-0.5 h-0.5 bg-yellow-200 rounded-full"></div>
-                </div>
-
+            <section className="relative py-20 md:py-28 px-4 md:px-6 lg:px-8 overflow-hidden">
                 <div className="max-w-7xl mx-auto relative z-10">
-                    {/* Elegant corner accents */}
-                    <div className="absolute inset-0 pointer-events-none">
-                        {/* Top left accent */}
-                        <div className="absolute -top-8 -left-8 w-40 h-40 opacity-40">
-                            <div className="w-full h-full bg-gradient-to-br from-primary/30 via-purple-500/20 to-transparent rounded-full blur-2xl"></div>
-                        </div>
-                        {/* Top right accent */}
-                        <div className="absolute -top-8 -right-8 w-40 h-40 opacity-40">
-                            <div className="w-full h-full bg-gradient-to-bl from-yellow-500/25 via-yellow-400/15 to-transparent rounded-full blur-2xl"></div>
-                        </div>
-                        {/* Bottom left accent */}
-                        <div className="absolute -bottom-8 -left-8 w-40 h-40 opacity-40">
-                            <div className="w-full h-full bg-gradient-to-tr from-yellow-500/25 via-yellow-400/15 to-transparent rounded-full blur-2xl"></div>
-                        </div>
-                        {/* Bottom right accent */}
-                        <div className="absolute -bottom-8 -right-8 w-40 h-40 opacity-40">
-                            <div className="w-full h-full bg-gradient-to-tl from-primary/30 via-purple-500/20 to-transparent rounded-full blur-2xl"></div>
-                        </div>
-                    </div>
                     {/* Section Title */}
                     <div className="text-center mb-12 md:mb-16">
                         <h2 className="text-white text-3xl md:text-4xl font-light mb-3" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.02em' }}>
