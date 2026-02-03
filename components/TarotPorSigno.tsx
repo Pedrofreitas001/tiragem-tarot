@@ -287,7 +287,6 @@ export const TarotPorSigno = () => {
                             {/* Badge do signo */}
                             <div className="mb-4">
                                 <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${elementColors.bg} border border-white/10`}>
-                                    <span className="text-2xl">{signData.symbol}</span>
                                     <span className={`text-sm font-medium ${elementColors.primary}`}>{signName}</span>
                                 </span>
                             </div>
@@ -338,10 +337,6 @@ export const TarotPorSigno = () => {
                             {/* 3 Cards Grid */}
                             <div className="relative z-10 flex items-end justify-center gap-3 md:gap-4">
                                 {dailyCards.map((card, index) => {
-                                    const positions = ['passado', 'presente', 'futuro'];
-                                    const positionLabels = isPortuguese
-                                        ? ['Passado', 'Presente', 'Futuro']
-                                        : ['Past', 'Present', 'Future'];
                                     const isCenter = index === 1;
                                     const cardName = getCardName(card.id, isPortuguese);
 
@@ -373,12 +368,9 @@ export const TarotPorSigno = () => {
                                                 />
                                             </div>
 
-                                            {/* Position Label */}
+                                            {/* Card Name */}
                                             <div className="mt-3 text-center">
-                                                <p className={`text-xs uppercase tracking-wider ${isCenter ? 'text-yellow-400' : 'text-gray-500'}`}>
-                                                    {positionLabels[index]}
-                                                </p>
-                                                <p className={`text-xs mt-1 ${isCenter ? 'text-white' : 'text-gray-400'} truncate max-w-[100px] md:max-w-[130px]`}>
+                                                <p className={`text-xs ${isCenter ? 'text-white' : 'text-gray-400'} truncate max-w-[100px] md:max-w-[130px]`}>
                                                     {cardName}
                                                 </p>
                                             </div>
@@ -625,13 +617,12 @@ export const TarotPorSigno = () => {
                                 <button
                                     key={sign}
                                     onClick={() => navigate(isPortuguese ? `/tarot-por-signo/${sign}` : `/tarot-by-sign/${sign}`)}
-                                    className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${isCurrentSign
+                                    className={`flex items-center justify-center p-4 rounded-xl transition-all ${isCurrentSign
                                         ? 'bg-yellow-500/20 border border-yellow-500/40'
                                         : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
                                         }`}
                                 >
-                                    <span className="text-2xl">{data.symbol}</span>
-                                    <span className={`text-xs font-medium ${isCurrentSign ? 'text-yellow-400' : 'text-gray-400'}`}>
+                                    <span className={`text-sm font-medium ${isCurrentSign ? 'text-yellow-400' : 'text-gray-400'}`}>
                                         {isPortuguese ? data.name.pt : data.name.en}
                                     </span>
                                 </button>

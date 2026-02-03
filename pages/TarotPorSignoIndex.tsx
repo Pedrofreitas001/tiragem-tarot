@@ -236,16 +236,13 @@ export const TarotPorSignoIndex = () => {
                                                     <div className={`absolute -top-12 -right-12 w-32 h-32 ${colors.bg} rounded-full blur-3xl opacity-0 group-hover:opacity-50 transition-opacity duration-500`}></div>
 
                                                     <div className="relative z-10">
-                                                        <div className="flex items-center gap-4 mb-3">
-                                                            <span className="text-4xl">{signData.symbol}</span>
-                                                            <div>
-                                                                <h3 className="text-white text-lg font-medium">
-                                                                    {isPortuguese ? signData.name.pt : signData.name.en}
-                                                                </h3>
-                                                                <p className="text-gray-500 text-xs">
-                                                                    {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
-                                                                </p>
-                                                            </div>
+                                                        <div className="mb-3">
+                                                            <h3 className="text-white text-lg font-medium">
+                                                                {isPortuguese ? signData.name.pt : signData.name.en}
+                                                            </h3>
+                                                            <p className="text-gray-500 text-xs mt-1">
+                                                                {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
+                                                            </p>
                                                         </div>
 
                                                         <div className="flex flex-wrap gap-2 mt-4">
