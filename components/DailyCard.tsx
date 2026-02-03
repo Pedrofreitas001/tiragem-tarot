@@ -916,6 +916,8 @@ export const DailyCard = () => {
 
                         </div>
                     )}
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -1289,8 +1291,6 @@ export const DailyCard = () => {
                                 </div>
                             </div>
                         </div>
-                        </div>
-                    </div>
                     </div>
                 </div>
             </section>
