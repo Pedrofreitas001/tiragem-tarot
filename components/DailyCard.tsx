@@ -754,52 +754,6 @@ export const DailyCard = () => {
                                 </div>
                             )}
 
-                            {/* Cards lado a lado - Compactos */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-20">
-                                {/* Chamado Universal ou Palavras-Chave */}
-                                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-900/20 via-transparent to-transparent border border-orange-500/10 p-4">
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl"></div>
-                                    <div className="relative">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="material-symbols-outlined text-orange-300 text-base">campaign</span>
-                                            <span className="text-white text-xs font-semibold uppercase tracking-wider">
-                                                {aiSynthesis?.chamado_universal ? (isPortuguese ? 'Chamado Universal' : 'Universal Call') : (isPortuguese ? 'Palavras-Chave' : 'Keywords')}
-                                            </span>
-                                        </div>
-                                        {aiSynthesis?.chamado_universal ? (
-                                            <p className="text-orange-50 text-sm leading-relaxed">
-                                                {aiSynthesis.chamado_universal}
-                                            </p>
-                                        ) : (
-                                            <div className="space-y-1">
-                                                {keywords.slice(0, 4).map((keyword, i) => (
-                                                    <div key={i} className="flex items-center gap-2">
-                                                        <div className="w-1 h-1 rounded-full bg-orange-400/60" />
-                                                        <span className="text-orange-100/90 text-xs">{keyword}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Portal de Transformação ou Conselho */}
-                                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-900/20 via-transparent to-transparent border border-emerald-500/10 p-4">
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl"></div>
-                                    <div className="relative">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="material-symbols-outlined text-emerald-300 text-base">transform</span>
-                                            <span className="text-white text-xs font-semibold uppercase tracking-wider">
-                                                {aiSynthesis?.portal_transformação ? (isPortuguese ? 'Portal Transformação' : 'Transformation Portal') : (isPortuguese ? 'Conselho' : 'Advice')}
-                                            </span>
-                                        </div>
-                                        <p className="text-emerald-50 text-sm leading-relaxed font-medium italic">
-                                            {aiSynthesis?.portal_transformação || advice}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
                             {/* Reflexão Final - se houver IA */}
                             {aiSynthesis?.reflexão_coletiva && (
                                 <div className="mt-10 text-center space-y-4">
