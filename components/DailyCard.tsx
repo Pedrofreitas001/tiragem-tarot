@@ -397,7 +397,7 @@ export const DailyCard = () => {
             setIsLoadingAI(true);
             try {
                 const synthesis = await getDailyCardSynthesis(
-                    { name: dailyCard.name, id: dailyCard.id },
+                    { name: dailyCard.name, name_pt: dailyCard.name_pt, id: dailyCard.id },
                     isPortuguese
                 );
                 if (synthesis) {

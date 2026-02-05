@@ -30,7 +30,14 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.crossOrigin = 'anonymous';
+
+            // Timeout para evitar espera infinita
+            const timeout = setTimeout(() => {
+                reject(new Error('Timeout ao carregar imagem'));
+            }, 10000);
+
             img.onload = () => {
+                clearTimeout(timeout);
                 const canvas = document.createElement('canvas');
                 canvas.width = img.width;
                 canvas.height = img.height;
@@ -42,8 +49,14 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                     reject(new Error('Não foi possível obter contexto do canvas'));
                 }
             };
-            img.onerror = () => reject(new Error('Erro ao carregar imagem'));
-            img.src = url;
+            img.onerror = () => {
+                clearTimeout(timeout);
+                reject(new Error('Erro ao carregar imagem'));
+            };
+
+            // Usar proxy CORS para resolver problema de cross-origin
+            const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=400&h=640&fit=cover&output=jpg`;
+            img.src = proxyUrl;
         });
     };
 
@@ -172,7 +185,7 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
 
                                         {/* Significado da Carta */}
                                         {aiSynthesis?.significado_carta && (
-                                            <p className="text-gray-300 text-sm leading-relaxed max-w-xs">
+                                            <p className="text-gray-300 text-xs leading-relaxed max-w-xs">
                                                 {aiSynthesis.significado_carta}
                                             </p>
                                         )}

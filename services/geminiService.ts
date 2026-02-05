@@ -194,7 +194,7 @@ export const getStructuredSynthesis = async (
 
 // Nova função para Carta do Dia com IA
 export const getDailyCardSynthesis = async (
-  card: { name: string; id: string },
+  card: { name: string; name_pt?: string; id: string },
   isPortuguese: boolean = true
 ): Promise<DailyCardSynthesis | null> => {
   try {

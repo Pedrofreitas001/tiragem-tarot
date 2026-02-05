@@ -16,6 +16,7 @@ ABORDAGEM:
 - Sem clichês ou obviedades
 - Sem mencionar IA/sistema
 - Máximo 3 parágrafos por campo
+- IMPORTANTE: Use SEMPRE o nome da carta no idioma solicitado. NUNCA mencione nomes de cartas em inglês quando o idioma for português (ex: use "Ás de Copas" e não "Ace of Cups")
 
 PERSPECTIVA: Esta carta representa as energias que permeiam o universo hoje, influenciando toda a humanidade de forma sutil mas poderosa.`;
 
@@ -49,8 +50,11 @@ export default async function handler(req, res) {
         const lang = isPortuguese ? 'português' : 'English';
         const today = new Date().toISOString().split('T')[0];
 
+        // Determinar nome da carta no idioma correto
+        const cardNameForPrompt = isPortuguese && card.name_pt ? card.name_pt : card.name;
+
         // Cache por dia + carta + idioma - LIMPAR CACHE PARA NOVOS CAMPOS
-        const cacheKey = `daily_v2_${card.name}_${today}_${lang}`;
+        const cacheKey = `daily_v3_${card.name}_${today}_${lang}`;
         if (dailyCache.has(cacheKey)) {
             const cached = dailyCache.get(cacheKey);
             if (Date.now() - cached.timestamp < CACHE_TTL) {
@@ -61,11 +65,11 @@ export default async function handler(req, res) {
 
         const prompt = `${BASE_SYSTEM_PROMPT}
 
-CARTA DO DIA: ${card.name}
+CARTA DO DIA: ${cardNameForPrompt}
 IDIOMA: ${lang}
 DATA: ${today}
 
-Como tarólogo conectado às energias universais, canalize a energia coletiva que ${card.name} traz para toda a humanidade hoje.
+Como tarólogo conectado às energias universais, canalize a energia coletiva que ${cardNameForPrompt} traz para toda a humanidade hoje.
 
 Crie uma interpretação completa focada na ENERGIA COLETIVA do dia. 
 
