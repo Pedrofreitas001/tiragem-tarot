@@ -443,15 +443,6 @@ export const DailyCard = () => {
                 dotColor: 'bg-cyan-500/30 border-cyan-400/50',
                 textColor: 'text-white',
                 contentColor: 'text-cyan-50'
-            },
-            {
-                title: isPortuguese ? 'Influência Espiritual' : 'Spiritual Influence',
-                content: aiSynthesis.influência_espiritual,
-                color: 'indigo',
-                borderColor: 'border-indigo-500/20',
-                dotColor: 'bg-indigo-500/30 border-indigo-400/50',
-                textColor: 'text-white',
-                contentColor: 'text-indigo-50'
             }
         ];
     };
@@ -709,6 +700,21 @@ export const DailyCard = () => {
                                 <span className="material-symbols-outlined text-yellow-400/40 text-sm">auto_awesome</span>
                                 <div className="w-16 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
                             </div>
+
+                            {/* Sobre a Carta - Significado */}
+                            {aiSynthesis?.significado_carta && (
+                                <div className="bg-white/5 rounded-xl p-4 border border-white/10 mb-6">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="material-symbols-outlined text-yellow-400 text-base">auto_awesome</span>
+                                        <span className="text-white text-xs font-semibold uppercase tracking-wider">
+                                            {isPortuguese ? 'Sobre a Carta' : 'About the Card'}
+                                        </span>
+                                    </div>
+                                    <p className="text-gray-200 text-sm leading-relaxed">
+                                        {aiSynthesis.significado_carta}
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Módulos - Lista Vertical */}
                             {aiSynthesis && getDynamicModules().length > 0 && (

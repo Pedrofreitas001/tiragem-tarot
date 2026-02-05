@@ -104,9 +104,9 @@ Responda EXCLUSIVAMENTE em JSON válido com todos os campos obrigatórios preenc
                     type: "string",
                     description: "A energia emocional predominante no coletivo hoje (máx 30 palavras)"
                 },
-                influência_espiritual: {
+                significado_carta: {
                     type: "string",
-                    description: "Como as forças espirituais influenciam o mundo hoje (máx 35 palavras)"
+                    description: "Breve descrição objetiva do que esta carta representa e simboliza, sua essência e energia. Ex: 'O Mago representa a manifestação, a conexão entre céu e terra...' (máx 50 palavras)"
                 },
                 portal_transformação: {
                     type: "string",
@@ -117,7 +117,7 @@ Responda EXCLUSIVAMENTE em JSON válido com todos os campos obrigatórios preenc
                     description: "Uma afirmação ou mantra para sintonizar com a energia do dia (máx 15 palavras)"
                 }
             },
-            required: ["mensagem_coletiva", "vibração_universal", "consciência_coletiva", "movimento_planetário", "chamado_universal", "reflexão_coletiva", "energia_emocional", "influência_espiritual", "portal_transformação", "mantra_diário"]
+            required: ["mensagem_coletiva", "vibração_universal", "consciência_coletiva", "movimento_planetário", "chamado_universal", "reflexão_coletiva", "energia_emocional", "significado_carta", "portal_transformação", "mantra_diário"]
         };
 
         console.log('📡 Fazendo chamada para Gemini...', {
@@ -158,7 +158,7 @@ Responda EXCLUSIVAMENTE em JSON válido com todos os campos obrigatórios preenc
                 const requiredFields = [
                     'mensagem_coletiva', 'vibração_universal', 'consciência_coletiva',
                     'movimento_planetário', 'chamado_universal', 'reflexão_coletiva',
-                    'energia_emocional', 'influência_espiritual', 'portal_transformação', 'mantra_diário'
+                    'energia_emocional', 'significado_carta', 'portal_transformação', 'mantra_diário'
                 ];
 
                 const missingFields = requiredFields.filter(field => !parsed[field]);

@@ -63,7 +63,7 @@ export interface DailyCardSynthesis {
   chamado_universal: string;        // O chamado que o universo faz à humanidade
   reflexão_coletiva: string;        // Pergunta reflexiva para a humanidade
   energia_emocional: string;        // A energia emocional predominante no coletivo
-  influência_espiritual: string;    // Como as forças espirituais influenciam o mundo
+  significado_carta: string;        // O que a carta representa e simboliza
   portal_transformação: string;     // Oportunidade de transformação disponível
   mantra_diário: string;            // Afirmação ou mantra para sintonizar com a energia
 }
