@@ -8,6 +8,7 @@ import { AuthModal } from './AuthModal';
 import { PaywallModal } from './PaywallModal';
 import { MinimalStarsBackground } from './MinimalStarsBackground';
 import { getDailyCardSynthesis, DailyCardSynthesis } from '../services/geminiService';
+import { CardImageExport } from './CardImageExport';
 
 // Header Component
 const Header = () => {
@@ -619,6 +620,18 @@ export const DailyCard = () => {
                             {isPortuguese ? 'Energias do Dia' : 'Daily Energies'}
                         </h2>
                         <div className="w-16 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto opacity-60" />
+
+                        {/* Botão de Download da Imagem */}
+                        {aiSynthesis && (
+                            <div className="mt-4 flex justify-center">
+                                <CardImageExport
+                                    card={dailyCard}
+                                    cardName={cardName}
+                                    aiSynthesis={aiSynthesis}
+                                    isPortuguese={isPortuguese}
+                                />
+                            </div>
+                        )}
                     </div>
 
                     {/* AI Loading State */}
