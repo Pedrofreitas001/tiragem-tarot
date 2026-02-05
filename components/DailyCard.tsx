@@ -148,9 +148,6 @@ export const DailyCard = () => {
     const [isLoadingAI, setIsLoadingAI] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
 
-    // Estados para rotação dinâmica dos módulos
-    const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
-    const [isTransitioning, setIsTransitioning] = useState(false);
     // CSS para órbitas planetárias - estáticas e estilos dos botões
     const orbitStyles = `
         @keyframes spin {
@@ -415,22 +412,7 @@ export const DailyCard = () => {
         fetchAISynthesis();
     }, [dailyCard.id, isPortuguese]);
 
-    // Rotação automática dos módulos dinâmicos
-    useEffect(() => {
-        if (!aiSynthesis) return;
-
-        const interval = setInterval(() => {
-            setIsTransitioning(true);
-            setTimeout(() => {
-                setCurrentModuleIndex((prev) => (prev + 1) % 4); // 4 módulos
-                setIsTransitioning(false);
-            }, 200); // Tempo da transição
-        }, 8000); // Troca a cada 8 segundos
-
-        return () => clearInterval(interval);
-    }, [aiSynthesis]);
-
-    // Definir módulos dinâmicos para rotação
+    // Definir módulos dinâmicos
     const getDynamicModules = () => {
         if (!aiSynthesis) return [];
 
@@ -592,7 +574,7 @@ export const DailyCard = () => {
             </main>
 
             {/* Energias do Dia - Layout da Síntese */}
-            <section className="relative py-16 md:py-24 px-4 md:px-6 lg:px-8">
+            <section className="relative py-8 md:py-12 px-4 md:px-6 lg:px-8">
                 {/* Container Premium com background claro */}
                 <div className="max-w-7xl mx-auto relative">
                     {/* Card container com glassmorphism premium */}
@@ -639,9 +621,9 @@ export const DailyCard = () => {
                         />
 
                         {/* Conteúdo com padding */}
-                        <div className="relative z-10 px-6 md:px-12 lg:px-16 py-12 md:py-16">
+                        <div className="relative z-10 px-6 md:px-8 lg:px-10 py-6 md:py-8">
                     {/* Section Title */}
-                    <div className="text-center mb-12 md:mb-16">
+                    <div className="text-center mb-6 md:mb-8">
                         <h2 className="text-white text-3xl md:text-4xl font-light mb-3" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.02em' }}>
                             {isPortuguese ? 'Energias do Dia' : 'Daily Energies'}
                         </h2>
@@ -728,102 +710,20 @@ export const DailyCard = () => {
                                 <div className="w-16 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
                             </div>
 
-                            {/* Módulo Dinâmico - Rota entre os 4 automaticamente */}
+                            {/* Módulos - Lista Vertical */}
                             {aiSynthesis && getDynamicModules().length > 0 && (
-                                <div className="relative min-h-[140px]">
-                                    <div
-                                        className={`transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-0 transform scale-95' : 'opacity-100 transform scale-100'
-                                            }`}
-                                    >
-                                        {(() => {
-                                            const modules = getDynamicModules();
-                                            const currentModule = modules[currentModuleIndex];
-                                            if (!currentModule) return null;
-
-                                            return (
-                                                <div className={`relative pl-6 border-l-2 ${currentModule.borderColor}`}>
-                                                    <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full ${currentModule.dotColor} border-2`}></div>
-                                                    <div className="mb-4">
-                                                        <span className={`${currentModule.textColor} text-sm font-semibold uppercase tracking-wider`}>
-                                                            {currentModule.title}
-                                                        </span>
-                                                    </div>
-                                                    <p className={`${currentModule.contentColor} text-lg leading-relaxed ${currentModule.color === 'cyan' ? 'italic' : ''}`}>
-                                                        {currentModule.content}
-                                                    </p>
-                                                </div>
-                                            );
-                                        })()}
-                                    </div>
-
-                                    {/* Controles discretos */}
-                                    <div className="flex items-center justify-between mt-8 px-2">
-                                        {/* Botões de navegação discretos */}
-                                        <div className="flex items-center space-x-2">
-                                            <button
-                                                onClick={() => {
-                                                    setIsTransitioning(true);
-                                                    setTimeout(() => {
-                                                        setCurrentModuleIndex((prev) => (prev - 1 + 4) % 4);
-                                                        setIsTransitioning(false);
-                                                    }, 200);
-                                                }}
-                                                className="group flex items-center justify-center w-7 h-7 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300"
-                                                title={isPortuguese ? "Anterior" : "Previous"}
-                                            >
-                                                <span className="material-symbols-outlined text-white/60 group-hover:text-white/90 text-sm">chevron_left</span>
-                                            </button>
-
-                                            <button
-                                                onClick={() => {
-                                                    setIsTransitioning(true);
-                                                    setTimeout(() => {
-                                                        setCurrentModuleIndex((prev) => (prev + 1) % 4);
-                                                        setIsTransitioning(false);
-                                                    }, 200);
-                                                }}
-                                                className="group flex items-center justify-center w-7 h-7 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300"
-                                                title={isPortuguese ? "Próximo" : "Next"}
-                                            >
-                                                <span className="material-symbols-outlined text-white/60 group-hover:text-white/90 text-sm">chevron_right</span>
-                                            </button>
+                                <div className="space-y-4">
+                                    {getDynamicModules().map((module, index) => (
+                                        <div key={index} className={`relative pl-5 border-l-2 ${module.borderColor}`}>
+                                            <div className={`absolute -left-[7px] top-0 w-3 h-3 rounded-full ${module.dotColor} border-2`}></div>
+                                            <span className={`${module.textColor} text-xs font-semibold uppercase tracking-wider`}>
+                                                {module.title}
+                                            </span>
+                                            <p className={`${module.contentColor} text-sm leading-relaxed mt-1 ${module.color === 'cyan' ? 'italic' : ''}`}>
+                                                {module.content}
+                                            </p>
                                         </div>
-
-                                        {/* Indicadores de posição melhorados */}
-                                        <div className="flex items-center space-x-3">
-                                            {getDynamicModules().map((module, index) => (
-                                                <button
-                                                    key={index}
-                                                    onClick={() => {
-                                                        setIsTransitioning(true);
-                                                        setTimeout(() => {
-                                                            setCurrentModuleIndex(index);
-                                                            setIsTransitioning(false);
-                                                        }, 200);
-                                                    }}
-                                                    className={`relative group transition-all duration-300 ${index === currentModuleIndex
-                                                        ? 'w-6 h-2'
-                                                        : 'w-2 h-2 hover:w-3'
-                                                        }`}
-                                                    title={module.title}
-                                                >
-                                                    <div className={`absolute inset-0 rounded-full transition-all duration-300 ${index === currentModuleIndex
-                                                        ? `bg-${module.color}-400 shadow-md`
-                                                        : 'bg-white/20 group-hover:bg-white/40'
-                                                        }`} />
-                                                    {index === currentModuleIndex && (
-                                                        <div className="absolute inset-0 rounded-full bg-white/20 animate-pulse" />
-                                                    )}
-                                                </button>
-                                            ))}
-                                        </div>
-
-                                        {/* Timer discreto */}
-                                        <div className="flex items-center space-x-1 text-white/30">
-                                            <span className="material-symbols-outlined text-xs">schedule</span>
-                                            <span className="text-xs font-mono">8s</span>
-                                        </div>
-                                    </div>
+                                    ))}
                                 </div>
                             )}
 
