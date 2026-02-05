@@ -620,18 +620,6 @@ export const DailyCard = () => {
                             {isPortuguese ? 'Energias do Dia' : 'Daily Energies'}
                         </h2>
                         <div className="w-16 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto opacity-60" />
-
-                        {/* Botão de Download da Imagem */}
-                        {aiSynthesis && (
-                            <div className="mt-4 flex justify-center">
-                                <CardImageExport
-                                    card={dailyCard}
-                                    cardName={cardName}
-                                    aiSynthesis={aiSynthesis}
-                                    isPortuguese={isPortuguese}
-                                />
-                            </div>
-                        )}
                     </div>
 
                     {/* AI Loading State */}
@@ -793,6 +781,18 @@ export const DailyCard = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Botão de Download da Imagem - Fora da seção */}
+            {aiSynthesis && (
+                <div className="py-8 flex justify-center bg-background-dark">
+                    <CardImageExport
+                        card={dailyCard}
+                        cardName={cardName}
+                        aiSynthesis={aiSynthesis}
+                        isPortuguese={isPortuguese}
+                    />
+                </div>
+            )}
 
             {/* WhatsApp Daily Card Subscription Section */}
             <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">

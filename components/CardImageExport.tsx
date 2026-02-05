@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import html2canvas from 'html2canvas';
 import { DailyCardSynthesis } from '../services/geminiService';
 import { TarotCardData } from '../tarotData';
@@ -10,10 +10,42 @@ interface CardImageExportProps {
     isPortuguese: boolean;
 }
 
-export const CardImageExport = ({ card, cardName, aiSynthesis, isPortuguese }: CardImageExportProps) => {
+export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageExportProps) => {
     const imageRef = useRef<HTMLDivElement>(null);
     const [isExporting, setIsExporting] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
+    const [imageBase64, setImageBase64] = useState<string | null>(null);
+
+    // Pré-carregar imagem como base64 quando o modal abrir
+    useEffect(() => {
+        if (showPreview && card.imageUrl && !imageBase64) {
+            loadImageAsBase64(card.imageUrl)
+                .then(setImageBase64)
+                .catch(err => console.error('Erro ao carregar imagem:', err));
+        }
+    }, [showPreview, card.imageUrl, imageBase64]);
+
+    // Função para converter imagem para base64 (resolve problema de CORS)
+    const loadImageAsBase64 = (url: string): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    ctx.drawImage(img, 0, 0);
+                    resolve(canvas.toDataURL('image/jpeg', 0.95));
+                } else {
+                    reject(new Error('Não foi possível obter contexto do canvas'));
+                }
+            };
+            img.onerror = () => reject(new Error('Erro ao carregar imagem'));
+            img.src = url;
+        });
+    };
 
     const getFormattedDate = () => {
         const today = new Date();
@@ -22,8 +54,11 @@ export const CardImageExport = ({ card, cardName, aiSynthesis, isPortuguese }: C
             month: 'long',
             year: 'numeric'
         };
-        return today.toLocaleDateString(isPortuguese ? 'pt-BR' : 'en-US', options);
+        return today.toLocaleDateString('pt-BR', options);
     };
+
+    // Nome da carta sempre em português
+    const cardNamePt = card.name_pt || card.name;
 
     const handleExport = async () => {
         if (!imageRef.current) return;
@@ -31,17 +66,14 @@ export const CardImageExport = ({ card, cardName, aiSynthesis, isPortuguese }: C
         setIsExporting(true);
         try {
             const canvas = await html2canvas(imageRef.current, {
-                scale: 2, // Alta resolução
+                scale: 2,
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: '#1a1628',
                 logging: false,
             });
 
-            // Converter para JPEG
             const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-
-            // Criar link de download
             const link = document.createElement('a');
             link.download = `carta-do-dia-${new Date().toISOString().split('T')[0]}.jpg`;
             link.href = dataUrl;
@@ -102,34 +134,38 @@ export const CardImageExport = ({ card, cardName, aiSynthesis, isPortuguese }: C
 
                                     {/* Centro: Carta */}
                                     <div className="flex-1 flex flex-col items-center justify-center gap-4 py-4">
-                                        {/* Imagem da Carta */}
+                                        {/* Imagem da Carta (usando base64) */}
                                         <div className="relative">
-                                            <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/20 to-purple-500/20 blur-2xl rounded-full"></div>
-                                            <img
-                                                src={card.imageUrl}
-                                                alt={cardName}
-                                                className="relative w-40 h-64 object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
-                                                crossOrigin="anonymous"
-                                            />
+                                            {imageBase64 ? (
+                                                <img
+                                                    src={imageBase64}
+                                                    alt={cardNamePt}
+                                                    className="w-40 h-64 object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
+                                                />
+                                            ) : (
+                                                <div className="w-40 h-64 bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
+                                                    <div className="w-6 h-6 border-2 border-yellow-500/50 border-t-yellow-500 rounded-full animate-spin"></div>
+                                                </div>
+                                            )}
                                         </div>
 
-                                        {/* Nome da Carta */}
+                                        {/* Nome da Carta - BRANCO, sempre português */}
                                         <h2
-                                            className="text-2xl font-bold"
-                                            style={{
-                                                fontFamily: "'Crimson Text', serif",
-                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
-                                                WebkitBackgroundClip: 'text',
-                                                WebkitTextFillColor: 'transparent',
-                                                backgroundClip: 'text',
-                                            }}
+                                            className="text-2xl font-bold text-white"
+                                            style={{ fontFamily: "'Crimson Text', serif" }}
                                         >
-                                            {cardName}
+                                            {cardNamePt}
                                         </h2>
 
-                                        {/* Vibração Universal */}
+                                        {/* Vibração Universal - GOLD SÓLIDO */}
                                         {aiSynthesis?.vibração_universal && (
-                                            <p className="text-purple-200 text-lg font-medium italic max-w-xs">
+                                            <p
+                                                className="text-lg font-medium italic max-w-xs"
+                                                style={{
+                                                    color: '#d4af37',
+                                                    fontFamily: "'Crimson Text', serif",
+                                                }}
+                                            >
                                                 "{aiSynthesis.vibração_universal}"
                                             </p>
                                         )}
@@ -142,20 +178,17 @@ export const CardImageExport = ({ card, cardName, aiSynthesis, isPortuguese }: C
                                         )}
                                     </div>
 
-                                    {/* Mantra */}
-                                    {aiSynthesis?.mantra_diário && (
+                                    {/* Reflexão Coletiva (frase de fechamento) - GOLD SÓLIDO */}
+                                    {aiSynthesis?.reflexão_coletiva && (
                                         <div className="bg-white/5 rounded-lg px-4 py-3 border border-yellow-500/20 max-w-xs">
                                             <p
                                                 className="text-sm font-medium"
                                                 style={{
+                                                    color: '#d4af37',
                                                     fontFamily: "'Crimson Text', serif",
-                                                    background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
-                                                    WebkitBackgroundClip: 'text',
-                                                    WebkitTextFillColor: 'transparent',
-                                                    backgroundClip: 'text',
                                                 }}
                                             >
-                                                "{aiSynthesis.mantra_diário}"
+                                                "{aiSynthesis.reflexão_coletiva}"
                                             </p>
                                         </div>
                                     )}
@@ -163,7 +196,7 @@ export const CardImageExport = ({ card, cardName, aiSynthesis, isPortuguese }: C
                                     {/* Data */}
                                     <div className="mt-4">
                                         <p className="text-gray-400 text-xs uppercase tracking-wider">
-                                            {isPortuguese ? 'Carta do Dia' : 'Card of the Day'}
+                                            Carta do Dia
                                         </p>
                                         <p className="text-gray-300 text-sm">
                                             {getFormattedDate()}
@@ -183,7 +216,7 @@ export const CardImageExport = ({ card, cardName, aiSynthesis, isPortuguese }: C
                             </button>
                             <button
                                 onClick={handleExport}
-                                disabled={isExporting}
+                                disabled={isExporting || !imageBase64}
                                 className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-bold rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {isExporting ? (
