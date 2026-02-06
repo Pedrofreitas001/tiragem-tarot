@@ -181,7 +181,7 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                     {/* Vibração Universal */}
                                     {aiSynthesis?.vibração_universal && (
                                         <p
-                                            className="text-sm font-medium italic text-center mb-4"
+                                            className="text-base font-medium italic text-center mb-4"
                                             style={{
                                                 color: '#d4af37',
                                                 fontFamily: "'Crimson Text', serif",
@@ -193,14 +193,16 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
 
                                     {/* Significado da Carta */}
                                     {aiSynthesis?.significado_carta && (
-                                        <p className="text-gray-300 text-[11px] leading-relaxed text-center mb-4 px-2">
-                                            {aiSynthesis.significado_carta}
-                                        </p>
+                                        <div className="bg-white/5 rounded-lg px-3 py-2.5 mb-4">
+                                            <p className="text-gray-300 text-[11px] leading-relaxed text-center">
+                                                {aiSynthesis.significado_carta}
+                                            </p>
+                                        </div>
                                     )}
 
                                     {/* Energia (bullet point) */}
                                     {aiSynthesis?.energia_emocional && (
-                                        <div className="flex items-start gap-2 mb-4 px-2">
+                                        <div className="flex items-start gap-2 mt-2 px-2">
                                             <span
                                                 className="text-[10px] mt-0.5"
                                                 style={{ color: '#d4af37' }}
@@ -225,24 +227,29 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                     <div className="flex-1"></div>
 
                                     {/* Linha decorativa */}
-                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent mb-4"></div>
+                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent mb-3"></div>
 
                                     {/* Mantra do Dia */}
                                     {aiSynthesis?.mantra_diário && (
-                                        <div className="bg-white/5 rounded-lg px-4 py-3 border border-yellow-500/20">
+                                        <>
                                             <p
-                                                className="text-[10px] font-semibold uppercase tracking-wide mb-1.5 text-center"
+                                                className="text-[10px] font-semibold uppercase tracking-wide mb-2 text-center"
                                                 style={{ color: '#d4af37' }}
                                             >
                                                 Mantra do Dia
                                             </p>
-                                            <p
-                                                className="text-sm font-medium text-center italic text-white"
-                                                style={{ fontFamily: "'Crimson Text', serif" }}
-                                            >
-                                                "{aiSynthesis.mantra_diário}"
-                                            </p>
-                                        </div>
+                                            <div className="bg-white/5 rounded-lg px-4 py-3 border border-yellow-500/20">
+                                                <p
+                                                    className="text-sm font-medium text-center italic"
+                                                    style={{
+                                                        fontFamily: "'Crimson Text', serif",
+                                                        color: '#d4af37'
+                                                    }}
+                                                >
+                                                    "{aiSynthesis.mantra_diário}"
+                                                </p>
+                                            </div>
+                                        </>
                                     )}
 
                                     {/* Rodapé com site */}
