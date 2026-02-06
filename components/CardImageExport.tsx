@@ -114,7 +114,7 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
             {/* Modal de Preview e Download */}
             {showPreview && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-[#1a1628] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                    <div className="bg-[#1a1628] rounded-2xl max-w-md w-full max-h-[95vh] overflow-y-auto">
                         {/* Header do Modal */}
                         <div className="flex items-center justify-between p-4 border-b border-white/10">
                             <h3 className="text-white font-semibold">
@@ -128,91 +128,130 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                             </button>
                         </div>
 
-                        {/* Preview da Imagem */}
-                        <div className="p-4">
+                        {/* Preview da Imagem - Layout Premium WhatsApp */}
+                        <div className="p-3">
                             <div
                                 ref={imageRef}
-                                className="w-full aspect-[3/4] rounded-xl overflow-hidden"
+                                className="w-full rounded-xl overflow-hidden"
                                 style={{
-                                    background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 30%, #1a1628 100%)',
+                                    background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 40%, #1a1628 100%)',
+                                    aspectRatio: '9/16',
                                 }}
                             >
-                                {/* Container da Imagem para Export */}
-                                <div className="h-full flex flex-col items-center justify-between p-6 text-center">
-                                    {/* Topo: Logo */}
-                                    <div className="flex items-center gap-2 opacity-80">
-                                        <span className="material-symbols-outlined text-yellow-400 text-xl">auto_awesome</span>
-                                        <span className="text-white font-bold text-lg">Zaya Tarot</span>
+                                {/* Container Principal */}
+                                <div className="h-full flex flex-col p-5">
+                                    {/* Topo: Logo + Data */}
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="material-symbols-outlined text-yellow-400 text-base">auto_awesome</span>
+                                            <span className="text-white font-bold text-sm">Zaya Tarot</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-gray-400 text-[10px] uppercase tracking-wider">Carta do Dia</p>
+                                            <p className="text-gray-300 text-xs">{getFormattedDate()}</p>
+                                        </div>
                                     </div>
 
-                                    {/* Centro: Carta */}
-                                    <div className="flex-1 flex flex-col items-center justify-center gap-4 py-4">
-                                        {/* Imagem da Carta (usando base64) */}
-                                        <div className="relative">
-                                            {imageBase64 ? (
-                                                <img
-                                                    src={imageBase64}
-                                                    alt={cardNamePt}
-                                                    className="w-40 h-64 object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
-                                                />
-                                            ) : (
-                                                <div className="w-40 h-64 bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
-                                                    <div className="w-6 h-6 border-2 border-yellow-500/50 border-t-yellow-500 rounded-full animate-spin"></div>
+                                    {/* Linha decorativa */}
+                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent mb-5"></div>
+
+                                    {/* Conteúdo Principal - Layout Lado a Lado */}
+                                    <div className="flex-1 flex gap-4">
+                                        {/* Coluna Esquerda: Textos */}
+                                        <div className="flex-1 flex flex-col justify-center">
+                                            {/* Nome da Carta */}
+                                            <h2
+                                                className="text-xl font-bold text-white mb-2"
+                                                style={{ fontFamily: "'Crimson Text', serif" }}
+                                            >
+                                                {cardNamePt}
+                                            </h2>
+
+                                            {/* Vibração Universal */}
+                                            {aiSynthesis?.vibração_universal && (
+                                                <p
+                                                    className="text-sm font-medium italic mb-4"
+                                                    style={{
+                                                        color: '#d4af37',
+                                                        fontFamily: "'Crimson Text', serif",
+                                                    }}
+                                                >
+                                                    "{aiSynthesis.vibração_universal}"
+                                                </p>
+                                            )}
+
+                                            {/* Significado da Carta */}
+                                            {aiSynthesis?.significado_carta && (
+                                                <p className="text-gray-300 text-[11px] leading-relaxed mb-4">
+                                                    {aiSynthesis.significado_carta}
+                                                </p>
+                                            )}
+
+                                            {/* Energia (bullet point) */}
+                                            {aiSynthesis?.energia_emocional && (
+                                                <div className="flex items-start gap-2">
+                                                    <span
+                                                        className="text-[10px] mt-0.5"
+                                                        style={{ color: '#d4af37' }}
+                                                    >
+                                                        ●
+                                                    </span>
+                                                    <div>
+                                                        <span
+                                                            className="text-[10px] font-semibold uppercase tracking-wide"
+                                                            style={{ color: '#d4af37' }}
+                                                        >
+                                                            Energia
+                                                        </span>
+                                                        <p className="text-gray-300 text-[10px] leading-relaxed mt-0.5">
+                                                            {aiSynthesis.energia_emocional}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
 
-                                        {/* Nome da Carta - BRANCO, sempre português */}
-                                        <h2
-                                            className="text-2xl font-bold text-white"
-                                            style={{ fontFamily: "'Crimson Text', serif" }}
-                                        >
-                                            {cardNamePt}
-                                        </h2>
-
-                                        {/* Vibração Universal - GOLD SÓLIDO */}
-                                        {aiSynthesis?.vibração_universal && (
-                                            <p
-                                                className="text-lg font-medium italic max-w-xs"
-                                                style={{
-                                                    color: '#d4af37',
-                                                    fontFamily: "'Crimson Text', serif",
-                                                }}
-                                            >
-                                                "{aiSynthesis.vibração_universal}"
-                                            </p>
-                                        )}
-
-                                        {/* Significado da Carta */}
-                                        {aiSynthesis?.significado_carta && (
-                                            <p className="text-gray-300 text-xs leading-relaxed max-w-xs">
-                                                {aiSynthesis.significado_carta}
-                                            </p>
-                                        )}
+                                        {/* Coluna Direita: Imagem da Carta */}
+                                        <div className="flex items-center justify-center">
+                                            {imageBase64 ? (
+                                                <img
+                                                    src={imageBase64}
+                                                    alt={cardNamePt}
+                                                    className="w-28 h-44 object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
+                                                />
+                                            ) : (
+                                                <div className="w-28 h-44 bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
+                                                    <div className="w-5 h-5 border-2 border-yellow-500/50 border-t-yellow-500 rounded-full animate-spin"></div>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
-                                    {/* Reflexão Coletiva (frase de fechamento) - GOLD SÓLIDO */}
-                                    {aiSynthesis?.reflexão_coletiva && (
-                                        <div className="bg-white/5 rounded-lg px-4 py-3 border border-yellow-500/20 max-w-xs">
+                                    {/* Linha decorativa */}
+                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent my-5"></div>
+
+                                    {/* Mantra do Dia */}
+                                    {aiSynthesis?.mantra_diário && (
+                                        <div className="bg-white/5 rounded-lg px-4 py-3 border border-yellow-500/20">
                                             <p
-                                                className="text-sm font-medium"
-                                                style={{
-                                                    color: '#d4af37',
-                                                    fontFamily: "'Crimson Text', serif",
-                                                }}
+                                                className="text-[10px] font-semibold uppercase tracking-wide mb-1.5 text-center"
+                                                style={{ color: '#d4af37' }}
                                             >
-                                                "{aiSynthesis.reflexão_coletiva}"
+                                                Mantra do Dia
+                                            </p>
+                                            <p
+                                                className="text-sm font-medium text-center italic text-white"
+                                                style={{ fontFamily: "'Crimson Text', serif" }}
+                                            >
+                                                "{aiSynthesis.mantra_diário}"
                                             </p>
                                         </div>
                                     )}
 
-                                    {/* Data */}
-                                    <div className="mt-4">
-                                        <p className="text-gray-400 text-xs uppercase tracking-wider">
-                                            Carta do Dia
-                                        </p>
-                                        <p className="text-gray-300 text-sm">
-                                            {getFormattedDate()}
+                                    {/* Rodapé com site */}
+                                    <div className="mt-4 text-center">
+                                        <p className="text-gray-500 text-[9px] tracking-wider">
+                                            zayatarot.com
                                         </p>
                                     </div>
                                 </div>
