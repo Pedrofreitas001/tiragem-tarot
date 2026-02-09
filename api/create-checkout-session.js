@@ -51,10 +51,10 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Plano inválido' });
         }
 
-        // Importar Stripe dinamicamente
-        const Stripe = (await import('stripe')).default;
+        // Importar Stripe
+        const { default: Stripe } = await import('stripe');
         const stripe = new Stripe(STRIPE_SECRET_KEY, {
-            apiVersion: '2024-12-18.acacia',
+            apiVersion: '2023-10-16',
         });
 
         // Construir URLs de retorno
