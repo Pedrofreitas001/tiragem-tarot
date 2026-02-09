@@ -17,16 +17,16 @@
 // ============================================
 
 export const STRIPE_CONFIG = {
-    // Your Stripe publishable key (starts with pk_test_ or pk_live_)
-    publishableKey: '', // TODO: Add your Stripe publishable key here
+    // Chave publicável do Stripe (carregada do ambiente em produção)
+    // Em desenvolvimento, usa a chave de teste diretamente
+    publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51SvSCpQfequPVfiy4XTSkIDHUtTiC8ZyRD53eviQdDqvzXtThFcgSx5BsQsY0c6dWoV00UvyH5KnQi5QhxEuj95D0010SHywCt',
 
-    // Your Stripe price ID for the premium subscription
-    // Create this in your Stripe dashboard: Products > Add Product > Add Price
-    priceId: '', // TODO: Add your Stripe price ID here (e.g., 'price_1ABC...')
+    // Product ID (para referência)
+    productId: 'prod_TuEXZVRLRlGKSn',
 
-    // Success and cancel URLs for Stripe Checkout
-    successUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/checkout/success`,
-    cancelUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/checkout`,
+    // Success and cancel URLs for Stripe Checkout (usa HashRouter)
+    successUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/#/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancelUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/#/checkout`,
 };
 
 // ============================================
