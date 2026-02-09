@@ -27,6 +27,7 @@ export interface Database {
           subscription_expires_at: string | null
           readings_today: number
           last_reading_date: string | null
+          is_admin: boolean
           created_at: string
           updated_at: string
         }
@@ -41,6 +42,7 @@ export interface Database {
           subscription_expires_at?: string | null
           readings_today?: number
           last_reading_date?: string | null
+          is_admin?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -55,6 +57,7 @@ export interface Database {
           subscription_expires_at?: string | null
           readings_today?: number
           last_reading_date?: string | null
+          is_admin?: boolean
           created_at?: string
           updated_at?: string
         }

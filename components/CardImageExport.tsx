@@ -191,33 +191,37 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                         </p>
                                     )}
 
-                                    {/* Significado da Carta */}
+                                    {/* Significado da Carta - limitado a ~150 caracteres */}
                                     {aiSynthesis?.significado_carta && (
-                                        <div className="bg-white/5 rounded-lg px-3 py-2.5 mb-4">
-                                            <p className="text-gray-300 text-[11px] leading-relaxed text-center">
-                                                {aiSynthesis.significado_carta}
+                                        <div className="bg-white/5 rounded-lg px-3 py-2 mb-3">
+                                            <p className="text-gray-300 text-[10px] leading-relaxed text-center">
+                                                {aiSynthesis.significado_carta.length > 150
+                                                    ? aiSynthesis.significado_carta.substring(0, 150) + '...'
+                                                    : aiSynthesis.significado_carta}
                                             </p>
                                         </div>
                                     )}
 
-                                    {/* Energia (bullet point) */}
+                                    {/* Energia (bullet point) - limitado a ~120 caracteres */}
                                     {aiSynthesis?.energia_emocional && (
-                                        <div className="flex items-start gap-2 mt-2 px-2">
+                                        <div className="flex items-start gap-2 mt-1 px-2">
                                             <span
-                                                className="text-[10px] mt-0.5"
+                                                className="text-[9px] mt-0.5"
                                                 style={{ color: '#d4af37' }}
                                             >
                                                 ●
                                             </span>
                                             <div>
                                                 <span
-                                                    className="text-[10px] font-semibold uppercase tracking-wide"
+                                                    className="text-[9px] font-semibold uppercase tracking-wide"
                                                     style={{ color: '#d4af37' }}
                                                 >
                                                     Energia
                                                 </span>
-                                                <p className="text-gray-300 text-[10px] leading-relaxed mt-0.5">
-                                                    {aiSynthesis.energia_emocional}
+                                                <p className="text-gray-300 text-[9px] leading-relaxed mt-0.5">
+                                                    {aiSynthesis.energia_emocional.length > 120
+                                                        ? aiSynthesis.energia_emocional.substring(0, 120) + '...'
+                                                        : aiSynthesis.energia_emocional}
                                                 </p>
                                             </div>
                                         </div>
@@ -233,14 +237,14 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                     {aiSynthesis?.mantra_diário && (
                                         <>
                                             <p
-                                                className="text-[10px] font-semibold uppercase tracking-wide mb-2 text-center"
+                                                className="text-[9px] font-semibold uppercase tracking-wide mb-1.5 text-center"
                                                 style={{ color: '#d4af37' }}
                                             >
                                                 Mantra do Dia
                                             </p>
-                                            <div className="bg-white/5 rounded-lg px-4 py-3 border border-yellow-500/20">
+                                            <div className="bg-white/5 rounded-lg px-3 py-2 border border-yellow-500/20">
                                                 <p
-                                                    className="text-sm font-medium text-center italic"
+                                                    className="text-xs font-medium text-center italic"
                                                     style={{
                                                         fontFamily: "'Crimson Text', serif",
                                                         color: '#d4af37'
@@ -253,8 +257,8 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                     )}
 
                                     {/* Rodapé com site */}
-                                    <div className="mt-3 text-center">
-                                        <p className="text-gray-500 text-[9px] tracking-wider">
+                                    <div className="mt-2 text-center">
+                                        <p className="text-gray-500 text-[8px] tracking-wider">
                                             zayatarot.com
                                         </p>
                                     </div>
