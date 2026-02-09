@@ -135,36 +135,33 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                 className="w-full rounded-xl overflow-hidden"
                                 style={{
                                     background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 40%, #1a1628 100%)',
-                                    aspectRatio: '9/16',
+                                    minHeight: '550px',
                                 }}
                             >
                                 {/* Container Principal */}
-                                <div className="h-full flex flex-col p-5">
+                                <div className="flex flex-col p-4">
                                     {/* Topo: Logo + Data */}
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-1.5">
-                                            <span className="material-symbols-outlined text-yellow-400 text-base">auto_awesome</span>
-                                            <span className="text-white font-bold text-sm">Zaya Tarot</span>
+                                            <span className="material-symbols-outlined text-yellow-400 text-sm">auto_awesome</span>
+                                            <span className="text-white font-bold text-xs">Zaya Tarot</span>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-gray-400 text-[10px] uppercase tracking-wider">Carta do Dia</p>
-                                            <p className="text-gray-300 text-xs">{getFormattedDate()}</p>
+                                            <p className="text-gray-400 text-[9px] uppercase tracking-wider">Carta do Dia</p>
+                                            <p className="text-gray-300 text-[10px]">{getFormattedDate()}</p>
                                         </div>
                                     </div>
 
-                                    {/* Linha decorativa */}
-                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent mt-3 mb-4"></div>
-
-                                    {/* Imagem da Carta - Centralizada no topo */}
-                                    <div className="flex justify-center mb-4">
+                                    {/* Imagem da Carta */}
+                                    <div className="flex justify-center mb-3">
                                         {imageBase64 ? (
                                             <img
                                                 src={imageBase64}
                                                 alt={cardNamePt}
-                                                className="w-32 h-52 object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
+                                                className="w-[140px] h-[220px] object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
                                             />
                                         ) : (
-                                            <div className="w-32 h-52 bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
+                                            <div className="w-[140px] h-[220px] bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
                                                 <div className="w-5 h-5 border-2 border-yellow-500/50 border-t-yellow-500 rounded-full animate-spin"></div>
                                             </div>
                                         )}
@@ -172,7 +169,7 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
 
                                     {/* Nome da Carta */}
                                     <h2
-                                        className="text-xl font-bold text-white text-center mb-2"
+                                        className="text-lg font-bold text-white text-center mb-1"
                                         style={{ fontFamily: "'Crimson Text', serif" }}
                                     >
                                         {cardNamePt}
@@ -181,30 +178,32 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                     {/* Vibração Universal */}
                                     {aiSynthesis?.vibração_universal && (
                                         <p
-                                            className="text-base font-medium italic text-center mb-4"
+                                            className="text-sm font-medium italic text-center mb-3"
                                             style={{
                                                 color: '#d4af37',
                                                 fontFamily: "'Crimson Text', serif",
                                             }}
                                         >
-                                            "{aiSynthesis.vibração_universal}"
+                                            "{aiSynthesis.vibração_universal.length > 50
+                                                ? aiSynthesis.vibração_universal.substring(0, 50) + '...'
+                                                : aiSynthesis.vibração_universal}"
                                         </p>
                                     )}
 
-                                    {/* Significado da Carta - limitado a ~150 caracteres */}
+                                    {/* Significado da Carta - limitado a 180 caracteres */}
                                     {aiSynthesis?.significado_carta && (
-                                        <div className="bg-white/5 rounded-lg px-3 py-2 mb-3">
-                                            <p className="text-gray-300 text-[10px] leading-relaxed text-center">
-                                                {aiSynthesis.significado_carta.length > 150
-                                                    ? aiSynthesis.significado_carta.substring(0, 150) + '...'
+                                        <div className="bg-white/5 rounded-lg px-3 py-2 mb-2">
+                                            <p className="text-gray-300 text-[10px] leading-snug text-center">
+                                                {aiSynthesis.significado_carta.length > 180
+                                                    ? aiSynthesis.significado_carta.substring(0, 180) + '...'
                                                     : aiSynthesis.significado_carta}
                                             </p>
                                         </div>
                                     )}
 
-                                    {/* Energia (bullet point) - limitado a ~120 caracteres */}
+                                    {/* Energia - limitado a 150 caracteres */}
                                     {aiSynthesis?.energia_emocional && (
-                                        <div className="flex items-start gap-2 mt-1 px-2">
+                                        <div className="flex items-start gap-2 px-1 mb-3">
                                             <span
                                                 className="text-[9px] mt-0.5"
                                                 style={{ color: '#d4af37' }}
@@ -218,39 +217,38 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                                 >
                                                     Energia
                                                 </span>
-                                                <p className="text-gray-300 text-[9px] leading-relaxed mt-0.5">
-                                                    {aiSynthesis.energia_emocional.length > 120
-                                                        ? aiSynthesis.energia_emocional.substring(0, 120) + '...'
+                                                <p className="text-gray-300 text-[9px] leading-snug mt-0.5">
+                                                    {aiSynthesis.energia_emocional.length > 150
+                                                        ? aiSynthesis.energia_emocional.substring(0, 150) + '...'
                                                         : aiSynthesis.energia_emocional}
                                                 </p>
                                             </div>
                                         </div>
                                     )}
 
-                                    {/* Espaço flexível para empurrar o mantra para baixo */}
-                                    <div className="flex-1"></div>
-
                                     {/* Linha decorativa */}
-                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent mb-3"></div>
+                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent my-2"></div>
 
                                     {/* Mantra do Dia */}
                                     {aiSynthesis?.mantra_diário && (
                                         <>
                                             <p
-                                                className="text-[9px] font-semibold uppercase tracking-wide mb-1.5 text-center"
+                                                className="text-[9px] font-semibold uppercase tracking-wide mb-1 text-center"
                                                 style={{ color: '#d4af37' }}
                                             >
                                                 Mantra do Dia
                                             </p>
                                             <div className="bg-white/5 rounded-lg px-3 py-2 border border-yellow-500/20">
                                                 <p
-                                                    className="text-xs font-medium text-center italic"
+                                                    className="text-[11px] font-medium text-center italic"
                                                     style={{
                                                         fontFamily: "'Crimson Text', serif",
                                                         color: '#d4af37'
                                                     }}
                                                 >
-                                                    "{aiSynthesis.mantra_diário}"
+                                                    "{aiSynthesis.mantra_diário.length > 80
+                                                        ? aiSynthesis.mantra_diário.substring(0, 80) + '...'
+                                                        : aiSynthesis.mantra_diário}"
                                                 </p>
                                             </div>
                                         </>

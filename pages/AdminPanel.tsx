@@ -273,9 +273,38 @@ export const AdminPanel = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#1a0a2e] via-[#16082a] to-[#0d0015] py-8 px-4">
+        <div className="min-h-screen bg-gradient-to-b from-[#1a0a2e] via-[#16082a] to-[#0d0015] flex flex-col">
+            {/* Header com navegação */}
+            <header className="sticky top-0 z-50 backdrop-blur-md bg-[#1a0a2e]/80 border-b border-white/10">
+                <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+                    <button
+                        onClick={() => navigate('/')}
+                        className="text-white text-lg font-bold leading-tight tracking-tight hover:text-purple-400 transition-colors"
+                    >
+                        Zaya Tarot
+                    </button>
+                    <nav className="flex items-center gap-4">
+                        <button
+                            onClick={() => navigate('/')}
+                            className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2"
+                        >
+                            <span className="material-symbols-outlined text-lg">home</span>
+                            Início
+                        </button>
+                        <button
+                            onClick={() => navigate(isPortuguese ? '/configuracoes' : '/settings')}
+                            className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2"
+                        >
+                            <span className="material-symbols-outlined text-lg">settings</span>
+                            Configurações
+                        </button>
+                    </nav>
+                </div>
+            </header>
+
+            <div className="flex-1 py-8 px-4">
             <div className="max-w-7xl mx-auto">
-                {/* Header */}
+                {/* Page Title */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-white mb-2">Painel Administrativo</h1>
                     <p className="text-gray-400">Geração de imagens em lote para WhatsApp</p>
@@ -293,9 +322,10 @@ export const AdminPanel = () => {
                                     const card = TAROT_CARDS.find(c => c.id === e.target.value);
                                     setSelectedCard(card || null);
                                 }}
-                                className="w-full bg-white/10 text-white border border-white/20 rounded-lg px-4 py-3"
+                                className="w-full bg-[#1a1628] text-white border border-white/20 rounded-lg px-4 py-3 [&>option]:bg-[#1a1628] [&>option]:text-white [&>optgroup]:bg-[#0d0015] [&>optgroup]:text-gray-400 [&>optgroup]:font-semibold"
+                                style={{ colorScheme: 'dark' }}
                             >
-                                <option value="">Escolha uma carta...</option>
+                                <option value="" className="text-gray-400">Escolha uma carta...</option>
                                 <optgroup label="Arcanos Maiores">
                                     {TAROT_CARDS.filter(c => c.arcana === 'major').map(card => (
                                         <option key={card.id} value={card.id}>{card.name_pt}</option>
@@ -374,111 +404,111 @@ export const AdminPanel = () => {
                     <div className="bg-white/5 rounded-xl p-6 border border-white/10">
                         <h2 className="text-xl font-semibold text-white mb-4">Preview</h2>
 
-                        {/* Canvas oculto para geração */}
+                        {/* Canvas para geração - altura dinâmica */}
                         <div className="flex justify-center">
                             <div
                                 ref={canvasRef}
                                 className="w-[280px] rounded-xl overflow-hidden"
                                 style={{
                                     background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 40%, #1a1628 100%)',
-                                    aspectRatio: '9/16',
+                                    minHeight: '498px', /* 280 * 16/9 */
                                 }}
                             >
-                                <div className="h-full flex flex-col p-5">
+                                <div className="flex flex-col p-4">
                                     {/* Header */}
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-1.5">
-                                            <span className="material-symbols-outlined text-yellow-400 text-base">auto_awesome</span>
-                                            <span className="text-white font-bold text-sm">Zaya Tarot</span>
+                                            <span className="material-symbols-outlined text-yellow-400 text-sm">auto_awesome</span>
+                                            <span className="text-white font-bold text-xs">Zaya Tarot</span>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-gray-400 text-[10px] uppercase tracking-wider">Carta do Dia</p>
-                                            <p className="text-gray-300 text-xs">{getFormattedDate()}</p>
+                                            <p className="text-gray-400 text-[9px] uppercase tracking-wider">Carta do Dia</p>
+                                            <p className="text-gray-300 text-[10px]">{getFormattedDate()}</p>
                                         </div>
                                     </div>
 
-                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent mt-3 mb-4"></div>
-
-                                    {/* Imagem */}
-                                    <div className="flex justify-center mb-4">
+                                    {/* Imagem da Carta */}
+                                    <div className="flex justify-center mb-3">
                                         {imageBase64 ? (
                                             <img
                                                 src={imageBase64}
                                                 alt={selectedCard?.name_pt || 'Carta'}
-                                                className="w-32 h-52 object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
+                                                className="w-[140px] h-[220px] object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
                                             />
                                         ) : (
-                                            <div className="w-32 h-52 bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
+                                            <div className="w-[140px] h-[220px] bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
                                                 <span className="text-gray-500 text-xs">Selecione</span>
                                             </div>
                                         )}
                                     </div>
 
-                                    {/* Nome */}
+                                    {/* Nome da Carta */}
                                     <h2
-                                        className="text-xl font-bold text-white text-center mb-2"
+                                        className="text-lg font-bold text-white text-center mb-1"
                                         style={{ fontFamily: "'Crimson Text', serif" }}
                                     >
                                         {selectedCard?.name_pt || 'Nome da Carta'}
                                     </h2>
 
-                                    {/* Vibração */}
+                                    {/* Vibração Universal */}
                                     {aiSynthesis?.vibração_universal && (
                                         <p
-                                            className="text-base font-medium italic text-center mb-4"
+                                            className="text-sm font-medium italic text-center mb-3"
                                             style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}
                                         >
-                                            "{aiSynthesis.vibração_universal}"
+                                            "{aiSynthesis.vibração_universal.length > 50
+                                                ? aiSynthesis.vibração_universal.substring(0, 50) + '...'
+                                                : aiSynthesis.vibração_universal}"
                                         </p>
                                     )}
 
-                                    {/* Significado - limitado a 150 caracteres */}
+                                    {/* Significado - limitado a 180 caracteres */}
                                     {aiSynthesis?.significado_carta && (
-                                        <div className="bg-white/5 rounded-lg px-3 py-2 mb-3">
-                                            <p className="text-gray-300 text-[10px] leading-relaxed text-center">
-                                                {aiSynthesis.significado_carta.length > 150
-                                                    ? aiSynthesis.significado_carta.substring(0, 150) + '...'
+                                        <div className="bg-white/5 rounded-lg px-3 py-2 mb-2">
+                                            <p className="text-gray-300 text-[10px] leading-snug text-center">
+                                                {aiSynthesis.significado_carta.length > 180
+                                                    ? aiSynthesis.significado_carta.substring(0, 180) + '...'
                                                     : aiSynthesis.significado_carta}
                                             </p>
                                         </div>
                                     )}
 
-                                    {/* Energia - limitado a 120 caracteres */}
+                                    {/* Energia - limitado a 150 caracteres */}
                                     {aiSynthesis?.energia_emocional && (
-                                        <div className="flex items-start gap-2 mt-1 px-2">
+                                        <div className="flex items-start gap-2 px-1 mb-3">
                                             <span className="text-[9px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
                                             <div>
                                                 <span className="text-[9px] font-semibold uppercase tracking-wide" style={{ color: '#d4af37' }}>
                                                     Energia
                                                 </span>
-                                                <p className="text-gray-300 text-[9px] leading-relaxed mt-0.5">
-                                                    {aiSynthesis.energia_emocional.length > 120
-                                                        ? aiSynthesis.energia_emocional.substring(0, 120) + '...'
+                                                <p className="text-gray-300 text-[9px] leading-snug mt-0.5">
+                                                    {aiSynthesis.energia_emocional.length > 150
+                                                        ? aiSynthesis.energia_emocional.substring(0, 150) + '...'
                                                         : aiSynthesis.energia_emocional}
                                                 </p>
                                             </div>
                                         </div>
                                     )}
 
-                                    <div className="flex-1"></div>
+                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent my-2"></div>
 
-                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent mb-3"></div>
-
-                                    {/* Mantra */}
+                                    {/* Mantra do Dia */}
                                     {aiSynthesis?.mantra_diário && (
                                         <>
                                             <p
-                                                className="text-[9px] font-semibold uppercase tracking-wide mb-1.5 text-center"
+                                                className="text-[9px] font-semibold uppercase tracking-wide mb-1 text-center"
                                                 style={{ color: '#d4af37' }}
                                             >
                                                 Mantra do Dia
                                             </p>
                                             <div className="bg-white/5 rounded-lg px-3 py-2 border border-yellow-500/20">
                                                 <p
-                                                    className="text-xs font-medium text-center italic"
+                                                    className="text-[11px] font-medium text-center italic"
                                                     style={{ fontFamily: "'Crimson Text', serif", color: '#d4af37' }}
                                                 >
-                                                    "{aiSynthesis.mantra_diário}"
+                                                    "{aiSynthesis.mantra_diário.length > 80
+                                                        ? aiSynthesis.mantra_diário.substring(0, 80) + '...'
+                                                        : aiSynthesis.mantra_diário}"
                                                 </p>
                                             </div>
                                         </>
@@ -558,6 +588,22 @@ export const AdminPanel = () => {
                     </div>
                 </div>
             </div>
+            </div>
+
+            {/* Footer */}
+            <footer className="mt-auto border-t border-white/10 bg-[#0d0015]/80">
+                <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+                    <p className="text-gray-500 text-sm">© 2025 Zaya Tarot. Painel Administrativo.</p>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => navigate('/')}
+                            className="text-gray-400 hover:text-white text-sm transition-colors"
+                        >
+                            Voltar ao Site
+                        </button>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 };
