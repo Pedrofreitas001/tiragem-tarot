@@ -433,10 +433,10 @@ export const AdminPanel = () => {
                                             <img
                                                 src={imageBase64}
                                                 alt={selectedCard?.name_pt || 'Carta'}
-                                                className="w-[140px] h-[220px] object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
+                                                className="w-[120px] h-[190px] object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
                                             />
                                         ) : (
-                                            <div className="w-[140px] h-[220px] bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
+                                            <div className="w-[120px] h-[190px] bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
                                                 <span className="text-gray-500 text-xs">Selecione</span>
                                             </div>
                                         )}
@@ -496,12 +496,12 @@ export const AdminPanel = () => {
                                     {aiSynthesis?.mantra_diário && (
                                         <>
                                             <p
-                                                className="text-[9px] font-semibold uppercase tracking-wide mb-1 text-center"
+                                                className="text-[9px] font-semibold uppercase tracking-wide mb-2 text-center"
                                                 style={{ color: '#d4af37' }}
                                             >
                                                 Mantra do Dia
                                             </p>
-                                            <div className="bg-white/5 rounded-lg px-3 py-2 border border-yellow-500/20">
+                                            <div className="bg-white/5 rounded-lg px-3 py-3 border border-yellow-500/20 flex items-center justify-center">
                                                 <p
                                                     className="text-[11px] font-medium text-center italic"
                                                     style={{ fontFamily: "'Crimson Text', serif", color: '#d4af37' }}

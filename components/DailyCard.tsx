@@ -8,7 +8,6 @@ import { AuthModal } from './AuthModal';
 import { PaywallModal } from './PaywallModal';
 import { MinimalStarsBackground } from './MinimalStarsBackground';
 import { getDailyCardSynthesis, DailyCardSynthesis } from '../services/geminiService';
-import { CardImageExport } from './CardImageExport';
 
 // Header Component
 const Header = () => {
@@ -781,18 +780,6 @@ export const DailyCard = () => {
                     </div>
                 </div>
             </section>
-
-            {/* Botão de Download da Imagem - Fora da seção */}
-            {aiSynthesis && (
-                <div className="py-8 flex justify-center bg-background-dark">
-                    <CardImageExport
-                        card={dailyCard}
-                        cardName={cardName}
-                        aiSynthesis={aiSynthesis}
-                        isPortuguese={isPortuguese}
-                    />
-                </div>
-            )}
 
             {/* WhatsApp Daily Card Subscription Section */}
             <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/10 to-background-dark">
