@@ -3,8 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import { useAdmin } from '../hooks/useAdmin';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 import { TAROT_CARDS, TarotCardData } from '../tarotData';
 import { getDailyCardSynthesis, DailyCardSynthesis } from '../services/geminiService';
+import { supabase } from '../lib/supabase';
+
+// Tipos para estatísticas
+interface AdminStats {
+    totalUsers: number;
+    premiumUsers: number;
+    whatsappSubscriptions: number;
+    totalReadings: number;
+    newUsersWeek: number;
+    newUsersMonth: number;
+    activeSubscriptions: number;
+    readingsWeek: number;
+    conversionRate: string;
+    generatedAt: string;
+}
+
+type AdminTab = 'images' | 'stats';
 
 // Lista de signos
 const ZODIAC_SIGNS = [
@@ -35,9 +53,13 @@ interface GeneratedImage {
 export const AdminPanel = () => {
     const { isAdmin, isLoading, user } = useAdmin();
     const { isPortuguese } = useLanguage();
+    const { session } = useAuth();
     const navigate = useNavigate();
 
-    // Estados
+    // Estados - Tabs
+    const [activeTab, setActiveTab] = useState<AdminTab>('stats');
+
+    // Estados - Imagens
     const [selectedCard, setSelectedCard] = useState<TarotCardData | null>(null);
     const [generatingType, setGeneratingType] = useState<'daily' | 'signo' | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
@@ -46,8 +68,50 @@ export const AdminPanel = () => {
     const [aiSynthesis, setAiSynthesis] = useState<DailyCardSynthesis | null>(null);
     const [imageBase64, setImageBase64] = useState<string | null>(null);
 
+    // Estados - Estatísticas
+    const [stats, setStats] = useState<AdminStats | null>(null);
+    const [statsLoading, setStatsLoading] = useState(false);
+    const [statsError, setStatsError] = useState<string | null>(null);
+
     // Ref para o canvas de renderização
     const canvasRef = useRef<HTMLDivElement>(null);
+
+    // Carregar estatísticas
+    const loadStats = async () => {
+        if (!session?.access_token) return;
+
+        setStatsLoading(true);
+        setStatsError(null);
+
+        try {
+            const response = await fetch('/api/admin/stats', {
+                headers: {
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Erro ao carregar estatísticas');
+            }
+
+            setStats(data.stats);
+        } catch (error: any) {
+            console.error('Erro ao carregar stats:', error);
+            setStatsError(error.message || 'Erro ao carregar estatísticas');
+        } finally {
+            setStatsLoading(false);
+        }
+    };
+
+    // Carregar stats quando mudar para aba de estatísticas
+    useEffect(() => {
+        if (activeTab === 'stats' && isAdmin && !stats && !statsLoading) {
+            loadStats();
+        }
+    }, [activeTab, isAdmin, session]);
 
     // Verificar se é admin
     useEffect(() => {
@@ -305,11 +369,156 @@ export const AdminPanel = () => {
             <div className="flex-1 py-8 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* Page Title */}
-                <div className="mb-8">
+                <div className="mb-6">
                     <h1 className="text-3xl font-bold text-white mb-2">Painel Administrativo</h1>
-                    <p className="text-gray-400">Geração de imagens em lote para WhatsApp</p>
+                    <p className="text-gray-400">Gestão e análise do Zaya Tarot</p>
                 </div>
 
+                {/* Tabs */}
+                <div className="flex gap-2 mb-8 border-b border-white/10 pb-4">
+                    <button
+                        onClick={() => setActiveTab('stats')}
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all ${
+                            activeTab === 'stats'
+                                ? 'bg-purple-600 text-white'
+                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-lg">analytics</span>
+                        Estatísticas
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('images')}
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all ${
+                            activeTab === 'images'
+                                ? 'bg-purple-600 text-white'
+                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <span className="material-symbols-outlined text-lg">image</span>
+                        Gerador de Imagens
+                    </button>
+                </div>
+
+                {/* Tab Content: Estatísticas */}
+                {activeTab === 'stats' && (
+                    <div className="space-y-6">
+                        {/* Header com botão refresh */}
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-xl font-semibold text-white">Visão Geral</h2>
+                            <button
+                                onClick={loadStats}
+                                disabled={statsLoading}
+                                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors disabled:opacity-50"
+                            >
+                                <span className={`material-symbols-outlined text-lg ${statsLoading ? 'animate-spin' : ''}`}>
+                                    refresh
+                                </span>
+                                Atualizar
+                            </button>
+                        </div>
+
+                        {/* Erro */}
+                        {statsError && (
+                            <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+                                {statsError}
+                            </div>
+                        )}
+
+                        {/* Loading */}
+                        {statsLoading && !stats && (
+                            <div className="flex items-center justify-center py-12">
+                                <div className="w-8 h-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>
+                            </div>
+                        )}
+
+                        {/* Stats Cards */}
+                        {stats && (
+                            <>
+                                {/* Principais métricas */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {/* Total de Usuários */}
+                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="material-symbols-outlined text-2xl text-purple-400">group</span>
+                                            <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">Total</span>
+                                        </div>
+                                        <p className="text-3xl font-bold text-white mb-1">{stats.totalUsers.toLocaleString()}</p>
+                                        <p className="text-sm text-gray-400">Usuários cadastrados</p>
+                                    </div>
+
+                                    {/* Usuários Premium */}
+                                    <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 rounded-xl p-5 border border-yellow-500/20">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="material-symbols-outlined text-2xl text-yellow-400">workspace_premium</span>
+                                            <span className="text-xs text-yellow-400/70 bg-yellow-500/10 px-2 py-1 rounded">Premium</span>
+                                        </div>
+                                        <p className="text-3xl font-bold text-white mb-1">{stats.premiumUsers.toLocaleString()}</p>
+                                        <p className="text-sm text-gray-400">Assinantes ativos</p>
+                                    </div>
+
+                                    {/* WhatsApp */}
+                                    <div className="bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-xl p-5 border border-green-500/20">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="material-symbols-outlined text-2xl text-green-400">chat</span>
+                                            <span className="text-xs text-green-400/70 bg-green-500/10 px-2 py-1 rounded">WhatsApp</span>
+                                        </div>
+                                        <p className="text-3xl font-bold text-white mb-1">{stats.whatsappSubscriptions.toLocaleString()}</p>
+                                        <p className="text-sm text-gray-400">Inscrições ativas</p>
+                                    </div>
+
+                                    {/* Taxa de Conversão */}
+                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="material-symbols-outlined text-2xl text-blue-400">trending_up</span>
+                                            <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">Conversão</span>
+                                        </div>
+                                        <p className="text-3xl font-bold text-white mb-1">{stats.conversionRate}%</p>
+                                        <p className="text-sm text-gray-400">Free → Premium</p>
+                                    </div>
+                                </div>
+
+                                {/* Métricas secundárias */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    {/* Novos usuários (7 dias) */}
+                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <span className="material-symbols-outlined text-xl text-purple-400">person_add</span>
+                                            <span className="text-sm text-gray-400">Novos usuários (7 dias)</span>
+                                        </div>
+                                        <p className="text-2xl font-bold text-white">{stats.newUsersWeek.toLocaleString()}</p>
+                                    </div>
+
+                                    {/* Novos usuários (30 dias) */}
+                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <span className="material-symbols-outlined text-xl text-purple-400">calendar_month</span>
+                                            <span className="text-sm text-gray-400">Novos usuários (30 dias)</span>
+                                        </div>
+                                        <p className="text-2xl font-bold text-white">{stats.newUsersMonth.toLocaleString()}</p>
+                                    </div>
+
+                                    {/* Total de leituras */}
+                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <span className="material-symbols-outlined text-xl text-purple-400">auto_awesome</span>
+                                            <span className="text-sm text-gray-400">Total de leituras</span>
+                                        </div>
+                                        <p className="text-2xl font-bold text-white">{stats.totalReadings.toLocaleString()}</p>
+                                    </div>
+                                </div>
+
+                                {/* Info de atualização */}
+                                <div className="text-center text-xs text-gray-500">
+                                    Última atualização: {new Date(stats.generatedAt).toLocaleString('pt-BR')}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                )}
+
+                {/* Tab Content: Gerador de Imagens */}
+                {activeTab === 'images' && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Coluna 1: Seleção de Carta */}
                     <div className="bg-white/5 rounded-xl p-6 border border-white/10">
@@ -587,6 +796,7 @@ export const AdminPanel = () => {
                         </div>
                     </div>
                 </div>
+                )}
             </div>
             </div>
 
