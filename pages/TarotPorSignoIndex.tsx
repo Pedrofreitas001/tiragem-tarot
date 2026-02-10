@@ -5,7 +5,39 @@ import React, { useState, useEffect } from 'react';
 import { UserMenu } from '../components/UserMenu';
 import { AuthModal } from '../components/AuthModal';
 import { MinimalStarsBackground } from '../components/MinimalStarsBackground';
-import { ZODIAC_SIGNS, ZODIAC_ORDER, ZodiacSign } from '../data/zodiacData';
+import { ZODIAC_SIGNS, ZODIAC_ORDER, ZodiacSign, ZodiacElement } from '../data/zodiacData';
+
+// Cores por elemento (tons mais claros para combinar com ícones escuros)
+const ELEMENT_LIGHT_COLORS: Record<ZodiacElement, { bg: string; border: string; hoverBorder: string; shadow: string; textDate: string }> = {
+    fire: {
+        bg: 'from-orange-400/15 to-amber-500/10',
+        border: 'border-orange-300/20',
+        hoverBorder: 'hover:border-orange-400/50',
+        shadow: 'hover:shadow-orange-400/20',
+        textDate: 'text-orange-300/70'
+    },
+    earth: {
+        bg: 'from-emerald-400/15 to-green-500/10',
+        border: 'border-emerald-300/20',
+        hoverBorder: 'hover:border-emerald-400/50',
+        shadow: 'hover:shadow-emerald-400/20',
+        textDate: 'text-emerald-300/70'
+    },
+    air: {
+        bg: 'from-cyan-400/15 to-sky-500/10',
+        border: 'border-cyan-300/20',
+        hoverBorder: 'hover:border-cyan-400/50',
+        shadow: 'hover:shadow-cyan-400/20',
+        textDate: 'text-cyan-300/70'
+    },
+    water: {
+        bg: 'from-blue-400/15 to-indigo-500/10',
+        border: 'border-blue-300/20',
+        hoverBorder: 'hover:border-blue-400/50',
+        shadow: 'hover:shadow-blue-400/20',
+        textDate: 'text-blue-300/70'
+    }
+};
 
 // Mapeamento de signos para ícones PNG
 const SIGN_ICONS: Record<ZodiacSign, string> = {
@@ -199,38 +231,35 @@ export const TarotPorSignoIndex = () => {
                             {ZODIAC_ORDER.map((sign) => {
                                 const signData = ZODIAC_SIGNS[sign];
                                 const iconPath = SIGN_ICONS[sign];
+                                const elementColors = ELEMENT_LIGHT_COLORS[signData.element];
 
                                 return (
                                     <button
                                         key={sign}
                                         onClick={() => handleSignClick(sign)}
-                                        className="group relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#2d2438] to-[#251e2f] border border-purple-400/15 aspect-square transition-all duration-300 hover:border-purple-400/40 hover:scale-[1.03] hover:shadow-xl hover:shadow-purple-500/15"
+                                        className={`group relative overflow-hidden rounded-2xl bg-gradient-to-b ${elementColors.bg} ${elementColors.border} aspect-square transition-all duration-300 ${elementColors.hoverBorder} hover:scale-[1.03] hover:shadow-xl ${elementColors.shadow}`}
                                     >
-                                        {/* Background glow effect */}
-                                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                                        {/* Ícone do signo centralizado */}
-                                        <div className="absolute inset-0 flex items-center justify-center p-6 md:p-8">
+                                        {/* Ícone do signo centralizado - menor com mais padding */}
+                                        <div className="absolute inset-0 flex items-center justify-center p-10 md:p-12 pb-16 md:pb-20">
                                             <img
                                                 src={iconPath}
                                                 alt={signData.name.pt}
-                                                className="w-full h-full object-contain opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-300 drop-shadow-lg"
-                                                style={{ filter: 'drop-shadow(0 0 8px rgba(168, 85, 247, 0.2))' }}
+                                                className="w-full h-full object-contain opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-300"
                                             />
                                         </div>
 
                                         {/* Nome e data no rodapé */}
-                                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1a1424]/95 via-[#1a1424]/80 to-transparent pt-10 pb-4 px-3 text-center">
+                                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1a1424]/90 via-[#1a1424]/70 to-transparent pt-8 pb-4 px-3 text-center">
                                             <h3 className="text-white text-base md:text-lg font-semibold tracking-wide mb-1 drop-shadow-md">
                                                 {isPortuguese ? signData.name.pt : signData.name.en}
                                             </h3>
-                                            <p className="text-purple-300/70 text-xs md:text-sm font-light">
+                                            <p className={`${elementColors.textDate} text-xs md:text-sm font-light`}>
                                                 {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
                                             </p>
                                         </div>
 
                                         {/* Borda interna brilhante */}
-                                        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/5 group-hover:ring-purple-400/20 transition-all duration-300" />
+                                        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/5 transition-all duration-300" />
                                     </button>
                                 );
                             })}
@@ -239,7 +268,7 @@ export const TarotPorSignoIndex = () => {
 
                     {/* CTA para criar conta */}
                     {isGuest && (
-                        <div className="max-w-md mx-auto mt-8 bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-purple-500/10 border border-purple-500/20 rounded-xl p-4 text-center">
+                        <div className="max-w-md mx-auto mt-14 md:mt-16 bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-purple-500/10 border border-purple-500/20 rounded-xl p-4 text-center">
                             <p className="text-gray-300 text-sm mb-3">
                                 {isPortuguese
                                     ? 'Crie sua conta para acessar automaticamente o tarot do seu signo.'

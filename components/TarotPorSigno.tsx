@@ -478,26 +478,26 @@ export const TarotPorSigno = () => {
                                     {/* Preview borrado */}
                                     <div className="blur-sm pointer-events-none opacity-60">
                                         {/* Módulos */}
-                                        <div className="relative min-h-[140px] bg-white/5 rounded-xl p-6">
+                                        <div className="relative min-h-[200px] md:min-h-[140px] bg-white/5 rounded-xl p-6">
                                             <p className="text-gray-400">Conteúdo premium bloqueado...</p>
                                         </div>
                                     </div>
 
                                     {/* Overlay com CTA */}
-                                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-background-dark via-background-dark/80 to-transparent rounded-xl">
-                                        <div className="text-center p-8">
-                                            <span className="material-symbols-outlined text-4xl text-yellow-500 mb-4">lock</span>
-                                            <h3 className="text-xl text-white mb-2">
+                                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-background-dark via-background-dark/90 to-background-dark/70 rounded-xl">
+                                        <div className="text-center p-4 md:p-8 w-full">
+                                            <span className="material-symbols-outlined text-3xl md:text-4xl text-yellow-500 mb-3 md:mb-4 block">lock</span>
+                                            <h3 className="text-lg md:text-xl text-white mb-2">
                                                 {isPortuguese ? 'Desbloqueie a interpretação completa' : 'Unlock complete interpretation'}
                                             </h3>
-                                            <p className="text-gray-400 text-sm mb-6 max-w-md">
+                                            <p className="text-gray-400 text-xs md:text-sm mb-4 md:mb-6 max-w-md mx-auto px-2">
                                                 {isPortuguese
                                                     ? `Acesse a análise detalhada de cada carta para ${signName}, os módulos de orientação e seu mantra personalizado.`
                                                     : `Access detailed analysis of each card for ${signName}, guidance modules and your personalized mantra.`}
                                             </p>
                                             <button
                                                 onClick={() => setShowPaywall(true)}
-                                                className="px-8 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold rounded-lg hover:shadow-lg hover:shadow-yellow-500/30 transition-all"
+                                                className="px-6 md:px-8 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold rounded-lg hover:shadow-lg hover:shadow-yellow-500/30 transition-all text-sm md:text-base"
                                             >
                                                 {isPortuguese ? 'Desbloquear Premium' : 'Unlock Premium'}
                                             </button>
