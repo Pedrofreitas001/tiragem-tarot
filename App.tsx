@@ -2275,10 +2275,14 @@ const CardDetails = () => {
                         {/* Description Section - below the card image */}
                         {lore?.description && (
                             <div className="mt-6 w-full max-w-[350px] p-5 bg-[#1a1320]/60 backdrop-blur-sm border border-[#875faf]/20 rounded-xl">
-                                <h4 className="text-[#a77fd4] font-bold text-xs mb-2 uppercase tracking-wider flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-sm">image</span>
-                                    {isPortuguese ? 'Descrição Visual' : 'Visual Description'}
-                                </h4>
+                                <h4 className="font-bold text-base mb-2 tracking-wider text-gradient-gold-home text-center" style={{
+                                    fontFamily: "'Crimson Text', serif",
+                                    background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text',
+                                    textTransform: 'none',
+                                }}>{isPortuguese ? 'Descrição visual' : 'Visual description'}</h4>
                                 <p className="text-gray-400 text-sm leading-relaxed italic">{lore.description}</p>
                             </div>
                         )}
@@ -2291,7 +2295,13 @@ const CardDetails = () => {
                                     {card.arcana === ArcanaType.MAJOR ? (isPortuguese ? 'Arcano Maior' : 'Major Arcana') : (isPortuguese ? 'Arcano Menor' : 'Minor Arcana')} {card.suit !== Suit.NONE && `• ${isPortuguese ? (card.suit === 'Wands' ? 'Paus' : card.suit === 'Cups' ? 'Copas' : card.suit === 'Swords' ? 'Espadas' : 'Ouros') : card.suit}`}
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-normal leading-tight text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{getCardName(card.id, isPortuguese)}</h1>
+                            <h1 className="text-4xl md:text-5xl font-normal leading-tight mb-2 text-gradient-gold-home" style={{
+                                fontFamily: "'Crimson Text', serif",
+                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                            }}>{getCardName(card.id, isPortuguese)}</h1>
                         </div>
 
                         {lore && (
@@ -2306,60 +2316,50 @@ const CardDetails = () => {
 
                                 <div className="space-y-6">
                                     <div className="prose prose-invert max-w-none">
-                                        <h3 className="text-xl font-bold flex items-center gap-2 text-white mb-3">
-                                            <span className="material-symbols-outlined text-[#875faf]">auto_awesome</span>
-                                            {t.cardDetails.upright}
-                                        </h3>
-                                        <p className="text-gray-300 leading-relaxed text-lg bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#875faf]/20">{lore.generalMeaning}</p>
+                                        <h3 className="text-2xl font-bold mb-5 text-gradient-gold-home" style={{
+                                            fontFamily: "'Crimson Text', serif",
+                                            background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            backgroundClip: 'text',
+                                        }}>{isPortuguese ? 'Significado' : 'Meaning'}</h3>
+                                        <p className="text-gray-300 leading-relaxed text-base bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#875faf]/20">{lore.generalMeaning}</p>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-pink-500/20 hover:border-pink-500/40 transition-all group">
-                                            <div className="size-10 rounded-full bg-pink-500/10 text-pink-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                <span className="material-symbols-outlined">favorite</span>
-                                            </div>
-                                            <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.love}</h4>
+                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#b88a44]/40 hover:border-[#b88a44]/70 transition-all group">
+                                            <h4 className="text-2xl font-bold mb-4 text-gradient-gold-home text-center" style={{
+                                                fontFamily: "'Crimson Text', serif",
+                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                backgroundClip: 'text',
+                                            }}>{t.cardDetails.love}</h4>
                                             <p className="text-gray-400 text-sm leading-relaxed">{lore.love}</p>
                                         </div>
-                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-blue-500/20 hover:border-blue-500/40 transition-all group">
-                                            <div className="size-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                <span className="material-symbols-outlined">work</span>
-                                            </div>
-                                            <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.career}</h4>
+                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#b88a44]/40 hover:border-[#b88a44]/70 transition-all group">
+                                            <h4 className="text-2xl font-bold mb-4 text-gradient-gold-home text-center" style={{
+                                                fontFamily: "'Crimson Text', serif",
+                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                backgroundClip: 'text',
+                                            }}>{t.cardDetails.career}</h4>
                                             <p className="text-gray-400 text-sm leading-relaxed">{lore.career}</p>
                                         </div>
-                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#875faf]/20 hover:border-[#875faf]/40 transition-all md:col-span-2 group">
-                                            <div className="size-10 rounded-full bg-[#875faf]/10 text-[#a77fd4] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                <span className="material-symbols-outlined">lightbulb</span>
-                                            </div>
-                                            <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.advice}</h4>
+                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#b88a44]/40 hover:border-[#b88a44]/70 transition-all md:col-span-2 group">
+                                            <h4 className="text-2xl font-bold mb-4 text-gradient-gold-home text-center" style={{
+                                                fontFamily: "'Crimson Text', serif",
+                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                backgroundClip: 'text',
+                                            }}>{t.cardDetails.advice}</h4>
                                             <p className="text-gray-400 text-sm leading-relaxed">{lore.advice}</p>
                                         </div>
                                     </div>
 
-                                    <div className="p-5 bg-red-500/5 border border-red-500/20 rounded-xl">
-                                        <h4 className="text-red-400 font-bold text-sm mb-2 uppercase tracking-wide flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-lg">rotate_right</span>
-                                            {t.cardDetails.reversed}
-                                        </h4>
-                                        <p className="text-gray-400 text-sm leading-relaxed">{lore.apiMeaningRev || lore.reversed}</p>
-                                    </div>
-
-                                    {lore.apiDescription ? (
-                                        <div className="p-6 bg-gradient-to-br from-[#875faf]/10 to-transparent border border-[#875faf]/20 rounded-xl">
-                                            <h4 className="text-[#a77fd4] font-bold text-sm mb-3 uppercase tracking-wide flex items-center gap-2">
-                                                <span className="material-symbols-outlined text-lg">menu_book</span>
-                                                {t.cardDetails.historicalSymbolism}
-                                            </h4>
-                                            <p className="text-gray-300 text-sm leading-relaxed italic">{lore.apiDescription}</p>
-                                        </div>
-                                    ) : isLoadingApi ? (
-                                        <div className="p-6 bg-[#1a1320]/40 border border-white/5 rounded-xl animate-pulse">
-                                            <div className="h-4 bg-white/10 rounded w-1/3 mb-3"></div>
-                                            <div className="h-3 bg-white/10 rounded w-full mb-2"></div>
-                                            <div className="h-3 bg-white/10 rounded w-5/6"></div>
-                                        </div>
-                                    ) : null}
+                                    {/* Boxes de Significado Invertido e Simbolismo Histórico removidos */}
                                 </div>
                             </>
                         )}
