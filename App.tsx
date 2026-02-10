@@ -36,6 +36,7 @@ import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, N
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 import { TAROT_CARDS } from './tarotData';
 
+import { Analytics } from '@vercel/analytics/react';
 // Extended CardLore with API description
 interface ExtendedCardLore extends CardLore {
     apiDescription?: string;
@@ -5915,6 +5916,7 @@ const App = () => {
                             <Route path="/terms" element={<TermsOfUse />} />
                         </Routes>
                         <CookieConsent />
+                        <Analytics />
                     </Router>
                 </CartProvider>
             </AuthProvider>
