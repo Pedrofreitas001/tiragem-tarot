@@ -28,6 +28,9 @@ import Checkout from './pages/Checkout';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import Settings from './pages/Settings';
 import { AdminPanel } from './pages/AdminPanel';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { TermsOfUse } from './pages/TermsOfUse';
+import { CookieConsent } from './components/CookieConsent';
 import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
@@ -269,9 +272,13 @@ const Footer = () => {
                     <div>
                         <h4 className="text-white font-bold text-sm mb-4">{t.footer.support}</h4>
                         <div className="flex flex-col gap-2">
-                            <span className="text-gray-400 text-sm">{t.footer.help}</span>
+                            <button onClick={() => navigate(isPortuguese ? '/privacidade' : '/privacy')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">
+                                {isPortuguese ? 'Política de Privacidade' : 'Privacy Policy'}
+                            </button>
+                            <button onClick={() => navigate(isPortuguese ? '/termos' : '/terms')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">
+                                {isPortuguese ? 'Termos de Uso' : 'Terms of Use'}
+                            </button>
                             <span className="text-gray-400 text-sm">{t.footer.contact}</span>
-                            <span className="text-gray-400 text-sm">{t.footer.privacy}</span>
                         </div>
                     </div>
                 </div>
@@ -5902,7 +5909,12 @@ const App = () => {
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/configuracoes" element={<Settings />} />
                             <Route path="/admin" element={<AdminPanel />} />
+                            <Route path="/privacidade" element={<PrivacyPolicy />} />
+                            <Route path="/privacy" element={<PrivacyPolicy />} />
+                            <Route path="/termos" element={<TermsOfUse />} />
+                            <Route path="/terms" element={<TermsOfUse />} />
                         </Routes>
+                        <CookieConsent />
                     </Router>
                 </CartProvider>
             </AuthProvider>
