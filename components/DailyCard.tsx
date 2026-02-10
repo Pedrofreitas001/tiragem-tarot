@@ -628,15 +628,15 @@ export const DailyCard = () => {
                             <p className="text-gray-400 text-sm">{isPortuguese ? 'Consultando os astros...' : 'Consulting the stars...'}</p>
                         </div>
                     ) : (
-                        <div className="space-y-12 lg:space-y-16 max-w-6xl mx-auto">
+                        <div className="space-y-8 lg:space-y-10 max-w-5xl mx-auto">
                             {/* Hero Header: Texto à esquerda, Carta à direita */}
-                            <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
+                            <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
                                 {/* Lado Esquerdo - Vibração Universal e Mensagem */}
-                                <div className="flex-1 flex flex-col justify-center text-center lg:text-left space-y-8">
+                                <div className="flex-1 flex flex-col justify-center text-center lg:text-left space-y-6">
                                     {/* Vibração Universal - Título Principal */}
                                     {aiSynthesis?.vibração_universal && (
                                         <div>
-                                            <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight" style={{
+                                            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight" style={{
                                                 fontFamily: "'Crimson Text', serif",
                                                 background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
                                                 WebkitBackgroundClip: 'text',
@@ -656,15 +656,15 @@ export const DailyCard = () => {
                                     </div>
 
                                     {/* Mensagem Coletiva - Subtexto */}
-                                    <div className="max-w-xl">
+                                    <div className="max-w-2xl lg:max-w-none">
                                         {aiSynthesis?.mensagem_coletiva && aiSynthesis.mensagem_coletiva.includes('.') ? (
-                                            <p className="text-gray-200 text-lg md:text-xl leading-relaxed font-light" style={{
+                                            <p className="text-gray-200 text-lg md:text-xl lg:text-2xl leading-relaxed font-light" style={{
                                                 fontFamily: "'Crimson Text', serif"
                                             }}>
                                                 {aiSynthesis.mensagem_coletiva.split(/\.\s+/).slice(1).join('. ').trim()}
                                             </p>
                                         ) : (
-                                            <p className="text-gray-200 text-lg md:text-xl leading-relaxed font-light" style={{
+                                            <p className="text-gray-200 text-lg md:text-xl lg:text-2xl leading-relaxed font-light" style={{
                                                 fontFamily: "'Crimson Text', serif"
                                             }}>
                                                 {`"${meaning}"`}
@@ -677,15 +677,15 @@ export const DailyCard = () => {
                                 <div className="flex-shrink-0 flex items-center justify-center">
                                     <div className="relative group">
                                         {/* Card container */}
-                                        <div className="relative rounded-xl p-4">
+                                        <div className="relative rounded-xl p-3">
                                             <img
                                                 src={dailyCard.imageUrl}
                                                 alt={cardName}
                                                 onError={handleImageError}
-                                                className="w-36 h-60 md:w-44 md:h-72 object-cover rounded-lg border border-white/10 transition-transform duration-300 group-hover:scale-[1.02] shadow-lg"
+                                                className="w-32 h-52 md:w-40 md:h-64 object-cover rounded-lg border border-white/10 transition-transform duration-300 group-hover:scale-[1.02] shadow-lg"
                                             />
-                                            <div className="mt-4 text-center">
-                                                <p className="text-white text-base md:text-lg font-medium" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                            <div className="mt-3 text-center">
+                                                <p className="text-white text-sm md:text-base font-medium" style={{ fontFamily: "'Crimson Text', serif" }}>
                                                     {cardName}
                                                 </p>
                                             </div>

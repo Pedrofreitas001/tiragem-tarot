@@ -177,30 +177,146 @@ export const TarotPorSignoIndex = () => {
                         </p>
                     </div>
 
-                    {/* Grid compacto de todos os signos */}
-                    <div className="max-w-4xl mx-auto">
-                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                            {ZODIAC_ORDER.map((sign) => {
-                                const signData = ZODIAC_SIGNS[sign];
-                                const colors = ELEMENT_COLORS[signData.element];
+                    {/* Grid organizado por elementos */}
+                    <div className="max-w-5xl mx-auto space-y-8">
+                        {/* Fogo */}
+                        <div>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center">
+                                    <span className="text-orange-400 text-lg">🔥</span>
+                                </div>
+                                <h2 className="text-orange-400 font-semibold text-lg">
+                                    {isPortuguese ? 'Fogo' : 'Fire'}
+                                </h2>
+                                <div className="flex-1 h-px bg-gradient-to-r from-orange-500/30 to-transparent"></div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                {(['aries', 'leao', 'sagitario'] as ZodiacSign[]).map((sign) => {
+                                    const signData = ZODIAC_SIGNS[sign];
+                                    return (
+                                        <button
+                                            key={sign}
+                                            onClick={() => handleSignClick(sign)}
+                                            className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-500/15 to-red-500/10 border border-orange-500/20 p-5 text-center transition-all duration-300 hover:border-orange-400/50 hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/10"
+                                        >
+                                            <div className="relative z-10">
+                                                <span className="text-2xl mb-2 block">{signData.symbol}</span>
+                                                <h3 className="text-white text-base font-semibold mb-1">
+                                                    {isPortuguese ? signData.name.pt : signData.name.en}
+                                                </h3>
+                                                <p className="text-gray-400 text-xs">
+                                                    {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
+                                                </p>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
 
-                                return (
-                                    <button
-                                        key={sign}
-                                        onClick={() => handleSignClick(sign)}
-                                        className={`group relative overflow-hidden rounded-xl ${colors.bg} border border-white/10 p-4 text-center transition-all duration-300 hover:border-white/30 hover:scale-105`}
-                                    >
-                                        <div className="relative z-10">
-                                            <h3 className="text-white text-sm font-medium mb-1">
-                                                {isPortuguese ? signData.name.pt : signData.name.en}
-                                            </h3>
-                                            <p className="text-gray-500 text-[10px]">
-                                                {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
-                                            </p>
-                                        </div>
-                                    </button>
-                                );
-                            })}
+                        {/* Terra */}
+                        <div>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                    <span className="text-emerald-400 text-lg">🌍</span>
+                                </div>
+                                <h2 className="text-emerald-400 font-semibold text-lg">
+                                    {isPortuguese ? 'Terra' : 'Earth'}
+                                </h2>
+                                <div className="flex-1 h-px bg-gradient-to-r from-emerald-500/30 to-transparent"></div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                {(['touro', 'virgem', 'capricornio'] as ZodiacSign[]).map((sign) => {
+                                    const signData = ZODIAC_SIGNS[sign];
+                                    return (
+                                        <button
+                                            key={sign}
+                                            onClick={() => handleSignClick(sign)}
+                                            className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-500/15 to-green-500/10 border border-emerald-500/20 p-5 text-center transition-all duration-300 hover:border-emerald-400/50 hover:scale-[1.02] hover:shadow-lg hover:shadow-emerald-500/10"
+                                        >
+                                            <div className="relative z-10">
+                                                <span className="text-2xl mb-2 block">{signData.symbol}</span>
+                                                <h3 className="text-white text-base font-semibold mb-1">
+                                                    {isPortuguese ? signData.name.pt : signData.name.en}
+                                                </h3>
+                                                <p className="text-gray-400 text-xs">
+                                                    {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
+                                                </p>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Ar */}
+                        <div>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                                    <span className="text-cyan-400 text-lg">💨</span>
+                                </div>
+                                <h2 className="text-cyan-400 font-semibold text-lg">
+                                    {isPortuguese ? 'Ar' : 'Air'}
+                                </h2>
+                                <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/30 to-transparent"></div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                {(['gemeos', 'libra', 'aquario'] as ZodiacSign[]).map((sign) => {
+                                    const signData = ZODIAC_SIGNS[sign];
+                                    return (
+                                        <button
+                                            key={sign}
+                                            onClick={() => handleSignClick(sign)}
+                                            className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-cyan-500/15 to-blue-500/10 border border-cyan-500/20 p-5 text-center transition-all duration-300 hover:border-cyan-400/50 hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/10"
+                                        >
+                                            <div className="relative z-10">
+                                                <span className="text-2xl mb-2 block">{signData.symbol}</span>
+                                                <h3 className="text-white text-base font-semibold mb-1">
+                                                    {isPortuguese ? signData.name.pt : signData.name.en}
+                                                </h3>
+                                                <p className="text-gray-400 text-xs">
+                                                    {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
+                                                </p>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Água */}
+                        <div>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                    <span className="text-blue-400 text-lg">💧</span>
+                                </div>
+                                <h2 className="text-blue-400 font-semibold text-lg">
+                                    {isPortuguese ? 'Água' : 'Water'}
+                                </h2>
+                                <div className="flex-1 h-px bg-gradient-to-r from-blue-500/30 to-transparent"></div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                {(['cancer', 'escorpiao', 'peixes'] as ZodiacSign[]).map((sign) => {
+                                    const signData = ZODIAC_SIGNS[sign];
+                                    return (
+                                        <button
+                                            key={sign}
+                                            onClick={() => handleSignClick(sign)}
+                                            className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/15 to-indigo-500/10 border border-blue-500/20 p-5 text-center transition-all duration-300 hover:border-blue-400/50 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10"
+                                        >
+                                            <div className="relative z-10">
+                                                <span className="text-2xl mb-2 block">{signData.symbol}</span>
+                                                <h3 className="text-white text-base font-semibold mb-1">
+                                                    {isPortuguese ? signData.name.pt : signData.name.en}
+                                                </h3>
+                                                <p className="text-gray-400 text-xs">
+                                                    {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
+                                                </p>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
 
