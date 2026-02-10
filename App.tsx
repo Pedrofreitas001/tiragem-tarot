@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
 import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured, AnySynthesis, CanonicalSynthesis, convertToLegacySynthesis } from './services/geminiService';
@@ -5915,6 +5916,7 @@ const App = () => {
                             <Route path="/terms" element={<TermsOfUse />} />
                         </Routes>
                         <CookieConsent />
+                        <Analytics />
                     </Router>
                 </CartProvider>
             </AuthProvider>
