@@ -1,0 +1,498 @@
+{
+  "_instructions": {
+    "description": "Este arquivo contém textos customizados para cada carta do tarot",
+    "howToUse": [
+      "1. Encontre a carta pelo ID (ex: maj_0 = O Louco)",
+      "2. Preencha os módulos que desejar em PT e EN",
+      "3. Você pode adicionar QUALQUER módulo novo",
+      "4. Módulos vazios ('') serão ignorados",
+      "5. Salve o arquivo e a aplicação usará os textos automaticamente"
+    ],
+    "moduleKeys": {
+      "love": "Amor",
+      "career": "Carreira",
+      "advice": "Conselho",
+      "spirituality": "Espiritualidade",
+      "health": "Saúde",
+      "finances": "Finanças",
+      "family": "Família",
+      "shadow": "Aspecto Sombra",
+      "meditation": "Meditação",
+      "affirmation": "Afirmação",
+      "daily_message": "Mensagem do Dia",
+      "yes_no": "Sim ou Não",
+      "timing": "Timing/Momento",
+      "crystals": "Cristais"
+    }
+  },
+
+  "cards": {
+    "maj_0": {
+      "name": "The Fool / O Louco",
+      "modules": {
+        "spirituality": {
+          "en": "The Fool represents the soul's journey before incarnation - pure potential untouched by earthly experience.",
+          "pt": "O Louco representa a jornada da alma antes da encarnação - potencial puro intocado pela experiência terrena."
+        },
+        "health": {
+          "en": "Time to try new approaches to wellness. Don't be afraid to explore alternative therapies.",
+          "pt": "Momento de experimentar novas abordagens para o bem-estar. Não tenha medo de explorar terapias alternativas."
+        },
+        "finances": {
+          "en": "A leap of faith may be needed. Be open to unconventional opportunities.",
+          "pt": "Um salto de fé pode ser necessário. Esteja aberto a oportunidades não convencionais."
+        },
+        "family": {
+          "en": "Fresh dynamics are possible within family relationships. Approach old conflicts with new eyes.",
+          "pt": "Novas dinâmicas são possíveis nas relações familiares. Aborde velhos conflitos com novos olhos."
+        },
+        "shadow": {
+          "en": "Beware of recklessness disguised as spontaneity. Are you running toward something or away from responsibility?",
+          "pt": "Cuidado com a imprudência disfarçada de espontaneidade. Você está correndo em direção a algo ou fugindo da responsabilidade?"
+        },
+        "meditation": {
+          "en": "Visualize yourself standing at a cliff's edge at sunrise. What would you do if you knew you couldn't fail?",
+          "pt": "Visualize-se à beira de um penhasco ao nascer do sol. O que você faria se soubesse que não poderia falhar?"
+        },
+        "affirmation": {
+          "en": "I trust the journey. I embrace new beginnings with joy and courage.",
+          "pt": "Eu confio na jornada. Eu abraço novos começos com alegria e coragem."
+        },
+        "daily_message": {
+          "en": "Today invites you to take a chance. That idea you've been hesitant about? The universe is giving you the green light.",
+          "pt": "Hoje convida você a arriscar. Aquela ideia sobre a qual você hesitava? O universo está dando luz verde."
+        },
+        "yes_no": {
+          "en": "Yes, but proceed with awareness.",
+          "pt": "Sim, mas prossiga com consciência."
+        },
+        "timing": {
+          "en": "Spring energy. New moons. The beginning of any cycle.",
+          "pt": "Energia de primavera. Luas novas. O início de qualquer ciclo."
+        },
+        "crystals": {
+          "en": "Clear Quartz, Turquoise, Citrine",
+          "pt": "Quartzo Transparente, Turquesa, Citrino"
+        }
+      }
+    },
+
+    "maj_1": {
+      "name": "The Magician / O Mago",
+      "modules": {
+        "spirituality": {
+          "en": "",
+          "pt": ""
+        },
+        "health": {
+          "en": "",
+          "pt": ""
+        },
+        "finances": {
+          "en": "",
+          "pt": ""
+        },
+        "family": {
+          "en": "",
+          "pt": ""
+        },
+        "shadow": {
+          "en": "",
+          "pt": ""
+        },
+        "meditation": {
+          "en": "",
+          "pt": ""
+        },
+        "affirmation": {
+          "en": "",
+          "pt": ""
+        },
+        "daily_message": {
+          "en": "",
+          "pt": ""
+        },
+        "yes_no": {
+          "en": "",
+          "pt": ""
+        },
+        "timing": {
+          "en": "",
+          "pt": ""
+        },
+        "crystals": {
+          "en": "",
+          "pt": ""
+        }
+      }
+    },
+
+    "maj_2": {
+      "name": "The High Priestess / A Sacerdotisa",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_3": {
+      "name": "The Empress / A Imperatriz",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_4": {
+      "name": "The Emperor / O Imperador",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_5": {
+      "name": "The Hierophant / O Hierofante",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_6": {
+      "name": "The Lovers / Os Enamorados",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_7": {
+      "name": "The Chariot / O Carro",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_8": {
+      "name": "Strength / A Força",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_9": {
+      "name": "The Hermit / O Eremita",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_10": {
+      "name": "Wheel of Fortune / A Roda da Fortuna",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_11": {
+      "name": "Justice / A Justiça",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_12": {
+      "name": "The Hanged Man / O Enforcado",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_13": {
+      "name": "Death / A Morte",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_14": {
+      "name": "Temperance / A Temperança",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_15": {
+      "name": "The Devil / O Diabo",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_16": {
+      "name": "The Tower / A Torre",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_17": {
+      "name": "The Star / A Estrela",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_18": {
+      "name": "The Moon / A Lua",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_19": {
+      "name": "The Sun / O Sol",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_20": {
+      "name": "Judgement / O Julgamento",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    },
+
+    "maj_21": {
+      "name": "The World / O Mundo",
+      "modules": {
+        "spirituality": { "en": "", "pt": "" },
+        "health": { "en": "", "pt": "" },
+        "finances": { "en": "", "pt": "" },
+        "family": { "en": "", "pt": "" },
+        "shadow": { "en": "", "pt": "" },
+        "meditation": { "en": "", "pt": "" },
+        "affirmation": { "en": "", "pt": "" },
+        "daily_message": { "en": "", "pt": "" },
+        "yes_no": { "en": "", "pt": "" },
+        "timing": { "en": "", "pt": "" },
+        "crystals": { "en": "", "pt": "" }
+      }
+    }
+  },
+
+  "_template": {
+    "description": "Use este template para adicionar novas cartas (Arcanos Menores)",
+    "card_id_format": {
+      "cups": "cups_ace, cups_2, cups_3, ... cups_10, cups_page, cups_knight, cups_queen, cups_king",
+      "pentacles": "pent_ace, pent_2, pent_3, ... pent_10, pent_page, pent_knight, pent_queen, pent_king",
+      "swords": "swords_ace, swords_2, swords_3, ... swords_10, swords_page, swords_knight, swords_queen, swords_king",
+      "wands": "wands_ace, wands_2, wands_3, ... wands_10, wands_page, wands_knight, wands_queen, wands_king"
+    },
+    "example": {
+      "cups_ace": {
+        "name": "Ace of Cups / Ás de Copas",
+        "modules": {
+          "spirituality": { "en": "", "pt": "" },
+          "health": { "en": "", "pt": "" },
+          "finances": { "en": "", "pt": "" },
+          "family": { "en": "", "pt": "" },
+          "shadow": { "en": "", "pt": "" },
+          "meditation": { "en": "", "pt": "" },
+          "affirmation": { "en": "", "pt": "" },
+          "daily_message": { "en": "", "pt": "" },
+          "yes_no": { "en": "", "pt": "" },
+          "timing": { "en": "", "pt": "" },
+          "crystals": { "en": "", "pt": "" }
+        }
+      }
+    }
+  }
+}

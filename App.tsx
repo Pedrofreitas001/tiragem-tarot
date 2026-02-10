@@ -17,13 +17,20 @@ import WhatsAppModal from './components/WhatsAppModal';
 import { JourneySection } from './components/journey';
 import HeroJourneyStories from './components/journey/HeroJourneyStories';
 import { DailyCard } from './components/DailyCard';
+import { TarotPorSigno } from './components/TarotPorSigno';
+import { TarotPorSignoIndex } from './pages/TarotPorSignoIndex';
 import { HistoryFiltered } from './components/HistoryFiltered';
 import { SideBySideExample } from './components/Charts/SideBySideExample';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import Spreads from './pages/Spreads';
 import Checkout from './pages/Checkout';
+import CheckoutSuccess from './pages/CheckoutSuccess';
 import Settings from './pages/Settings';
+import { AdminPanel } from './pages/AdminPanel';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { TermsOfUse } from './pages/TermsOfUse';
+import { CookieConsent } from './components/CookieConsent';
 import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
@@ -146,11 +153,13 @@ const Header = () => {
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
     const { toggleCart, getItemCount } = useCart();
+    const { profile } = useAuth();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
     const itemCount = getItemCount();
+    const isAdmin = Boolean(profile?.is_admin);
 
     const exploreRoute = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
 
@@ -173,6 +182,9 @@ const Header = () => {
                             <button onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')} className={`text-sm font-medium transition-colors ${(isActive('/carta-do-dia') || isActive('/daily-card')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
                             </button>
+                            <button onClick={() => navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign')} className={`text-sm font-medium transition-colors ${(isActive('/tarot-por-signo') || isActive('/tarot-by-sign')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
+                            </button>
                             <button onClick={() => navigate(isPortuguese ? '/interpretacao' : '/interpretation')} className={`text-sm font-medium transition-colors ${(isActive('/interpretacao') || isActive('/interpretation')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {isPortuguese ? 'Interpretação' : 'Interpretation'}
                             </button>
@@ -182,6 +194,11 @@ const Header = () => {
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
+                            {isAdmin && (
+                                <button onClick={() => navigate('/admin')} className={`text-sm font-medium transition-colors ${isActive('/admin') ? 'text-yellow-400' : 'text-yellow-500/70 hover:text-yellow-400'}`}>
+                                    Admin
+                                </button>
+                            )}
                         </nav>
 
                         <div className="flex items-center gap-4 sm:gap-6">
@@ -204,9 +221,13 @@ const Header = () => {
                             <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
+                            <button onClick={() => { navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</button>
                             <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
+                            {isAdmin && (
+                                <button onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10">Admin</button>
+                            )}
                         </nav>
                     )}
                 </div>
@@ -241,6 +262,7 @@ const Footer = () => {
                         <h4 className="text-white font-bold text-sm mb-4">{t.footer.explore}</h4>
                         <div className="flex flex-col gap-2">
                             <button onClick={() => navigate('/')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.readings}</button>
+                            <button onClick={() => navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</button>
                             <button onClick={() => navigate(exploreRoute)} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.cardLibrary}</button>
                             <button onClick={() => navigate('/history')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">{t.footer.history}</button>
                         </div>
@@ -250,9 +272,13 @@ const Footer = () => {
                     <div>
                         <h4 className="text-white font-bold text-sm mb-4">{t.footer.support}</h4>
                         <div className="flex flex-col gap-2">
-                            <span className="text-gray-400 text-sm">{t.footer.help}</span>
+                            <button onClick={() => navigate(isPortuguese ? '/privacidade' : '/privacy')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">
+                                {isPortuguese ? 'Política de Privacidade' : 'Privacy Policy'}
+                            </button>
+                            <button onClick={() => navigate(isPortuguese ? '/termos' : '/terms')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">
+                                {isPortuguese ? 'Termos de Uso' : 'Terms of Use'}
+                            </button>
                             <span className="text-gray-400 text-sm">{t.footer.contact}</span>
-                            <span className="text-gray-400 text-sm">{t.footer.privacy}</span>
                         </div>
                     </div>
                 </div>
@@ -5873,11 +5899,22 @@ const App = () => {
                             <Route path="/cosmic" element={<CosmicCalendar />} />
                             <Route path="/carta-do-dia" element={<DailyCard />} />
                             <Route path="/daily-card" element={<DailyCard />} />
+                            <Route path="/tarot-por-signo" element={<TarotPorSignoIndex />} />
+                            <Route path="/tarot-by-sign" element={<TarotPorSignoIndex />} />
+                            <Route path="/tarot-por-signo/:signo" element={<TarotPorSigno />} />
+                            <Route path="/tarot-by-sign/:signo" element={<TarotPorSigno />} />
                             <Route path="/charts-demo" element={<SideBySideExample />} />
                             <Route path="/checkout" element={<Checkout />} />
+                            <Route path="/checkout/success" element={<CheckoutSuccess />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/configuracoes" element={<Settings />} />
+                            <Route path="/admin" element={<AdminPanel />} />
+                            <Route path="/privacidade" element={<PrivacyPolicy />} />
+                            <Route path="/privacy" element={<PrivacyPolicy />} />
+                            <Route path="/termos" element={<TermsOfUse />} />
+                            <Route path="/terms" element={<TermsOfUse />} />
                         </Routes>
+                        <CookieConsent />
                     </Router>
                 </CartProvider>
             </AuthProvider>

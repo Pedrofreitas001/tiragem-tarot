@@ -54,12 +54,40 @@ export interface YesNoSynthesis extends BaseSynthesis {
   condicao: string;
 }
 
-// Carta do Dia
+// Carta do Dia - Energia Coletiva
 export interface DailyCardSynthesis {
-  mensagem: string;
-  energia: string;
-  foco: string;
-  reflexao: string;
+  mensagem_coletiva: string;        // Mensagem sobre a energia coletiva do dia
+  vibração_universal: string;       // A vibração que permeia o universo hoje
+  consciência_coletiva: string;     // Como a humanidade deve direcionar sua consciência
+  movimento_planetário: string;     // A energia em movimento no planeta hoje
+  chamado_universal: string;        // O chamado que o universo faz à humanidade
+  reflexão_coletiva: string;        // Pergunta reflexiva para a humanidade
+  energia_emocional: string;        // A energia emocional predominante no coletivo
+  significado_carta: string;        // O que a carta representa e simboliza
+  portal_transformação: string;     // Oportunidade de transformação disponível
+  mantra_diário: string;            // Afirmação ou mantra para sintonizar com a energia
+}
+
+// Tarot por Signo - 3 Cartas Personalizadas
+export interface TarotPorSignoCardInterpretation {
+  posicao: 'passado' | 'presente' | 'futuro';
+  nome: string;
+  interpretacao_signo: string;      // Interpretação à luz do signo
+  palavra_chave: string;
+}
+
+export interface TarotPorSignoSynthesis {
+  signo: string;
+  energia_signo_hoje: string;       // Energia do signo no dia
+  cartas: TarotPorSignoCardInterpretation[];
+  sintese_energetica: string;       // Como as 3 cartas conversam
+  mensagem_do_dia: string;          // Título principal (max 8 palavras)
+  desafio_cosmico: string;          // O que o universo pede
+  portal_oportunidade: string;      // Onde está a chance
+  sombra_a_integrar: string;        // Aspecto interno a reconhecer
+  acao_sugerida: string;            // Passo prático do dia
+  mantra_signo: string;             // Mantra personalizado
+  conselho_final: string;           // Mensagem de fechamento
 }
 
 // Tipo legado para compatibilidade
@@ -166,7 +194,7 @@ export const getStructuredSynthesis = async (
 
 // Nova função para Carta do Dia com IA
 export const getDailyCardSynthesis = async (
-  card: { name: string; id: string },
+  card: { name: string; name_pt?: string; id: string },
   isPortuguese: boolean = true
 ): Promise<DailyCardSynthesis | null> => {
   try {
@@ -203,6 +231,53 @@ export const getDailyCardSynthesis = async (
 
   } catch (error) {
     console.error("❌ Erro na carta do dia:", error);
+    return null;
+  }
+};
+
+// Nova função para Tarot por Signo com IA
+export const getTarotPorSignoSynthesis = async (
+  signo: string,
+  cards: { name: string; id: string }[],
+  isPortuguese: boolean = true
+): Promise<TarotPorSignoSynthesis | null> => {
+  try {
+    console.log("📡 Chamando Backend para tarot por signo...", { signo, cardCount: cards.length });
+
+    const result = await retryWithBackoff(async () => {
+      const response = await fetch('/api/tarot-signo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          signo,
+          cards,
+          isPortuguese
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Tarot Signo Error: ${JSON.stringify(errorData)}`);
+      }
+
+      return await response.json();
+    });
+
+    if (!result || !result.text) {
+      console.error("❌ Falha ao obter tarot por signo");
+      return null;
+    }
+
+    const parsed = typeof result.text === 'string'
+      ? JSON.parse(result.text) as TarotPorSignoSynthesis
+      : result.text as TarotPorSignoSynthesis;
+    console.log("✅ Tarot por signo parseado:", parsed);
+    return parsed;
+
+  } catch (error) {
+    console.error("❌ Erro no tarot por signo:", error);
     return null;
   }
 };

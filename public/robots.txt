@@ -1,0 +1,31 @@
+# Zaya Tarot - robots.txt
+# https://zayatarot.com
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://zayatarot.com/sitemap.xml
+
+# Bloquear páginas administrativas e APIs
+Disallow: /api/
+Disallow: /#/admin
+Disallow: /admin
+
+# Bloquear arquivos de build
+Disallow: /assets/
+Disallow: /*.js$
+Disallow: /*.css$
+
+# Permitir bots de busca específicos
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Delay de crawl para evitar sobrecarga
+Crawl-delay: 1
