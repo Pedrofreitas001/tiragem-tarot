@@ -615,9 +615,9 @@ const Home = () => {
                         {/* Right Column - Floating Carta do Dia Mockup */}
                         <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4 gap-5">
                             <div className="hero-daily-card relative w-[280px] sm:w-[300px] md:w-[340px] lg:w-[400px]">
-                                {/* Purple blur behind card */}
-                                <div className="absolute -inset-8 rounded-full bg-purple-600/15 blur-3xl pointer-events-none"></div>
-                                <div className="absolute -inset-4 rounded-full bg-purple-500/10 blur-2xl pointer-events-none"></div>
+                                {/* Golden blur behind card */}
+                                <div className="absolute -inset-8 rounded-full bg-yellow-500/15 blur-3xl pointer-events-none"></div>
+                                <div className="absolute -inset-4 rounded-full bg-yellow-400/10 blur-2xl pointer-events-none"></div>
                                 {/* Subtle stars around the card */}
                                 <div className="hero-star-1 absolute -top-4 -left-6 text-yellow-300/30 text-[10px]">✦</div>
                                 <div className="hero-star-2 absolute -top-2 right-4 text-purple-300/25 text-xs">✦</div>
@@ -1052,8 +1052,8 @@ const Home = () => {
                         {/* Right: Mini Tarot Cards Mockup */}
                         <div className="lg:col-span-5 flex items-center justify-center order-1 lg:order-2 -mt-4 lg:-mt-8">
                             <div className="relative">
-                                {/* Golden glow behind cards */}
-                                <div className="absolute inset-0 scale-[2.5] rounded-full bg-yellow-500/15 blur-3xl pointer-events-none"></div>
+                                {/* Purple glow behind cards */}
+                                <div className="absolute inset-0 scale-[2.5] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
 
                                 {/* Subtle white stars around mockup */}
                                 <div className="absolute -top-10 -left-6 w-[3px] h-[3px] rounded-full bg-white/30"></div>
