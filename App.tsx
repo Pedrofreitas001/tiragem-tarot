@@ -588,6 +588,22 @@ const Home = () => {
                                     </span>
                                 </button>
                             </div>
+
+                            {/* Subtle feature badges */}
+                            <div className="flex flex-wrap gap-4 pt-2 justify-center lg:justify-start">
+                                <div className="flex items-center gap-1.5 text-gray-500 text-[10px] md:text-xs">
+                                    <span className="material-symbols-outlined text-green-500/70 text-sm">chat</span>
+                                    <span>{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-gray-500 text-[10px] md:text-xs">
+                                    <span className="material-symbols-outlined text-purple-400/70 text-sm">all_inclusive</span>
+                                    <span>{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-gray-500 text-[10px] md:text-xs">
+                                    <span className="material-symbols-outlined text-yellow-500/70 text-sm">history</span>
+                                    <span>{isPortuguese ? 'Histórico da sua jornada' : 'Your journey history'}</span>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Right Column - Arcane Symbol (Mobile: appears first) */}
@@ -1191,6 +1207,13 @@ const Home = () => {
                                             onClick={(e) => {
                                                 e.preventDefault();
 
+                                                // Guests/não logados: mostrar modal de autenticação
+                                                if (!user || isGuest) {
+                                                    setAuthModalMode('register');
+                                                    setShowAuthModal(true);
+                                                    return;
+                                                }
+
                                                 // Usuários FREE: mostrar modal de upgrade para premium
                                                 if (tier === 'free') {
                                                     setShowPaywallForm(true);
@@ -1202,9 +1225,6 @@ const Home = () => {
                                                     setShowWhatsAppModal(true);
                                                     return;
                                                 }
-
-                                                // Guests/não logados: criar conta
-                                                setShowPaywallForm(true);
                                             }}
                                             className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
                                             type="button"
@@ -2468,6 +2488,28 @@ const CardDetails = () => {
             <Header />
             <CartDrawer />
 
+            {/* Static subtle stars background */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                <div className="absolute w-[2px] h-[2px] bg-white/20 rounded-full" style={{ top: '8%', left: '5%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/30 rounded-full" style={{ top: '12%', left: '15%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '6%', right: '10%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/25 rounded-full" style={{ top: '18%', right: '25%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/20 rounded-full" style={{ top: '22%', left: '40%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '30%', left: '8%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/25 rounded-full" style={{ top: '35%', right: '5%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/20 rounded-full" style={{ top: '28%', right: '40%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '45%', left: '3%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/30 rounded-full" style={{ top: '50%', left: '20%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/20 rounded-full" style={{ top: '55%', right: '15%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '60%', right: '30%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/25 rounded-full" style={{ top: '65%', left: '12%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/20 rounded-full" style={{ top: '70%', left: '35%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '75%', right: '8%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/25 rounded-full" style={{ top: '80%', right: '45%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/20 rounded-full" style={{ top: '85%', left: '25%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '90%', left: '50%' }}></div>
+            </div>
+
             <main className="relative z-10 flex-1 w-full max-w-[1200px] mx-auto px-6 py-12">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div className="flex items-center gap-2 text-sm text-gray-400">
@@ -3290,6 +3332,96 @@ const History = () => {
                         </div>
                     )}
                 </div>
+
+                {/* Account Management Section - Only for logged-in users */}
+                {user && !isGuest && (
+                    <div className="mt-16 pt-8 border-t border-white/5">
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-6">
+                            {isPortuguese ? 'Gerenciar Conta' : 'Manage Account'}
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {/* Change Plan */}
+                            <button
+                                onClick={() => navigate('/checkout')}
+                                className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-purple-500/30 rounded-lg transition-all text-left group"
+                            >
+                                <span className="material-symbols-outlined text-purple-400 text-lg">swap_horiz</span>
+                                <div>
+                                    <p className="text-white text-sm font-medium">{isPortuguese ? 'Mudar Plano' : 'Change Plan'}</p>
+                                    <p className="text-gray-500 text-[10px]">{isPremium ? 'Premium' : 'Free'}</p>
+                                </div>
+                            </button>
+
+                            {/* Cancel Subscription */}
+                            {isPremium && (
+                                <button
+                                    onClick={async () => {
+                                        const confirmed = window.confirm(
+                                            isPortuguese
+                                                ? 'Tem certeza que deseja cancelar sua assinatura Premium? Você perderá o acesso aos recursos premium ao final do período.'
+                                                : 'Are you sure you want to cancel your Premium subscription? You will lose access to premium features at the end of the period.'
+                                        );
+                                        if (!confirmed) return;
+                                        try {
+                                            const { openCustomerPortal } = await import('./services/stripeService');
+                                            await openCustomerPortal(user.id);
+                                        } catch (err) {
+                                            console.error('Error opening portal:', err);
+                                            alert(isPortuguese ? 'Erro ao abrir portal. Entre em contato com o suporte.' : 'Error opening portal. Please contact support.');
+                                        }
+                                    }}
+                                    className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] hover:bg-red-500/5 border border-white/10 hover:border-red-500/20 rounded-lg transition-all text-left group"
+                                >
+                                    <span className="material-symbols-outlined text-red-400/70 text-lg">cancel</span>
+                                    <div>
+                                        <p className="text-white text-sm font-medium">{isPortuguese ? 'Cancelar Assinatura' : 'Cancel Subscription'}</p>
+                                        <p className="text-gray-500 text-[10px]">{isPortuguese ? 'Via portal Stripe' : 'Via Stripe portal'}</p>
+                                    </div>
+                                </button>
+                            )}
+
+                            {/* Delete Account */}
+                            <button
+                                onClick={async () => {
+                                    const confirmed = window.confirm(
+                                        isPortuguese
+                                            ? 'ATENÇÃO: Esta ação é irreversível! Todos os seus dados, histórico e configurações serão permanentemente excluídos. Deseja continuar?'
+                                            : 'WARNING: This action is irreversible! All your data, history and settings will be permanently deleted. Do you want to continue?'
+                                    );
+                                    if (!confirmed) return;
+                                    const doubleConfirm = window.confirm(
+                                        isPortuguese
+                                            ? 'Última confirmação: Deseja realmente excluir sua conta?'
+                                            : 'Final confirmation: Do you really want to delete your account?'
+                                    );
+                                    if (!doubleConfirm) return;
+                                    try {
+                                        const { supabase } = await import('./lib/supabase');
+                                        if (!supabase) return;
+                                        // Delete user data
+                                        await (supabase as any).from('readings').delete().eq('user_id', user.id);
+                                        await (supabase as any).from('whatsapp_subscriptions').delete().eq('user_id', user.id);
+                                        await (supabase as any).from('profiles').delete().eq('id', user.id);
+                                        // Sign out
+                                        await (supabase as any).auth.signOut();
+                                        localStorage.clear();
+                                        navigate('/');
+                                    } catch (err) {
+                                        console.error('Error deleting account:', err);
+                                        alert(isPortuguese ? 'Erro ao excluir conta. Entre em contato com o suporte.' : 'Error deleting account. Please contact support.');
+                                    }
+                                }}
+                                className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] hover:bg-red-500/5 border border-white/10 hover:border-red-500/20 rounded-lg transition-all text-left group"
+                            >
+                                <span className="material-symbols-outlined text-red-400/70 text-lg">person_remove</span>
+                                <div>
+                                    <p className="text-white text-sm font-medium">{isPortuguese ? 'Excluir Conta' : 'Delete Account'}</p>
+                                    <p className="text-gray-500 text-[10px]">{isPortuguese ? 'Ação irreversível' : 'Irreversible action'}</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                )}
             </main>
             <Footer />
 
