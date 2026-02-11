@@ -356,6 +356,7 @@ const Home = () => {
     const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [showJourneyStories, setShowJourneyStories] = useState(false);
+    const [zoomedGalleryCard, setZoomedGalleryCard] = useState<{ name: string; img: string; vibracao: string; significado: string; energia: string; mantra: string } | null>(null);
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const { user, incrementReadingCount, tier, isGuest } = useAuth();
     const { isPortuguese: langIsPortuguese } = useLanguage();
@@ -1365,14 +1366,34 @@ const Home = () => {
                         <div className="absolute -left-32 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/18 to-transparent blur-3xl pointer-events-none"></div>
                         <div className="absolute -right-24 top-16 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-pink-500/12 to-transparent blur-3xl pointer-events-none"></div>
 
-                        {/* Cards Layout - Center card elevated */}
-                        <div className="flex items-end justify-center gap-4 md:gap-6 lg:gap-8 relative z-10">
+                        {/* Cards Layout - Center card elevated, scaled down on mobile */}
+                        <style dangerouslySetInnerHTML={{ __html: `
+                            .gallery-cards-wrapper { --gallery-scale: 1; }
+                            @media (max-width: 639px) { .gallery-cards-wrapper { --gallery-scale: 0.55; margin-bottom: -42%; } }
+                            @media (min-width: 640px) and (max-width: 767px) { .gallery-cards-wrapper { --gallery-scale: 0.7; margin-bottom: -22%; } }
+                            @media (min-width: 768px) and (max-width: 1023px) { .gallery-cards-wrapper { --gallery-scale: 0.85; margin-bottom: -8%; } }
+                            @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+                            .animate-scaleIn { animation: scaleIn 0.2s ease-out; }
+                            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                            .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+                        `}} />
+                        <div className="gallery-cards-wrapper relative z-10">
+                        <div className="flex items-end justify-center gap-4 md:gap-6 lg:gap-8 origin-top" style={{ transform: 'scale(var(--gallery-scale, 1))' }}>
                             {[
                                 { name: 'O Mundo', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg', vibracao: 'Completude e plenitude', significado: 'O Mundo representa a conclusão de um ciclo, a integração e a realização plena.', energia: 'Harmonia universal e gratidão profunda.', mantra: 'Eu celebro minha jornada.', featured: false },
                                 { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.', featured: true },
                                 { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.', featured: false },
                             ].map((card) => (
-                                <div key={card.name} className={`relative group transition-all duration-500 ${card.featured ? 'w-[110px] sm:w-[150px] md:w-[220px] lg:w-[240px] -mb-2' : 'w-[88px] sm:w-[120px] md:w-[175px] lg:w-[195px] opacity-85'}`}>
+                                <div
+                                    key={card.name}
+                                    className={`relative group transition-all duration-500 cursor-pointer ${card.featured ? 'w-[240px] -mb-2' : 'w-[195px] opacity-85'}`}
+                                    onClick={() => setZoomedGalleryCard(card)}
+                                >
+                                    {/* Tap hint on mobile */}
+                                    <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1 text-gray-400/60 text-[8px] md:hidden z-20 whitespace-nowrap">
+                                        <span className="material-symbols-outlined text-[10px]">touch_app</span>
+                                        <span>{isPortuguese ? 'Toque para ampliar' : 'Tap to zoom'}</span>
+                                    </div>
                                     <div className={`rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
                                         background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
                                         border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
@@ -1381,39 +1402,39 @@ const Home = () => {
                                         <div className="flex items-center justify-between px-2.5 pt-2.5 pb-1.5">
                                             <div className="flex items-center gap-1">
                                                 <span className="text-yellow-400/80 text-[7px]">✦</span>
-                                                <span className="text-gray-100/90 text-[7px] md:text-[8px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
+                                                <span className="text-gray-100/90 text-[8px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
                                             </div>
-                                            <p className="text-gray-300/60 text-[6px] md:text-[7px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</p>
+                                            <p className="text-gray-300/60 text-[7px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</p>
                                         </div>
                                         {/* Divider */}
                                         <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
                                         {/* Card Image */}
                                         <div className="flex justify-center py-3 px-4">
-                                            <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 w-full ${card.featured ? 'max-w-[60px] sm:max-w-[90px] md:max-w-[110px] lg:max-w-[120px]' : 'max-w-[46px] sm:max-w-[72px] md:max-w-[88px] lg:max-w-[95px]'}`} style={{ aspectRatio: '2/3' }} loading="lazy" />
+                                            <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${card.featured ? 'w-[120px] h-[190px]' : 'w-[95px] h-[152px]'}`} loading="lazy" />
                                         </div>
                                         {/* Card Name */}
-                                        <p className={`font-bold text-white text-center ${card.featured ? 'text-[11px] md:text-xs' : 'text-[9px] md:text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
+                                        <p className={`font-bold text-white text-center ${card.featured ? 'text-xs' : 'text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
                                         {/* Vibração */}
-                                        <p className={`italic text-center px-2 mb-2 ${card.featured ? 'text-[7px] md:text-[8px]' : 'text-[6px] md:text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
+                                        <p className={`italic text-center px-2 mb-2 ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
                                         {/* Significado */}
                                         <div className="bg-white/5 rounded mx-2.5 px-2 py-1.5 mb-1.5">
-                                            <p className={`text-gray-300 leading-snug text-center ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`}>{card.significado}</p>
+                                            <p className={`text-gray-300 leading-snug text-center ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.significado}</p>
                                         </div>
                                         {/* Energia */}
                                         <div className="flex items-start gap-1.5 px-2.5 mb-2">
                                             <span className="text-[6px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
                                             <div>
-                                                <span className={`font-semibold uppercase tracking-wide ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`} style={{ color: '#d4af37' }}>Energia</span>
-                                                <p className={`text-gray-300 leading-snug ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`}>{card.energia}</p>
+                                                <span className={`font-semibold uppercase tracking-wide ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>Energia</span>
+                                                <p className={`text-gray-300 leading-snug ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.energia}</p>
                                             </div>
                                         </div>
                                         {/* Divider */}
                                         <div className="mx-2.5 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1.5"></div>
                                         {/* Mantra */}
                                         <div className="px-2.5 pb-2.5 text-center">
-                                            <p className={`font-semibold uppercase tracking-wide mb-1 ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`} style={{ color: '#d4af37' }}>Mantra do Dia</p>
+                                            <p className={`font-semibold uppercase tracking-wide mb-1 ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>Mantra do Dia</p>
                                             <div className="bg-white/5 rounded px-2 py-1.5 border border-yellow-500/15">
-                                                <p className={`italic ${card.featured ? 'text-[7px] md:text-[8px]' : 'text-[6px] md:text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
+                                                <p className={`italic ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
                                             </div>
                                         </div>
                                         {/* Footer */}
@@ -1422,6 +1443,68 @@ const Home = () => {
                                 </div>
                             ))}
                         </div>
+                        </div>
+
+                        {/* Zoom Modal */}
+                        {zoomedGalleryCard && (
+                            <div
+                                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn"
+                                onClick={() => setZoomedGalleryCard(null)}
+                            >
+                                <div className="relative w-full max-w-[320px] animate-scaleIn" onClick={(e) => e.stopPropagation()}>
+                                    <button
+                                        onClick={() => setZoomedGalleryCard(null)}
+                                        className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors flex items-center gap-1 text-xs"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">close</span>
+                                        {isPortuguese ? 'Fechar' : 'Close'}
+                                    </button>
+                                    <div className="rounded-2xl overflow-hidden shadow-2xl" style={{
+                                        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
+                                        border: '1.5px solid rgba(212, 175, 55, 0.35)',
+                                    }}>
+                                        {/* Header */}
+                                        <div className="flex items-center justify-between px-4 pt-4 pb-2">
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="text-yellow-400/80 text-xs">✦</span>
+                                                <span className="text-gray-100/90 text-[11px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
+                                            </div>
+                                            <p className="text-gray-300/60 text-[9px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</p>
+                                        </div>
+                                        <div className="mx-4 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
+                                        {/* Card Image */}
+                                        <div className="flex justify-center py-4 px-6">
+                                            <img src={zoomedGalleryCard.img} alt={zoomedGalleryCard.name} className="object-cover rounded-lg shadow-lg border border-yellow-500/20 w-[160px] h-[254px]" />
+                                        </div>
+                                        {/* Card Name */}
+                                        <p className="font-bold text-white text-center text-base" style={{ fontFamily: "'Crimson Text', serif" }}>{zoomedGalleryCard.name}</p>
+                                        {/* Vibração */}
+                                        <p className="italic text-center px-4 mb-3 text-sm" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{zoomedGalleryCard.vibracao}"</p>
+                                        {/* Significado */}
+                                        <div className="bg-white/5 rounded mx-4 px-3 py-2 mb-2">
+                                            <p className="text-gray-300 leading-relaxed text-center text-xs">{zoomedGalleryCard.significado}</p>
+                                        </div>
+                                        {/* Energia */}
+                                        <div className="flex items-start gap-2 px-4 mb-3">
+                                            <span className="text-xs mt-0.5" style={{ color: '#d4af37' }}>●</span>
+                                            <div>
+                                                <span className="font-semibold uppercase tracking-wide text-xs" style={{ color: '#d4af37' }}>Energia</span>
+                                                <p className="text-gray-300 leading-relaxed text-xs">{zoomedGalleryCard.energia}</p>
+                                            </div>
+                                        </div>
+                                        <div className="mx-4 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-2"></div>
+                                        {/* Mantra */}
+                                        <div className="px-4 pb-4 text-center">
+                                            <p className="font-semibold uppercase tracking-wide mb-1.5 text-xs" style={{ color: '#d4af37' }}>Mantra do Dia</p>
+                                            <div className="bg-white/5 rounded px-3 py-2 border border-yellow-500/15">
+                                                <p className="italic text-sm" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{zoomedGalleryCard.mantra}"</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-gray-500 text-[8px] tracking-wider text-center pb-3">zayatarot.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Form Card with Key Features */}
