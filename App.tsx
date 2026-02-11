@@ -919,24 +919,24 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-14 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-14 items-center">
                         {/* Left: Mini Tarot Cards Mockup */}
-                        <div className="lg:col-span-2 flex items-center justify-center lg:justify-start lg:pl-8">
-                            <div className="relative">
+                        <div className="lg:col-span-2 flex items-center justify-center lg:justify-start lg:pl-4 lg:mt-6">
+                            <div className="relative lg:-translate-x-2">
                                 {/* Purple glow behind cards */}
-                                <div className="absolute inset-0 scale-[1.8] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
+                                <div className="absolute inset-0 scale-[2] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
 
                                 {/* Subtle white stars around mockup */}
-                                <div className="absolute -top-6 -left-4 w-[3px] h-[3px] rounded-full bg-white/30"></div>
-                                <div className="absolute -top-3 right-2 w-[2px] h-[2px] rounded-full bg-white/25"></div>
-                                <div className="absolute top-1/3 -left-8 w-[2px] h-[2px] rounded-full bg-white/20"></div>
-                                <div className="absolute top-1/2 -right-6 w-[3px] h-[3px] rounded-full bg-white/15"></div>
-                                <div className="absolute -bottom-4 left-4 w-[2px] h-[2px] rounded-full bg-white/25"></div>
-                                <div className="absolute -bottom-6 right-8 w-[3px] h-[3px] rounded-full bg-white/20"></div>
-                                <div className="absolute bottom-1/3 -left-6 w-[2px] h-[2px] rounded-full bg-white/15"></div>
-                                <div className="absolute top-8 -right-4 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+                                <div className="absolute -top-8 -left-5 w-[3px] h-[3px] rounded-full bg-white/30"></div>
+                                <div className="absolute -top-4 right-3 w-[2px] h-[2px] rounded-full bg-white/25"></div>
+                                <div className="absolute top-1/3 -left-10 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+                                <div className="absolute top-1/2 -right-8 w-[3px] h-[3px] rounded-full bg-white/15"></div>
+                                <div className="absolute -bottom-5 left-4 w-[2px] h-[2px] rounded-full bg-white/25"></div>
+                                <div className="absolute -bottom-8 right-10 w-[3px] h-[3px] rounded-full bg-white/20"></div>
+                                <div className="absolute bottom-1/3 -left-8 w-[2px] h-[2px] rounded-full bg-white/15"></div>
+                                <div className="absolute top-10 -right-5 w-[2px] h-[2px] rounded-full bg-white/20"></div>
 
-                                <div className="relative flex items-end justify-center gap-3 py-6">
+                                <div className="relative flex items-end justify-center gap-4 py-6">
                                     {[TAROT_CARDS[1], TAROT_CARDS[2], TAROT_CARDS[5]].map((card, i) => {
                                         const rotations = [-8, 0, 8];
                                         const yOffsets = [8, 0, 8];
@@ -944,7 +944,7 @@ const Home = () => {
                                             <div key={`story-card-${i}`} className="relative transition-transform duration-500" style={{
                                                 transform: `rotate(${rotations[i]}deg) translateY(${yOffsets[i]}px)`,
                                             }}>
-                                                <div className="w-[72px] h-[118px] sm:w-[82px] sm:h-[134px] md:w-[90px] md:h-[148px] rounded-lg overflow-hidden" style={{
+                                                <div className="w-[80px] h-[132px] sm:w-[92px] sm:h-[150px] md:w-[105px] md:h-[172px] rounded-lg overflow-hidden" style={{
                                                     border: '1.5px solid rgba(212, 175, 55, 0.2)',
                                                     boxShadow: i === 1
                                                         ? '0 12px 30px rgba(0,0,0,0.5), 0 0 25px rgba(135, 95, 175, 0.25)'
@@ -969,7 +969,7 @@ const Home = () => {
                                 {/* Gold top border */}
                                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
 
-                                <div className="relative z-10 px-6 md:px-8 py-10 md:py-14 space-y-0">
+                                <div className="relative z-10 px-6 md:px-8 py-12 md:py-16 space-y-0">
                                     {/* Section 1 */}
                                     <div className="flex gap-4 items-start">
                                         <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/10 border border-purple-400/20 flex items-center justify-center">
@@ -983,7 +983,7 @@ const Home = () => {
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="my-7 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="my-9 md:my-10 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
 
                                     {/* Section 2 */}
                                     <div className="flex gap-4 items-start">
@@ -998,7 +998,7 @@ const Home = () => {
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="my-7 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="my-9 md:my-10 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
 
                                     {/* Section 3 */}
                                     <div className="flex gap-4 items-start">
@@ -1013,7 +1013,7 @@ const Home = () => {
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="my-7 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="my-9 md:my-10 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
 
                                     {/* Section 4 */}
                                     <div className="flex gap-4 items-start">
@@ -1653,9 +1653,6 @@ const Home = () => {
 
             {/* Tarot por Signo - Quick Access Section */}
             <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-[#110e1a] pb-28 md:pb-36 overflow-hidden">
-                {/* Golden blur background - centered and prominent */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] rounded-full bg-gradient-to-br from-yellow-500/10 via-amber-500/8 to-yellow-600/5 blur-3xl pointer-events-none"></div>
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/3 w-[600px] h-[500px] rounded-full bg-gradient-to-t from-yellow-400/8 to-amber-500/6 blur-3xl pointer-events-none"></div>
                 <div className="max-w-[1000px] mx-auto relative">
                     <div className="text-center mb-12 md:mb-16">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -1668,7 +1665,13 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-5">
+                    {/* Grid wrapper with golden blur behind cards only */}
+                    <div className="relative">
+                        {/* Golden rectangular blur - behind cards grid only */}
+                        <div className="absolute -inset-x-8 -inset-y-6 rounded-2xl bg-gradient-to-br from-yellow-500/10 via-amber-500/8 to-yellow-600/6 blur-3xl pointer-events-none"></div>
+                        <div className="absolute -inset-x-4 -inset-y-3 rounded-2xl bg-gradient-to-t from-yellow-400/7 to-amber-500/5 blur-2xl pointer-events-none"></div>
+
+                    <div className="relative grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-5">
                         {ZODIAC_ORDER.map((slug) => {
                             const sign = ZODIAC_SIGNS[slug];
                             return (
@@ -1684,6 +1687,7 @@ const Home = () => {
                             );
                         })}
                     </div>
+                    </div>{/* end grid wrapper with blur */}
 
                     <div className="text-center mt-10">
                         <button
