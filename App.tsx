@@ -518,10 +518,6 @@ const Home = () => {
             <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden py-16">
                 <style dangerouslySetInnerHTML={{
                     __html: `
-                    @keyframes float-card {
-                        0%, 100% { transform: translateY(0px); }
-                        50% { transform: translateY(-14px); }
-                    }
                     @keyframes shimmer-gold {
                         0% { background-position: -200% center; }
                         100% { background-position: 200% center; }
@@ -541,7 +537,6 @@ const Home = () => {
                         }
                     }
                     .hero-daily-card {
-                        animation: float-card 6s ease-in-out infinite;
                     }
                     .hero-star-1 { animation: twinkle 3s ease-in-out infinite; }
                     .hero-star-2 { animation: twinkle 4s ease-in-out 1s infinite; }
@@ -604,10 +599,10 @@ const Home = () => {
                                     : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
                             </p>
 
-                            <div className="flex md:flex-row gap-4 pt-4 justify-center lg:justify-start items-center lg:items-start">
+                            <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start items-stretch sm:items-center lg:items-start">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="group relative px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
+                                    className="group relative w-full sm:w-auto px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
                                     <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2">
@@ -617,7 +612,7 @@ const Home = () => {
                                 </button>
                                 <button
                                     onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
-                                    className="group px-4 py-2 md:px-6 md:py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-[10px] md:text-xs"
+                                    className="group w-full sm:w-auto px-4 py-3 md:px-6 md:py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-[10px] md:text-xs"
                                 >
                                     <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400">
                                         {isPortuguese ? 'Explorar o Arquivo Arcano' : 'Explore the Arcane Archive'}
@@ -627,7 +622,7 @@ const Home = () => {
                             </div>
 
                             {/* Subtle feature badges */}
-                            <div className="flex flex-wrap gap-5 pt-4 justify-center lg:justify-start">
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-4 justify-items-start lg:flex lg:flex-wrap lg:gap-5 lg:justify-start">
                                 <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
                                     <span className="material-symbols-outlined text-green-500/80 text-lg">chat</span>
                                     <span>{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
@@ -1377,7 +1372,7 @@ const Home = () => {
                                 { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.', featured: true },
                                 { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.', featured: false },
                             ].map((card) => (
-                                <div key={card.name} className={`relative group transition-all duration-500 ${card.featured ? 'w-[150px] sm:w-[180px] md:w-[220px] lg:w-[240px] -mb-2' : 'w-[120px] sm:w-[145px] md:w-[175px] lg:w-[195px] opacity-85'}`}>
+                                <div key={card.name} className={`relative group transition-all duration-500 ${card.featured ? 'w-[110px] sm:w-[150px] md:w-[220px] lg:w-[240px] -mb-2' : 'w-[88px] sm:w-[120px] md:w-[175px] lg:w-[195px] opacity-85'}`}>
                                     <div className={`rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
                                         background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
                                         border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
@@ -1394,7 +1389,7 @@ const Home = () => {
                                         <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
                                         {/* Card Image */}
                                         <div className="flex justify-center py-3 px-4">
-                                            <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${card.featured ? 'w-[75px] h-[120px] sm:w-[90px] sm:h-[143px] md:w-[110px] md:h-[175px] lg:w-[120px] lg:h-[190px]' : 'w-[58px] h-[93px] sm:w-[72px] sm:h-[115px] md:w-[88px] md:h-[140px] lg:w-[95px] lg:h-[152px]'}`} loading="lazy" />
+                                            <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 w-full ${card.featured ? 'max-w-[60px] sm:max-w-[90px] md:max-w-[110px] lg:max-w-[120px]' : 'max-w-[46px] sm:max-w-[72px] md:max-w-[88px] lg:max-w-[95px]'}`} style={{ aspectRatio: '2/3' }} loading="lazy" />
                                         </div>
                                         {/* Card Name */}
                                         <p className={`font-bold text-white text-center ${card.featured ? 'text-[11px] md:text-xs' : 'text-[9px] md:text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
@@ -1642,8 +1637,8 @@ const Home = () => {
                                 </div>
                                 {/* Feature 2 */}
                                 <div className="flex items-start gap-4 group">
-                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-purple-500/15 to-purple-600/5 border border-purple-500/20 flex items-center justify-center group-hover:border-purple-500/40 transition-all">
-                                        <span className="material-symbols-outlined text-purple-400 text-xl">schedule</span>
+                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
+                                        <span className="material-symbols-outlined text-yellow-500 text-xl">schedule</span>
                                     </div>
                                     <div>
                                         <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -1656,8 +1651,8 @@ const Home = () => {
                                 </div>
                                 {/* Feature 3 */}
                                 <div className="flex items-start gap-4 group">
-                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-green-500/15 to-green-600/5 border border-green-500/20 flex items-center justify-center group-hover:border-green-500/40 transition-all">
-                                        <span className="material-symbols-outlined text-green-400 text-xl">chat</span>
+                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
+                                        <span className="material-symbols-outlined text-yellow-500 text-xl">chat</span>
                                     </div>
                                     <div>
                                         <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
