@@ -919,7 +919,7 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-14 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-20 items-center">
                         {/* Left: Content with sections */}
                         <div className="lg:col-span-3 order-2 lg:order-1">
                             <div className="relative rounded-2xl overflow-hidden" style={{
@@ -1050,7 +1050,7 @@ const Home = () => {
                         </div>
 
                         {/* Right: Mini Tarot Cards Mockup */}
-                        <div className="lg:col-span-2 flex items-center justify-center order-1 lg:order-2 -mt-4 lg:-mt-8">
+                        <div className="lg:col-span-2 flex items-center justify-center lg:justify-end order-1 lg:order-2 -mt-4 lg:-mt-8">
                             <div className="relative">
                                 {/* Purple glow behind cards */}
                                 <div className="absolute inset-0 scale-[2.5] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
