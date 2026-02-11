@@ -907,7 +907,7 @@ const Home = () => {
                 <div className="absolute -left-40 top-10 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="absolute -right-32 bottom-10 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-purple-600/10 to-transparent blur-3xl pointer-events-none"></div>
 
-                <div className="max-w-[1000px] mx-auto relative">
+                <div className="max-w-[1300px] mx-auto relative">
                     <div className="text-center mb-10 md:mb-14">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Por que o Tarot?' : 'Why Tarot?'}
@@ -919,9 +919,9 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-20 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
                         {/* Left: Content with sections */}
-                        <div className="lg:col-span-3 order-2 lg:order-1">
+                        <div className="lg:col-span-7 order-2 lg:order-1">
                             <div className="relative rounded-2xl overflow-hidden" style={{
                                 background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.5) 0%, rgba(45, 38, 65, 0.6) 50%, rgba(55, 45, 75, 0.5) 100%)',
                                 boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.06), 0 20px 40px -12px rgba(0,0,0,0.3)',
@@ -1050,7 +1050,7 @@ const Home = () => {
                         </div>
 
                         {/* Right: Mini Tarot Cards Mockup */}
-                        <div className="lg:col-span-2 flex items-center justify-center lg:justify-end order-1 lg:order-2 -mt-4 lg:-mt-8">
+                        <div className="lg:col-span-5 flex items-center justify-center order-1 lg:order-2 -mt-4 lg:-mt-8">
                             <div className="relative">
                                 {/* Purple glow behind cards */}
                                 <div className="absolute inset-0 scale-[2.5] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
