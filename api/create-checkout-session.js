@@ -9,6 +9,11 @@
  */
 
 export default async function handler(req, res) {
+    console.log('🔵 Checkout API chamada:', req.method, {
+        hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+        hasPriceId: !!(process.env.STRIPE_PREMIUM_PRICE_ID || process.env.VITE_STRIPE_PREMIUM_PRICE_ID),
+    });
+
     // CORS
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -113,10 +118,10 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        console.error('❌ Erro ao criar sessão:', error.message);
+        console.error('❌ Erro ao criar sessão:', error.message, error.stack);
         return res.status(500).json({
             error: 'Erro ao processar pagamento',
-            details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+            details: error.message,
         });
     }
 }

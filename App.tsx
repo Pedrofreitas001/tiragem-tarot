@@ -558,6 +558,20 @@ const Home = () => {
                     }
                 `}} />
 
+                {/* Static star dots */}
+                <div className="absolute top-[12%] left-[8%] w-[2px] h-[2px] rounded-full bg-white/40 z-0"></div>
+                <div className="absolute top-[18%] right-[15%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[35%] left-[3%] w-[2px] h-[2px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[45%] right-[6%] w-[1.5px] h-[1.5px] rounded-full bg-white/35 z-0"></div>
+                <div className="absolute top-[60%] left-[12%] w-[1px] h-[1px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[70%] right-[22%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[25%] left-[45%] w-[1.5px] h-[1.5px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[80%] left-[30%] w-[1px] h-[1px] rounded-full bg-white/35 z-0"></div>
+                <div className="absolute top-[15%] left-[70%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[55%] right-[35%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[90%] right-[10%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[40%] left-[55%] w-[1.5px] h-[1.5px] rounded-full bg-white/20 z-0"></div>
+
                 <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-12 w-full">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
@@ -1306,7 +1320,21 @@ const Home = () => {
                     }
                 `}</style>
 
-                <div className="max-w-6xl mx-auto">
+                {/* Static star dots */}
+                <div className="absolute top-[8%] left-[5%] w-[2px] h-[2px] rounded-full bg-white/35 z-0"></div>
+                <div className="absolute top-[14%] right-[12%] w-[1.5px] h-[1.5px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[28%] left-[10%] w-[1px] h-[1px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[22%] right-[8%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[42%] left-[4%] w-[1.5px] h-[1.5px] rounded-full bg-white/35 z-0"></div>
+                <div className="absolute top-[50%] right-[18%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[35%] left-[48%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[65%] left-[15%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[58%] right-[5%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[75%] left-[35%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[82%] right-[25%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[90%] left-[8%] w-[1px] h-[1px] rounded-full bg-white/35 z-0"></div>
+
+                <div className="max-w-6xl mx-auto relative z-10">
                     {/* Feature Presentation Header */}
                     <div className="text-left mb-14 md:mb-20 px-2">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold-home mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
