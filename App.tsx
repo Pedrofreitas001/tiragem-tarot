@@ -1369,9 +1369,9 @@ const Home = () => {
                         {/* Cards Layout - Center card elevated, scaled down on mobile */}
                         <style dangerouslySetInnerHTML={{ __html: `
                             .gallery-cards-wrapper { --gallery-scale: 1; }
-                            @media (max-width: 639px) { .gallery-cards-wrapper { --gallery-scale: 0.55; margin-bottom: -42%; } }
-                            @media (min-width: 640px) and (max-width: 767px) { .gallery-cards-wrapper { --gallery-scale: 0.7; margin-bottom: -22%; } }
-                            @media (min-width: 768px) and (max-width: 1023px) { .gallery-cards-wrapper { --gallery-scale: 0.85; margin-bottom: -8%; } }
+                            @media (max-width: 639px) { .gallery-cards-wrapper { --gallery-scale: 0.75; margin-bottom: -22%; } }
+                            @media (min-width: 640px) and (max-width: 767px) { .gallery-cards-wrapper { --gallery-scale: 0.82; margin-bottom: -14%; } }
+                            @media (min-width: 768px) and (max-width: 1023px) { .gallery-cards-wrapper { --gallery-scale: 0.9; margin-bottom: -5%; } }
                             @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
                             .animate-scaleIn { animation: scaleIn 0.2s ease-out; }
                             @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
