@@ -771,7 +771,7 @@ const Home = () => {
             </section>
 
             {/* Spread Selection - Premium Cards Style */}
-            <section id="spreads" className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-6 relative">
+            <section id="spreads" className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-6 relative" style={{ backgroundColor: '#1a1628' }}>
                 <div className="max-w-[1200px] mx-auto relative">
                     {/* Cosmic Flame Background - Positioned lower */}
                     <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
@@ -902,7 +902,7 @@ const Home = () => {
             </section>
 
             {/* Reflective Journey Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6" style={{ backgroundColor: '#1a1628' }}>
                 {/* Purple blur background - like spreads section */}
                 <div className="absolute -left-40 top-10 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="absolute -right-32 bottom-10 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-purple-600/10 to-transparent blur-3xl pointer-events-none"></div>
@@ -925,16 +925,51 @@ const Home = () => {
                             <div className="relative rounded-2xl overflow-hidden" style={{
                                 background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.5) 0%, rgba(45, 38, 65, 0.6) 50%, rgba(55, 45, 75, 0.5) 100%)',
                                 boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.06), 0 20px 40px -12px rgba(0,0,0,0.3)',
-                                border: '1px solid rgba(135, 95, 175, 0.1)'
+                                border: '1px solid rgba(212, 175, 55, 0.15)'
                             }}>
-                                {/* Gold top border */}
-                                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
+                                {/* Gold top & bottom border */}
+                                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent" />
+                                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
+
+                                {/* Tarot-style corner ornaments */}
+                                {/* Top-left */}
+                                <div className="absolute top-3 left-3 w-8 h-8 pointer-events-none">
+                                    <div className="absolute top-0 left-0 w-6 h-px bg-gradient-to-r from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute top-0 left-0 w-px h-6 bg-gradient-to-b from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute top-1.5 left-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
+                                </div>
+                                {/* Top-right */}
+                                <div className="absolute top-3 right-3 w-8 h-8 pointer-events-none">
+                                    <div className="absolute top-0 right-0 w-6 h-px bg-gradient-to-l from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute top-0 right-0 w-px h-6 bg-gradient-to-b from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
+                                </div>
+                                {/* Bottom-left */}
+                                <div className="absolute bottom-3 left-3 w-8 h-8 pointer-events-none">
+                                    <div className="absolute bottom-0 left-0 w-6 h-px bg-gradient-to-r from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute bottom-0 left-0 w-px h-6 bg-gradient-to-t from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute bottom-1.5 left-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
+                                </div>
+                                {/* Bottom-right */}
+                                <div className="absolute bottom-3 right-3 w-8 h-8 pointer-events-none">
+                                    <div className="absolute bottom-0 right-0 w-6 h-px bg-gradient-to-l from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute bottom-0 right-0 w-px h-6 bg-gradient-to-t from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute bottom-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
+                                </div>
+
+                                {/* Side ornament lines */}
+                                <div className="absolute top-1/2 -translate-y-1/2 left-1 w-px h-16 bg-gradient-to-b from-transparent via-yellow-500/20 to-transparent pointer-events-none"></div>
+                                <div className="absolute top-1/2 -translate-y-1/2 right-1 w-px h-16 bg-gradient-to-b from-transparent via-yellow-500/20 to-transparent pointer-events-none"></div>
+
+                                {/* Small diamond ornaments on sides */}
+                                <div className="absolute top-1/2 -translate-y-1/2 left-2.5 w-1 h-1 rotate-45 bg-yellow-500/25 pointer-events-none"></div>
+                                <div className="absolute top-1/2 -translate-y-1/2 right-2.5 w-1 h-1 rotate-45 bg-yellow-500/25 pointer-events-none"></div>
 
                                 <div className="relative z-10 px-6 md:px-8 py-12 md:py-16 space-y-8 md:space-y-10">
                                     {/* Section 1 */}
                                     <div className="flex gap-4 items-start">
-                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/10 border border-purple-400/20 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-purple-300/70 text-sm">visibility</span>
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">visibility</span>
                                         </div>
                                         <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
                                             {isPortuguese
@@ -944,12 +979,12 @@ const Home = () => {
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
 
                                     {/* Section 2 */}
                                     <div className="flex gap-4 items-start">
-                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-400/20 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-yellow-300/70 text-sm">auto_awesome</span>
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">auto_awesome</span>
                                         </div>
                                         <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
                                             {isPortuguese
@@ -959,12 +994,12 @@ const Home = () => {
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
 
                                     {/* Section 3 */}
                                     <div className="flex gap-4 items-start">
-                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/10 border border-purple-400/20 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-purple-300/70 text-sm">school</span>
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">school</span>
                                         </div>
                                         <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
                                             {isPortuguese
@@ -974,12 +1009,12 @@ const Home = () => {
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
 
                                     {/* Section 4 */}
                                     <div className="flex gap-4 items-start">
-                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-400/20 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-yellow-300/70 text-sm">psychology</span>
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">psychology</span>
                                         </div>
                                         <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
                                             {isPortuguese
@@ -1015,34 +1050,34 @@ const Home = () => {
                         </div>
 
                         {/* Right: Mini Tarot Cards Mockup */}
-                        <div className="lg:col-span-2 flex items-center justify-center lg:justify-end lg:pr-4 order-1 lg:order-2">
-                            <div className="relative lg:translate-x-2">
+                        <div className="lg:col-span-2 flex items-center justify-center order-1 lg:order-2 -mt-4 lg:-mt-8">
+                            <div className="relative">
                                 {/* Purple glow behind cards */}
-                                <div className="absolute inset-0 scale-[2] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
+                                <div className="absolute inset-0 scale-[2.5] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
 
                                 {/* Subtle white stars around mockup */}
-                                <div className="absolute -top-8 -left-5 w-[3px] h-[3px] rounded-full bg-white/30"></div>
-                                <div className="absolute -top-4 right-3 w-[2px] h-[2px] rounded-full bg-white/25"></div>
-                                <div className="absolute top-1/3 -left-10 w-[2px] h-[2px] rounded-full bg-white/20"></div>
-                                <div className="absolute top-1/2 -right-8 w-[3px] h-[3px] rounded-full bg-white/15"></div>
-                                <div className="absolute -bottom-5 left-4 w-[2px] h-[2px] rounded-full bg-white/25"></div>
-                                <div className="absolute -bottom-8 right-10 w-[3px] h-[3px] rounded-full bg-white/20"></div>
-                                <div className="absolute bottom-1/3 -left-8 w-[2px] h-[2px] rounded-full bg-white/15"></div>
-                                <div className="absolute top-10 -right-5 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+                                <div className="absolute -top-10 -left-6 w-[3px] h-[3px] rounded-full bg-white/30"></div>
+                                <div className="absolute -top-5 right-4 w-[2px] h-[2px] rounded-full bg-white/25"></div>
+                                <div className="absolute top-1/3 -left-12 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+                                <div className="absolute top-1/2 -right-10 w-[3px] h-[3px] rounded-full bg-white/15"></div>
+                                <div className="absolute -bottom-6 left-5 w-[2px] h-[2px] rounded-full bg-white/25"></div>
+                                <div className="absolute -bottom-10 right-12 w-[3px] h-[3px] rounded-full bg-white/20"></div>
+                                <div className="absolute bottom-1/3 -left-10 w-[2px] h-[2px] rounded-full bg-white/15"></div>
+                                <div className="absolute top-12 -right-6 w-[2px] h-[2px] rounded-full bg-white/20"></div>
 
-                                <div className="relative flex items-end justify-center gap-4 py-6">
+                                <div className="relative flex items-end justify-center gap-5 py-6">
                                     {[TAROT_CARDS[1], TAROT_CARDS[2], TAROT_CARDS[5]].map((card, i) => {
                                         const rotations = [-8, 0, 8];
-                                        const yOffsets = [8, 0, 8];
+                                        const yOffsets = [10, 0, 10];
                                         return (
                                             <div key={`story-card-${i}`} className="relative transition-transform duration-500" style={{
                                                 transform: `rotate(${rotations[i]}deg) translateY(${yOffsets[i]}px)`,
                                             }}>
-                                                <div className="w-[80px] h-[132px] sm:w-[92px] sm:h-[150px] md:w-[105px] md:h-[172px] rounded-lg overflow-hidden" style={{
-                                                    border: '1.5px solid rgba(212, 175, 55, 0.2)',
+                                                <div className="w-[100px] h-[165px] sm:w-[115px] sm:h-[188px] md:w-[130px] md:h-[213px] rounded-lg overflow-hidden" style={{
+                                                    border: '1.5px solid rgba(212, 175, 55, 0.25)',
                                                     boxShadow: i === 1
-                                                        ? '0 12px 30px rgba(0,0,0,0.5), 0 0 25px rgba(135, 95, 175, 0.25)'
-                                                        : '0 8px 20px rgba(0,0,0,0.4), 0 0 15px rgba(135, 95, 175, 0.1)',
+                                                        ? '0 16px 40px rgba(0,0,0,0.5), 0 0 30px rgba(135, 95, 175, 0.25)'
+                                                        : '0 10px 25px rgba(0,0,0,0.4), 0 0 20px rgba(135, 95, 175, 0.1)',
                                                 }}>
                                                     <img src={card.imageUrl} alt={card.name_pt} className="w-full h-full object-cover" loading="lazy" />
                                                 </div>
@@ -1652,7 +1687,7 @@ const Home = () => {
             </section>
 
             {/* Tarot por Signo - Quick Access Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-[#110e1a] pb-28 md:pb-36 overflow-hidden">
+            <section className="relative z-10 pt-12 md:pt-16 pb-28 md:pb-36 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
                 <div className="max-w-[1000px] mx-auto relative">
                     <div className="text-center mb-12 md:mb-16">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
