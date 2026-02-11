@@ -920,47 +920,8 @@ const Home = () => {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-14 items-center">
-                        {/* Left: Mini Tarot Cards Mockup */}
-                        <div className="lg:col-span-2 flex items-center justify-center lg:justify-start lg:pl-4 lg:mt-6">
-                            <div className="relative lg:-translate-x-2">
-                                {/* Purple glow behind cards */}
-                                <div className="absolute inset-0 scale-[2] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
-
-                                {/* Subtle white stars around mockup */}
-                                <div className="absolute -top-8 -left-5 w-[3px] h-[3px] rounded-full bg-white/30"></div>
-                                <div className="absolute -top-4 right-3 w-[2px] h-[2px] rounded-full bg-white/25"></div>
-                                <div className="absolute top-1/3 -left-10 w-[2px] h-[2px] rounded-full bg-white/20"></div>
-                                <div className="absolute top-1/2 -right-8 w-[3px] h-[3px] rounded-full bg-white/15"></div>
-                                <div className="absolute -bottom-5 left-4 w-[2px] h-[2px] rounded-full bg-white/25"></div>
-                                <div className="absolute -bottom-8 right-10 w-[3px] h-[3px] rounded-full bg-white/20"></div>
-                                <div className="absolute bottom-1/3 -left-8 w-[2px] h-[2px] rounded-full bg-white/15"></div>
-                                <div className="absolute top-10 -right-5 w-[2px] h-[2px] rounded-full bg-white/20"></div>
-
-                                <div className="relative flex items-end justify-center gap-4 py-6">
-                                    {[TAROT_CARDS[1], TAROT_CARDS[2], TAROT_CARDS[5]].map((card, i) => {
-                                        const rotations = [-8, 0, 8];
-                                        const yOffsets = [8, 0, 8];
-                                        return (
-                                            <div key={`story-card-${i}`} className="relative transition-transform duration-500" style={{
-                                                transform: `rotate(${rotations[i]}deg) translateY(${yOffsets[i]}px)`,
-                                            }}>
-                                                <div className="w-[80px] h-[132px] sm:w-[92px] sm:h-[150px] md:w-[105px] md:h-[172px] rounded-lg overflow-hidden" style={{
-                                                    border: '1.5px solid rgba(212, 175, 55, 0.2)',
-                                                    boxShadow: i === 1
-                                                        ? '0 12px 30px rgba(0,0,0,0.5), 0 0 25px rgba(135, 95, 175, 0.25)'
-                                                        : '0 8px 20px rgba(0,0,0,0.4), 0 0 15px rgba(135, 95, 175, 0.1)',
-                                                }}>
-                                                    <img src={card.imageUrl} alt={card.name_pt} className="w-full h-full object-cover" loading="lazy" />
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Right: Content with sections */}
-                        <div className="lg:col-span-3">
+                        {/* Left: Content with sections */}
+                        <div className="lg:col-span-3 order-2 lg:order-1">
                             <div className="relative rounded-2xl overflow-hidden" style={{
                                 background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.5) 0%, rgba(45, 38, 65, 0.6) 50%, rgba(55, 45, 75, 0.5) 100%)',
                                 boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.06), 0 20px 40px -12px rgba(0,0,0,0.3)',
@@ -969,7 +930,7 @@ const Home = () => {
                                 {/* Gold top border */}
                                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
 
-                                <div className="relative z-10 px-6 md:px-8 py-12 md:py-16 space-y-0">
+                                <div className="relative z-10 px-6 md:px-8 py-12 md:py-16 space-y-8 md:space-y-10">
                                     {/* Section 1 */}
                                     <div className="flex gap-4 items-start">
                                         <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/10 border border-purple-400/20 flex items-center justify-center">
@@ -983,7 +944,7 @@ const Home = () => {
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="my-9 md:my-10 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
 
                                     {/* Section 2 */}
                                     <div className="flex gap-4 items-start">
@@ -998,7 +959,7 @@ const Home = () => {
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="my-9 md:my-10 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
 
                                     {/* Section 3 */}
                                     <div className="flex gap-4 items-start">
@@ -1013,7 +974,7 @@ const Home = () => {
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="my-9 md:my-10 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
 
                                     {/* Section 4 */}
                                     <div className="flex gap-4 items-start">
@@ -1050,6 +1011,45 @@ const Home = () => {
                                     <span>{isPortuguese ? 'Explore a Jornada do Herói' : 'Explore the Hero\'s Journey'}</span>
                                     <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                                 </button>
+                            </div>
+                        </div>
+
+                        {/* Right: Mini Tarot Cards Mockup */}
+                        <div className="lg:col-span-2 flex items-center justify-center lg:justify-end lg:pr-4 order-1 lg:order-2">
+                            <div className="relative lg:translate-x-2">
+                                {/* Purple glow behind cards */}
+                                <div className="absolute inset-0 scale-[2] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
+
+                                {/* Subtle white stars around mockup */}
+                                <div className="absolute -top-8 -left-5 w-[3px] h-[3px] rounded-full bg-white/30"></div>
+                                <div className="absolute -top-4 right-3 w-[2px] h-[2px] rounded-full bg-white/25"></div>
+                                <div className="absolute top-1/3 -left-10 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+                                <div className="absolute top-1/2 -right-8 w-[3px] h-[3px] rounded-full bg-white/15"></div>
+                                <div className="absolute -bottom-5 left-4 w-[2px] h-[2px] rounded-full bg-white/25"></div>
+                                <div className="absolute -bottom-8 right-10 w-[3px] h-[3px] rounded-full bg-white/20"></div>
+                                <div className="absolute bottom-1/3 -left-8 w-[2px] h-[2px] rounded-full bg-white/15"></div>
+                                <div className="absolute top-10 -right-5 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+
+                                <div className="relative flex items-end justify-center gap-4 py-6">
+                                    {[TAROT_CARDS[1], TAROT_CARDS[2], TAROT_CARDS[5]].map((card, i) => {
+                                        const rotations = [-8, 0, 8];
+                                        const yOffsets = [8, 0, 8];
+                                        return (
+                                            <div key={`story-card-${i}`} className="relative transition-transform duration-500" style={{
+                                                transform: `rotate(${rotations[i]}deg) translateY(${yOffsets[i]}px)`,
+                                            }}>
+                                                <div className="w-[80px] h-[132px] sm:w-[92px] sm:h-[150px] md:w-[105px] md:h-[172px] rounded-lg overflow-hidden" style={{
+                                                    border: '1.5px solid rgba(212, 175, 55, 0.2)',
+                                                    boxShadow: i === 1
+                                                        ? '0 12px 30px rgba(0,0,0,0.5), 0 0 25px rgba(135, 95, 175, 0.25)'
+                                                        : '0 8px 20px rgba(0,0,0,0.4), 0 0 15px rgba(135, 95, 175, 0.1)',
+                                                }}>
+                                                    <img src={card.imageUrl} alt={card.name_pt} className="w-full h-full object-cover" loading="lazy" />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
                     </div>
