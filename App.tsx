@@ -908,11 +908,11 @@ const Home = () => {
                 <div className="absolute -right-32 bottom-10 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-purple-600/10 to-transparent blur-3xl pointer-events-none"></div>
 
                 <div className="max-w-[1300px] mx-auto relative">
-                    <div className="text-center mb-10 md:mb-14">
+                    <div className="mb-10 md:mb-14 md:text-left px-2">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Por que o Tarot?' : 'Why Tarot?'}
                         </h2>
-                        <p className="text-gray-400 text-base md:text-lg lg:text-xl font-light max-w-2xl mx-auto leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <p className="text-gray-400 text-base md:text-lg lg:text-xl font-light max-w-2xl leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
                             {isPortuguese
                                 ? 'Para quem busca autoconhecimento, clareza e equilíbrio, o Tarot é uma ferramenta de reflexão profunda — um ritual diário que conecta você à sua intuição.'
                                 : 'For those seeking self-knowledge, clarity and balance, Tarot is a tool for deep reflection — a daily ritual that connects you to your intuition.'}
