@@ -16,6 +16,8 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
+    const { profile } = useAuth();
+    const isAdmin = Boolean(profile?.is_admin);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
 
@@ -54,6 +56,11 @@ const Header = () => {
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
+                            {isAdmin && (
+                                <button onClick={() => navigate('/admin')} className={`text-sm font-medium transition-colors ${isActive('/admin') ? 'text-yellow-400' : 'text-yellow-500/70 hover:text-yellow-400'}`}>
+                                    Admin
+                                </button>
+                            )}
                         </nav>
 
                         <div className="flex items-center gap-4 sm:gap-6">
@@ -78,6 +85,9 @@ const Header = () => {
                             <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
+                            {isAdmin && (
+                                <button onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10">Admin</button>
+                            )}
                         </nav>
                     )}
                 </div>
@@ -134,6 +144,7 @@ export const TarotPorSigno = () => {
     const { isPortuguese } = useLanguage();
     const { tier, profile } = useAuth();
     const isPremium = tier === 'premium';
+    const isAdmin = Boolean(profile?.is_admin);
 
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -591,7 +602,7 @@ export const TarotPorSigno = () => {
                                         : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
                                         }`}
                                 >
-                                    <span className={`text-sm font-medium ${isCurrentSign ? 'text-yellow-400' : 'text-gray-400'}`}>
+                                    <span className={`text-sm font-medium text-gradient-gold`}>
                                         {isPortuguese ? data.name.pt : data.name.en}
                                     </span>
                                 </button>

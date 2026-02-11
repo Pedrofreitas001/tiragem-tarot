@@ -107,8 +107,8 @@ export const CashFlowChartGeneric: React.FC<Props> = ({
 
     return (
         <div className={`${isDark ? 'bg-card-dark border-border-dark' : 'bg-white border-gray-200'} border rounded-2xl p-6 shadow-lg flex flex-col h-full w-full overflow-hidden`}>
-            <div className="flex justify-between items-center mb-4 shrink-0">
-                <h3 className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold text-base`}>{title}</h3>
+            <div className="flex flex-col items-center justify-center mb-4 shrink-0 w-full">
+                <h3 className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold text-base w-full text-center`}>{title}</h3>
             </div>
             <div className="flex-1 w-full min-h-0 flex flex-col overflow-x-auto">
                 <div className="flex-1 min-h-0 min-w-[400px]">

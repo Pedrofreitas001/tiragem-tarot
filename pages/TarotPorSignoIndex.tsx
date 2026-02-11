@@ -60,6 +60,8 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
+    const { profile } = useAuth();
+    const isAdmin = Boolean(profile?.is_admin);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
 
@@ -69,9 +71,9 @@ const Header = () => {
 
     return (
         <>
-            <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
+            <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark min-h-[88px]">
                 <div className="flex flex-col w-full max-w-[1200px]">
-                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
+                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-6 lg:px-10 lg:py-7">
                         <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
                             <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>
@@ -98,6 +100,11 @@ const Header = () => {
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
+                            {isAdmin && (
+                                <button onClick={() => navigate('/admin')} className={`text-sm font-medium transition-colors ${isActive('/admin') ? 'text-yellow-400' : 'text-yellow-500/70 hover:text-yellow-400'}`}>
+                                    Admin
+                                </button>
+                            )}
                         </nav>
 
                         <div className="flex items-center gap-4 sm:gap-6">
@@ -122,6 +129,9 @@ const Header = () => {
                             <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
+                            {isAdmin && (
+                                <button onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10">Admin</button>
+                            )}
                         </nav>
                     )}
                 </div>
@@ -195,6 +205,14 @@ export const TarotPorSignoIndex = () => {
         navigate(route);
     };
 
+    // Inverter gemeos e libra na ordem
+    const zodiacOrderSwapped = [...ZODIAC_ORDER];
+    const idxGemeos = zodiacOrderSwapped.indexOf('gemeos');
+    const idxLibra = zodiacOrderSwapped.indexOf('libra');
+    if (idxGemeos !== -1 && idxLibra !== -1) {
+        [zodiacOrderSwapped[idxGemeos], zodiacOrderSwapped[idxLibra]] = [zodiacOrderSwapped[idxLibra], zodiacOrderSwapped[idxGemeos]];
+    }
+
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden" style={{
             backgroundColor: '#1a1628',
@@ -215,7 +233,8 @@ export const TarotPorSignoIndex = () => {
                 <div className="container mx-auto px-4 relative z-10">
                     {/* Hero Section */}
                     <div className="text-center mb-8 max-w-3xl mx-auto">
-                        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-medium tracking-wide text-gradient-gold drop-shadow-lg mb-4">
+                        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-medium tracking-wide text-gradient-gold drop-shadow-lg mb-4"
+                            style={{ lineHeight: 1.25 }}>
                             {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
                         </h1>
                         <p className="text-gray-300 text-base md:text-lg font-light leading-relaxed">
@@ -226,9 +245,9 @@ export const TarotPorSignoIndex = () => {
                     </div>
 
                     {/* Grid de signos com ícones */}
-                    <div className="max-w-6xl mx-auto">
+                    <div className="max-w-6xl mx-auto mt-12 md:mt-20">
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                            {ZODIAC_ORDER.map((sign) => {
+                            {zodiacOrderSwapped.map((sign) => {
                                 const signData = ZODIAC_SIGNS[sign];
                                 const iconPath = SIGN_ICONS[sign];
                                 const elementColors = ELEMENT_LIGHT_COLORS[signData.element];
@@ -244,18 +263,16 @@ export const TarotPorSignoIndex = () => {
                                             <img
                                                 src={iconPath}
                                                 alt={signData.name.pt}
-                                                className="w-full h-full object-contain opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-300"
+                                                className={`w-full h-full object-contain opacity-98 group-hover:opacity-100 group-hover:scale-103 transition-all duration-300${sign === 'gemeos' ? ' translate-x-[2.5px]' : ''}`}
+                                                style={{ filter: 'contrast(1.01) brightness(1.01) drop-shadow(0 0 0.5px #fff2)', ...(sign === 'gemeos' ? { marginLeft: '2.5px' } : {}) }}
                                             />
                                         </div>
 
                                         {/* Nome e data no rodapé */}
                                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1a1424]/90 via-[#1a1424]/70 to-transparent pt-8 pb-4 px-3 text-center">
-                                            <h3 className="text-white text-base md:text-lg font-semibold tracking-wide mb-1 drop-shadow-md">
+                                            <h3 className="text-base md:text-lg font-semibold tracking-wide mb-1 drop-shadow-md text-gradient-gold">
                                                 {isPortuguese ? signData.name.pt : signData.name.en}
                                             </h3>
-                                            <p className={`${elementColors.textDate} text-xs md:text-sm font-light`}>
-                                                {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
-                                            </p>
                                         </div>
 
                                         {/* Borda interna brilhante */}
@@ -268,7 +285,7 @@ export const TarotPorSignoIndex = () => {
 
                     {/* CTA para criar conta */}
                     {isGuest && (
-                        <div className="max-w-md mx-auto mt-14 md:mt-16 bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-purple-500/10 border border-purple-500/20 rounded-xl p-4 text-center">
+                        <div className="max-w-xl mx-auto mt-14 md:mt-16 bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-purple-500/10 border border-purple-500/20 rounded-xl px-8 py-4 text-center">
                             <p className="text-gray-300 text-sm mb-3">
                                 {isPortuguese
                                     ? 'Crie sua conta para acessar automaticamente o tarot do seu signo.'

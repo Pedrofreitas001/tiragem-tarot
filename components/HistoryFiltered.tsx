@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { ExecutiveDREGeneric } from './Charts/ExecutiveDREGeneric';
 import { CashFlowChartGeneric } from './Charts/CashFlowChartGeneric';
+import Spinner from './Spinner';
 
 interface Reading {
     id: number;
@@ -280,6 +281,9 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
 
     const maxFrequency = Math.max(...frequencyData.map(d => d.total), 1);
 
+    // Loading state: true if readings is undefined/null or still fetching
+    const isLoading = !readings || (Array.isArray(readings) && readings.length === 0 && filteredReadings.length === 0);
+
     return (
         <div className="space-y-8">
             {/* Filters Toggle Button */}
@@ -411,7 +415,16 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                     {isPortuguese ? 'Análise de Leituras' : 'Reading Analysis'}
                 </h3>
 
-                {frequencyData.length === 0 ? (
+                {isLoading ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="h-[350px] flex items-center justify-center bg-white/5 rounded-lg border border-white/10">
+                            <Spinner />
+                        </div>
+                        <div className="h-[350px] flex items-center justify-center bg-white/5 rounded-lg border border-white/10">
+                            <Spinner />
+                        </div>
+                    </div>
+                ) : frequencyData.length === 0 ? (
                     <div className="text-center text-gray-400 py-8">
                         {isPortuguese ? 'Nenhuma leitura encontrada' : 'No readings found'}
                     </div>
@@ -441,10 +454,10 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                             });
 
                             return (
-                                <div className="h-[250px] overflow-hidden">
+                                <div className="h-[350px] overflow-hidden">
                                     <ExecutiveDREGeneric
                                         items={dreItems}
-                                        title={isPortuguese ? 'Visão Executiva' : 'Executive View'}
+                                        title={<span className="text-gradient-gold bg-clip-text text-transparent flex justify-center text-center w-full">{isPortuguese ? 'Visão Geral' : 'General View'}</span>}
                                         dark={true}
                                     />
                                 </div>
@@ -459,10 +472,10 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                             }));
 
                             return (
-                                <div className="h-[250px] overflow-hidden">
+                                <div className="h-[350px] overflow-hidden">
                                     <CashFlowChartGeneric
                                         data={chartData}
-                                        title={isPortuguese ? 'Jogadas por Dia' : 'Spreads per Day'}
+                                        title={<span className="text-gradient-gold bg-clip-text text-transparent flex justify-center text-center w-full">{isPortuguese ? 'Jogadas por Dia' : 'Spreads per Day'}</span>}
                                         dark={true}
                                         barColor="#b555ef"
                                         barLabel={isPortuguese ? 'Jogadas' : 'Spreads'}

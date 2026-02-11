@@ -23,9 +23,9 @@ export const ExecutiveDREGeneric: React.FC<Props> = ({ items, title = 'Visão Ex
 
     return (
         <div className={`${isDark ? 'bg-card-dark border-border-dark' : 'bg-white border-gray-200'} border rounded-2xl p-6 shadow-lg flex flex-col h-full w-full`}>
-            <div className="flex justify-between items-center mb-4 shrink-0">
-                <h3 className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold text-base`}>{title}</h3>
-                <span className={`text-[9px] ${isDark ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider font-bold`}>Proporcional</span>
+            <div className="flex flex-col items-center justify-center mb-4 shrink-0 w-full">
+                <h3 className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold text-base w-full text-center`}>{title}</h3>
+                <span className={`text-[9px] ${isDark ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider font-bold mt-1`}>Proporcional</span>
             </div>
 
             <div className="flex flex-col gap-2 justify-center flex-1 pr-1">

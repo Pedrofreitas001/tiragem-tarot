@@ -4244,7 +4244,7 @@ const Session = () => {
                                     </div>
                                     <span className="uppercase tracking-widest text-[9px] md:text-[10px] font-bold text-primary text-center">
                                         {isPortuguese
-                                            ? (spread.positions[idx]?.name_pt || positionName)
+                                            ? (spread.positions[idx] && (spread.positions[idx] as any).name_pt ? (spread.positions[idx] as any).name_pt : positionName)
                                             : positionName
                                         }
                                     </span>

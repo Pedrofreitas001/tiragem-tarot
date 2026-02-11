@@ -5,14 +5,17 @@ import { SPREADS } from '../constants';
 import { Spread } from '../types';
 import { UserMenu } from '../components/UserMenu';
 import { PaywallModal, usePaywall } from '../components/PaywallModal';
-import { useAuth } from '../contexts/AuthContext';
 import { AuthModal } from '../components/AuthModal';
 
 // Inline components since they're in App.tsx
+import { useAuth } from '../contexts/AuthContext';
+// ...existing code...
 const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
+    const { profile } = useAuth();
+    const isAdmin = Boolean(profile?.is_admin);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
@@ -49,6 +52,11 @@ const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
+                            {isAdmin && (
+                                <button onClick={() => navigate('/admin')} className={`text-sm font-medium transition-colors ${isActive('/admin') ? 'text-yellow-400' : 'text-yellow-500/70 hover:text-yellow-400'}`}>
+                                    Admin
+                                </button>
+                            )}
                         </nav>
 
                         <div className="flex items-center gap-4 sm:gap-6">
