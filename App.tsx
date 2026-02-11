@@ -627,12 +627,8 @@ const Home = () => {
                                 <div className="relative rounded-2xl overflow-hidden" style={{
                                     background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 40%, #1a1628 100%)',
                                     boxShadow: '0 30px 60px -15px rgba(0,0,0,0.6), 0 0 40px rgba(100, 60, 160, 0.15), inset 0 1px 0 0 rgba(255,255,255,0.06)',
-                                    border: '1px solid rgba(135, 95, 175, 0.15)'
+                                    border: '1.5px solid rgba(212, 175, 55, 0.3)'
                                 }}>
-                                    {/* Gold border accent top */}
-                                    <div className="absolute top-0 left-0 right-0 h-[1px]" style={{
-                                        background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent)'
-                                    }}></div>
 
                                     {/* Header */}
                                     <div className="flex items-center justify-between px-5 pt-4 pb-3">
@@ -711,10 +707,6 @@ const Home = () => {
                                         </div>
                                     </div>
 
-                                    {/* Gold border accent bottom */}
-                                    <div className="absolute bottom-0 left-0 right-0 h-[1px]" style={{
-                                        background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.25), transparent)'
-                                    }}></div>
                                 </div>
                             </div>
                             {/* Discrete button to Carta do Dia */}
