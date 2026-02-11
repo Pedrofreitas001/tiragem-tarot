@@ -710,57 +710,95 @@ const Home = () => {
                         <p className="text-gray-400 text-lg md:text-xl max-w-xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>{t.home.chooseReadingSubtitle}</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 px-2 relative z-10">
-                        {SPREADS.map((spread) => {
-                            const translation = getSpreadTranslation(spread.id);
-                            const spreadImages: Record<string, string> = {
-                                'three_card': '/images/spreads/three_card.png',
-                                'celtic_cross': '/images/spreads/celtic_cross.png',
-                                'love_check': '/images/spreads/love_check.png',
-                                'yes_no': '/images/spreads/yes_no.png',
-                                'card_of_day': '/images/spreads/card_of_day.png',
-                            };
-                            return (
-                                <div
-                                    key={spread.id}
-                                    onClick={() => handleSelectSpread(spread)}
-                                    className="group relative flex flex-col h-[300px] md:h-[340px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
-                                >
-                                    {/* Background Image with subtle Zoom */}
+                    <div className="px-2 relative z-10">
+                        {/* Top row: 3 spreads */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                            {SPREADS.slice(0, 3).map((spread) => {
+                                const translation = getSpreadTranslation(spread.id);
+                                const spreadImages: Record<string, string> = {
+                                    'three_card': '/images/spreads/three_card.png',
+                                    'celtic_cross': '/images/spreads/celtic_cross.png',
+                                    'love_check': '/images/spreads/love_check.png',
+                                    'yes_no': '/images/spreads/yes_no.png',
+                                    'card_of_day': '/images/spreads/card_of_day.png',
+                                };
+                                const isPopular = spread.id === 'three_card' || spread.id === 'card_of_day';
+                                return (
                                     <div
-                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                                        style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }}
-                                    />
-
-                                    {/* Gradient Overlay - Dark red to purple */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d14] via-[#1a0f1e]/90 to-transparent group-hover:via-[#1a0f1e]/70 transition-colors duration-500" />
-
-                                    {/* Content */}
-                                    <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col justify-end">
-                                        <div className="flex flex-col gap-3">
-                                            <div className="flex items-center gap-2">
-                                                <span className="px-2.5 py-1 rounded-md bg-gradient-to-r from-[#875faf] to-[#a77fd4] backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10 shadow-lg shadow-purple-900/30">
-                                                    {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
-                                                </span>
+                                        key={spread.id}
+                                        onClick={() => handleSelectSpread(spread)}
+                                        className="group relative flex flex-col h-[300px] md:h-[340px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
+                                    >
+                                        {isPopular && (
+                                            <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-red-500/90 backdrop-blur-sm text-white text-[9px] font-bold uppercase tracking-wider shadow-lg">
+                                                +{isPortuguese ? 'mais popular' : 'most popular'}
                                             </div>
-
-                                            <h3 className="text-white text-2xl md:text-3xl font-bold tracking-tight">
-                                                {translation.name}
-                                            </h3>
-
-                                            <p className="text-gray-300 text-sm md:text-base leading-relaxed opacity-90">
-                                                {translation.description}
-                                            </p>
-
-                                            <div className="mt-3 flex items-center text-[#a77fd4] group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
-                                                {t.home.start}
-                                                <span className="material-symbols-outlined text-[18px] ml-2 transform group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                                        )}
+                                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }} />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d14] via-[#1a0f1e]/90 to-transparent group-hover:via-[#1a0f1e]/70 transition-colors duration-500" />
+                                        <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col justify-end">
+                                            <div className="flex flex-col gap-3">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="px-2.5 py-1 rounded-md bg-gradient-to-r from-[#875faf] to-[#a77fd4] backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10 shadow-lg shadow-purple-900/30">
+                                                        {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
+                                                    </span>
+                                                </div>
+                                                <h3 className="text-white text-2xl md:text-3xl font-bold tracking-tight">{translation.name}</h3>
+                                                <p className="text-gray-300 text-sm md:text-base leading-relaxed opacity-90">{translation.description}</p>
+                                                <div className="mt-3 flex items-center text-[#a77fd4] group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
+                                                    {t.home.start}
+                                                    <span className="material-symbols-outlined text-[18px] ml-2 transform group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
+                        {/* Bottom row: 2 spreads centered */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6 md:max-w-[66.666%] md:mx-auto">
+                            {SPREADS.slice(3).map((spread) => {
+                                const translation = getSpreadTranslation(spread.id);
+                                const spreadImages: Record<string, string> = {
+                                    'three_card': '/images/spreads/three_card.png',
+                                    'celtic_cross': '/images/spreads/celtic_cross.png',
+                                    'love_check': '/images/spreads/love_check.png',
+                                    'yes_no': '/images/spreads/yes_no.png',
+                                    'card_of_day': '/images/spreads/card_of_day.png',
+                                };
+                                const isPopular = spread.id === 'three_card' || spread.id === 'card_of_day';
+                                return (
+                                    <div
+                                        key={spread.id}
+                                        onClick={() => handleSelectSpread(spread)}
+                                        className="group relative flex flex-col h-[300px] md:h-[340px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
+                                    >
+                                        {isPopular && (
+                                            <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-red-500/90 backdrop-blur-sm text-white text-[9px] font-bold uppercase tracking-wider shadow-lg">
+                                                +{isPortuguese ? 'mais popular' : 'most popular'}
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }} />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d14] via-[#1a0f1e]/90 to-transparent group-hover:via-[#1a0f1e]/70 transition-colors duration-500" />
+                                        <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col justify-end">
+                                            <div className="flex flex-col gap-3">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="px-2.5 py-1 rounded-md bg-gradient-to-r from-[#875faf] to-[#a77fd4] backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10 shadow-lg shadow-purple-900/30">
+                                                        {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
+                                                    </span>
+                                                </div>
+                                                <h3 className="text-white text-2xl md:text-3xl font-bold tracking-tight">{translation.name}</h3>
+                                                <p className="text-gray-300 text-sm md:text-base leading-relaxed opacity-90">{translation.description}</p>
+                                                <div className="mt-3 flex items-center text-[#a77fd4] group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
+                                                    {t.home.start}
+                                                    <span className="material-symbols-outlined text-[18px] ml-2 transform group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             </section>
@@ -1373,15 +1411,13 @@ const Home = () => {
                     <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                         {ZODIAC_ORDER.map((slug) => {
                             const sign = ZODIAC_SIGNS[slug];
-                            const elementColor = ELEMENT_COLORS[sign.element];
                             return (
                                 <button
                                     key={slug}
                                     onClick={() => navigate(isPortuguese ? `/tarot-por-signo/${slug}` : `/tarot-by-sign/${slug}`)}
-                                    className={`group flex flex-col items-center gap-2 py-4 px-2 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 transition-all duration-200 hover:scale-[1.04]`}
+                                    className="group flex items-center justify-center py-4 px-2 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-yellow-500/30 transition-all duration-200 hover:scale-[1.04]"
                                 >
-                                    <span className={`text-2xl md:text-3xl ${elementColor.primary}`}>{sign.symbol}</span>
-                                    <span className="text-xs font-medium text-gray-300 group-hover:text-white transition-colors">
+                                    <span className="text-sm md:text-base font-semibold text-gradient-gold tracking-wide group-hover:opacity-90 transition-opacity" style={{ fontFamily: "'Crimson Text', serif" }}>
                                         {isPortuguese ? sign.name.pt : sign.name.en}
                                     </span>
                                 </button>
