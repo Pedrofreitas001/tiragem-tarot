@@ -1289,7 +1289,7 @@ const Home = () => {
             </section>
 
             {/* WhatsApp Daily Card Subscription Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-[#110e1a] pb-32 md:pb-48 lg:pb-64">
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 pb-32 md:pb-48 lg:pb-64" style={{ backgroundColor: '#1a1628' }}>
                 <style>{`
                     .home-glass-card {
                         background: rgba(255, 255, 255, 0.04);
