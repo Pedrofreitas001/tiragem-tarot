@@ -228,6 +228,23 @@ const Header = () => {
                 </div>
             </header>
 
+            {/* Promotional Banner - Home only */}
+            {isActive('/') && (
+                <div
+                    className="w-full bg-red-700/90 cursor-pointer overflow-hidden sticky top-[45px] sm:top-[49px] lg:top-[56px] z-[39]"
+                    onClick={() => navigate('/checkout')}
+                >
+                    <div className="flex animate-marquee whitespace-nowrap py-1.5">
+                        {Array.from({ length: 16 }).map((_, i) => (
+                            <span key={i} className="text-white text-[11px] font-medium mx-8 tracking-wide flex-shrink-0">
+                                Assine o Premium com 15% de desconto
+                                <span className="mx-4 text-white/40">✦</span>
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Mobile Drawer Menu */}
             {mobileMenuOpen && (
                 <div className="fixed inset-0 z-50 md:hidden">
