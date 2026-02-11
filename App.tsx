@@ -895,7 +895,7 @@ const Home = () => {
             </section>
 
             {/* Reflective Journey Section */}
-            <section className="relative z-10 pt-16 md:pt-20 pb-20 md:pb-28 px-4 md:px-6" style={{ backgroundColor: '#1a1628' }}>
+            <section className="relative z-10 pt-28 md:pt-40 pb-20 md:pb-28 px-4 md:px-6" style={{ backgroundColor: '#1a1628' }}>
                 {/* Purple blur background - like spreads section */}
                 <div className="absolute -left-40 top-10 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="absolute -right-32 bottom-10 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-purple-600/10 to-transparent blur-3xl pointer-events-none"></div>
@@ -1319,16 +1319,81 @@ const Home = () => {
                         </p>
                     </div>
 
-                    {/* Form Card + Feature Circles */}
-                    <div className="flex flex-col lg:flex-row items-start gap-6 md:gap-8 lg:gap-10 relative">
-                        {/* Cosmic Flame Background - menos intenso e mais baixo */}
-                        <div className="absolute -left-40 -top-36 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
-                        <div className="absolute -left-32 -top-28 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
+                    {/* Gallery - Example Daily Card Downloads */}
+                    <div className="mb-16 md:mb-24 relative">
+                        {/* Purple flame blur behind gallery */}
+                        <div className="absolute -left-32 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/18 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -right-24 top-16 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-pink-500/12 to-transparent blur-3xl pointer-events-none"></div>
 
-                        {/* Form Card - Left Side */}
-                        <div className="home-glass-card w-full lg:flex-1 rounded-xl sm:rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
-                            {/* Form Content */}
-                            <div className="flex-1 p-6 lg:p-12 order-2 lg:order-1">
+                        {/* Cards Layout - Center card elevated */}
+                        <div className="flex items-end justify-center gap-4 md:gap-6 lg:gap-8 relative z-10">
+                            {[
+                                { name: 'O Mundo', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg', vibracao: 'Completude e plenitude', significado: 'O Mundo representa a conclusão de um ciclo, a integração e a realização plena.', energia: 'Harmonia universal e gratidão profunda.', mantra: 'Eu celebro minha jornada.', featured: false },
+                                { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.', featured: true },
+                                { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.', featured: false },
+                            ].map((card) => (
+                                <div key={card.name} className={`relative group transition-all duration-500 ${card.featured ? 'w-[150px] sm:w-[180px] md:w-[220px] lg:w-[240px] -mb-2' : 'w-[120px] sm:w-[145px] md:w-[175px] lg:w-[195px] opacity-85'}`}>
+                                    <div className={`rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
+                                        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
+                                        border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
+                                    }}>
+                                        {/* Header */}
+                                        <div className="flex items-center justify-between px-2.5 pt-2.5 pb-1.5">
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-yellow-400/80 text-[7px]">✦</span>
+                                                <span className="text-gray-100/90 text-[7px] md:text-[8px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
+                                            </div>
+                                            <p className="text-gray-300/60 text-[6px] md:text-[7px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</p>
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
+                                        {/* Card Image */}
+                                        <div className="flex justify-center py-3 px-4">
+                                            <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${card.featured ? 'w-[75px] h-[120px] sm:w-[90px] sm:h-[143px] md:w-[110px] md:h-[175px] lg:w-[120px] lg:h-[190px]' : 'w-[58px] h-[93px] sm:w-[72px] sm:h-[115px] md:w-[88px] md:h-[140px] lg:w-[95px] lg:h-[152px]'}`} loading="lazy" />
+                                        </div>
+                                        {/* Card Name */}
+                                        <p className={`font-bold text-white text-center ${card.featured ? 'text-[11px] md:text-xs' : 'text-[9px] md:text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
+                                        {/* Vibração */}
+                                        <p className={`italic text-center px-2 mb-2 ${card.featured ? 'text-[7px] md:text-[8px]' : 'text-[6px] md:text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
+                                        {/* Significado */}
+                                        <div className="bg-white/5 rounded mx-2.5 px-2 py-1.5 mb-1.5">
+                                            <p className={`text-gray-300 leading-snug text-center ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`}>{card.significado}</p>
+                                        </div>
+                                        {/* Energia */}
+                                        <div className="flex items-start gap-1.5 px-2.5 mb-2">
+                                            <span className="text-[6px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
+                                            <div>
+                                                <span className={`font-semibold uppercase tracking-wide ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`} style={{ color: '#d4af37' }}>Energia</span>
+                                                <p className={`text-gray-300 leading-snug ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`}>{card.energia}</p>
+                                            </div>
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="mx-2.5 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1.5"></div>
+                                        {/* Mantra */}
+                                        <div className="px-2.5 pb-2.5 text-center">
+                                            <p className={`font-semibold uppercase tracking-wide mb-1 ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`} style={{ color: '#d4af37' }}>Mantra do Dia</p>
+                                            <div className="bg-white/5 rounded px-2 py-1.5 border border-yellow-500/15">
+                                                <p className={`italic ${card.featured ? 'text-[7px] md:text-[8px]' : 'text-[6px] md:text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
+                                            </div>
+                                        </div>
+                                        {/* Footer */}
+                                        <p className="text-gray-500 text-[6px] tracking-wider text-center pb-2">zayatarot.com</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Form Card with Key Features */}
+                    <div className="relative">
+                        {/* Cosmic Flame Background */}
+                        <div className="absolute -left-40 -top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -right-32 -top-10 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
+
+                        <div className="home-glass-card w-full max-w-4xl mx-auto rounded-xl sm:rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative">
+                            <div className="flex flex-col lg:flex-row items-stretch">
+                                {/* Form Content - Left */}
+                                <div className="flex-1 p-6 lg:p-10">
                                 <header className="mb-6 text-center lg:text-left">
                                     <h3 className="font-display text-2xl md:text-3xl text-white mb-4 leading-tight">
                                         {isPortuguese ? 'Cadastre-se Agora' : 'Sign Up Now'}
@@ -1514,255 +1579,53 @@ const Home = () => {
                                 </form>
                             </div>
 
-                            {/* iPhone Mockup - WhatsApp Style */}
-                            <div className="lg:w-[380px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-3 sm:p-6 lg:p-10 order-1 lg:order-2 relative overflow-hidden">
-                                <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
-                                <div className="relative z-10">
-                                    {/* iPhone Frame */}
-                                    <div className="relative w-[140px] sm:w-[180px] md:w-[220px] h-[295px] sm:h-[380px] md:h-[460px] bg-black rounded-[1.5rem] sm:rounded-[2rem] lg:rounded-[2.5rem] p-[5px] sm:p-[6px] lg:p-[8px] shadow-[0_0_50px_rgba(168,85,247,0.25),0_20px_40px_rgba(0,0,0,0.5)]">
-                                        {/* Dynamic Island */}
-                                        <div className="absolute top-1 sm:top-1.5 md:top-2 left-1/2 -translate-x-1/2 w-12 sm:w-16 md:w-20 h-2.5 sm:h-3.5 md:h-5 bg-black rounded-full z-10"></div>
-
-                                        {/* Screen */}
-                                        <div className="w-full h-full rounded-[2rem] overflow-hidden bg-[#0b141a] flex flex-col">
-                                            {/* Status Bar */}
-                                            <div className="h-6 bg-[#0b141a] flex items-center justify-between px-4 pt-1 flex-shrink-0">
-                                                <span className="text-white text-[9px] font-semibold">9:41</span>
-                                                <div className="flex items-center gap-[2px] sm:gap-[3px]">
-                                                    <svg className="w-[9px] sm:w-[12px] h-[7px] sm:h-[9px] text-white" viewBox="0 0 18 12" fill="currentColor">
-                                                        <rect x="0" y="8" width="3" height="4" rx="0.5" />
-                                                        <rect x="4" y="5" width="3" height="7" rx="0.5" />
-                                                        <rect x="8" y="2" width="3" height="10" rx="0.5" />
-                                                        <rect x="12" y="0" width="3" height="12" rx="0.5" />
-                                                    </svg>
-                                                    <div className="flex items-center">
-                                                        <div className="w-[16px] sm:w-[20px] h-[7px] sm:h-[9px] border border-white rounded-[2px] flex items-center p-[1px]">
-                                                            <div className="w-[10px] sm:w-[14px] h-[3px] sm:h-[5px] bg-white rounded-[1px]"></div>
-                                                        </div>
-                                                        <div className="w-[1px] h-[2px] sm:h-[3px] bg-white rounded-r ml-[1px]"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* WhatsApp Header */}
-                                            <div className="bg-[#1f2c34] px-1 sm:px-1.5 md:px-2 py-0.5 sm:py-1 flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
-                                                <svg className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                                </svg>
-                                                <div className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-                                                    <span className="material-symbols-outlined text-white text-[6px] sm:text-[8px] md:text-[10px]">auto_awesome</span>
-                                                </div>
-                                                <div className="flex-1 ml-0.5 sm:ml-1">
-                                                    <h4 className="text-white text-[7px] sm:text-[9px] md:text-[10px] font-medium leading-tight">Zaya Tarot</h4>
-                                                    <p className="text-emerald-400 text-[6px] sm:text-[7px] md:text-[8px]">online</p>
-                                                </div>
-                                                <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
-                                                    <svg className="w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M17 12c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm3 7h-2v2h-2v-2h-2v-2h2v-2h2v2h2v2zM18 6c0-1.1-.9-2-2-2H8C5.79 4 4 5.79 4 8v10c0 1.1.9 2 2 2h5c0-.73.1-1.43.28-2.1-.34.06-.69.1-1.05.1-2.79 0-5.06-2.27-5.06-5.06 0-1.51.66-2.86 1.71-3.78L12 3.97l5.12 5.19c.5.44.88 1 1.09 1.62.55-.5 1.17-.91 1.85-1.22C20.02 8.42 20 7.22 20 6h-2z" />
-                                                    </svg>
-                                                    <svg className="w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-
-                                            {/* Chat Background Pattern - flex-1 to fill remaining space */}
-                                            <div className="flex-1 relative overflow-hidden" style={{
-                                                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                                                backgroundColor: '#0b141a'
-                                            }}>
-                                                <div className="absolute inset-0 p-1.5 sm:p-2 overflow-hidden flex flex-col items-start">
-                                                    {/* Message Bubble - Vertical Layout */}
-                                                    <div className="max-w-[95%] bg-[#1f2c34] rounded-lg rounded-tl-none shadow-lg overflow-hidden">
-                                                        {/* Card Image - Smaller */}
-                                                        <div className="p-1 sm:p-1.5 md:p-2">
-                                                            <div className="relative rounded-md overflow-hidden">
-                                                                <img
-                                                                    alt="Sacerdotisa"
-                                                                    className="w-16 sm:w-24 md:w-32 h-20 sm:h-32 md:h-44 object-cover object-center"
-                                                                    src="/sarcedo.jpg"
-                                                                    onError={handleImageError}
-                                                                />
-                                                            </div>
-                                                        </div>
-
-                                                        {/* Message Text - Below Image */}
-                                                        <div className="px-1 sm:px-1.5 md:px-2 pb-1 sm:pb-1.5 md:pb-2">
-                                                            <p className="text-white/90 text-[5px] sm:text-[6px] md:text-[8px] leading-relaxed font-normal">
-                                                                <span className="font-semibold text-yellow-400 text-[6px] sm:text-[7px] md:text-[9px]">{cardName}</span>
-                                                                <br /><br />
-                                                                {isPortuguese
-                                                                    ? 'Bom dia! Sua carta de hoje traz uma mensagem especial sobre novos caminhos.'
-                                                                    : 'Good morning! Your card today brings a special message about new paths.'}
-                                                            </p>
-                                                            <div className="flex items-center justify-end gap-0.5 mt-0.5">
-                                                                <span className="text-[3px] md:text-[7px] text-gray-400">08:00</span>
-                                                                <svg className="w-1 md:w-3 h-1 md:h-2 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                                                    <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" />
-                                                                </svg>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Input Bar - at very bottom */}
-                                            <div className="bg-[#1f2c34] px-1.5 py-1.5 sm:px-2 sm:py-1.5 md:px-2 md:py-1.5 flex items-center gap-1 sm:gap-1.5 md:gap-2 flex-shrink-0">
-                                                <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
-                                                </svg>
-                                                <div className="flex-1 bg-[#2a3942] rounded-full h-5 sm:h-6 md:h-7 px-2 sm:px-2.5 md:px-3 flex items-center min-w-0">
-                                                    <span className="text-gray-500 text-[6px] sm:text-[8px] md:text-[10px] truncate">
-                                                        {isPortuguese ? 'Mensagem' : 'Message'}
-                                                    </span>
-                                                </div>
-                                                <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
-                                                </svg>
-                                            </div>
-                                        </div>
-
-                                        {/* Home Indicator */}
-                                        <div className="hidden md:block absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/30 rounded-full"></div>
+                            {/* Key Features - Right Side */}
+                            <div className="lg:w-[340px] bg-white/[0.02] border-l border-white/5 p-6 lg:p-8 flex flex-col justify-center gap-6">
+                                {/* Feature 1 */}
+                                <div className="flex items-start gap-4 group">
+                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
+                                        <span className="material-symbols-outlined text-yellow-500 text-xl">auto_awesome</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            {isPortuguese ? 'Personalizada' : 'Personalized'}
+                                        </h4>
+                                        <p className="text-gray-400 text-xs leading-relaxed">
+                                            {isPortuguese ? 'Cada carta é interpretada com inteligência artificial para trazer insights únicos.' : 'Each card is interpreted with AI to bring unique insights.'}
+                                        </p>
                                     </div>
                                 </div>
-
-                                {/* Decorative Elements */}
-                                <div className="absolute top-4 sm:top-6 md:top-8 right-4 sm:right-6 md:right-8 text-primary/20 block md:block">
-                                    <span className="material-symbols-outlined text-3xl sm:text-4xl md:text-5xl">stars</span>
+                                {/* Feature 2 */}
+                                <div className="flex items-start gap-4 group">
+                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-purple-500/15 to-purple-600/5 border border-purple-500/20 flex items-center justify-center group-hover:border-purple-500/40 transition-all">
+                                        <span className="material-symbols-outlined text-purple-400 text-xl">schedule</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
+                                        </h4>
+                                        <p className="text-gray-400 text-xs leading-relaxed">
+                                            {isPortuguese ? 'Escolha o melhor horário: manhã, tarde ou noite para receber sua mensagem.' : 'Choose the best time: morning, afternoon or evening to receive your message.'}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-4 sm:left-6 md:left-8 text-yellow-500/20 block md:block">
-                                    <span className="material-symbols-outlined text-4xl sm:text-5xl md:text-6xl">auto_awesome</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Circular Cards - Right Side */}
-                        <div className="hidden lg:flex flex-col items-center gap-4 md:gap-5 lg:gap-6 mt-12 lg:mt-20">
-                            {/* Card 1 - Circular */}
-                            <div className="flex flex-col items-center gap-3 group">
-                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
-                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">auto_awesome</span>
-                                </div>
-                                <div className="text-center">
-                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                        {isPortuguese ? 'Personalizada' : 'Personalized'}
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Card 2 - Circular */}
-                            <div className="flex flex-col items-center gap-3 group">
-                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
-                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">schedule</span>
-                                </div>
-                                <div className="text-center">
-                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                        {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Card 3 - Circular */}
-                            <div className="flex flex-col items-center gap-3 group">
-                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
-                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">chat</span>
-                                </div>
-                                <div className="text-center">
-                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                        {isPortuguese ? 'WhatsApp' : 'WhatsApp'}
-                                    </h3>
+                                {/* Feature 3 */}
+                                <div className="flex items-start gap-4 group">
+                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-green-500/15 to-green-600/5 border border-green-500/20 flex items-center justify-center group-hover:border-green-500/40 transition-all">
+                                        <span className="material-symbols-outlined text-green-400 text-xl">chat</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            {isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}
+                                        </h4>
+                                        <p className="text-gray-400 text-xs leading-relaxed">
+                                            {isPortuguese ? 'Receba diretamente no seu WhatsApp com imagem e interpretação completa.' : 'Receive directly on your WhatsApp with image and full interpretation.'}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    {/* Gallery - Example Daily Card Downloads */}
-                    <div className="mt-20 md:mt-28 relative">
-                        {/* Purple flame blur behind gallery */}
-                        <div className="absolute -left-32 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/18 to-transparent blur-3xl pointer-events-none"></div>
-                        <div className="absolute -right-24 top-16 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-pink-500/12 to-transparent blur-3xl pointer-events-none"></div>
-
-                        <div className="text-center mb-10 md:mb-14 relative z-10">
-                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-normal text-gradient-gold-home mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Sua Carta, Todos os Dias' : 'Your Card, Every Day'}
-                            </h3>
-                            <p className="text-gray-400 text-sm md:text-base font-light tracking-wide max-w-lg mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                {isPortuguese ? 'Veja como são as cartas que você recebe diariamente no WhatsApp.' : 'See what the daily cards you receive on WhatsApp look like.'}
-                            </p>
-                        </div>
-
-                        {/* Cards Layout - Center card elevated */}
-                        <div className="flex items-end justify-center gap-4 md:gap-6 lg:gap-8 relative z-10">
-                            {[
-                                { name: 'O Mundo', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg', vibracao: 'Completude e plenitude', significado: 'O Mundo representa a conclusão de um ciclo, a integração e a realização plena.', energia: 'Harmonia universal e gratidão profunda.', mantra: 'Eu celebro minha jornada.', featured: false },
-                                { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.', featured: true },
-                                { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.', featured: false },
-                            ].map((card) => (
-                                <div key={card.name} className={`relative group transition-all duration-500 ${card.featured ? 'w-[140px] sm:w-[170px] md:w-[200px] -mb-2' : 'w-[115px] sm:w-[140px] md:w-[165px] opacity-85'}`}>
-                                    <div className={`rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
-                                        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
-                                        border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
-                                    }}>
-                                        {/* Header */}
-                                        <div className="flex items-center justify-between px-2.5 pt-2.5 pb-1.5">
-                                            <div className="flex items-center gap-1">
-                                                <span className="text-yellow-400/80 text-[7px]">✦</span>
-                                                <span className="text-gray-100/90 text-[7px] md:text-[8px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
-                                            </div>
-                                            <p className="text-gray-300/60 text-[6px] md:text-[7px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</p>
-                                        </div>
-                                        {/* Divider */}
-                                        <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
-                                        {/* Card Image */}
-                                        <div className="flex justify-center py-3 px-4">
-                                            <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${card.featured ? 'w-[70px] h-[110px] sm:w-[85px] sm:h-[135px] md:w-[100px] md:h-[158px]' : 'w-[55px] h-[88px] sm:w-[68px] sm:h-[108px] md:w-[80px] md:h-[128px]'}`} loading="lazy" />
-                                        </div>
-                                        {/* Card Name */}
-                                        <p className={`font-bold text-white text-center ${card.featured ? 'text-[11px] md:text-xs' : 'text-[9px] md:text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
-                                        {/* Vibração */}
-                                        <p className={`italic text-center px-2 mb-2 ${card.featured ? 'text-[7px] md:text-[8px]' : 'text-[6px] md:text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
-                                        {/* Significado */}
-                                        <div className="bg-white/5 rounded mx-2.5 px-2 py-1.5 mb-1.5">
-                                            <p className={`text-gray-300 leading-snug text-center ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`}>{card.significado}</p>
-                                        </div>
-                                        {/* Energia */}
-                                        <div className="flex items-start gap-1.5 px-2.5 mb-2">
-                                            <span className="text-[6px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
-                                            <div>
-                                                <span className={`font-semibold uppercase tracking-wide ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`} style={{ color: '#d4af37' }}>Energia</span>
-                                                <p className={`text-gray-300 leading-snug ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`}>{card.energia}</p>
-                                            </div>
-                                        </div>
-                                        {/* Divider */}
-                                        <div className="mx-2.5 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1.5"></div>
-                                        {/* Mantra */}
-                                        <div className="px-2.5 pb-2.5 text-center">
-                                            <p className={`font-semibold uppercase tracking-wide mb-1 ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`} style={{ color: '#d4af37' }}>Mantra do Dia</p>
-                                            <div className="bg-white/5 rounded px-2 py-1.5 border border-yellow-500/15">
-                                                <p className={`italic ${card.featured ? 'text-[7px] md:text-[8px]' : 'text-[6px] md:text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
-                                            </div>
-                                        </div>
-                                        {/* Footer */}
-                                        <p className="text-gray-500 text-[6px] tracking-wider text-center pb-2">zayatarot.com</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* CTA Button */}
-                        <div className="text-center mt-10 md:mt-14 relative z-10">
-                            <button
-                                onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')}
-                                className="group relative px-8 py-3 bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1"
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
-                                <span className="relative z-10 text-white font-bold text-xs tracking-wide flex items-center justify-center gap-2">
-                                    {isPortuguese ? 'Descubra sua Carta do Dia' : 'Discover your Daily Card'}
-                                    <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                </span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </section>
