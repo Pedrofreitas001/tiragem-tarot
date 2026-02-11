@@ -71,9 +71,9 @@ const Header = () => {
 
     return (
         <>
-            <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark min-h-[88px]">
+            <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
                 <div className="flex flex-col w-full max-w-[1200px]">
-                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-6 lg:px-10 lg:py-7">
+                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-4 lg:px-10 lg:py-5">
                         <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
                             <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>
@@ -245,8 +245,8 @@ export const TarotPorSignoIndex = () => {
                     </div>
 
                     {/* Grid de signos com ícones */}
-                    <div className="max-w-6xl mx-auto mt-12 md:mt-20">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                    <div className="max-w-5xl mx-auto mt-10 md:mt-16">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
                             {zodiacOrderSwapped.map((sign) => {
                                 const signData = ZODIAC_SIGNS[sign];
                                 const iconPath = SIGN_ICONS[sign];
@@ -256,7 +256,7 @@ export const TarotPorSignoIndex = () => {
                                     <button
                                         key={sign}
                                         onClick={() => handleSignClick(sign)}
-                                        className={`group relative overflow-hidden rounded-2xl bg-gradient-to-b ${elementColors.bg} ${elementColors.border} aspect-square transition-all duration-300 ${elementColors.hoverBorder} hover:scale-[1.03] hover:shadow-xl ${elementColors.shadow}`}
+                                        className={`group relative overflow-hidden rounded-2xl bg-gradient-to-b ${elementColors.bg} ${elementColors.border} aspect-square transition-all duration-200 ${elementColors.hoverBorder} hover:scale-[1.02]`}
                                     >
                                         {/* Ícone do signo centralizado - menor com mais padding */}
                                         <div className="absolute inset-0 flex items-center justify-center p-10 md:p-12 pb-16 md:pb-20">

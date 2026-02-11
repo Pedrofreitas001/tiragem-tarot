@@ -590,17 +590,17 @@ const Home = () => {
                             </div>
 
                             {/* Subtle feature badges */}
-                            <div className="flex flex-wrap gap-4 pt-2 justify-center lg:justify-start">
-                                <div className="flex items-center gap-1.5 text-gray-500 text-[10px] md:text-xs">
-                                    <span className="material-symbols-outlined text-green-500/70 text-sm">chat</span>
+                            <div className="flex flex-wrap gap-5 pt-3 justify-center lg:justify-start">
+                                <div className="flex items-center gap-2 text-gray-400 text-xs md:text-sm">
+                                    <span className="material-symbols-outlined text-green-500/70 text-base">chat</span>
                                     <span>{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
                                 </div>
-                                <div className="flex items-center gap-1.5 text-gray-500 text-[10px] md:text-xs">
-                                    <span className="material-symbols-outlined text-purple-400/70 text-sm">all_inclusive</span>
+                                <div className="flex items-center gap-2 text-gray-400 text-xs md:text-sm">
+                                    <span className="material-symbols-outlined text-purple-400/70 text-base">all_inclusive</span>
                                     <span>{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
                                 </div>
-                                <div className="flex items-center gap-1.5 text-gray-500 text-[10px] md:text-xs">
-                                    <span className="material-symbols-outlined text-yellow-500/70 text-sm">history</span>
+                                <div className="flex items-center gap-2 text-gray-400 text-xs md:text-sm">
+                                    <span className="material-symbols-outlined text-yellow-500/70 text-base">history</span>
                                     <span>{isPortuguese ? 'Histórico da sua jornada' : 'Your journey history'}</span>
                                 </div>
                             </div>
@@ -743,7 +743,7 @@ const Home = () => {
                                     <div
                                         key={spread.id}
                                         onClick={() => handleSelectSpread(spread)}
-                                        className="group relative flex flex-col h-[300px] md:h-[340px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
+                                        className="group relative flex flex-col h-[260px] md:h-[290px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
                                     >
                                         {isPopular && (
                                             <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-red-500/90 backdrop-blur-sm text-white text-[9px] font-bold uppercase tracking-wider shadow-lg">
@@ -787,7 +787,7 @@ const Home = () => {
                                     <div
                                         key={spread.id}
                                         onClick={() => handleSelectSpread(spread)}
-                                        className="group relative flex flex-col h-[300px] md:h-[340px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
+                                        className="group relative flex flex-col h-[260px] md:h-[290px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
                                     >
                                         {isPopular && (
                                             <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-red-500/90 backdrop-blur-sm text-white text-[9px] font-bold uppercase tracking-wider shadow-lg">
@@ -820,7 +820,7 @@ const Home = () => {
             </section>
 
             {/* Features Presentation Section */}
-            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/5 to-background-dark overflow-hidden">
+            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
                 {/* Decorative Stars */}
                 <div className="absolute inset-0 pointer-events-none">
                     {/* Around Image - Top */}
@@ -1017,7 +1017,7 @@ const Home = () => {
             </section>
 
             {/* WhatsApp Daily Card Subscription Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/5 to-background-dark pb-32 md:pb-48 lg:pb-64">
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-[#110e1a] pb-32 md:pb-48 lg:pb-64">
                 <style>{`
                     .home-glass-card {
                         background: rgba(255, 255, 255, 0.04);
@@ -1061,7 +1061,7 @@ const Home = () => {
                         <div className="absolute -left-32 -top-28 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
 
                         {/* Form Card - Left Side */}
-                        <div className="home-glass-card w-full lg:flex-1 rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
+                        <div className="home-glass-card w-full lg:flex-1 rounded-xl sm:rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
                             {/* Form Content */}
                             <div className="flex-1 p-6 lg:p-12 order-2 lg:order-1">
                                 <header className="mb-6 text-center lg:text-left">
@@ -1415,7 +1415,7 @@ const Home = () => {
             </section>
 
             {/* Tarot por Signo - Quick Access Section */}
-            <section className="relative z-10 py-16 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/5 to-background-dark">
+            <section className="relative z-10 py-16 md:py-20 px-4 md:px-6 bg-[#110e1a]">
                 <div className="max-w-5xl mx-auto">
                     <div className="text-center mb-10">
                         <h2 className="text-3xl md:text-4xl font-normal text-gradient-gold mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
