@@ -153,7 +153,7 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                     </div>
 
                                     {/* Imagem da Carta */}
-                                    <div className="flex justify-center mb-3">
+                                    <div className="flex justify-center mt-2 mb-4">
                                         {imageBase64 ? (
                                             <img
                                                 src={imageBase64}
@@ -184,9 +184,7 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                                 fontFamily: "'Crimson Text', serif",
                                             }}
                                         >
-                                            "{aiSynthesis.vibração_universal.length > 50
-                                                ? aiSynthesis.vibração_universal.substring(0, 50) + '...'
-                                                : aiSynthesis.vibração_universal}"
+                                            "{aiSynthesis.vibração_universal}"
                                         </p>
                                     )}
 
@@ -194,9 +192,7 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                     {aiSynthesis?.significado_carta && (
                                         <div className="bg-white/5 rounded-lg px-3 py-2 mb-2">
                                             <p className="text-gray-300 text-[10px] leading-snug text-center">
-                                                {aiSynthesis.significado_carta.length > 180
-                                                    ? aiSynthesis.significado_carta.substring(0, 180) + '...'
-                                                    : aiSynthesis.significado_carta}
+                                                {aiSynthesis.significado_carta}
                                             </p>
                                         </div>
                                     )}
@@ -218,9 +214,7 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                                     Energia
                                                 </span>
                                                 <p className="text-gray-300 text-[9px] leading-snug mt-0.5">
-                                                    {aiSynthesis.energia_emocional.length > 150
-                                                        ? aiSynthesis.energia_emocional.substring(0, 150) + '...'
-                                                        : aiSynthesis.energia_emocional}
+                                                    {aiSynthesis.energia_emocional}
                                                 </p>
                                             </div>
                                         </div>
@@ -246,9 +240,7 @@ export const CardImageExport = ({ card, aiSynthesis, isPortuguese }: CardImageEx
                                                         color: '#d4af37'
                                                     }}
                                                 >
-                                                    "{aiSynthesis.mantra_diário.length > 80
-                                                        ? aiSynthesis.mantra_diário.substring(0, 80) + '...'
-                                                        : aiSynthesis.mantra_diário}"
+                                                    "{aiSynthesis.mantra_diário}"
                                                 </p>
                                             </div>
                                         </>

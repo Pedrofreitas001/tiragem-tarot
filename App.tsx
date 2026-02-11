@@ -764,7 +764,7 @@ const Home = () => {
             </section>
 
             {/* Spread Selection - Premium Cards Style */}
-            <section id="spreads" className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-6 relative overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
+            <section id="spreads" className="pt-24 md:pt-32 pb-0 md:pb-0 px-4 md:px-6 relative" style={{ backgroundColor: '#1a1628' }}>
                 <div className="max-w-[1200px] mx-auto relative">
                     {/* Cosmic Flame Background - Positioned lower */}
                     <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
@@ -895,7 +895,7 @@ const Home = () => {
             </section>
 
             {/* Reflective Journey Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
+            <section className="relative z-10 pt-16 md:pt-20 pb-20 md:pb-28 px-4 md:px-6" style={{ backgroundColor: '#1a1628' }}>
                 {/* Purple blur background - like spreads section */}
                 <div className="absolute -left-40 top-10 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="absolute -right-32 bottom-10 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-purple-600/10 to-transparent blur-3xl pointer-events-none"></div>
@@ -1674,6 +1674,71 @@ const Home = () => {
                                     </h3>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Gallery - Example Daily Card Downloads */}
+                    <div className="mt-16 md:mt-20">
+                        <div className="text-center mb-8">
+                            <p className="text-gray-400 text-sm md:text-base font-light tracking-wide" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                {isPortuguese ? 'Exemplos de cartas que você recebe diariamente' : 'Examples of cards you receive daily'}
+                            </p>
+                        </div>
+                        <div className="flex items-center justify-center gap-3 md:gap-5 lg:gap-6">
+                            {[
+                                { name: 'O Mundo', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg', vibracao: 'Completude e plenitude', significado: 'O Mundo representa a conclusão de um ciclo, a integração e a realização plena.', energia: 'Harmonia universal e gratidão profunda.', mantra: 'Eu celebro minha jornada.' },
+                                { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.' },
+                                { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.' },
+                            ].map((card, idx) => (
+                                <div key={card.name} className={`relative w-[105px] sm:w-[130px] md:w-[155px] group ${idx === 1 ? '-mt-3' : ''}`}>
+                                    <div className="rounded-xl overflow-hidden shadow-lg shadow-black/30 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-purple-500/15" style={{
+                                        background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 40%, #1a1628 100%)',
+                                        border: '1px solid rgba(212, 175, 55, 0.2)',
+                                    }}>
+                                        {/* Header */}
+                                        <div className="flex items-center justify-between px-2 pt-2 pb-1">
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-yellow-400/80 text-[6px]">✦</span>
+                                                <span className="text-gray-100/90 text-[6px] md:text-[7px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
+                                            </div>
+                                            <p className="text-gray-300/60 text-[5px] md:text-[6px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</p>
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="mx-2 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.2), transparent)' }}></div>
+                                        {/* Card Image */}
+                                        <div className="flex justify-center py-2 px-3">
+                                            <img src={card.img} alt={card.name} className="w-[50px] h-[80px] sm:w-[60px] sm:h-[95px] md:w-[70px] md:h-[110px] object-cover rounded shadow-lg border border-yellow-500/20" loading="lazy" />
+                                        </div>
+                                        {/* Card Name */}
+                                        <p className="text-[9px] md:text-[10px] font-bold text-white text-center" style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
+                                        {/* Vibração */}
+                                        <p className="text-[6px] md:text-[7px] italic text-center px-2 mb-1.5" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
+                                        {/* Significado */}
+                                        <div className="bg-white/5 rounded mx-2 px-1.5 py-1 mb-1">
+                                            <p className="text-gray-300 text-[5px] md:text-[6px] leading-snug text-center">{card.significado}</p>
+                                        </div>
+                                        {/* Energia */}
+                                        <div className="flex items-start gap-1 px-2 mb-1.5">
+                                            <span className="text-[5px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
+                                            <div>
+                                                <span className="text-[5px] md:text-[6px] font-semibold uppercase tracking-wide" style={{ color: '#d4af37' }}>Energia</span>
+                                                <p className="text-gray-300 text-[5px] md:text-[6px] leading-snug">{card.energia}</p>
+                                            </div>
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="mx-2 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1"></div>
+                                        {/* Mantra */}
+                                        <div className="px-2 pb-2 text-center">
+                                            <p className="text-[5px] md:text-[6px] font-semibold uppercase tracking-wide mb-0.5" style={{ color: '#d4af37' }}>Mantra do Dia</p>
+                                            <div className="bg-white/5 rounded px-1.5 py-1 border border-yellow-500/15">
+                                                <p className="text-[6px] md:text-[7px] italic" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
+                                            </div>
+                                        </div>
+                                        {/* Footer */}
+                                        <p className="text-gray-500 text-[5px] tracking-wider text-center pb-1.5">zayatarot.com</p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
