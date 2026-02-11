@@ -609,12 +609,16 @@ const Home = () => {
                                     <span className="material-symbols-outlined text-yellow-500/80 text-lg">history</span>
                                     <span>{isPortuguese ? 'Histórico da sua jornada' : 'Your journey history'}</span>
                                 </div>
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                    <span className="material-symbols-outlined text-blue-400/80 text-lg">auto_awesome</span>
+                                    <span>{isPortuguese ? 'Interpretação completa' : 'Complete interpretation'}</span>
+                                </div>
                             </div>
                         </div>
 
                         {/* Right Column - Floating Carta do Dia Mockup */}
                         <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4 gap-5">
-                            <div className="hero-daily-card relative w-[260px] sm:w-[270px] md:w-[300px] lg:w-[320px]">
+                            <div className="hero-daily-card relative w-[260px] sm:w-[270px] md:w-[340px] lg:w-[380px]">
                                 {/* Subtle stars around the card */}
                                 <div className="hero-star-1 absolute -top-4 -left-6 text-yellow-300/30 text-[10px]">✦</div>
                                 <div className="hero-star-2 absolute -top-2 right-4 text-purple-300/25 text-xs">✦</div>
