@@ -281,8 +281,101 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
 
     const maxFrequency = Math.max(...frequencyData.map(d => d.total), 1);
 
-    // Loading state: true if readings is undefined/null or still fetching
+    // Chart navigation and aggregation
+    const [chartMonthOffset, setChartMonthOffset] = useState(0);
+    const [chartAggregation, setChartAggregation] = useState<'daily' | 'monthly'>('daily');
+    const [chartsReady, setChartsReady] = useState(false);
+
+    // Check if data spans multiple months
+    const hasMultipleMonths = useMemo(() => {
+        const months = new Set<string>();
+        filteredReadings.forEach(r => {
+            try {
+                if (r.date.includes('T')) {
+                    const d = new Date(r.date);
+                    months.add(`${d.getFullYear()}-${d.getMonth()}`);
+                } else if (r.date.includes('/')) {
+                    const parts = r.date.split(',')[0].trim().split('/');
+                    if (parts.length >= 2) months.add(`${parts[2] || new Date().getFullYear()}-${parts[1]}`);
+                }
+            } catch { }
+        });
+        return months.size > 1;
+    }, [filteredReadings]);
+
+    // Monthly aggregation data
+    const monthlyFrequencyData = useMemo(() => {
+        if (filteredReadings.length === 0) return [];
+        const shortMonthNames = isPortuguese
+            ? ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+            : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthMap: Record<string, { types: Record<string, number>, sort: number }> = {};
+        filteredReadings.forEach(reading => {
+            try {
+                let d: Date;
+                if (reading.date.includes('T')) {
+                    d = new Date(reading.date);
+                } else if (reading.date.includes('/')) {
+                    const parts = reading.date.split(',')[0].trim().split('/');
+                    d = new Date(parseInt(parts[2] || String(new Date().getFullYear())), parseInt(parts[1]) - 1, parseInt(parts[0]));
+                } else return;
+                const key = `${shortMonthNames[d.getMonth()]}/${String(d.getFullYear()).slice(2)}`;
+                const sort = d.getFullYear() * 12 + d.getMonth();
+                if (!monthMap[key]) monthMap[key] = { types: {}, sort };
+                const spreadType = spreadCanonicalMap[reading.typeBadge || 'Unknown'] || (reading.typeBadge || 'Unknown');
+                monthMap[key].types[spreadType] = (monthMap[key].types[spreadType] || 0) + 1;
+            } catch { }
+        });
+        return Object.entries(monthMap)
+            .sort(([, a], [, b]) => a.sort - b.sort)
+            .map(([month, data]) => ({
+                day: month,
+                total: Object.values(data.types).reduce((a, b) => a + b, 0),
+                breakdown: data.types,
+            }));
+    }, [filteredReadings, isPortuguese]);
+
+    // Paginated daily frequency data with month scroll
+    const navigableDailyData = useMemo(() => {
+        if (frequencyData.length === 0) return { data: [], totalPages: 0, currentPage: 0 };
+        const pageSize = 7;
+        const totalPages = Math.ceil(frequencyData.length / pageSize);
+        // chartMonthOffset: 0 = latest page, -1 = previous, etc.
+        const page = Math.max(0, Math.min(totalPages - 1 + chartMonthOffset, totalPages - 1));
+        // frequencyData is already sorted oldest→newest, so page 0 = oldest
+        const latestPage = totalPages - 1;
+        const targetPage = latestPage + chartMonthOffset;
+        const clampedPage = Math.max(0, Math.min(targetPage, latestPage));
+        const start = clampedPage * pageSize;
+        return { data: frequencyData.slice(start, start + pageSize), totalPages, currentPage: clampedPage };
+    }, [frequencyData, chartMonthOffset]);
+
+    // Reset offset on filter change
+    useEffect(() => { setChartMonthOffset(0); }, [filteredReadings]);
+
+    // Loading animation delay
+    useEffect(() => {
+        setChartsReady(false);
+        const timer = setTimeout(() => setChartsReady(true), 500);
+        return () => clearTimeout(timer);
+    }, [filteredReadings]);
+
+    const activeChartData = chartAggregation === 'monthly' ? monthlyFrequencyData : navigableDailyData.data;
+
+    // Loading state
     const isLoading = !readings || (Array.isArray(readings) && readings.length === 0 && filteredReadings.length === 0);
+
+    // Chart skeleton
+    const ChartSkeleton = () => (
+        <div className="h-[350px] bg-white/5 rounded-2xl border border-white/10 p-6">
+            <div className="h-4 w-28 bg-white/10 rounded mb-6 mx-auto animate-pulse" />
+            <div className="flex items-end justify-center gap-4 h-[250px] pt-4">
+                {[40, 65, 50, 80, 35, 55, 70].map((h, i) => (
+                    <div key={i} className="w-5 rounded-t bg-white/10 animate-pulse" style={{ height: `${h}%`, animationDelay: `${i * 120}ms` }} />
+                ))}
+            </div>
+        </div>
+    );
 
     return (
         <div className="space-y-8">
@@ -409,31 +502,47 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                 </div>
             )}
 
-            {/* New Charts - Dashboard Style - Side by Side */}
+            {/* Charts - Dashboard Style */}
             <div className="space-y-4">
-                <h3 className="text-white font-semibold text-sm uppercase tracking-widest opacity-70">
-                    {isPortuguese ? 'Análise de Leituras' : 'Reading Analysis'}
-                </h3>
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                    <h3 className="text-white font-semibold text-sm uppercase tracking-widest opacity-70">
+                        {isPortuguese ? 'Análise de Leituras' : 'Reading Analysis'}
+                    </h3>
 
-                {isLoading ? (
+                    {/* Aggregation toggle - show only when multiple months */}
+                    {hasMultipleMonths && (
+                        <div className="flex items-center gap-1 bg-white/5 rounded-lg border border-white/10 p-0.5">
+                            <button
+                                onClick={() => { setChartAggregation('daily'); setChartMonthOffset(0); }}
+                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${chartAggregation === 'daily' ? 'bg-[#875faf] text-white' : 'text-gray-400 hover:text-white'}`}
+                            >
+                                {isPortuguese ? 'Diário' : 'Daily'}
+                            </button>
+                            <button
+                                onClick={() => setChartAggregation('monthly')}
+                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${chartAggregation === 'monthly' ? 'bg-[#875faf] text-white' : 'text-gray-400 hover:text-white'}`}
+                            >
+                                {isPortuguese ? 'Mensal' : 'Monthly'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {(isLoading || !chartsReady) ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div className="h-[350px] flex items-center justify-center bg-white/5 rounded-lg border border-white/10">
-                            <Spinner />
-                        </div>
-                        <div className="h-[350px] flex items-center justify-center bg-white/5 rounded-lg border border-white/10">
-                            <Spinner />
-                        </div>
+                        <ChartSkeleton />
+                        <ChartSkeleton />
                     </div>
                 ) : frequencyData.length === 0 ? (
                     <div className="text-center text-gray-400 py-8">
                         {isPortuguese ? 'Nenhuma leitura encontrada' : 'No readings found'}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 transition-opacity duration-500" style={{ opacity: chartsReady ? 1 : 0 }}>
                         {/* DRE Chart - Categories Distribution */}
                         {(() => {
                             const dreItems = spreadTypeOptions.map((option) => {
-                                const total = frequencyData.reduce((sum, day) => sum + (day.breakdown[option.key] || 0), 0);
+                                const total = activeChartData.reduce((sum, day) => sum + (day.breakdown[option.key] || 0), 0);
                                 const colorMap: Record<string, string> = {
                                     'DIÁRIA': '#fbbf24',
                                     'DAILY': '#fbbf24',
@@ -464,25 +573,47 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                             );
                         })()}
 
-                        {/* Cards Quantity Chart - Daily Count */}
-                        {(() => {
-                            const chartData = frequencyData.map((day) => ({
-                                label: day.day,
-                                quantity: day.total,
-                            }));
+                        {/* Cards Quantity Chart - Daily/Monthly Count */}
+                        <div className="h-[350px] overflow-hidden relative">
+                            {/* Month navigation arrows for daily view */}
+                            {chartAggregation === 'daily' && navigableDailyData.totalPages > 1 && (
+                                <div className="absolute top-2 right-4 z-10 flex items-center gap-2">
+                                    <button
+                                        onClick={() => setChartMonthOffset(prev => Math.max(prev - 1, -(navigableDailyData.totalPages - 1)))}
+                                        disabled={navigableDailyData.currentPage <= 0}
+                                        className="p-1 rounded-md bg-white/5 border border-white/10 text-gray-400 hover:text-white disabled:opacity-30 transition-all"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">chevron_left</span>
+                                    </button>
+                                    <span className="text-gray-500 text-[10px]">
+                                        {navigableDailyData.currentPage + 1}/{navigableDailyData.totalPages}
+                                    </span>
+                                    <button
+                                        onClick={() => setChartMonthOffset(prev => Math.min(prev + 1, 0))}
+                                        disabled={chartMonthOffset >= 0}
+                                        className="p-1 rounded-md bg-white/5 border border-white/10 text-gray-400 hover:text-white disabled:opacity-30 transition-all"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">chevron_right</span>
+                                    </button>
+                                </div>
+                            )}
+                            {(() => {
+                                const chartData = activeChartData.map((day) => ({
+                                    label: day.day,
+                                    quantity: day.total,
+                                }));
 
-                            return (
-                                <div className="h-[350px] overflow-hidden">
+                                return (
                                     <CashFlowChartGeneric
                                         data={chartData}
-                                        title={<span className="text-gradient-gold bg-clip-text text-transparent flex justify-center text-center w-full">{isPortuguese ? 'Jogadas por Dia' : 'Spreads per Day'}</span>}
+                                        title={<span className="text-gradient-gold bg-clip-text text-transparent flex justify-center text-center w-full">{chartAggregation === 'monthly' ? (isPortuguese ? 'Jogadas por Mês' : 'Spreads per Month') : (isPortuguese ? 'Jogadas por Dia' : 'Spreads per Day')}</span>}
                                         dark={true}
                                         barColor="#b555ef"
                                         barLabel={isPortuguese ? 'Jogadas' : 'Spreads'}
                                     />
-                                </div>
-                            );
-                        })()}
+                                );
+                            })()}
+                        </div>
                     </div>
                 )}
             </div>
@@ -499,7 +630,6 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
         </div>
     );
 }, (prevProps, nextProps) => {
-    // Custom comparison for memo - return true if props are equal (skip render)
     return prevProps.readings === nextProps.readings &&
         prevProps.isPortuguese === nextProps.isPortuguese;
 });

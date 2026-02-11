@@ -1,115 +1,264 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-
-  <!-- Página Principal -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Home -->
   <url>
-    <loc>https://zayatarot.com/</loc>
-    <lastmod>2025-02-09</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://zayatarot.com/#/</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Carta do Dia -->
-  <url>
-    <loc>https://zayatarot.com/#/carta-do-dia</loc>
-    <lastmod>2025-02-09</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://zayatarot.com/#/daily-card</loc>
-    <lastmod>2025-02-09</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://zayatarot.com/#/daily-card"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://zayatarot.com/#/carta-do-dia"/>
-  </url>
-
-  <!-- Jogos de Tarot / Spreads -->
+  <!-- Main Sections -->
   <url>
     <loc>https://zayatarot.com/#/jogos-de-tarot</loc>
-    <lastmod>2025-02-09</lastmod>
+    <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zayatarot.com/#/spreads</loc>
-    <lastmod>2025-02-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://zayatarot.com/#/carta-do-dia</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
   </url>
-
-  <!-- Tarot por Signo -->
   <url>
     <loc>https://zayatarot.com/#/tarot-por-signo</loc>
-    <lastmod>2025-02-09</lastmod>
+    <lastmod>2026-02-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://zayatarot.com/#/tarot-by-sign</loc>
-    <lastmod>2025-02-09</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Arquivo Arcano / Card Meanings -->
-  <url>
-    <loc>https://zayatarot.com/#/arquivo-arcano</loc>
-    <lastmod>2025-02-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://zayatarot.com/#/arcane-archive</loc>
-    <lastmod>2025-02-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Interpretação -->
   <url>
     <loc>https://zayatarot.com/#/interpretacao</loc>
-    <lastmod>2025-02-09</lastmod>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Tarot por Signo - Individual Signs -->
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/aries</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/touro</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/gemeos</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/cancer</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/leao</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/virgem</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/libra</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/escorpiao</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/sagitario</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/capricornio</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/aquario</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/tarot-por-signo/peixes</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Arquivo Arcano - 22 Major Arcana Cards -->
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-louco</loc>
+    <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://zayatarot.com/#/interpretation</loc>
-    <lastmod>2025-02-09</lastmod>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-mago</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-a-sacerdotisa</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-a-imperatriz</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-imperador</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-hierofante</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-os-enamorados</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-carro</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-a-forca</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-eremita</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-a-roda-da-fortuna</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-a-justica</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-enforcado</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-a-morte</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-a-temperanca</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-diabo</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-a-torre</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-a-estrela</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-a-lua</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-sol</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-julgamento</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://zayatarot.com/#/arquivo-arcano/carta-o-mundo</loc>
+    <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- Histórico -->
+  <!-- Legal Pages -->
   <url>
-    <loc>https://zayatarot.com/#/history</loc>
-    <lastmod>2025-02-09</lastmod>
+    <loc>https://zayatarot.com/#/privacidade</loc>
+    <lastmod>2026-02-11</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Configurações -->
-  <url>
-    <loc>https://zayatarot.com/#/settings</loc>
-    <lastmod>2025-02-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://zayatarot.com/#/configuracoes</loc>
-    <lastmod>2025-02-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <loc>https://zayatarot.com/#/termos</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.3</priority>
   </url>
-
-  <!-- Checkout -->
-  <url>
-    <loc>https://zayatarot.com/#/checkout</loc>
-    <lastmod>2025-02-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
 </urlset>

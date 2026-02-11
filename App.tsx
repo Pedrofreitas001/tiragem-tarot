@@ -35,6 +35,7 @@ import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 import { TAROT_CARDS } from './tarotData';
+import { ZODIAC_SIGNS, ZODIAC_ORDER, ELEMENT_COLORS } from './data/zodiacData';
 
 // Extended CardLore with API description
 interface ExtendedCardLore extends CardLore {
@@ -163,13 +164,23 @@ const Header = () => {
 
     const exploreRoute = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
 
+    const mobileNavItems = [
+        { icon: 'home', label: t.nav.home, path: '/', active: isActive('/') },
+        { icon: 'style', label: t.nav.tarot, path: isPortuguese ? '/jogos-de-tarot' : '/spreads', active: false },
+        { icon: 'today', label: isPortuguese ? 'Carta do Dia' : 'Daily Card', path: isPortuguese ? '/carta-do-dia' : '/daily-card', active: isActive('/carta-do-dia') || isActive('/daily-card') },
+        { icon: 'stars', label: isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign', path: isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign', active: isActive('/tarot-por-signo') || isActive('/tarot-by-sign') },
+        { icon: 'menu_book', label: isPortuguese ? 'Interpretação' : 'Interpretation', path: isPortuguese ? '/interpretacao' : '/interpretation', active: isActive('/interpretacao') || isActive('/interpretation') },
+        { icon: 'auto_stories', label: t.nav.cardMeanings, path: exploreRoute, active: isActive('/explore') || isActive(exploreRoute) },
+        { icon: 'history', label: t.nav.history, path: '/history', active: isActive('/history') },
+    ];
+
     return (
         <>
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
-                <div className="flex flex-col w-full max-w-[1200px]">
-                    <div className="flex items-center justify-between whitespace-nowrap px-2 py-2 sm:px-4 sm:py-3 lg:px-10 lg:py-4 gap-2">
+                <div className="flex w-full max-w-[1200px]">
+                    <div className="flex items-center justify-between whitespace-nowrap w-full px-3 py-2.5 sm:px-4 sm:py-3 lg:px-10 lg:py-4 gap-2">
                         <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
-                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
+                            <h2 className="text-white text-base sm:text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>
 
                         <nav className="hidden md:flex items-center gap-8">
@@ -201,37 +212,58 @@ const Header = () => {
                             )}
                         </nav>
 
-                        <div className="flex items-center gap-4 sm:gap-6">
+                        <div className="flex items-center gap-3 sm:gap-6">
                             <LanguageToggle />
 
                             <UserMenu onLoginClick={() => setShowAuthModal(true)} />
 
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="md:hidden p-1.5 sm:p-2 rounded-lg hover:bg-white/5"
+                                className="md:hidden p-1.5 rounded-lg hover:bg-white/5"
                             >
-                                <span className="material-symbols-outlined text-white text-xl sm:text-2xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
+                                <span className="material-symbols-outlined text-white text-xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
                             </button>
                         </div>
                     </div>
-
-                    {/* Mobile Menu */}
-                    {mobileMenuOpen && (
-                        <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
-                            <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
-                            <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
-                            <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
-                            {isAdmin && (
-                                <button onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10">Admin</button>
-                            )}
-                        </nav>
-                    )}
                 </div>
             </header>
+
+            {/* Mobile Drawer Menu */}
+            {mobileMenuOpen && (
+                <div className="fixed inset-0 z-50 md:hidden">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+                    <nav className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-background-dark/98 backdrop-blur-xl border-l border-border-dark flex flex-col animate-slide-in-right">
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+                            <span className="text-white font-bold text-base">Menu</span>
+                            <button onClick={() => setMobileMenuOpen(false)} className="p-1 rounded-lg hover:bg-white/5">
+                                <span className="material-symbols-outlined text-gray-400 text-xl">close</span>
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto py-2 px-3">
+                            {mobileNavItems.map((item) => (
+                                <button
+                                    key={item.path}
+                                    onClick={() => { navigate(item.path); setMobileMenuOpen(false); }}
+                                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all ${item.active ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                                >
+                                    <span className="material-symbols-outlined text-lg">{item.icon}</span>
+                                    {item.label}
+                                </button>
+                            ))}
+                            {isAdmin && (
+                                <button
+                                    onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }}
+                                    className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all"
+                                >
+                                    <span className="material-symbols-outlined text-lg">admin_panel_settings</span>
+                                    Admin
+                                </button>
+                            )}
+                        </div>
+                    </nav>
+                </div>
+            )}
+
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </>
     );
@@ -312,6 +344,41 @@ const Home = () => {
     const { isPortuguese: langIsPortuguese } = useLanguage();
     const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium'>('premium');
     const [whatsappSubscribed, setWhatsappSubscribed] = useState(false);
+    const [pendingGuestReading, setPendingGuestReading] = useState<any>(null);
+    const [regeneratingReading, setRegeneratingReading] = useState(false);
+
+    // Check for pending guest reading after sign-up
+    useEffect(() => {
+        if (user && !isGuest) {
+            const guestReading = getGuestReading();
+            if (guestReading) {
+                setPendingGuestReading(guestReading);
+            }
+        }
+    }, [user, isGuest]);
+
+    const handleRegenerateReading = async () => {
+        if (!pendingGuestReading || !user) return;
+        setRegeneratingReading(true);
+        try {
+            // Navigate to result page with the saved guest reading data
+            const spread = SPREADS.find(s => s.id === pendingGuestReading.spreadType) || SPREADS[0];
+            clearGuestReading();
+            setPendingGuestReading(null);
+            navigate('/result', {
+                state: {
+                    spread,
+                    cards: pendingGuestReading.cards,
+                    question: pendingGuestReading.question || '',
+                    timestamp: Date.now(),
+                }
+            });
+        } catch (err) {
+            console.error('Error regenerating reading:', err);
+        } finally {
+            setRegeneratingReading(false);
+        }
+    };
 
     // Carregar status da inscrição do WhatsApp
     useEffect(() => {
@@ -382,6 +449,42 @@ const Home = () => {
         }}>
             <Header />
             <CartDrawer />
+
+            {/* Guest Reading Recovery Banner */}
+            {pendingGuestReading && user && !isGuest && (
+                <div className="relative z-20 mx-auto w-full max-w-[1200px] px-4 pt-4">
+                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-gradient-to-r from-amber-900/30 to-purple-900/30 border border-amber-500/20 rounded-xl px-5 py-4">
+                        <span className="material-symbols-outlined text-amber-400 text-2xl flex-shrink-0">auto_awesome</span>
+                        <div className="flex-1 text-center sm:text-left">
+                            <p className="text-white text-sm font-medium">
+                                {isPortuguese
+                                    ? 'Você tinha uma tiragem pendente! Deseja gerar a leitura completa com IA agora?'
+                                    : 'You had a pending reading! Would you like to generate the full AI reading now?'}
+                            </p>
+                        </div>
+                        <div className="flex gap-2 flex-shrink-0">
+                            <button
+                                onClick={handleRegenerateReading}
+                                disabled={regeneratingReading}
+                                className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white text-sm font-bold rounded-lg transition-all flex items-center gap-2 disabled:opacity-60"
+                            >
+                                {regeneratingReading ? (
+                                    <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                                ) : (
+                                    <span className="material-symbols-outlined text-sm">replay</span>
+                                )}
+                                {isPortuguese ? 'Gerar Leitura' : 'Generate Reading'}
+                            </button>
+                            <button
+                                onClick={() => { clearGuestReading(); setPendingGuestReading(null); }}
+                                className="px-3 py-2 text-gray-400 hover:text-white text-sm transition-colors"
+                            >
+                                {isPortuguese ? 'Dispensar' : 'Dismiss'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* <MinimalStarsBackground /> */}
 
@@ -1253,6 +1356,50 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Tarot por Signo - Quick Access Section */}
+            <section className="relative z-10 py-16 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/5 to-background-dark">
+                <div className="max-w-5xl mx-auto">
+                    <div className="text-center mb-10">
+                        <h2 className="text-3xl md:text-4xl font-normal text-gradient-gold mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
+                        </h2>
+                        <p className="text-gray-400 text-base max-w-xl mx-auto font-light">
+                            {isPortuguese
+                                ? 'Descubra as energias do tarot personalizadas para o seu signo hoje.'
+                                : 'Discover personalized tarot energies for your sign today.'}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+                        {ZODIAC_ORDER.map((slug) => {
+                            const sign = ZODIAC_SIGNS[slug];
+                            const elementColor = ELEMENT_COLORS[sign.element];
+                            return (
+                                <button
+                                    key={slug}
+                                    onClick={() => navigate(isPortuguese ? `/tarot-por-signo/${slug}` : `/tarot-by-sign/${slug}`)}
+                                    className={`group flex flex-col items-center gap-2 py-4 px-2 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 transition-all duration-200 hover:scale-[1.04]`}
+                                >
+                                    <span className={`text-2xl md:text-3xl ${elementColor.primary}`}>{sign.symbol}</span>
+                                    <span className="text-xs font-medium text-gray-300 group-hover:text-white transition-colors">
+                                        {isPortuguese ? sign.name.pt : sign.name.en}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    <div className="text-center mt-8">
+                        <button
+                            onClick={() => navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign')}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-white/10 text-sm text-gray-400 hover:text-white hover:border-white/20 transition-all"
+                        >
+                            {isPortuguese ? 'Ver todos os signos' : 'View all signs'}
+                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
 
             {/* Journey Section - A Jornada do Herói */}
             <div className="relative">
@@ -2203,6 +2350,38 @@ const CardDetails = () => {
     const [card, setCard] = useState<TarotCard | null>(null);
     const [lore, setLore] = useState<ExtendedCardLore | null>(null);
     const [isLoadingApi, setIsLoadingApi] = useState(true);
+
+    // SEO: Update document title and meta tags for card pages
+    useEffect(() => {
+        if (card) {
+            const cardName = getCardName(card.id, isPortuguese);
+            const title = isPortuguese
+                ? `${cardName} - Significado e Interpretação | Zaya Tarot`
+                : `${cardName} - Meaning & Interpretation | Zaya Tarot`;
+            const description = isPortuguese
+                ? `Descubra o significado completo da carta ${cardName} no tarot. Interpretação, simbolismo e orientações práticas.`
+                : `Discover the complete meaning of the ${cardName} tarot card. Interpretation, symbolism and practical guidance.`;
+
+            document.title = title;
+
+            // Update or create meta tags
+            const setMeta = (name: string, content: string, attr = 'name') => {
+                let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement;
+                if (!el) {
+                    el = document.createElement('meta');
+                    el.setAttribute(attr, name);
+                    document.head.appendChild(el);
+                }
+                el.content = content;
+            };
+            setMeta('description', description);
+            setMeta('og:title', title, 'property');
+            setMeta('og:description', description, 'property');
+            setMeta('og:type', 'article', 'property');
+            setMeta('og:image', card.imageUrl, 'property');
+        }
+        return () => { document.title = 'Zaya Tarot'; };
+    }, [card, isPortuguese]);
 
     useEffect(() => {
         const deck = generateDeck();
@@ -4490,9 +4669,15 @@ const Result = () => {
             // Declarar rawSynthesis no escopo correto
             let rawSynthesis: any = null;
 
-            // Se é guest, NÃO gerar síntese - apenas mostrar resultado sem salvar (PAYWALL)
+            // Se é guest, NÃO gerar síntese - salvar cartas para recuperação pós-cadastro
             if (!user) {
-                // Guest mode: mostrar resultado, sem síntese, sem salvar
+                // Save guest reading to localStorage for recovery after signup
+                saveGuestReading({
+                    spreadType: state.spread.id,
+                    cards: state.cards,
+                    question: state.question || '',
+                    createdAt: new Date().toISOString(),
+                });
                 setStructuredSynthesis(null);
                 setIsLoading(false);
                 return;

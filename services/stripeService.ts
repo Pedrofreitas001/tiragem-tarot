@@ -18,11 +18,13 @@
 
 export const STRIPE_CONFIG = {
     // Chave publicável do Stripe (carregada do ambiente em produção)
-    // Em desenvolvimento, usa a chave de teste diretamente
     publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51SvSCpQfequPVfiy4XTSkIDHUtTiC8ZyRD53eviQdDqvzXtThFcgSx5BsQsY0c6dWoV00UvyH5KnQi5QhxEuj95D0010SHywCt',
 
     // Product ID (para referência)
     productId: 'prod_TuEXZVRLRlGKSn',
+
+    // Price ID do plano premium (carregado do ambiente - OBRIGATÓRIO para checkout)
+    priceId: import.meta.env.VITE_STRIPE_PREMIUM_PRICE_ID || '',
 
     // Success and cancel URLs for Stripe Checkout (usa HashRouter)
     successUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/#/checkout/success?session_id={CHECKOUT_SESSION_ID}`,

@@ -113,7 +113,7 @@ export const CashFlowChartGeneric: React.FC<Props> = ({
             <div className="flex-1 w-full min-h-0 flex flex-col overflow-x-auto">
                 <div className="flex-1 min-h-0 min-w-[400px]">
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data} margin={{ top: 20, right: 10, left: -10, bottom: 5 }} barCategoryGap="10%">
+                        <BarChart data={data} margin={{ top: 20, right: 10, left: -10, bottom: 5 }} barCategoryGap="20%">
                             <CartesianGrid vertical={false} stroke={colors.gridStroke} strokeDasharray="3 3" />
                             <XAxis
                                 dataKey="label"
@@ -124,7 +124,7 @@ export const CashFlowChartGeneric: React.FC<Props> = ({
                                 tickFormatter={formatDayLabel}
                             />
                             <YAxis axisLine={false} tickLine={false} tick={{ fill: colors.tickFill, fontSize: 12 }} tickFormatter={formatYAxis} />
-                            <Bar dataKey="quantity" name={barLabel} fill={barColor} radius={[6, 6, 0, 0]} barSize={20} label={renderLabel} />
+                            <Bar dataKey="quantity" name={barLabel} fill={barColor} radius={[6, 6, 0, 0]} barSize={28} label={renderLabel} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
