@@ -586,7 +586,7 @@ const Home = () => {
                                 </button>
                                 <button
                                     onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
-                                    className="group px-6 py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-xs"
+                                    className="group px-4 py-2 md:px-6 md:py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-[10px] md:text-xs"
                                 >
                                     <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400">
                                         {isPortuguese ? 'Explorar o Arquivo Arcano' : 'Explore the Arcane Archive'}
@@ -652,7 +652,7 @@ const Home = () => {
                                     <div className="mx-5 h-[0.5px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.2), transparent)' }}></div>
 
                                     {/* Cards Area */}
-                                    <div className="relative px-5 py-6 flex items-center justify-center" style={{ minHeight: '200px' }}>
+                                    <div className="relative px-5 py-6 md:py-10 flex items-center justify-center" style={{ minHeight: '200px' }}>
                                         {/* Background constellation dots */}
                                         <div className="absolute inset-0 overflow-hidden">
                                             <div className="hero-star-1 absolute top-6 left-8 w-[2px] h-[2px] rounded-full bg-white/10"></div>
@@ -663,7 +663,7 @@ const Home = () => {
                                         </div>
 
                                         {/* 3 Tarot Cards in fan layout */}
-                                        <div className="relative flex items-center justify-center" style={{ height: '180px', width: '220px' }}>
+                                        <div className="relative flex items-center justify-center" style={{ height: '220px', width: '220px' }}>
                                             {heroCardIndices.map((cardIdx, i) => {
                                                 const card = TAROT_CARDS[cardIdx];
                                                 const rotations = [-12, 0, 12];
@@ -679,7 +679,7 @@ const Home = () => {
                                                             zIndex: zIndexes[i],
                                                         }}
                                                     >
-                                                        <div className="w-[80px] h-[130px] sm:w-[90px] sm:h-[146px] rounded-lg overflow-hidden shadow-lg" style={{
+                                                        <div className="w-[80px] h-[130px] sm:w-[90px] sm:h-[146px] md:w-[100px] md:h-[162px] rounded-lg overflow-hidden shadow-lg" style={{
                                                             border: '1.5px solid rgba(212, 175, 55, 0.25)',
                                                             boxShadow: i === 1
                                                                 ? '0 12px 30px rgba(0,0,0,0.5), 0 0 20px rgba(135, 95, 175, 0.15)'
@@ -764,7 +764,7 @@ const Home = () => {
             </section>
 
             {/* Spread Selection - Premium Cards Style */}
-            <section id="spreads" className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-6 relative" style={{ backgroundColor: '#1a1628' }}>
+            <section id="spreads" className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-6 relative overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
                 <div className="max-w-[1200px] mx-auto relative">
                     {/* Cosmic Flame Background - Positioned lower */}
                     <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
@@ -895,7 +895,7 @@ const Home = () => {
             </section>
 
             {/* Reflective Journey Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6" style={{ backgroundColor: '#1a1628' }}>
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
                 {/* Purple blur background - like spreads section */}
                 <div className="absolute -left-40 top-10 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="absolute -right-32 bottom-10 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-purple-600/10 to-transparent blur-3xl pointer-events-none"></div>
@@ -1696,8 +1696,8 @@ const Home = () => {
                     {/* Grid wrapper with golden blur behind cards only */}
                     <div className="relative">
                         {/* Golden rectangular blur - behind cards grid only */}
-                        <div className="absolute -inset-x-8 -inset-y-6 rounded-2xl bg-gradient-to-br from-yellow-500/10 via-amber-500/8 to-yellow-600/6 blur-3xl pointer-events-none"></div>
-                        <div className="absolute -inset-x-4 -inset-y-3 rounded-2xl bg-gradient-to-t from-yellow-400/7 to-amber-500/5 blur-2xl pointer-events-none"></div>
+                        <div className="absolute -inset-x-8 -inset-y-6 rounded-2xl bg-gradient-to-br from-yellow-500/5 via-amber-500/4 to-yellow-600/3 blur-3xl pointer-events-none"></div>
+                        <div className="absolute -inset-x-4 -inset-y-3 rounded-2xl bg-gradient-to-t from-yellow-400/3 to-amber-500/2 blur-2xl pointer-events-none"></div>
 
                     <div className="relative grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-5">
                         {ZODIAC_ORDER.map((slug) => {
