@@ -614,7 +614,7 @@ const Home = () => {
 
                         {/* Right Column - Floating Carta do Dia Mockup */}
                         <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4 gap-5">
-                            <div className="hero-daily-card relative w-[280px] sm:w-[300px] md:w-[340px] lg:w-[400px]">
+                            <div className="hero-daily-card relative w-[260px] sm:w-[270px] md:w-[300px] lg:w-[320px]">
                                 {/* Subtle stars around the card */}
                                 <div className="hero-star-1 absolute -top-4 -left-6 text-yellow-300/30 text-[10px]">✦</div>
                                 <div className="hero-star-2 absolute -top-2 right-4 text-purple-300/25 text-xs">✦</div>
