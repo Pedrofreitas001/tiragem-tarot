@@ -723,7 +723,7 @@ const Home = () => {
                             {/* Discrete button to Carta do Dia */}
                             <button
                                 onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')}
-                                className="group flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-gray-400 text-xs hover:text-white hover:border-purple-400/30 hover:bg-white/[0.03] transition-all duration-300"
+                                className="group flex items-center gap-2 px-4 py-2 rounded-lg border border-purple-400/25 text-gray-400 text-xs hover:text-white hover:border-purple-400/50 hover:bg-purple-500/10 transition-all duration-300"
                             >
                                 <span className="material-symbols-outlined text-sm text-purple-400/70 group-hover:text-purple-300">auto_awesome</span>
                                 <span>{isPortuguese ? 'Receba sua Carta do Dia' : 'Get your Daily Card'}</span>
@@ -912,19 +912,30 @@ const Home = () => {
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Por que o Tarot?' : 'Why Tarot?'}
                         </h2>
-                        <p className="text-gray-400 text-lg md:text-xl font-light max-w-xl mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <p className="text-gray-400 text-base md:text-lg lg:text-xl font-light max-w-2xl mx-auto leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
                             {isPortuguese
-                                ? 'Mais do que cartas — um espelho da sua jornada.'
-                                : 'More than cards — a mirror of your journey.'}
+                                ? 'Para quem busca autoconhecimento, clareza e equilíbrio, o Tarot é uma ferramenta de reflexão profunda — um ritual diário que conecta você à sua intuição.'
+                                : 'For those seeking self-knowledge, clarity and balance, Tarot is a tool for deep reflection — a daily ritual that connects you to your intuition.'}
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-14 items-start">
                         {/* Left: Mini Tarot Cards Mockup */}
-                        <div className="lg:col-span-2 flex items-center justify-center">
+                        <div className="lg:col-span-2 flex items-center justify-center lg:justify-start lg:pl-8">
                             <div className="relative">
                                 {/* Purple glow behind cards */}
-                                <div className="absolute inset-0 scale-150 rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
+                                <div className="absolute inset-0 scale-[1.8] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
+
+                                {/* Subtle white stars around mockup */}
+                                <div className="absolute -top-6 -left-4 w-[3px] h-[3px] rounded-full bg-white/30"></div>
+                                <div className="absolute -top-3 right-2 w-[2px] h-[2px] rounded-full bg-white/25"></div>
+                                <div className="absolute top-1/3 -left-8 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+                                <div className="absolute top-1/2 -right-6 w-[3px] h-[3px] rounded-full bg-white/15"></div>
+                                <div className="absolute -bottom-4 left-4 w-[2px] h-[2px] rounded-full bg-white/25"></div>
+                                <div className="absolute -bottom-6 right-8 w-[3px] h-[3px] rounded-full bg-white/20"></div>
+                                <div className="absolute bottom-1/3 -left-6 w-[2px] h-[2px] rounded-full bg-white/15"></div>
+                                <div className="absolute top-8 -right-4 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+
                                 <div className="relative flex items-end justify-center gap-3 py-6">
                                     {[TAROT_CARDS[1], TAROT_CARDS[2], TAROT_CARDS[5]].map((card, i) => {
                                         const rotations = [-8, 0, 8];
@@ -958,7 +969,7 @@ const Home = () => {
                                 {/* Gold top border */}
                                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
 
-                                <div className="relative z-10 px-6 md:px-8 py-8 md:py-10 space-y-0">
+                                <div className="relative z-10 px-6 md:px-8 py-10 md:py-14 space-y-0">
                                     {/* Section 1 */}
                                     <div className="flex gap-4 items-start">
                                         <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/10 border border-purple-400/20 flex items-center justify-center">
@@ -966,13 +977,13 @@ const Home = () => {
                                         </div>
                                         <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
                                             {isPortuguese
-                                                ? 'O Tarot é mais do que cartas: é um espelho da sua própria jornada, um convite para se conectar com sua intuição e sua evolução pessoal.'
-                                                : 'Tarot is more than cards: it\'s a mirror of your own journey, an invitation to connect with your intuition and personal evolution.'}
+                                                ? 'Você já sentiu que precisa de um momento para refletir sobre si mesmo? O Tarot é um espelho da sua jornada, um convite para se conectar com sua intuição e evolução pessoal.'
+                                                : 'Have you ever felt the need for a moment to reflect on yourself? Tarot is a mirror of your journey, an invitation to connect with your intuition and personal evolution.'}
                                         </p>
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="my-5 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="my-7 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
 
                                     {/* Section 2 */}
                                     <div className="flex gap-4 items-start">
@@ -981,13 +992,13 @@ const Home = () => {
                                         </div>
                                         <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
                                             {isPortuguese
-                                                ? 'A Carta do Dia oferece um insight diário exclusivo, trazendo energia, orientação e inspiração para enfrentar os desafios e celebrar pequenas conquistas.'
-                                                : 'The Daily Card offers an exclusive daily insight, bringing energy, guidance and inspiration to face challenges and celebrate small victories.'}
+                                                ? 'A Carta do Dia oferece um insight diário exclusivo — energia, orientação e inspiração para enfrentar desafios e celebrar conquistas. Um lembrete do universo para alinhar seus objetivos.'
+                                                : 'The Daily Card offers an exclusive daily insight — energy, guidance and inspiration to face challenges and celebrate victories. A reminder from the universe to align your goals.'}
                                         </p>
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="my-5 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="my-7 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
 
                                     {/* Section 3 */}
                                     <div className="flex gap-4 items-start">
@@ -996,13 +1007,13 @@ const Home = () => {
                                         </div>
                                         <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
                                             {isPortuguese
-                                                ? 'Nossas consultas rápidas permitem que você explore temas específicos, enquanto a biblioteca completa ajuda iniciantes a aprender cada carta, cada símbolo, cada mensagem.'
-                                                : 'Our quick consultations let you explore specific themes, while the complete library helps beginners learn each card, each symbol, each message.'}
+                                                ? 'Consultas rápidas para explorar temas específicos e uma biblioteca completa que ensina cada carta, cada símbolo — do iniciante ao avançado, passo a passo.'
+                                                : 'Quick consultations to explore specific themes and a complete library teaching each card, each symbol — from beginner to advanced, step by step.'}
                                         </p>
                                     </div>
 
                                     {/* Divider */}
-                                    <div className="my-5 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+                                    <div className="my-7 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
 
                                     {/* Section 4 */}
                                     <div className="flex gap-4 items-start">
@@ -1011,21 +1022,32 @@ const Home = () => {
                                         </div>
                                         <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
                                             {isPortuguese
-                                                ? 'A experiência digital mantém a profundidade simbólica e a energia de cada carta, combinando praticidade e clareza em leituras acessíveis a qualquer hora.'
-                                                : 'The digital experience maintains the symbolic depth and energy of each card, combining practicality and clarity in readings accessible at any time.'}
+                                                ? 'A experiência digital mantém toda a profundidade simbólica e energia de cada carta, combinando praticidade e clareza em leituras acessíveis a qualquer hora, em qualquer lugar.'
+                                                : 'The digital experience maintains all the symbolic depth and energy of each card, combining practicality and clarity in readings accessible anytime, anywhere.'}
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Discrete CTA button */}
-                            <div className="text-center mt-8">
+                            {/* Discrete CTA buttons */}
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-purple-400/20 text-sm text-gray-300 hover:text-white hover:border-purple-400/40 hover:bg-purple-500/10 transition-all duration-300"
+                                    className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-purple-400/25 text-sm text-gray-300 hover:text-white hover:border-purple-400/50 hover:bg-purple-500/10 transition-all duration-300"
                                 >
                                     <span className="material-symbols-outlined text-base text-purple-400/70 group-hover:text-purple-300">style</span>
                                     <span>{isPortuguese ? 'Comece sua primeira leitura' : 'Start your first reading'}</span>
+                                    <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        const journeySection = document.querySelector('[data-section="journey"]');
+                                        if (journeySection) journeySection.scrollIntoView({ behavior: 'smooth' });
+                                    }}
+                                    className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-yellow-500/20 text-sm text-gray-400 hover:text-yellow-200 hover:border-yellow-500/40 hover:bg-yellow-500/5 transition-all duration-300"
+                                >
+                                    <span className="material-symbols-outlined text-base text-yellow-500/60 group-hover:text-yellow-400">explore</span>
+                                    <span>{isPortuguese ? 'Explore a Jornada do Herói' : 'Explore the Hero\'s Journey'}</span>
                                     <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                                 </button>
                             </div>
@@ -1631,9 +1653,9 @@ const Home = () => {
 
             {/* Tarot por Signo - Quick Access Section */}
             <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-[#110e1a] pb-28 md:pb-36 overflow-hidden">
-                {/* Golden blur background */}
-                <div className="absolute -right-40 top-20 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-yellow-500/10 to-transparent blur-3xl pointer-events-none"></div>
-                <div className="absolute -left-32 bottom-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-yellow-600/8 to-amber-500/5 blur-3xl pointer-events-none"></div>
+                {/* Golden blur background - centered and prominent */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] rounded-full bg-gradient-to-br from-yellow-500/10 via-amber-500/8 to-yellow-600/5 blur-3xl pointer-events-none"></div>
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/3 w-[600px] h-[500px] rounded-full bg-gradient-to-t from-yellow-400/8 to-amber-500/6 blur-3xl pointer-events-none"></div>
                 <div className="max-w-[1000px] mx-auto relative">
                     <div className="text-center mb-12 md:mb-16">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -1676,7 +1698,7 @@ const Home = () => {
             </section>
 
             {/* Journey Section - A Jornada do Herói */}
-            <div className="relative">
+            <div className="relative" data-section="journey">
                 <JourneySection
                     onStartReading={() => handleSelectSpread(SPREADS[0])}
                     onOpenAuthModal={() => setShowAuthModal(true)}
