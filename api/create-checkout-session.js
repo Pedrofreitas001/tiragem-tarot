@@ -31,8 +31,10 @@ export default async function handler(req, res) {
     }
 
     // IDs de preços permitidos (whitelist de segurança)
+    // Aceita tanto STRIPE_PREMIUM_PRICE_ID quanto VITE_STRIPE_PREMIUM_PRICE_ID
+    const premiumPriceId = process.env.STRIPE_PREMIUM_PRICE_ID || process.env.VITE_STRIPE_PREMIUM_PRICE_ID;
     const ALLOWED_PRICE_IDS = [
-        process.env.STRIPE_PREMIUM_PRICE_ID, // Preço do plano premium
+        premiumPriceId,
     ].filter(Boolean);
 
     try {
@@ -44,7 +46,7 @@ export default async function handler(req, res) {
         }
 
         // Usar o preço do ambiente (não confiar no cliente)
-        const priceId = process.env.STRIPE_PREMIUM_PRICE_ID;
+        const priceId = premiumPriceId;
 
         if (!priceId || !ALLOWED_PRICE_IDS.includes(priceId)) {
             console.error('❌ Price ID inválido ou não permitido');
@@ -59,8 +61,8 @@ export default async function handler(req, res) {
 
         // Construir URLs de retorno
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
-                       process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
-                       'http://localhost:3000';
+                       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
+                       'http://localhost:3000');
 
         const finalSuccessUrl = successUrl || `${baseUrl}/#/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
         const finalCancelUrl = cancelUrl || `${baseUrl}/#/checkout`;

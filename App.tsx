@@ -629,8 +629,8 @@ const Home = () => {
 
                                 {/* Main Card Container */}
                                 <div className="relative rounded-2xl overflow-hidden" style={{
-                                    background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 40%, #1a1628 100%)',
-                                    boxShadow: '0 30px 60px -15px rgba(0,0,0,0.6), 0 0 40px rgba(100, 60, 160, 0.15), inset 0 1px 0 0 rgba(255,255,255,0.06)',
+                                    background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
+                                    boxShadow: '0 30px 60px -15px rgba(0,0,0,0.6), 0 0 40px rgba(100, 60, 160, 0.2), inset 0 1px 0 0 rgba(255,255,255,0.08)',
                                     border: '1.5px solid rgba(212, 175, 55, 0.3)'
                                 }}>
 
@@ -765,10 +765,10 @@ const Home = () => {
 
             {/* Spread Selection - Premium Cards Style */}
             <section id="spreads" className="pt-24 md:pt-32 pb-0 md:pb-0 px-4 md:px-6 relative" style={{ backgroundColor: '#1a1628' }}>
+                {/* Cosmic Flame Background - Outside container to flow freely across sections */}
+                <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
+                <div className="absolute -right-32 top-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="max-w-[1200px] mx-auto relative">
-                    {/* Cosmic Flame Background - Positioned lower */}
-                    <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
-                    <div className="absolute -right-32 top-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
 
                     {/* Subtle Star Dots */}
                     <div className="absolute top-12 left-8 w-1 h-1 rounded-full bg-white/40 pointer-events-none"></div>
@@ -1678,67 +1678,90 @@ const Home = () => {
                     </div>
 
                     {/* Gallery - Example Daily Card Downloads */}
-                    <div className="mt-16 md:mt-20">
-                        <div className="text-center mb-8">
-                            <p className="text-gray-400 text-sm md:text-base font-light tracking-wide" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                {isPortuguese ? 'Exemplos de cartas que você recebe diariamente' : 'Examples of cards you receive daily'}
+                    <div className="mt-20 md:mt-28 relative">
+                        {/* Purple flame blur behind gallery */}
+                        <div className="absolute -left-32 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/18 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -right-24 top-16 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-pink-500/12 to-transparent blur-3xl pointer-events-none"></div>
+
+                        <div className="text-center mb-10 md:mb-14 relative z-10">
+                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-normal text-gradient-gold-home mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                {isPortuguese ? 'Sua Carta, Todos os Dias' : 'Your Card, Every Day'}
+                            </h3>
+                            <p className="text-gray-400 text-sm md:text-base font-light tracking-wide max-w-lg mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                {isPortuguese ? 'Veja como são as cartas que você recebe diariamente no WhatsApp.' : 'See what the daily cards you receive on WhatsApp look like.'}
                             </p>
                         </div>
-                        <div className="flex items-center justify-center gap-3 md:gap-5 lg:gap-6">
+
+                        {/* Cards Layout - Center card elevated */}
+                        <div className="flex items-end justify-center gap-4 md:gap-6 lg:gap-8 relative z-10">
                             {[
-                                { name: 'O Mundo', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg', vibracao: 'Completude e plenitude', significado: 'O Mundo representa a conclusão de um ciclo, a integração e a realização plena.', energia: 'Harmonia universal e gratidão profunda.', mantra: 'Eu celebro minha jornada.' },
-                                { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.' },
-                                { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.' },
-                            ].map((card, idx) => (
-                                <div key={card.name} className={`relative w-[105px] sm:w-[130px] md:w-[155px] group ${idx === 1 ? '-mt-3' : ''}`}>
-                                    <div className="rounded-xl overflow-hidden shadow-lg shadow-black/30 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-purple-500/15" style={{
-                                        background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 40%, #1a1628 100%)',
-                                        border: '1px solid rgba(212, 175, 55, 0.2)',
+                                { name: 'O Mundo', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg', vibracao: 'Completude e plenitude', significado: 'O Mundo representa a conclusão de um ciclo, a integração e a realização plena.', energia: 'Harmonia universal e gratidão profunda.', mantra: 'Eu celebro minha jornada.', featured: false },
+                                { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.', featured: true },
+                                { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.', featured: false },
+                            ].map((card) => (
+                                <div key={card.name} className={`relative group transition-all duration-500 ${card.featured ? 'w-[140px] sm:w-[170px] md:w-[200px] -mb-2' : 'w-[115px] sm:w-[140px] md:w-[165px] opacity-85'}`}>
+                                    <div className={`rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
+                                        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
+                                        border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
                                     }}>
                                         {/* Header */}
-                                        <div className="flex items-center justify-between px-2 pt-2 pb-1">
+                                        <div className="flex items-center justify-between px-2.5 pt-2.5 pb-1.5">
                                             <div className="flex items-center gap-1">
-                                                <span className="text-yellow-400/80 text-[6px]">✦</span>
-                                                <span className="text-gray-100/90 text-[6px] md:text-[7px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
+                                                <span className="text-yellow-400/80 text-[7px]">✦</span>
+                                                <span className="text-gray-100/90 text-[7px] md:text-[8px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
                                             </div>
-                                            <p className="text-gray-300/60 text-[5px] md:text-[6px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</p>
+                                            <p className="text-gray-300/60 text-[6px] md:text-[7px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</p>
                                         </div>
                                         {/* Divider */}
-                                        <div className="mx-2 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.2), transparent)' }}></div>
+                                        <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
                                         {/* Card Image */}
-                                        <div className="flex justify-center py-2 px-3">
-                                            <img src={card.img} alt={card.name} className="w-[50px] h-[80px] sm:w-[60px] sm:h-[95px] md:w-[70px] md:h-[110px] object-cover rounded shadow-lg border border-yellow-500/20" loading="lazy" />
+                                        <div className="flex justify-center py-3 px-4">
+                                            <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${card.featured ? 'w-[70px] h-[110px] sm:w-[85px] sm:h-[135px] md:w-[100px] md:h-[158px]' : 'w-[55px] h-[88px] sm:w-[68px] sm:h-[108px] md:w-[80px] md:h-[128px]'}`} loading="lazy" />
                                         </div>
                                         {/* Card Name */}
-                                        <p className="text-[9px] md:text-[10px] font-bold text-white text-center" style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
+                                        <p className={`font-bold text-white text-center ${card.featured ? 'text-[11px] md:text-xs' : 'text-[9px] md:text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
                                         {/* Vibração */}
-                                        <p className="text-[6px] md:text-[7px] italic text-center px-2 mb-1.5" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
+                                        <p className={`italic text-center px-2 mb-2 ${card.featured ? 'text-[7px] md:text-[8px]' : 'text-[6px] md:text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
                                         {/* Significado */}
-                                        <div className="bg-white/5 rounded mx-2 px-1.5 py-1 mb-1">
-                                            <p className="text-gray-300 text-[5px] md:text-[6px] leading-snug text-center">{card.significado}</p>
+                                        <div className="bg-white/5 rounded mx-2.5 px-2 py-1.5 mb-1.5">
+                                            <p className={`text-gray-300 leading-snug text-center ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`}>{card.significado}</p>
                                         </div>
                                         {/* Energia */}
-                                        <div className="flex items-start gap-1 px-2 mb-1.5">
-                                            <span className="text-[5px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
+                                        <div className="flex items-start gap-1.5 px-2.5 mb-2">
+                                            <span className="text-[6px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
                                             <div>
-                                                <span className="text-[5px] md:text-[6px] font-semibold uppercase tracking-wide" style={{ color: '#d4af37' }}>Energia</span>
-                                                <p className="text-gray-300 text-[5px] md:text-[6px] leading-snug">{card.energia}</p>
+                                                <span className={`font-semibold uppercase tracking-wide ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`} style={{ color: '#d4af37' }}>Energia</span>
+                                                <p className={`text-gray-300 leading-snug ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`}>{card.energia}</p>
                                             </div>
                                         </div>
                                         {/* Divider */}
-                                        <div className="mx-2 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1"></div>
+                                        <div className="mx-2.5 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1.5"></div>
                                         {/* Mantra */}
-                                        <div className="px-2 pb-2 text-center">
-                                            <p className="text-[5px] md:text-[6px] font-semibold uppercase tracking-wide mb-0.5" style={{ color: '#d4af37' }}>Mantra do Dia</p>
-                                            <div className="bg-white/5 rounded px-1.5 py-1 border border-yellow-500/15">
-                                                <p className="text-[6px] md:text-[7px] italic" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
+                                        <div className="px-2.5 pb-2.5 text-center">
+                                            <p className={`font-semibold uppercase tracking-wide mb-1 ${card.featured ? 'text-[6px] md:text-[7px]' : 'text-[5px] md:text-[6px]'}`} style={{ color: '#d4af37' }}>Mantra do Dia</p>
+                                            <div className="bg-white/5 rounded px-2 py-1.5 border border-yellow-500/15">
+                                                <p className={`italic ${card.featured ? 'text-[7px] md:text-[8px]' : 'text-[6px] md:text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
                                             </div>
                                         </div>
                                         {/* Footer */}
-                                        <p className="text-gray-500 text-[5px] tracking-wider text-center pb-1.5">zayatarot.com</p>
+                                        <p className="text-gray-500 text-[6px] tracking-wider text-center pb-2">zayatarot.com</p>
                                     </div>
                                 </div>
                             ))}
+                        </div>
+
+                        {/* CTA Button */}
+                        <div className="text-center mt-10 md:mt-14 relative z-10">
+                            <button
+                                onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')}
+                                className="group relative px-8 py-3 bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
+                                <span className="relative z-10 text-white font-bold text-xs tracking-wide flex items-center justify-center gap-2">
+                                    {isPortuguese ? 'Descubra sua Carta do Dia' : 'Discover your Daily Card'}
+                                    <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                </span>
+                            </button>
                         </div>
                     </div>
                 </div>
