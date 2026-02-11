@@ -502,8 +502,8 @@ const Home = () => {
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     @keyframes float-card {
-                        0%, 100% { transform: translateY(0px) rotate(-1deg); }
-                        50% { transform: translateY(-12px) rotate(0.5deg); }
+                        0%, 100% { transform: translateY(0px); }
+                        50% { transform: translateY(-14px); }
                     }
                     @keyframes shimmer-gold {
                         0% { background-position: -200% center; }
@@ -596,25 +596,28 @@ const Home = () => {
                             </div>
 
                             {/* Subtle feature badges */}
-                            <div className="flex flex-wrap gap-5 pt-3 justify-center lg:justify-start">
-                                <div className="flex items-center gap-2 text-gray-400 text-xs md:text-sm">
-                                    <span className="material-symbols-outlined text-green-500/70 text-base">chat</span>
+                            <div className="flex flex-wrap gap-5 pt-4 justify-center lg:justify-start">
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                    <span className="material-symbols-outlined text-green-500/80 text-lg">chat</span>
                                     <span>{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-gray-400 text-xs md:text-sm">
-                                    <span className="material-symbols-outlined text-purple-400/70 text-base">all_inclusive</span>
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                    <span className="material-symbols-outlined text-purple-400/80 text-lg">all_inclusive</span>
                                     <span>{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-gray-400 text-xs md:text-sm">
-                                    <span className="material-symbols-outlined text-yellow-500/70 text-base">history</span>
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                    <span className="material-symbols-outlined text-yellow-500/80 text-lg">history</span>
                                     <span>{isPortuguese ? 'Histórico da sua jornada' : 'Your journey history'}</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Right Column - Floating Carta do Dia Mockup */}
-                        <div className="flex items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4">
-                            <div className="hero-daily-card relative w-[280px] sm:w-[300px] md:w-[320px] lg:w-[360px]">
+                        <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4 gap-5">
+                            <div className="hero-daily-card relative w-[280px] sm:w-[300px] md:w-[340px] lg:w-[400px]">
+                                {/* Purple blur behind card */}
+                                <div className="absolute -inset-8 rounded-full bg-purple-600/15 blur-3xl pointer-events-none"></div>
+                                <div className="absolute -inset-4 rounded-full bg-purple-500/10 blur-2xl pointer-events-none"></div>
                                 {/* Subtle stars around the card */}
                                 <div className="hero-star-1 absolute -top-4 -left-6 text-yellow-300/30 text-[10px]">✦</div>
                                 <div className="hero-star-2 absolute -top-2 right-4 text-purple-300/25 text-xs">✦</div>
@@ -637,12 +640,12 @@ const Home = () => {
                                     {/* Header */}
                                     <div className="flex items-center justify-between px-5 pt-4 pb-3">
                                         <div className="flex items-center gap-1.5">
-                                            <span className="text-yellow-400/70 text-xs">✦</span>
-                                            <span className="text-gray-300/80 text-[11px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
+                                            <span className="text-yellow-400/80 text-xs">✦</span>
+                                            <span className="text-gray-100/90 text-[11px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-gray-500 text-[9px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</div>
-                                            <div className="text-gray-400/60 text-[9px]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            <div className="text-gray-300/80 text-[9px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</div>
+                                            <div className="text-gray-300/50 text-[9px]" style={{ fontFamily: "'Inter', sans-serif" }}>
                                                 {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                                             </div>
                                         </div>
@@ -706,7 +709,7 @@ const Home = () => {
                                         <div className="text-gradient-gold text-sm font-semibold tracking-wide" style={{ fontFamily: "'Crimson Text', serif" }}>
                                             Zaya Tarot
                                         </div>
-                                        <div className="text-gray-500 text-[10px] tracking-widest uppercase mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                        <div className="text-gray-300/60 text-[10px] tracking-widest uppercase mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
                                             A Carta do Dia
                                         </div>
                                     </div>
@@ -717,6 +720,15 @@ const Home = () => {
                                     }}></div>
                                 </div>
                             </div>
+                            {/* Discrete button to Carta do Dia */}
+                            <button
+                                onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')}
+                                className="group flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-gray-400 text-xs hover:text-white hover:border-purple-400/30 hover:bg-white/[0.03] transition-all duration-300"
+                            >
+                                <span className="material-symbols-outlined text-sm text-purple-400/70 group-hover:text-purple-300">auto_awesome</span>
+                                <span>{isPortuguese ? 'Receba sua Carta do Dia' : 'Get your Daily Card'}</span>
+                                <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                            </button>
                         </div>
 
                     </div>
@@ -890,8 +902,12 @@ const Home = () => {
             </section>
 
             {/* Reflective Journey Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6" style={{ backgroundColor: '#1a1628' }}>
-                <div className="max-w-[900px] mx-auto">
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 overflow-hidden" style={{ backgroundColor: '#1a1628' }}>
+                {/* Purple blur background - like spreads section */}
+                <div className="absolute -left-40 top-10 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
+                <div className="absolute -right-32 bottom-10 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-purple-600/10 to-transparent blur-3xl pointer-events-none"></div>
+
+                <div className="max-w-[1000px] mx-auto relative">
                     <div className="text-center mb-10 md:mb-14">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Por que o Tarot?' : 'Why Tarot?'}
@@ -903,68 +919,116 @@ const Home = () => {
                         </p>
                     </div>
 
-                    {/* Premium container - similar to daily card */}
-                    <div
-                        className="relative rounded-2xl overflow-hidden"
-                        style={{
-                            background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.6) 0%, rgba(45, 38, 65, 0.7) 50%, rgba(55, 45, 75, 0.6) 100%)',
-                            boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.08), 0 20px 40px -12px rgba(0,0,0,0.4)'
-                        }}
-                    >
-                        {/* Gold top border */}
-                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent" />
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
+                        {/* Left: Mini Tarot Cards Mockup */}
+                        <div className="lg:col-span-2 flex items-center justify-center">
+                            <div className="relative">
+                                {/* Purple glow behind cards */}
+                                <div className="absolute inset-0 scale-150 rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
+                                <div className="relative flex items-end justify-center gap-3 py-6">
+                                    {[TAROT_CARDS[1], TAROT_CARDS[2], TAROT_CARDS[5]].map((card, i) => {
+                                        const rotations = [-8, 0, 8];
+                                        const yOffsets = [8, 0, 8];
+                                        return (
+                                            <div key={`story-card-${i}`} className="relative transition-transform duration-500" style={{
+                                                transform: `rotate(${rotations[i]}deg) translateY(${yOffsets[i]}px)`,
+                                            }}>
+                                                <div className="w-[72px] h-[118px] sm:w-[82px] sm:h-[134px] md:w-[90px] md:h-[148px] rounded-lg overflow-hidden" style={{
+                                                    border: '1.5px solid rgba(212, 175, 55, 0.2)',
+                                                    boxShadow: i === 1
+                                                        ? '0 12px 30px rgba(0,0,0,0.5), 0 0 25px rgba(135, 95, 175, 0.25)'
+                                                        : '0 8px 20px rgba(0,0,0,0.4), 0 0 15px rgba(135, 95, 175, 0.1)',
+                                                }}>
+                                                    <img src={card.imageUrl} alt={card.name_pt} className="w-full h-full object-cover" loading="lazy" />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
 
-                        {/* Corner decorations */}
-                        <div className="absolute top-3 left-3 w-8 h-8 pointer-events-none">
-                            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-yellow-500/40 to-transparent" />
-                            <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-yellow-500/40 to-transparent" />
-                        </div>
-                        <div className="absolute top-3 right-3 w-8 h-8 pointer-events-none">
-                            <div className="absolute top-0 right-0 w-full h-px bg-gradient-to-l from-yellow-500/40 to-transparent" />
-                            <div className="absolute top-0 right-0 h-full w-px bg-gradient-to-b from-yellow-500/40 to-transparent" />
-                        </div>
-                        <div className="absolute bottom-3 left-3 w-8 h-8 pointer-events-none">
-                            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-yellow-500/40 to-transparent" />
-                            <div className="absolute bottom-0 left-0 h-full w-px bg-gradient-to-t from-yellow-500/40 to-transparent" />
-                        </div>
-                        <div className="absolute bottom-3 right-3 w-8 h-8 pointer-events-none">
-                            <div className="absolute bottom-0 right-0 w-full h-px bg-gradient-to-l from-yellow-500/40 to-transparent" />
-                            <div className="absolute bottom-0 right-0 h-full w-px bg-gradient-to-t from-yellow-500/40 to-transparent" />
-                        </div>
+                        {/* Right: Content with sections */}
+                        <div className="lg:col-span-3">
+                            <div className="relative rounded-2xl overflow-hidden" style={{
+                                background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.5) 0%, rgba(45, 38, 65, 0.6) 50%, rgba(55, 45, 75, 0.5) 100%)',
+                                boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.06), 0 20px 40px -12px rgba(0,0,0,0.3)',
+                                border: '1px solid rgba(135, 95, 175, 0.1)'
+                            }}>
+                                {/* Gold top border */}
+                                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
 
-                        {/* Subtle center glow */}
-                        <div
-                            className="absolute inset-0 pointer-events-none"
-                            style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 30%, rgba(255, 215, 150, 0.04) 0%, transparent 70%)' }}
-                        />
+                                <div className="relative z-10 px-6 md:px-8 py-8 md:py-10 space-y-0">
+                                    {/* Section 1 */}
+                                    <div className="flex gap-4 items-start">
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/10 border border-purple-400/20 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-purple-300/70 text-sm">visibility</span>
+                                        </div>
+                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                            {isPortuguese
+                                                ? 'O Tarot é mais do que cartas: é um espelho da sua própria jornada, um convite para se conectar com sua intuição e sua evolução pessoal.'
+                                                : 'Tarot is more than cards: it\'s a mirror of your own journey, an invitation to connect with your intuition and personal evolution.'}
+                                        </p>
+                                    </div>
 
-                        {/* Content */}
-                        <div className="relative z-10 px-6 md:px-10 lg:px-14 py-8 md:py-12 space-y-6">
-                            <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
-                                {isPortuguese
-                                    ? 'Você já sentiu que precisa de um momento para refletir sobre si mesmo, compreender suas escolhas e encontrar clareza no dia a dia? O Tarot é mais do que cartas: é um espelho da sua própria jornada, um convite para se conectar com sua intuição e sua evolução pessoal.'
-                                    : 'Have you ever felt the need for a moment to reflect on yourself, understand your choices and find clarity in everyday life? Tarot is more than cards: it\'s a mirror of your own journey, an invitation to connect with your intuition and personal evolution.'}
-                            </p>
-                            <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
-                                {isPortuguese
-                                    ? 'Para quem busca crescimento espiritual e autoconhecimento, a Carta do Dia oferece um insight diário exclusivo, trazendo energia, orientação e inspiração para enfrentar os desafios e celebrar pequenas conquistas. É como receber um lembrete do universo, um pequeno guia para se alinhar com seus objetivos e emoções.'
-                                    : 'For those seeking spiritual growth and self-knowledge, the Daily Card offers an exclusive daily insight, bringing energy, guidance and inspiration to face challenges and celebrate small victories. It\'s like receiving a reminder from the universe, a small guide to align with your goals and emotions.'}
-                            </p>
-                            <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
-                                {isPortuguese
-                                    ? 'Além disso, nossas consultas rápidas permitem que você explore temas específicos ou situações do momento, enquanto a biblioteca completa de Tarot ajuda iniciantes a aprender passo a passo cada carta, cada símbolo, cada mensagem. Você vai desenvolver a habilidade de interpretar as cartas, aplicar os ensinamentos na sua vida e perceber padrões que antes passavam despercebidos.'
-                                    : 'Additionally, our quick consultations allow you to explore specific themes or current situations, while the complete Tarot library helps beginners learn step by step each card, each symbol, each message. You will develop the ability to interpret the cards, apply the teachings in your life and notice patterns that previously went unnoticed.'}
-                            </p>
-                            <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
-                                {isPortuguese
-                                    ? 'E se você se pergunta sobre a diferença entre o Tarot real e o Tarot digital, aqui explicamos de forma simples: a experiência digital mantém a profundidade simbólica e a energia de cada carta, combinando praticidade e clareza em leituras acessíveis a qualquer hora.'
-                                    : 'And if you wonder about the difference between real Tarot and digital Tarot, here we explain simply: the digital experience maintains the symbolic depth and energy of each card, combining practicality and clarity in readings accessible at any time.'}
-                            </p>
-                            <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
-                                {isPortuguese
-                                    ? 'Comece hoje e descubra como pequenas leituras podem transformar sua percepção, trazer equilíbrio emocional e inspirar sua evolução espiritual. Receba a sua Carta do Dia e abra espaço para uma jornada de autoconhecimento e energia positiva todos os dias.'
-                                    : 'Start today and discover how small readings can transform your perception, bring emotional balance and inspire your spiritual evolution. Receive your Daily Card and make room for a journey of self-knowledge and positive energy every day.'}
-                            </p>
+                                    {/* Divider */}
+                                    <div className="my-5 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+
+                                    {/* Section 2 */}
+                                    <div className="flex gap-4 items-start">
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-400/20 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-yellow-300/70 text-sm">auto_awesome</span>
+                                        </div>
+                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                            {isPortuguese
+                                                ? 'A Carta do Dia oferece um insight diário exclusivo, trazendo energia, orientação e inspiração para enfrentar os desafios e celebrar pequenas conquistas.'
+                                                : 'The Daily Card offers an exclusive daily insight, bringing energy, guidance and inspiration to face challenges and celebrate small victories.'}
+                                        </p>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="my-5 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+
+                                    {/* Section 3 */}
+                                    <div className="flex gap-4 items-start">
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/10 border border-purple-400/20 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-purple-300/70 text-sm">school</span>
+                                        </div>
+                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                            {isPortuguese
+                                                ? 'Nossas consultas rápidas permitem que você explore temas específicos, enquanto a biblioteca completa ajuda iniciantes a aprender cada carta, cada símbolo, cada mensagem.'
+                                                : 'Our quick consultations let you explore specific themes, while the complete library helps beginners learn each card, each symbol, each message.'}
+                                        </p>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="my-5 h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.15), transparent)' }}></div>
+
+                                    {/* Section 4 */}
+                                    <div className="flex gap-4 items-start">
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-400/20 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-yellow-300/70 text-sm">psychology</span>
+                                        </div>
+                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                            {isPortuguese
+                                                ? 'A experiência digital mantém a profundidade simbólica e a energia de cada carta, combinando praticidade e clareza em leituras acessíveis a qualquer hora.'
+                                                : 'The digital experience maintains the symbolic depth and energy of each card, combining practicality and clarity in readings accessible at any time.'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Discrete CTA button */}
+                            <div className="text-center mt-8">
+                                <button
+                                    onClick={() => handleSelectSpread(SPREADS[0])}
+                                    className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-purple-400/20 text-sm text-gray-300 hover:text-white hover:border-purple-400/40 hover:bg-purple-500/10 transition-all duration-300"
+                                >
+                                    <span className="material-symbols-outlined text-base text-purple-400/70 group-hover:text-purple-300">style</span>
+                                    <span>{isPortuguese ? 'Comece sua primeira leitura' : 'Start your first reading'}</span>
+                                    <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1566,8 +1630,11 @@ const Home = () => {
             </section>
 
             {/* Tarot por Signo - Quick Access Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-[#110e1a] pb-28 md:pb-36">
-                <div className="max-w-[1000px] mx-auto">
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-[#110e1a] pb-28 md:pb-36 overflow-hidden">
+                {/* Golden blur background */}
+                <div className="absolute -right-40 top-20 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-yellow-500/10 to-transparent blur-3xl pointer-events-none"></div>
+                <div className="absolute -left-32 bottom-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-yellow-600/8 to-amber-500/5 blur-3xl pointer-events-none"></div>
+                <div className="max-w-[1000px] mx-auto relative">
                     <div className="text-center mb-12 md:mb-16">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
