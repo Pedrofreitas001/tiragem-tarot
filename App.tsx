@@ -615,9 +615,6 @@ const Home = () => {
                         {/* Right Column - Floating Carta do Dia Mockup */}
                         <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4 gap-5">
                             <div className="hero-daily-card relative w-[280px] sm:w-[300px] md:w-[340px] lg:w-[400px]">
-                                {/* Purple blur behind card */}
-                                <div className="absolute -inset-8 rounded-full bg-purple-600/15 blur-3xl pointer-events-none"></div>
-                                <div className="absolute -inset-4 rounded-full bg-purple-500/10 blur-2xl pointer-events-none"></div>
                                 {/* Subtle stars around the card */}
                                 <div className="hero-star-1 absolute -top-4 -left-6 text-yellow-300/30 text-[10px]">✦</div>
                                 <div className="hero-star-2 absolute -top-2 right-4 text-purple-300/25 text-xs">✦</div>
@@ -628,7 +625,7 @@ const Home = () => {
 
                                 {/* Main Card Container */}
                                 <div className="relative rounded-2xl overflow-hidden" style={{
-                                    background: 'linear-gradient(165deg, rgba(25, 18, 50, 0.98) 0%, rgba(18, 12, 38, 0.99) 40%, rgba(22, 16, 45, 0.98) 100%)',
+                                    background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 40%, #1a1628 100%)',
                                     boxShadow: '0 30px 60px -15px rgba(0,0,0,0.6), 0 0 40px rgba(100, 60, 160, 0.15), inset 0 1px 0 0 rgba(255,255,255,0.06)',
                                     border: '1px solid rgba(135, 95, 175, 0.15)'
                                 }}>
