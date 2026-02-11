@@ -1052,8 +1052,8 @@ const Home = () => {
                         {/* Right: Mini Tarot Cards Mockup */}
                         <div className="lg:col-span-5 flex items-center justify-center order-1 lg:order-2 -mt-4 lg:-mt-8">
                             <div className="relative">
-                                {/* Purple glow behind cards */}
-                                <div className="absolute inset-0 scale-[2.5] rounded-full bg-purple-500/20 blur-3xl pointer-events-none"></div>
+                                {/* Golden glow behind cards */}
+                                <div className="absolute inset-0 scale-[2.5] rounded-full bg-yellow-500/15 blur-3xl pointer-events-none"></div>
 
                                 {/* Subtle white stars around mockup */}
                                 <div className="absolute -top-10 -left-6 w-[3px] h-[3px] rounded-full bg-white/30"></div>
