@@ -214,7 +214,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50" onClick={onClose} />
 
-      <div className="paywall-animate-in fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md z-50 max-h-[90vh] overflow-y-auto">
+      <div className="paywall-animate-in fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md z-50">
         <div className="relative bg-[#13101d] border border-white/[0.08] rounded-2xl overflow-hidden">
 
           {/* Close button */}
@@ -226,15 +226,15 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           </button>
 
           {/* Header */}
-          <div className="relative px-6 pt-8 pb-6 text-center">
+          <div className="relative px-6 pt-6 pb-4 text-center">
             {/* Subtle ambient glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
             <div className="relative z-10">
-              <h2 className="text-2xl font-bold paywall-gradient-gold mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
+              <h2 className="text-xl font-bold paywall-gradient-gold mb-1.5" style={{ fontFamily: "'Crimson Text', serif" }}>
                 {getTitle()}
               </h2>
-              <p className="text-gray-400 text-sm leading-relaxed max-w-sm mx-auto">
+              <p className="text-gray-400 text-xs leading-relaxed max-w-sm mx-auto">
                 {getDescription()}
               </p>
             </div>
@@ -244,7 +244,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           <div className="mx-6 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
           {/* Content */}
-          <div className="px-6 py-5">
+          <div className="px-6 py-4">
             {isGuest ? (
               /* Guest: show free account benefits */
               <div>
@@ -266,21 +266,19 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               /* Free tier: show premium benefits with price */
               <div>
                 {/* Price highlight */}
-                <div className="flex items-center justify-center gap-1 mb-5">
-                  <span className="text-3xl font-bold text-white tracking-tight">{t.price}</span>
+                <div className="flex items-center justify-center gap-1 mb-4">
+                  <span className="text-2xl font-bold text-white tracking-tight">{t.price}</span>
                   <span className="text-gray-500 text-sm">{t.pricePerMonth}</span>
                 </div>
 
-                <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.15em] mb-3">
+                <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-[0.15em] mb-2">
                   {t.premiumBenefits}
                 </p>
-                <div className="grid grid-cols-1 gap-2">
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
                   {premiumFeatures.map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 py-1">
-                      <div className="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center flex-shrink-0">
-                        <span className="material-symbols-outlined text-purple-400 text-[16px]">{item.icon}</span>
-                      </div>
-                      <span className="text-gray-300 text-sm">{item.text}</span>
+                    <div key={i} className="flex items-center gap-2 py-0.5">
+                      <span className="material-symbols-outlined text-purple-400 text-[14px] flex-shrink-0">{item.icon}</span>
+                      <span className="text-gray-300 text-xs">{item.text}</span>
                     </div>
                   ))}
                 </div>
@@ -289,7 +287,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           </div>
 
           {/* Actions */}
-          <div className="px-6 pb-6 pt-2 space-y-2.5">
+          <div className="px-6 pb-5 pt-1 space-y-2">
             {isGuest ? (
               <>
                 <button

@@ -166,7 +166,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   return (
     <>
       <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-[#1a1628] border border-[#875faf]/30 rounded-2xl p-8 z-50 max-h-[90vh] overflow-y-auto">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md bg-[#1a1628] border border-[#875faf]/30 rounded-2xl p-6 z-50">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-white" style={{ fontFamily: "'Crimson Text', serif" }}>

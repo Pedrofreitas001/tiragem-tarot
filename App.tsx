@@ -346,6 +346,15 @@ const Home = () => {
     const [whatsappSubscribed, setWhatsappSubscribed] = useState(false);
     const [pendingGuestReading, setPendingGuestReading] = useState<any>(null);
     const [regeneratingReading, setRegeneratingReading] = useState(false);
+    const [heroCardIndices, setHeroCardIndices] = useState([0, 7, 14]);
+
+    // Cycle hero mockup cards every 4 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setHeroCardIndices(prev => prev.map(i => (i + 1) % TAROT_CARDS.length));
+        }, 4000);
+        return () => clearInterval(interval);
+    }, []);
 
     // Check for pending guest reading after sign-up
     useEffect(() => {
@@ -492,17 +501,17 @@ const Home = () => {
             <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden py-16">
                 <style dangerouslySetInnerHTML={{
                     __html: `
-                    @keyframes rotate-slow {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(360deg); }
+                    @keyframes float-card {
+                        0%, 100% { transform: translateY(0px) rotate(-1deg); }
+                        50% { transform: translateY(-12px) rotate(0.5deg); }
                     }
-                    @keyframes rotate-reverse {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(-360deg); }
+                    @keyframes shimmer-gold {
+                        0% { background-position: -200% center; }
+                        100% { background-position: 200% center; }
                     }
-                    @keyframes pulse-subtle {
-                        0%, 100% { opacity: 0.4; }
-                        50% { opacity: 0.6; }
+                    @keyframes twinkle {
+                        0%, 100% { opacity: 0.2; }
+                        50% { opacity: 0.8; }
                     }
                     @keyframes fadeIn {
                         from {
@@ -514,18 +523,15 @@ const Home = () => {
                             transform: translateY(0);
                         }
                     }
-                    .arcane-ring-outer {
-                        animation: rotate-slow 30s linear infinite;
+                    .hero-daily-card {
+                        animation: float-card 6s ease-in-out infinite;
                     }
-                    .arcane-ring-middle {
-                        animation: rotate-reverse 25s linear infinite;
-                    }
-                    .arcane-ring-inner {
-                        animation: rotate-slow 20s linear infinite;
-                    }
-                    .arcane-center {
-                        animation: pulse-subtle 4s ease-in-out infinite;
-                    }
+                    .hero-star-1 { animation: twinkle 3s ease-in-out infinite; }
+                    .hero-star-2 { animation: twinkle 4s ease-in-out 1s infinite; }
+                    .hero-star-3 { animation: twinkle 3.5s ease-in-out 0.5s infinite; }
+                    .hero-star-4 { animation: twinkle 4.5s ease-in-out 1.5s infinite; }
+                    .hero-star-5 { animation: twinkle 3s ease-in-out 2s infinite; }
+                    .hero-star-6 { animation: twinkle 5s ease-in-out 0.8s infinite; }
                     .animate-fadeIn {
                         animation: fadeIn 0.6s ease-out forwards;
                     }
@@ -606,45 +612,109 @@ const Home = () => {
                             </div>
                         </div>
 
-                        {/* Right Column - Arcane Symbol (Mobile: appears first) */}
-                        <div className="flex items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-12">
-                            <div className="relative w-[300px] h-[300px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
-                                {/* Outer Ring */}
-                                <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.45)" strokeWidth="1" fill="none" />
-                                    <circle cx="220" cy="40" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <circle cx="220" cy="400" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <circle cx="40" cy="220" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <circle cx="400" cy="220" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <path d="M 220,20 L 220,50" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                    <path d="M 220,390 L 220,420" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                    <path d="M 20,220 L 50,220" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                    <path d="M 390,220 L 420,220" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                </svg>
+                        {/* Right Column - Floating Carta do Dia Mockup */}
+                        <div className="flex items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4">
+                            <div className="hero-daily-card relative w-[280px] sm:w-[300px] md:w-[320px] lg:w-[360px]">
+                                {/* Subtle stars around the card */}
+                                <div className="hero-star-1 absolute -top-4 -left-6 text-yellow-300/30 text-[10px]">✦</div>
+                                <div className="hero-star-2 absolute -top-2 right-4 text-purple-300/25 text-xs">✦</div>
+                                <div className="hero-star-3 absolute top-1/4 -right-5 text-yellow-200/20 text-[10px]">✧</div>
+                                <div className="hero-star-4 absolute bottom-12 -left-4 text-purple-200/25 text-[8px]">✦</div>
+                                <div className="hero-star-5 absolute -bottom-3 right-8 text-yellow-300/20 text-[10px]">✧</div>
+                                <div className="hero-star-6 absolute top-1/2 -left-7 text-white/15 text-xs">·</div>
 
-                                {/* Middle Ring */}
-                                <svg className="arcane-ring-middle absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="140" stroke="rgba(135, 95, 175, 0.38)" strokeWidth="1" fill="none" />
-                                    <circle cx="220" cy="80" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="220" cy="360" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="80" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="360" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="130" cy="130" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                    <circle cx="310" cy="130" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                    <circle cx="130" cy="310" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                    <circle cx="310" cy="310" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                </svg>
+                                {/* Main Card Container */}
+                                <div className="relative rounded-2xl overflow-hidden" style={{
+                                    background: 'linear-gradient(165deg, rgba(25, 18, 50, 0.98) 0%, rgba(18, 12, 38, 0.99) 40%, rgba(22, 16, 45, 0.98) 100%)',
+                                    boxShadow: '0 30px 60px -15px rgba(0,0,0,0.6), 0 0 40px rgba(100, 60, 160, 0.15), inset 0 1px 0 0 rgba(255,255,255,0.06)',
+                                    border: '1px solid rgba(135, 95, 175, 0.15)'
+                                }}>
+                                    {/* Gold border accent top */}
+                                    <div className="absolute top-0 left-0 right-0 h-[1px]" style={{
+                                        background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent)'
+                                    }}></div>
 
-                                {/* Inner Ring */}
-                                <svg className="arcane-ring-inner absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="80" stroke="rgba(135, 95, 175, 0.5)" strokeWidth="1.5" fill="none" />
-                                </svg>
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between px-5 pt-4 pb-3">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="text-yellow-400/70 text-xs">✦</span>
+                                            <span className="text-gray-300/80 text-[11px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-gray-500 text-[9px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</div>
+                                            <div className="text-gray-400/60 text-[9px]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                                {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                {/* Center Symbol */}
-                                <div className="arcane-center absolute inset-0 flex items-center justify-center">
-                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="6" cy="6" r="4" fill="rgba(135, 95, 175, 0.5)" />
-                                    </svg>
+                                    {/* Divider */}
+                                    <div className="mx-5 h-[0.5px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.2), transparent)' }}></div>
+
+                                    {/* Cards Area */}
+                                    <div className="relative px-5 py-6 flex items-center justify-center" style={{ minHeight: '200px' }}>
+                                        {/* Background constellation dots */}
+                                        <div className="absolute inset-0 overflow-hidden">
+                                            <div className="hero-star-1 absolute top-6 left-8 w-[2px] h-[2px] rounded-full bg-white/10"></div>
+                                            <div className="hero-star-3 absolute top-16 right-12 w-[1.5px] h-[1.5px] rounded-full bg-purple-300/15"></div>
+                                            <div className="hero-star-5 absolute bottom-10 left-16 w-[2px] h-[2px] rounded-full bg-white/8"></div>
+                                            <div className="hero-star-2 absolute bottom-16 right-8 w-[1.5px] h-[1.5px] rounded-full bg-yellow-300/10"></div>
+                                            <div className="hero-star-4 absolute top-1/2 left-6 w-[1px] h-[1px] rounded-full bg-white/10"></div>
+                                        </div>
+
+                                        {/* 3 Tarot Cards in fan layout */}
+                                        <div className="relative flex items-center justify-center" style={{ height: '180px', width: '220px' }}>
+                                            {heroCardIndices.map((cardIdx, i) => {
+                                                const card = TAROT_CARDS[cardIdx];
+                                                const rotations = [-12, 0, 12];
+                                                const offsets = [-40, 0, 40];
+                                                const zIndexes = [1, 3, 1];
+                                                const scales = [0.9, 1, 0.9];
+                                                return (
+                                                    <div
+                                                        key={`hero-card-${i}`}
+                                                        className="absolute transition-all duration-700 ease-in-out"
+                                                        style={{
+                                                            transform: `translateX(${offsets[i]}px) rotate(${rotations[i]}deg) scale(${scales[i]})`,
+                                                            zIndex: zIndexes[i],
+                                                        }}
+                                                    >
+                                                        <div className="w-[80px] h-[130px] sm:w-[90px] sm:h-[146px] rounded-lg overflow-hidden shadow-lg" style={{
+                                                            border: '1.5px solid rgba(212, 175, 55, 0.25)',
+                                                            boxShadow: i === 1
+                                                                ? '0 12px 30px rgba(0,0,0,0.5), 0 0 20px rgba(135, 95, 175, 0.15)'
+                                                                : '0 8px 20px rgba(0,0,0,0.4)',
+                                                        }}>
+                                                            <img
+                                                                src={card.imageUrl}
+                                                                alt={card.name_pt}
+                                                                className="w-full h-full object-cover"
+                                                                loading="lazy"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="mx-5 h-[0.5px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.2), transparent)' }}></div>
+
+                                    {/* Footer */}
+                                    <div className="px-5 pt-3 pb-4 text-center">
+                                        <div className="text-gradient-gold text-sm font-semibold tracking-wide" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                            Zaya Tarot
+                                        </div>
+                                        <div className="text-gray-500 text-[10px] tracking-widest uppercase mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            A Carta do Dia
+                                        </div>
+                                    </div>
+
+                                    {/* Gold border accent bottom */}
+                                    <div className="absolute bottom-0 left-0 right-0 h-[1px]" style={{
+                                        background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.25), transparent)'
+                                    }}></div>
                                 </div>
                             </div>
                         </div>
@@ -814,6 +884,87 @@ const Home = () => {
                                     </div>
                                 );
                             })}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Reflective Journey Section */}
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6" style={{ backgroundColor: '#1a1628' }}>
+                <div className="max-w-[900px] mx-auto">
+                    <div className="text-center mb-10 md:mb-14">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Por que o Tarot?' : 'Why Tarot?'}
+                        </h2>
+                        <p className="text-gray-400 text-lg md:text-xl font-light max-w-xl mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+                            {isPortuguese
+                                ? 'Mais do que cartas — um espelho da sua jornada.'
+                                : 'More than cards — a mirror of your journey.'}
+                        </p>
+                    </div>
+
+                    {/* Premium container - similar to daily card */}
+                    <div
+                        className="relative rounded-2xl overflow-hidden"
+                        style={{
+                            background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.6) 0%, rgba(45, 38, 65, 0.7) 50%, rgba(55, 45, 75, 0.6) 100%)',
+                            boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.08), 0 20px 40px -12px rgba(0,0,0,0.4)'
+                        }}
+                    >
+                        {/* Gold top border */}
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent" />
+
+                        {/* Corner decorations */}
+                        <div className="absolute top-3 left-3 w-8 h-8 pointer-events-none">
+                            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-yellow-500/40 to-transparent" />
+                            <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-yellow-500/40 to-transparent" />
+                        </div>
+                        <div className="absolute top-3 right-3 w-8 h-8 pointer-events-none">
+                            <div className="absolute top-0 right-0 w-full h-px bg-gradient-to-l from-yellow-500/40 to-transparent" />
+                            <div className="absolute top-0 right-0 h-full w-px bg-gradient-to-b from-yellow-500/40 to-transparent" />
+                        </div>
+                        <div className="absolute bottom-3 left-3 w-8 h-8 pointer-events-none">
+                            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-yellow-500/40 to-transparent" />
+                            <div className="absolute bottom-0 left-0 h-full w-px bg-gradient-to-t from-yellow-500/40 to-transparent" />
+                        </div>
+                        <div className="absolute bottom-3 right-3 w-8 h-8 pointer-events-none">
+                            <div className="absolute bottom-0 right-0 w-full h-px bg-gradient-to-l from-yellow-500/40 to-transparent" />
+                            <div className="absolute bottom-0 right-0 h-full w-px bg-gradient-to-t from-yellow-500/40 to-transparent" />
+                        </div>
+
+                        {/* Subtle center glow */}
+                        <div
+                            className="absolute inset-0 pointer-events-none"
+                            style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 30%, rgba(255, 215, 150, 0.04) 0%, transparent 70%)' }}
+                        />
+
+                        {/* Content */}
+                        <div className="relative z-10 px-6 md:px-10 lg:px-14 py-8 md:py-12 space-y-6">
+                            <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
+                                {isPortuguese
+                                    ? 'Você já sentiu que precisa de um momento para refletir sobre si mesmo, compreender suas escolhas e encontrar clareza no dia a dia? O Tarot é mais do que cartas: é um espelho da sua própria jornada, um convite para se conectar com sua intuição e sua evolução pessoal.'
+                                    : 'Have you ever felt the need for a moment to reflect on yourself, understand your choices and find clarity in everyday life? Tarot is more than cards: it\'s a mirror of your own journey, an invitation to connect with your intuition and personal evolution.'}
+                            </p>
+                            <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
+                                {isPortuguese
+                                    ? 'Para quem busca crescimento espiritual e autoconhecimento, a Carta do Dia oferece um insight diário exclusivo, trazendo energia, orientação e inspiração para enfrentar os desafios e celebrar pequenas conquistas. É como receber um lembrete do universo, um pequeno guia para se alinhar com seus objetivos e emoções.'
+                                    : 'For those seeking spiritual growth and self-knowledge, the Daily Card offers an exclusive daily insight, bringing energy, guidance and inspiration to face challenges and celebrate small victories. It\'s like receiving a reminder from the universe, a small guide to align with your goals and emotions.'}
+                            </p>
+                            <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
+                                {isPortuguese
+                                    ? 'Além disso, nossas consultas rápidas permitem que você explore temas específicos ou situações do momento, enquanto a biblioteca completa de Tarot ajuda iniciantes a aprender passo a passo cada carta, cada símbolo, cada mensagem. Você vai desenvolver a habilidade de interpretar as cartas, aplicar os ensinamentos na sua vida e perceber padrões que antes passavam despercebidos.'
+                                    : 'Additionally, our quick consultations allow you to explore specific themes or current situations, while the complete Tarot library helps beginners learn step by step each card, each symbol, each message. You will develop the ability to interpret the cards, apply the teachings in your life and notice patterns that previously went unnoticed.'}
+                            </p>
+                            <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
+                                {isPortuguese
+                                    ? 'E se você se pergunta sobre a diferença entre o Tarot real e o Tarot digital, aqui explicamos de forma simples: a experiência digital mantém a profundidade simbólica e a energia de cada carta, combinando praticidade e clareza em leituras acessíveis a qualquer hora.'
+                                    : 'And if you wonder about the difference between real Tarot and digital Tarot, here we explain simply: the digital experience maintains the symbolic depth and energy of each card, combining practicality and clarity in readings accessible at any time.'}
+                            </p>
+                            <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light">
+                                {isPortuguese
+                                    ? 'Comece hoje e descubra como pequenas leituras podem transformar sua percepção, trazer equilíbrio emocional e inspirar sua evolução espiritual. Receba a sua Carta do Dia e abra espaço para uma jornada de autoconhecimento e energia positiva todos os dias.'
+                                    : 'Start today and discover how small readings can transform your perception, bring emotional balance and inspire your spiritual evolution. Receive your Daily Card and make room for a journey of self-knowledge and positive energy every day.'}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -1415,29 +1566,29 @@ const Home = () => {
             </section>
 
             {/* Tarot por Signo - Quick Access Section */}
-            <section className="relative z-10 py-16 md:py-20 px-4 md:px-6 bg-[#110e1a]">
-                <div className="max-w-5xl mx-auto">
-                    <div className="text-center mb-10">
-                        <h2 className="text-3xl md:text-4xl font-normal text-gradient-gold mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-[#110e1a] pb-28 md:pb-36">
+                <div className="max-w-[1000px] mx-auto">
+                    <div className="text-center mb-12 md:mb-16">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
                         </h2>
-                        <p className="text-gray-400 text-base max-w-xl mx-auto font-light">
+                        <p className="text-gray-400 text-lg md:text-xl max-w-xl mx-auto font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
                             {isPortuguese
                                 ? 'Descubra as energias do tarot personalizadas para o seu signo hoje.'
                                 : 'Discover personalized tarot energies for your sign today.'}
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-5">
                         {ZODIAC_ORDER.map((slug) => {
                             const sign = ZODIAC_SIGNS[slug];
                             return (
                                 <button
                                     key={slug}
                                     onClick={() => navigate(isPortuguese ? `/tarot-por-signo/${slug}` : `/tarot-by-sign/${slug}`)}
-                                    className="group flex items-center justify-center py-4 px-2 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-yellow-500/30 transition-all duration-200 hover:scale-[1.04]"
+                                    className="group flex items-center justify-center py-5 px-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-yellow-500/30 transition-all duration-200 hover:scale-[1.04]"
                                 >
-                                    <span className="text-sm md:text-base font-semibold text-gradient-gold tracking-wide group-hover:opacity-90 transition-opacity" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    <span className="text-base md:text-lg font-semibold text-gradient-gold tracking-wide group-hover:opacity-90 transition-opacity" style={{ fontFamily: "'Crimson Text', serif" }}>
                                         {isPortuguese ? sign.name.pt : sign.name.en}
                                     </span>
                                 </button>
@@ -1445,7 +1596,7 @@ const Home = () => {
                         })}
                     </div>
 
-                    <div className="text-center mt-8">
+                    <div className="text-center mt-10">
                         <button
                             onClick={() => navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign')}
                             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-white/10 text-sm text-gray-400 hover:text-white hover:border-white/20 transition-all"
@@ -5172,7 +5323,41 @@ const Result = () => {
                                     <>
                                         {/* LAYOUT MÍSTICO INTEGRADO */}
                                         {(structuredSynthesis as any).sintese_geral ? (
-                                            <div className="bg-gradient-to-br from-[#1a1230]/80 to-[#12091a]/80 backdrop-blur-sm border border-white/10 rounded-2xl p-8 md:p-10 space-y-10 relative">
+                                            <div
+                                                className="relative rounded-3xl overflow-hidden"
+                                                style={{
+                                                    background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.95) 0%, rgba(45, 38, 65, 0.98) 50%, rgba(55, 45, 75, 0.95) 100%)',
+                                                    boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.1), 0 25px 50px -12px rgba(0,0,0,0.5)'
+                                                }}
+                                            >
+                                                {/* Gold top border */}
+                                                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent" />
+
+                                                {/* Corner decorations */}
+                                                <div className="absolute top-4 left-4 w-12 h-12 pointer-events-none">
+                                                    <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-yellow-500/50 to-transparent" />
+                                                    <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-yellow-500/50 to-transparent" />
+                                                </div>
+                                                <div className="absolute top-4 right-4 w-12 h-12 pointer-events-none">
+                                                    <div className="absolute top-0 right-0 w-full h-px bg-gradient-to-l from-yellow-500/50 to-transparent" />
+                                                    <div className="absolute top-0 right-0 h-full w-px bg-gradient-to-b from-yellow-500/50 to-transparent" />
+                                                </div>
+                                                <div className="absolute bottom-4 left-4 w-12 h-12 pointer-events-none">
+                                                    <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-yellow-500/50 to-transparent" />
+                                                    <div className="absolute bottom-0 left-0 h-full w-px bg-gradient-to-t from-yellow-500/50 to-transparent" />
+                                                </div>
+                                                <div className="absolute bottom-4 right-4 w-12 h-12 pointer-events-none">
+                                                    <div className="absolute bottom-0 right-0 w-full h-px bg-gradient-to-l from-yellow-500/50 to-transparent" />
+                                                    <div className="absolute bottom-0 right-0 h-full w-px bg-gradient-to-t from-yellow-500/50 to-transparent" />
+                                                </div>
+
+                                                {/* Subtle center glow */}
+                                                <div
+                                                    className="absolute inset-0 pointer-events-none"
+                                                    style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(255, 215, 150, 0.06) 0%, transparent 70%)' }}
+                                                />
+
+                                            <div className="relative z-10 p-8 md:p-10 space-y-10">
                                                 {/* Ornamento decorativo superior */}
                                                 <div className="flex justify-center mb-6">
                                                     <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
@@ -5298,6 +5483,7 @@ const Result = () => {
                                                 <div className="flex justify-center mt-8">
                                                     <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
                                                 </div>
+                                            </div>
                                             </div>
                                         ) : (
                                             <>

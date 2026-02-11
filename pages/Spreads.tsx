@@ -73,20 +73,52 @@ const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
                         </div>
                     </div>
 
-                    {/* Mobile Menu */}
-                    {mobileMenuOpen && (
-                        <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
-                            <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-white font-medium">{t.nav.tarot}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
-                            <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
-                            <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
-                        </nav>
-                    )}
                 </div>
             </header>
+
+            {/* Mobile Drawer Menu */}
+            {mobileMenuOpen && (
+                <div className="fixed inset-0 z-50 md:hidden">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+                    <nav className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-background-dark/98 backdrop-blur-xl border-l border-border-dark flex flex-col animate-slide-in-right">
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+                            <span className="text-white font-bold text-base">Menu</span>
+                            <button onClick={() => setMobileMenuOpen(false)} className="p-1 rounded-lg hover:bg-white/5">
+                                <span className="material-symbols-outlined text-gray-400 text-xl">close</span>
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto py-2 px-3">
+                            {[
+                                { icon: 'home', label: t.nav.home, path: '/', active: isActive('/') },
+                                { icon: 'style', label: t.nav.tarot, path: isPortuguese ? '/jogos-de-tarot' : '/spreads', active: isActive(isPortuguese ? '/jogos-de-tarot' : '/spreads') },
+                                { icon: 'today', label: isPortuguese ? 'Carta do Dia' : 'Daily Card', path: isPortuguese ? '/carta-do-dia' : '/daily-card', active: isActive('/carta-do-dia') || isActive('/daily-card') },
+                                { icon: 'stars', label: isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign', path: isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign', active: isActive('/tarot-por-signo') || isActive('/tarot-by-sign') },
+                                { icon: 'menu_book', label: isPortuguese ? 'Interpretação' : 'Interpretation', path: isPortuguese ? '/interpretacao' : '/interpretation', active: isActive('/interpretacao') || isActive('/interpretation') },
+                                { icon: 'auto_stories', label: t.nav.cardMeanings, path: exploreRoute, active: isActive('/explore') || isActive(exploreRoute) },
+                                { icon: 'history', label: t.nav.history, path: '/history', active: isActive('/history') },
+                            ].map((item) => (
+                                <button
+                                    key={item.path}
+                                    onClick={() => { navigate(item.path); setMobileMenuOpen(false); }}
+                                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all ${item.active ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                                >
+                                    <span className="material-symbols-outlined text-lg">{item.icon}</span>
+                                    {item.label}
+                                </button>
+                            ))}
+                            {isAdmin && (
+                                <button
+                                    onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }}
+                                    className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all"
+                                >
+                                    <span className="material-symbols-outlined text-lg">admin_panel_settings</span>
+                                    Admin
+                                </button>
+                            )}
+                        </div>
+                    </nav>
+                </div>
+            )}
         </>
     );
 };
