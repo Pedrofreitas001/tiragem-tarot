@@ -5,7 +5,35 @@
  * - Atualizem métodos de pagamento
  * - Vejam faturas e histórico
  * - Cancelem assinaturas
+ *
+ * NOTA: Usa fetch direto para a Stripe API ao invés do SDK
+ * para evitar problemas de conexão no runtime Vercel Serverless.
  */
+
+const STRIPE_API = 'https://api.stripe.com/v1';
+
+async function stripeRequest(endpoint, params, secretKey) {
+    const response = await fetch(`${STRIPE_API}${endpoint}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${secretKey}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(params).toString(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        const errorMessage = data.error?.message || `Stripe API error: ${response.status}`;
+        const err = new Error(errorMessage);
+        err.type = data.error?.type;
+        err.code = data.error?.code;
+        throw err;
+    }
+
+    return data;
+}
 
 export default async function handler(req, res) {
     // CORS
@@ -30,17 +58,11 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { customerId, returnUrl } = req.body;
+        const { customerId, returnUrl } = req.body || {};
 
         if (!customerId) {
             return res.status(400).json({ error: 'customerId é obrigatório' });
         }
-
-        // Importar Stripe
-        const Stripe = (await import('stripe')).default;
-        const stripe = new Stripe(STRIPE_SECRET_KEY, {
-            apiVersion: '2024-12-18.acacia',
-        });
 
         // Construir URL de retorno
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
@@ -49,13 +71,13 @@ export default async function handler(req, res) {
 
         const finalReturnUrl = returnUrl || `${baseUrl}/#/settings`;
 
-        console.log('📡 Criando sessão do portal...', { customerId });
+        console.log('📡 Criando sessão do portal via fetch...', { customerId });
 
-        // Criar sessão do portal
-        const session = await stripe.billingPortal.sessions.create({
-            customer: customerId,
-            return_url: finalReturnUrl,
-        });
+        // Criar sessão do portal via Stripe API direta
+        const session = await stripeRequest('/billing_portal/sessions', {
+            'customer': customerId,
+            'return_url': finalReturnUrl,
+        }, STRIPE_SECRET_KEY);
 
         console.log('✅ Portal session criada');
 

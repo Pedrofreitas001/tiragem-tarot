@@ -7,9 +7,37 @@
  * - price_id é validado contra lista permitida (não confia no cliente)
  * - Usa client_reference_id para vincular ao userId do Supabase
  * - Verifica assinatura ativa antes de criar sessão
+ *
+ * NOTA: Usa fetch direto para a Stripe API ao invés do SDK
+ * para evitar problemas de conexão no runtime Vercel Serverless.
  */
 
 import { createClient } from '@supabase/supabase-js';
+
+const STRIPE_API = 'https://api.stripe.com/v1';
+
+async function stripeRequest(endpoint, params, secretKey) {
+    const response = await fetch(`${STRIPE_API}${endpoint}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${secretKey}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(params).toString(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        const errorMessage = data.error?.message || `Stripe API error: ${response.status}`;
+        const err = new Error(errorMessage);
+        err.type = data.error?.type;
+        err.code = data.error?.code;
+        throw err;
+    }
+
+    return data;
+}
 
 export default async function handler(req, res) {
     console.log('🔵 Checkout API chamada:', req.method, {
@@ -39,11 +67,8 @@ export default async function handler(req, res) {
     }
 
     // IDs de preços permitidos (whitelist de segurança)
-    // Aceita tanto STRIPE_PREMIUM_PRICE_ID quanto VITE_STRIPE_PREMIUM_PRICE_ID
     const premiumPriceId = process.env.STRIPE_PREMIUM_PRICE_ID || process.env.VITE_STRIPE_PREMIUM_PRICE_ID;
-    const ALLOWED_PRICE_IDS = [
-        premiumPriceId,
-    ].filter(Boolean);
+    const ALLOWED_PRICE_IDS = [premiumPriceId].filter(Boolean);
 
     try {
         const { email, customerName, userId, successUrl, cancelUrl } = req.body || {};
@@ -90,16 +115,9 @@ export default async function handler(req, res) {
                     }
                 }
             } catch (dbError) {
-                // Log mas não bloqueia - se falhar verificação, deixa prosseguir
                 console.warn('⚠️ Erro ao verificar assinatura existente (prosseguindo):', dbError.message);
             }
         }
-
-        // Importar Stripe
-        const { default: Stripe } = await import('stripe');
-        const stripe = new Stripe(STRIPE_SECRET_KEY, {
-            apiVersion: '2023-10-16',
-        });
 
         // Construir URLs de retorno
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
@@ -109,7 +127,7 @@ export default async function handler(req, res) {
         const finalSuccessUrl = successUrl || `${baseUrl}/#/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
         const finalCancelUrl = cancelUrl || `${baseUrl}/#/checkout`;
 
-        console.log('📡 Criando sessão Stripe Checkout...', {
+        console.log('📡 Criando sessão Stripe Checkout via fetch...', {
             email,
             userId,
             priceId,
@@ -117,37 +135,24 @@ export default async function handler(req, res) {
             cancelUrl: finalCancelUrl,
         });
 
-        // Criar sessão de checkout
-        const session = await stripe.checkout.sessions.create({
-            mode: 'subscription',
-            payment_method_types: ['card'],
-            line_items: [
-                {
-                    price: priceId,
-                    quantity: 1,
-                },
-            ],
-            success_url: finalSuccessUrl,
-            cancel_url: finalCancelUrl,
-            customer_email: email,
-            client_reference_id: userId, // Vincula ao Supabase user ID
-            metadata: {
-                userId,
-                customerName: customerName || '',
-                source: 'zaya_tarot',
-            },
-            // Permitir códigos promocionais
-            allow_promotion_codes: true,
-            // Coletar endereço de cobrança
-            billing_address_collection: 'auto',
-            // Configurações de assinatura
-            subscription_data: {
-                metadata: {
-                    userId,
-                    source: 'zaya_tarot',
-                },
-            },
-        });
+        // Criar sessão de checkout via Stripe API direta (fetch)
+        const session = await stripeRequest('/checkout/sessions', {
+            'mode': 'subscription',
+            'payment_method_types[0]': 'card',
+            'line_items[0][price]': priceId,
+            'line_items[0][quantity]': '1',
+            'success_url': finalSuccessUrl,
+            'cancel_url': finalCancelUrl,
+            'customer_email': email,
+            'client_reference_id': userId,
+            'metadata[userId]': userId,
+            'metadata[customerName]': customerName || '',
+            'metadata[source]': 'zaya_tarot',
+            'allow_promotion_codes': 'true',
+            'billing_address_collection': 'auto',
+            'subscription_data[metadata][userId]': userId,
+            'subscription_data[metadata][source]': 'zaya_tarot',
+        }, STRIPE_SECRET_KEY);
 
         console.log('✅ Sessão criada:', session.id, 'URL:', session.url);
 
