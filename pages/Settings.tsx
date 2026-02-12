@@ -53,7 +53,7 @@ export const Settings: React.FC = () => {
                 .from('whatsapp_subscriptions')
                 .select('*')
                 .eq('user_id', user.id)
-                .single();
+                .maybeSingle();
 
             if (whatsappData) setWhatsappSub(whatsappData);
 
@@ -63,7 +63,7 @@ export const Settings: React.FC = () => {
                 .select('*')
                 .eq('user_id', user.id)
                 .eq('status', 'active')
-                .single();
+                .maybeSingle();
 
             if (subData) setSubscription(subData);
         } catch (err) {

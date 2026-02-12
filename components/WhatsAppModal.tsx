@@ -37,9 +37,9 @@ export const WhatsAppModal: React.FC<WhatsAppModalProps> = ({ isOpen, onClose })
                 .from('whatsapp_subscriptions')
                 .select('*')
                 .eq('user_id', user.id)
-                .single();
+                .maybeSingle();
 
-            if (error && error.code !== 'PGRST116') {
+            if (error) {
                 console.error('Error loading subscription:', error);
                 return;
             }

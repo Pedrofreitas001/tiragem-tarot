@@ -6,7 +6,10 @@
  * - Valida inputs antes de processar
  * - price_id é validado contra lista permitida (não confia no cliente)
  * - Usa client_reference_id para vincular ao userId do Supabase
+ * - Verifica assinatura ativa antes de criar sessão
  */
+
+import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req, res) {
     console.log('🔵 Checkout API chamada:', req.method, {
@@ -18,7 +21,7 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
@@ -43,10 +46,11 @@ export default async function handler(req, res) {
     ].filter(Boolean);
 
     try {
-        const { email, customerName, userId, successUrl, cancelUrl } = req.body;
+        const { email, customerName, userId, successUrl, cancelUrl } = req.body || {};
 
         // Validação de inputs
         if (!email || !userId) {
+            console.error('❌ Dados obrigatórios ausentes:', { email: !!email, userId: !!userId });
             return res.status(400).json({ error: 'Email e userId são obrigatórios' });
         }
 
@@ -54,8 +58,41 @@ export default async function handler(req, res) {
         const priceId = premiumPriceId;
 
         if (!priceId || !ALLOWED_PRICE_IDS.includes(priceId)) {
-            console.error('❌ Price ID inválido ou não permitido');
-            return res.status(400).json({ error: 'Plano inválido' });
+            console.error('❌ Price ID inválido ou não configurado:', { priceId });
+            return res.status(400).json({ error: 'Plano inválido. Verifique a configuração do STRIPE_PREMIUM_PRICE_ID.' });
+        }
+
+        // Verificar se o usuário já tem assinatura ativa no Supabase
+        const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+        if (supabaseUrl && supabaseKey) {
+            try {
+                const supabase = createClient(supabaseUrl, supabaseKey);
+
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('subscription_tier, subscription_expires_at')
+                    .eq('id', userId)
+                    .maybeSingle();
+
+                if (profile?.subscription_tier === 'premium') {
+                    const isExpired = profile.subscription_expires_at
+                        ? new Date(profile.subscription_expires_at) < new Date()
+                        : false;
+
+                    if (!isExpired) {
+                        console.log('ℹ️ Usuário já possui assinatura premium ativa:', userId);
+                        return res.status(200).json({
+                            alreadyActive: true,
+                            message: 'Você já possui uma assinatura Premium ativa.',
+                        });
+                    }
+                }
+            } catch (dbError) {
+                // Log mas não bloqueia - se falhar verificação, deixa prosseguir
+                console.warn('⚠️ Erro ao verificar assinatura existente (prosseguindo):', dbError.message);
+            }
         }
 
         // Importar Stripe
@@ -76,6 +113,8 @@ export default async function handler(req, res) {
             email,
             userId,
             priceId,
+            successUrl: finalSuccessUrl,
+            cancelUrl: finalCancelUrl,
         });
 
         // Criar sessão de checkout
@@ -110,7 +149,7 @@ export default async function handler(req, res) {
             },
         });
 
-        console.log('✅ Sessão criada:', session.id);
+        console.log('✅ Sessão criada:', session.id, 'URL:', session.url);
 
         return res.json({
             url: session.url,
@@ -121,7 +160,7 @@ export default async function handler(req, res) {
         console.error('❌ Erro ao criar sessão:', error.message, error.stack);
         return res.status(500).json({
             error: 'Erro ao processar pagamento',
-            details: error.message,
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined,
         });
     }
 }

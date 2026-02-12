@@ -91,7 +91,6 @@ export const redirectToCheckout = async (options: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                priceId: STRIPE_CONFIG.priceId,
                 email: options.email,
                 customerName: options.customerName,
                 userId: options.userId,
@@ -100,14 +99,25 @@ export const redirectToCheckout = async (options: {
             }),
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error('Failed to create checkout session');
+            console.error('Checkout session error:', data);
+            throw new Error(data.error || 'Failed to create checkout session');
         }
 
-        const { url } = await response.json();
+        // Se o usuário já tem assinatura ativa
+        if (data.alreadyActive) {
+            window.location.href = '/settings';
+            return;
+        }
 
         // Redirect to Stripe Checkout
-        window.location.href = url;
+        if (data.url) {
+            window.location.href = data.url;
+        } else {
+            throw new Error('No checkout URL returned from server');
+        }
     } catch (error) {
         console.error('Error redirecting to checkout:', error);
         throw error;
