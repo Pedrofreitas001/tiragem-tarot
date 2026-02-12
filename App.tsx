@@ -34,6 +34,7 @@ import { CookieConsent } from './components/CookieConsent';
 import { HelmetProvider } from 'react-helmet-async';
 import { SEO } from './components/SEO';
 import { ScrollToTop } from './components/ScrollToTop';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
@@ -5852,7 +5853,7 @@ const Result = () => {
 const Interpretacao = () => {
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
-    const { user, tier } = useAuth();
+    const { user, session: authSession, tier } = useAuth();
     const { checkAccess, isPremium } = usePaywall();
 
     // State
@@ -6033,9 +6034,13 @@ const Interpretacao = () => {
         setIsLoading(true);
 
         try {
+            const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+            if (authSession?.access_token) {
+                headers['Authorization'] = `Bearer ${authSession.access_token}`;
+            }
             const response = await fetch('/api/physical-reading', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({
                     spreadType,
                     cards: filledCards,
@@ -6609,9 +6614,9 @@ const App = () => {
                             <Route path="/spreads" element={<><SEO title="Tarot Spreads" description="Explore different tarot spreads: Three Card, Celtic Cross, Love Check, Yes/No and more. Choose your spread and get your reading." path="/spreads" /><Spreads /></>} />
                             <Route path="/jogos-de-tarot" element={<><SEO title="Jogos de Tarot" description="Explore diferentes jogos de tarot: Três Cartas, Cruz Celta, Tarot do Amor, Sim/Não e mais. Escolha seu jogo e receba sua leitura." path="/jogos-de-tarot" /><Spreads /></>} />
 
-                            {/* Physical Reading Interpretation */}
-                            <Route path="/interpretacao" element={<><SEO title="Interpretação de Tarot" description="Guia completo de interpretação de tarot. Aprenda a ler e interpretar as cartas de tarot com orientações detalhadas." path="/interpretacao" /><Interpretacao /></>} />
-                            <Route path="/interpretation" element={<><SEO title="Tarot Interpretation" description="Complete tarot interpretation guide. Learn how to read and interpret tarot cards with detailed guidance." path="/interpretation" /><Interpretacao /></>} />
+                            {/* Physical Reading Interpretation - Premium only */}
+                            <Route path="/interpretacao" element={<ProtectedRoute requiredTier="premium"><SEO title="Interpretação de Tarot" description="Guia completo de interpretação de tarot. Aprenda a ler e interpretar as cartas de tarot com orientações detalhadas." path="/interpretacao" /><Interpretacao /></ProtectedRoute>} />
+                            <Route path="/interpretation" element={<ProtectedRoute requiredTier="premium"><SEO title="Tarot Interpretation" description="Complete tarot interpretation guide. Learn how to read and interpret tarot cards with detailed guidance." path="/interpretation" /><Interpretacao /></ProtectedRoute>} />
 
                             {/* Rotas em Português */}
                             <Route path="/arquivo-arcano" element={<><SEO title="Arquivo Arcano - Todas as Cartas de Tarot" description="Explore todas as 78 cartas do tarot. Significado, simbolismo e interpretação de cada arcano maior e menor." path="/arquivo-arcano" /><Explore /></>} />
@@ -6627,7 +6632,7 @@ const App = () => {
 
                             <Route path="/session" element={<Session />} />
                             <Route path="/result" element={<Result />} />
-                            <Route path="/history" element={<History />} />
+                            <Route path="/history" element={<ProtectedRoute requiredTier="authenticated"><History /></ProtectedRoute>} />
                             <Route path="/numerology" element={<><SEO title="Numerologia" description="Descubra seu perfil numerológico completo. Calcule seu número do destino, alma e personalidade." path="/numerology" /><Numerology /></>} />
                             <Route path="/cosmic" element={<><SEO title="Calendário Cósmico" description="Acompanhe as fases da lua, energia cósmica do dia e alinhamento planetário." path="/cosmic" /><CosmicCalendar /></>} />
                             <Route path="/carta-do-dia" element={<><SEO title="Carta do Dia - Tarot Diário" description="Descubra a carta de tarot do dia. Receba orientação diária com interpretação completa e conselho espiritual." path="/carta-do-dia" /><DailyCard /></>} />
@@ -6639,9 +6644,9 @@ const App = () => {
                             <Route path="/charts-demo" element={<SideBySideExample />} />
                             <Route path="/checkout" element={<Checkout />} />
                             <Route path="/checkout/success" element={<CheckoutSuccess />} />
-                            <Route path="/settings" element={<Settings />} />
-                            <Route path="/configuracoes" element={<Settings />} />
-                            <Route path="/admin" element={<AdminPanel />} />
+                            <Route path="/settings" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />
+                            <Route path="/configuracoes" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />
+                            <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminPanel /></ProtectedRoute>} />
                             <Route path="/privacidade" element={<><SEO title="Política de Privacidade" description="Política de privacidade do Zaya Tarot. Saiba como protegemos seus dados e respeitamos sua privacidade." path="/privacidade" /><PrivacyPolicy /></>} />
                             <Route path="/privacy" element={<><SEO title="Privacy Policy" description="Zaya Tarot privacy policy. Learn how we protect your data and respect your privacy." path="/privacy" /><PrivacyPolicy /></>} />
                             <Route path="/termos" element={<><SEO title="Termos de Uso" description="Termos de uso do Zaya Tarot. Condições para utilização da plataforma de tarot online." path="/termos" /><TermsOfUse /></>} />

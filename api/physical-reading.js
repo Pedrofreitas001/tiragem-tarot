@@ -1,7 +1,8 @@
 // Vercel Serverless Function - /api/physical-reading
-// Interpreta tiragens físicas de tarot feitas pelo usuário
+// Interpreta tiragens físicas de tarot feitas pelo usuário (Premium only)
 
 import crypto from 'crypto';
+import { requirePremium } from './_lib/auth.js';
 
 // Cache em memória
 const readingsCache = new Map();
@@ -84,6 +85,10 @@ export default async function handler(req, res) {
     }
 
     try {
+        // Server-side premium validation - prevents bypass via direct API call
+        const auth = await requirePremium(req, res);
+        if (!auth) return; // Response already sent by requirePremium
+
         const { spreadType, cards, question, isPortuguese = true } = req.body;
         const GEMINI_KEY = process.env.GEMINI_KEY || process.env.VITE_GEMINI_API_KEY;
 
