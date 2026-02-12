@@ -756,7 +756,7 @@ const Home = () => {
             </section>
 
             {/* Interactive Stats Banner */}
-            <section className="mt-24 md:mt-32 py-3 md:py-4 px-4 md:px-6 relative overflow-hidden">
+            <section className="mt-14 md:mt-32 py-3 md:py-4 px-4 md:px-6 relative overflow-hidden">
                 <div className="absolute inset-0 border-y border-transparent"></div>
                 {/* Glassmorphism background */}
                 <div className="absolute inset-0 z-0 bg-white/10 backdrop-blur-sm border border-white/10" style={{ boxShadow: '0 1px 4px 0 rgba(0,0,0,0.01)' }}></div>
@@ -764,13 +764,13 @@ const Home = () => {
                     <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 md:gap-8">
                         <div className="text-center group">
                             <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                1.247
+                                8.247
                             </div>
                             <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Jornadas Ativas' : 'Active Journeys'}</div>
                         </div>
                         <div className="text-center group">
                             <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                8.432
+                                87.432
                             </div>
                             <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Leituras Realizadas' : 'Readings Performed'}</div>
                         </div>
@@ -1394,10 +1394,14 @@ const Home = () => {
                                         <span className="material-symbols-outlined text-[10px]">touch_app</span>
                                         <span>{isPortuguese ? 'Toque para ampliar' : 'Tap to zoom'}</span>
                                     </div>
-                                    <div className={`rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
+                                    <div className={`relative rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
                                         background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
                                         border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
                                     }}>
+                                        {/* Red Badge */}
+                                        <div className="absolute top-1.5 right-1.5 z-10 bg-red-600 text-white text-[5px] md:text-[6px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm shadow-lg" style={{ lineHeight: '1.2' }}>
+                                            {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
+                                        </div>
                                         {/* Header */}
                                         <div className="flex items-center justify-between px-2.5 pt-2.5 pb-1.5">
                                             <div className="flex items-center gap-1">
@@ -1514,6 +1518,11 @@ const Home = () => {
                         <div className="absolute -right-32 -top-10 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
 
                         <div className="home-glass-card w-full max-w-4xl mx-auto rounded-xl sm:rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative">
+                            {/* Subscriber Badge */}
+                            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 bg-red-600 text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-lg flex items-center gap-1.5">
+                                <span className="material-symbols-outlined text-[12px]">group</span>
+                                {isPortuguese ? '+ 2 mil assinantes' : '+ 2k subscribers'}
+                            </div>
                             <div className="flex flex-col lg:flex-row items-stretch">
                                 {/* Form Content - Left */}
                                 <div className="flex-1 p-6 lg:p-10">
