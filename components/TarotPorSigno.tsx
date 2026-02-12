@@ -16,6 +16,8 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
+    const { profile } = useAuth();
+    const isAdmin = Boolean(profile?.is_admin);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
 
@@ -54,6 +56,11 @@ const Header = () => {
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
+                            {isAdmin && (
+                                <button onClick={() => navigate('/admin')} className={`text-sm font-medium transition-colors ${isActive('/admin') ? 'text-yellow-400' : 'text-yellow-500/70 hover:text-yellow-400'}`}>
+                                    Admin
+                                </button>
+                            )}
                         </nav>
 
                         <div className="flex items-center gap-4 sm:gap-6">
@@ -78,6 +85,9 @@ const Header = () => {
                             <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
                             <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
                             <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
+                            {isAdmin && (
+                                <button onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10">Admin</button>
+                            )}
                         </nav>
                     )}
                 </div>
@@ -134,6 +144,7 @@ export const TarotPorSigno = () => {
     const { isPortuguese } = useLanguage();
     const { tier, profile } = useAuth();
     const isPremium = tier === 'premium';
+    const isAdmin = Boolean(profile?.is_admin);
 
     const [showPaywall, setShowPaywall] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -423,148 +434,148 @@ export const TarotPorSigno = () => {
 
                         {/* Conteúdo com padding */}
                         <div className="relative z-10 px-6 md:px-8 lg:px-10 py-6 md:py-8">
-                    {/* Section Title */}
-                    <div className="text-center mb-6 md:mb-8">
-                        <h2 className="text-white text-3xl md:text-4xl font-light mb-3" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.02em' }}>
-                            {isPortuguese ? `Energias de ${signName}` : `${signName} Energies`}
-                        </h2>
-                        <div className="w-16 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto opacity-60" />
-                    </div>
-
-                    {/* AI Loading State */}
-                    {isLoadingAI ? (
-                        <div className="flex flex-col items-center justify-center gap-4 py-20">
-                            <div className="w-8 h-8 border-2 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin"></div>
-                            <p className="text-gray-400 text-sm">{isPortuguese ? 'Consultando os astros...' : 'Consulting the stars...'}</p>
-                        </div>
-                    ) : (
-                        <div className="space-y-12 lg:space-y-16 max-w-6xl mx-auto">
-                            {/* Mensagem do Dia - Título Grande */}
-                            {aiSynthesis?.mensagem_do_dia && (
-                                <div className="text-center">
-                                    <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight" style={{
-                                        fontFamily: "'Crimson Text', serif",
-                                        background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
-                                        WebkitBackgroundClip: 'text',
-                                        WebkitTextFillColor: 'transparent',
-                                        backgroundClip: 'text',
-                                    }}>
-                                        {aiSynthesis.mensagem_do_dia}
-                                    </h3>
-                                </div>
-                            )}
-
-                            {/* Divisor decorativo */}
-                            <div className="flex items-center justify-center gap-3">
-                                <div className="w-12 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
-                                <div className="w-2 h-2 rounded-full bg-yellow-500/40"></div>
-                                <div className="w-12 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
+                            {/* Section Title */}
+                            <div className="text-center mb-6 md:mb-8">
+                                <h2 className="text-white text-3xl md:text-4xl font-light mb-3" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.02em' }}>
+                                    {isPortuguese ? `Energias de ${signName}` : `${signName} Energies`}
+                                </h2>
+                                <div className="w-16 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto opacity-60" />
                             </div>
 
-                            {/* Síntese Energética - FREE */}
-                            {aiSynthesis?.sintese_energetica && (
-                                <div className="max-w-3xl mx-auto text-center">
-                                    <p className="text-gray-200 text-lg md:text-xl leading-relaxed font-light" style={{
-                                        fontFamily: "'Crimson Text', serif"
-                                    }}>
-                                        {aiSynthesis.sintese_energetica}
-                                    </p>
-                                </div>
-                            )}
-
-                            {/* Paywall para conteúdo Premium */}
-                            {!isPremium ? (
-                                <div className="relative">
-                                    {/* Preview borrado */}
-                                    <div className="blur-sm pointer-events-none opacity-60">
-                                        {/* Módulos */}
-                                        <div className="relative min-h-[200px] md:min-h-[140px] bg-white/5 rounded-xl p-6">
-                                            <p className="text-gray-400">Conteúdo premium bloqueado...</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Overlay com CTA */}
-                                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-background-dark via-background-dark/90 to-background-dark/70 rounded-xl">
-                                        <div className="text-center p-4 md:p-8 w-full">
-                                            <span className="material-symbols-outlined text-3xl md:text-4xl text-yellow-500 mb-3 md:mb-4 block">lock</span>
-                                            <h3 className="text-lg md:text-xl text-white mb-2">
-                                                {isPortuguese ? 'Desbloqueie a interpretação completa' : 'Unlock complete interpretation'}
-                                            </h3>
-                                            <p className="text-gray-400 text-xs md:text-sm mb-4 md:mb-6 max-w-md mx-auto px-2">
-                                                {isPortuguese
-                                                    ? `Acesse a análise detalhada de cada carta para ${signName}, os módulos de orientação e seu mantra personalizado.`
-                                                    : `Access detailed analysis of each card for ${signName}, guidance modules and your personalized mantra.`}
-                                            </p>
-                                            <button
-                                                onClick={() => setShowPaywall(true)}
-                                                className="px-6 md:px-8 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold rounded-lg hover:shadow-lg hover:shadow-yellow-500/30 transition-all text-sm md:text-base"
-                                            >
-                                                {isPortuguese ? 'Desbloquear Premium' : 'Unlock Premium'}
-                                            </button>
-                                        </div>
-                                    </div>
+                            {/* AI Loading State */}
+                            {isLoadingAI ? (
+                                <div className="flex flex-col items-center justify-center gap-4 py-20">
+                                    <div className="w-8 h-8 border-2 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin"></div>
+                                    <p className="text-gray-400 text-sm">{isPortuguese ? 'Consultando os astros...' : 'Consulting the stars...'}</p>
                                 </div>
                             ) : (
-                                <>
-                                    {/* Módulos - Lista Vertical - PREMIUM */}
-                                    {aiSynthesis && getDynamicModules().length > 0 && (
-                                        <div className="space-y-4">
-                                            {getDynamicModules().map((module, index) => (
-                                                <div key={index} className={`relative pl-5 border-l-2 ${module.borderColor}`}>
-                                                    <div className={`absolute -left-[7px] top-0 w-3 h-3 rounded-full ${module.dotColor} border-2`}></div>
-                                                    <span className={`${module.textColor} text-xs font-semibold uppercase tracking-wider`}>
-                                                        {module.title}
-                                                    </span>
-                                                    <p className={`${module.contentColor} text-sm leading-relaxed mt-1`}>
-                                                        {module.content}
-                                                    </p>
-                                                </div>
-                                            ))}
+                                <div className="space-y-12 lg:space-y-16 max-w-6xl mx-auto">
+                                    {/* Mensagem do Dia - Título Grande */}
+                                    {aiSynthesis?.mensagem_do_dia && (
+                                        <div className="text-center">
+                                            <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight" style={{
+                                                fontFamily: "'Crimson Text', serif",
+                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                backgroundClip: 'text',
+                                            }}>
+                                                {aiSynthesis.mensagem_do_dia}
+                                            </h3>
                                         </div>
                                     )}
 
-                                    {/* Mantra do Signo - PREMIUM */}
-                                    {aiSynthesis?.mantra_signo && (
-                                        <div className="mt-10 text-center space-y-4">
-                                            <div className="flex items-center justify-center gap-3">
-                                                <div className="w-12 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
-                                                <span className="material-symbols-outlined text-yellow-400/50 text-lg">self_improvement</span>
-                                                <div className="w-12 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
-                                            </div>
-                                            <div className="relative">
-                                                <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 via-yellow-400/5 to-yellow-500/10 blur-xl rounded-2xl"></div>
-                                                <div className="relative bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-yellow-500/20 rounded-xl p-6">
-                                                    <p className="text-2xl md:text-3xl font-medium leading-relaxed max-w-2xl mx-auto" style={{
-                                                        fontFamily: "'Crimson Text', serif",
-                                                        background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
-                                                        WebkitBackgroundClip: 'text',
-                                                        WebkitTextFillColor: 'transparent',
-                                                        backgroundClip: 'text',
-                                                    }}>
-                                                        "{aiSynthesis.mantra_signo}"
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
+                                    {/* Divisor decorativo */}
+                                    <div className="flex items-center justify-center gap-3">
+                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
+                                        <div className="w-2 h-2 rounded-full bg-yellow-500/40"></div>
+                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
+                                    </div>
 
-                                    {/* Conselho Final - PREMIUM */}
-                                    {aiSynthesis?.conselho_final && (
-                                        <div className="mt-10 text-center space-y-4">
-                                            <div className="flex items-center justify-center gap-3">
-                                                <div className="w-12 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
-                                                <span className="material-symbols-outlined text-purple-400/50 text-lg">psychology</span>
-                                                <div className="w-12 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
-                                            </div>
-                                            <p className="text-purple-100 text-xl md:text-2xl font-medium italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                                {aiSynthesis.conselho_final}
+                                    {/* Síntese Energética - FREE */}
+                                    {aiSynthesis?.sintese_energetica && (
+                                        <div className="max-w-3xl mx-auto text-center">
+                                            <p className="text-gray-200 text-lg md:text-xl leading-relaxed font-light" style={{
+                                                fontFamily: "'Crimson Text', serif"
+                                            }}>
+                                                {aiSynthesis.sintese_energetica}
                                             </p>
                                         </div>
                                     )}
-                                </>
+
+                                    {/* Paywall para conteúdo Premium */}
+                                    {!isPremium ? (
+                                        <div className="relative">
+                                            {/* Preview borrado */}
+                                            <div className="blur-sm pointer-events-none opacity-60">
+                                                {/* Módulos */}
+                                                <div className="relative min-h-[200px] md:min-h-[140px] bg-white/5 rounded-xl p-6">
+                                                    <p className="text-gray-400">Conteúdo premium bloqueado...</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Overlay com CTA */}
+                                            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-background-dark via-background-dark/90 to-background-dark/70 rounded-xl">
+                                                <div className="text-center p-4 md:p-8 w-full">
+                                                    <span className="material-symbols-outlined text-3xl md:text-4xl text-yellow-500 mb-3 md:mb-4 block">lock</span>
+                                                    <h3 className="text-lg md:text-xl text-white mb-2">
+                                                        {isPortuguese ? 'Desbloqueie a interpretação completa' : 'Unlock complete interpretation'}
+                                                    </h3>
+                                                    <p className="text-gray-400 text-xs md:text-sm mb-4 md:mb-6 max-w-md mx-auto px-2">
+                                                        {isPortuguese
+                                                            ? `Acesse a análise detalhada de cada carta para ${signName}, os módulos de orientação e seu mantra personalizado.`
+                                                            : `Access detailed analysis of each card for ${signName}, guidance modules and your personalized mantra.`}
+                                                    </p>
+                                                    <button
+                                                        onClick={() => setShowPaywall(true)}
+                                                        className="px-6 md:px-8 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold rounded-lg hover:shadow-lg hover:shadow-yellow-500/30 transition-all text-sm md:text-base"
+                                                    >
+                                                        {isPortuguese ? 'Desbloquear Premium' : 'Unlock Premium'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {/* Módulos - Lista Vertical - PREMIUM */}
+                                            {aiSynthesis && getDynamicModules().length > 0 && (
+                                                <div className="space-y-4">
+                                                    {getDynamicModules().map((module, index) => (
+                                                        <div key={index} className={`relative pl-5 border-l-2 ${module.borderColor}`}>
+                                                            <div className={`absolute -left-[7px] top-0 w-3 h-3 rounded-full ${module.dotColor} border-2`}></div>
+                                                            <span className={`${module.textColor} text-xs font-semibold uppercase tracking-wider`}>
+                                                                {module.title}
+                                                            </span>
+                                                            <p className={`${module.contentColor} text-sm leading-relaxed mt-1`}>
+                                                                {module.content}
+                                                            </p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {/* Mantra do Signo - PREMIUM */}
+                                            {aiSynthesis?.mantra_signo && (
+                                                <div className="mt-10 text-center space-y-4">
+                                                    <div className="flex items-center justify-center gap-3">
+                                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
+                                                        <span className="material-symbols-outlined text-yellow-400/50 text-lg">self_improvement</span>
+                                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
+                                                    </div>
+                                                    <div className="relative">
+                                                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 via-yellow-400/5 to-yellow-500/10 blur-xl rounded-2xl"></div>
+                                                        <div className="relative bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-yellow-500/20 rounded-xl p-6">
+                                                            <p className="text-2xl md:text-3xl font-medium leading-relaxed max-w-2xl mx-auto" style={{
+                                                                fontFamily: "'Crimson Text', serif",
+                                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                                WebkitBackgroundClip: 'text',
+                                                                WebkitTextFillColor: 'transparent',
+                                                                backgroundClip: 'text',
+                                                            }}>
+                                                                "{aiSynthesis.mantra_signo}"
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Conselho Final - PREMIUM */}
+                                            {aiSynthesis?.conselho_final && (
+                                                <div className="mt-10 text-center space-y-4">
+                                                    <div className="flex items-center justify-center gap-3">
+                                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
+                                                        <span className="material-symbols-outlined text-purple-400/50 text-lg">psychology</span>
+                                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
+                                                    </div>
+                                                    <p className="text-purple-100 text-xl md:text-2xl font-medium italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                        {aiSynthesis.conselho_final}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
                             )}
-                        </div>
-                    )}
                         </div>
                     </div>
                 </div>
@@ -591,7 +602,7 @@ export const TarotPorSigno = () => {
                                         : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
                                         }`}
                                 >
-                                    <span className={`text-sm font-medium ${isCurrentSign ? 'text-yellow-400' : 'text-gray-400'}`}>
+                                    <span className={`text-sm font-medium text-gradient-gold`}>
                                         {isPortuguese ? data.name.pt : data.name.en}
                                     </span>
                                 </button>

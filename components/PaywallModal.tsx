@@ -7,8 +7,8 @@ interface PaywallModalProps {
   onClose: () => void;
   feature?: 'readings' | 'synthesis' | 'history' | 'export' | 'patterns' | 'archive' | 'ranking' | 'whatsapp' | 'physicalReading' | 'aiSynthesis';
   onLogin?: () => void;
-  onRegister?: () => void; // Para abrir modal de registro (guests)
-  onCheckout?: () => void; // Para ir ao checkout (upgrade premium)
+  onRegister?: () => void;
+  onCheckout?: () => void;
 }
 
 export const PaywallModal: React.FC<PaywallModalProps> = ({
@@ -25,7 +25,6 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   if (!isOpen) return null;
 
   const t = {
-    // Títulos para visitantes (não logados)
     guestReadingsTitle: isPortuguese ? 'Crie sua Conta Gratuita' : 'Create Your Free Account',
     guestReadingsDesc: isPortuguese
       ? 'Você usou sua tirada gratuita de demonstração. Crie uma conta grátis para ter 1 tirada por dia!'
@@ -55,7 +54,6 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       ? 'Crie uma conta gratuita para ter acesso à síntese personalizada com IA em suas tiragens.'
       : 'Create a free account to access personalized AI synthesis in your readings.',
 
-    // Títulos para free tier (logados)
     title: isPortuguese ? 'Limite Atingido' : 'Limit Reached',
     readingsTitle: isPortuguese ? 'Tiragens Diárias Esgotadas' : 'Daily Readings Exhausted',
     synthesisTitle: isPortuguese ? 'Síntese com IA é Premium' : 'AI Synthesis is Premium',
@@ -95,7 +93,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       ? 'A interpretação de tiragens físicas com IA é exclusiva para assinantes Premium.'
       : 'Physical reading interpretation with AI is exclusive to Premium subscribers.',
 
-    upgrade: isPortuguese ? 'Fazer Upgrade' : 'Upgrade Now',
+    upgrade: isPortuguese ? 'Assinar Premium' : 'Go Premium',
     createAccount: isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account',
     login: isPortuguese ? 'Já tenho conta' : 'I have an account',
     maybeLater: isPortuguese ? 'Talvez Depois' : 'Maybe Later',
@@ -105,7 +103,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     historyAccess: isPortuguese ? 'Histórico das últimas 3 tiragens' : 'History of last 3 readings',
     sevenCards: isPortuguese ? 'Acesso a 7 cartas do arquivo' : 'Access to 7 archive cards',
 
-    premiumBenefits: isPortuguese ? 'Benefícios Premium' : 'Premium Benefits',
+    premiumBenefits: isPortuguese ? 'Tudo incluso no Premium' : 'Everything in Premium',
     unlimitedReadings: isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings',
     aiSynthesis: isPortuguese ? 'Síntese com IA personalizada' : 'Personalized AI synthesis',
     fullHistory: isPortuguese ? 'Histórico completo' : 'Full history',
@@ -113,8 +111,11 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     pdfExport: isPortuguese ? 'Exportar em PDF' : 'PDF export',
     patternAnalysis: isPortuguese ? 'Análise de padrões' : 'Pattern analysis',
     noAds: isPortuguese ? 'Sem anúncios' : 'No ads',
+    tarotBySign: isPortuguese ? 'Tarot por Signo diário' : 'Daily Tarot by Sign',
+    whatsappCard: isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp',
 
-    price: isPortuguese ? 'R$ 19,90/mês' : '$3.99/month',
+    price: isPortuguese ? 'R$ 19,90' : '$3.99',
+    pricePerMonth: isPortuguese ? '/mês' : '/month',
     priceNote: isPortuguese ? 'Cancele quando quiser' : 'Cancel anytime',
   };
 
@@ -176,136 +177,165 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     }
   };
 
-  const getIcon = () => {
-    switch (feature) {
-      case 'readings': return 'style';
-      case 'synthesis': return 'auto_awesome';
-      case 'history': return 'history';
-      case 'export': return 'picture_as_pdf';
-      case 'patterns': return 'insights';
-      case 'archive': return 'collections_bookmark';
-      case 'ranking': return 'emoji_events';
-      case 'whatsapp': return 'chat';
-      default: return 'lock';
-    }
-  };
+  const premiumFeatures = [
+    { icon: 'all_inclusive', text: t.unlimitedReadings },
+    { icon: 'auto_awesome', text: t.aiSynthesis },
+    { icon: 'stars', text: t.tarotBySign },
+    { icon: 'chat', text: t.whatsappCard },
+    { icon: 'history', text: t.fullHistory },
+    { icon: 'collections_bookmark', text: t.fullArchive },
+    { icon: 'picture_as_pdf', text: t.pdfExport },
+    { icon: 'block', text: t.noAds },
+  ];
+
+  const freeFeatures = [
+    { icon: 'style', text: t.threeReadings },
+    { icon: 'history', text: t.historyAccess },
+    { icon: 'collections_bookmark', text: t.sevenCards },
+  ];
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#1a1628] border border-[#875faf]/30 rounded-2xl overflow-hidden z-50">
-        {/* Header with gradient */}
-        <div className="bg-gradient-to-br from-[#875faf]/20 to-[#1a1628] p-8 text-center border-b border-[#875faf]/20">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#875faf]/20 flex items-center justify-center">
-            <span className="material-symbols-outlined text-3xl text-[#a77fd4]">{getIcon()}</span>
+      <style>{`
+        .paywall-gradient-gold {
+          background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        @keyframes paywall-fade-in {
+          from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+          to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .paywall-animate-in {
+          animation: paywall-fade-in 0.2s ease-out;
+        }
+      `}</style>
+
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50" onClick={onClose} />
+
+      <div className="paywall-animate-in fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md z-50">
+        <div className="relative bg-[#13101d] border border-white/[0.08] rounded-2xl overflow-hidden">
+
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-20 p-1 rounded-full hover:bg-white/10 transition-colors"
+          >
+            <span className="material-symbols-outlined text-gray-500 text-xl">close</span>
+          </button>
+
+          {/* Header */}
+          <div className="relative px-6 pt-6 pb-4 text-center">
+            {/* Subtle ambient glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div className="relative z-10">
+              <h2 className="text-xl font-bold paywall-gradient-gold mb-1.5" style={{ fontFamily: "'Crimson Text', serif" }}>
+                {getTitle()}
+              </h2>
+              <p className="text-gray-400 text-xs leading-relaxed max-w-sm mx-auto">
+                {getDescription()}
+              </p>
+            </div>
           </div>
-          <h2 className="text-2xl font-bold text-gradient-gold mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
-            {getTitle()}
-          </h2>
-          <p className="text-gray-400 text-sm">
-            {getDescription()}
-          </p>
-        </div>
 
-        {/* Benefits - diferentes para guest vs free */}
-        <div className="p-6">
-          {isGuest ? (
-            <>
-              <h3 className="text-[#a77fd4] text-sm font-bold uppercase tracking-wider mb-4">
-                {t.freeBenefits}
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { icon: 'style', text: t.threeReadings },
-                  { icon: 'history', text: t.historyAccess },
-                  { icon: 'collections_bookmark', text: t.sevenCards },
-                ].map((benefit, i) => (
-                  <div key={i} className="flex items-center gap-3 text-gray-300 text-sm">
-                    <span className="material-symbols-outlined text-green-400 text-lg">check_circle</span>
-                    {benefit.text}
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            <>
-              <h3 className="text-[#a77fd4] text-sm font-bold uppercase tracking-wider mb-4">
-                {t.premiumBenefits}
-              </h3>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { icon: 'all_inclusive', text: t.unlimitedReadings },
-                  { icon: 'auto_awesome', text: t.aiSynthesis },
-                  { icon: 'history', text: t.fullHistory },
-                  { icon: 'collections_bookmark', text: t.fullArchive },
-                  { icon: 'picture_as_pdf', text: t.pdfExport },
-                  { icon: 'block', text: t.noAds },
-                ].map((benefit, i) => (
-                  <div key={i} className="flex items-center gap-2 text-gray-300 text-sm">
-                    <span className="material-symbols-outlined text-[#875faf] text-lg">{benefit.icon}</span>
-                    {benefit.text}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+          {/* Divider */}
+          <div className="mx-6 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-        {/* Price - só mostra para usuários logados */}
-        {!isGuest && (
-          <div className="px-6 pb-2 text-center">
-            <div className="text-3xl font-bold text-white">{t.price}</div>
-            <div className="text-gray-500 text-sm">{t.priceNote}</div>
+          {/* Content */}
+          <div className="px-6 py-4">
+            {isGuest ? (
+              /* Guest: show free account benefits */
+              <div>
+                <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.15em] mb-3">
+                  {t.freeBenefits}
+                </p>
+                <div className="space-y-2.5">
+                  {freeFeatures.map((item, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                        <span className="material-symbols-outlined text-green-400 text-[16px]">check</span>
+                      </div>
+                      <span className="text-gray-300 text-sm">{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              /* Free tier: show premium benefits with price */
+              <div>
+                {/* Price highlight */}
+                <div className="flex items-center justify-center gap-1 mb-4">
+                  <span className="text-2xl font-bold text-white tracking-tight">{t.price}</span>
+                  <span className="text-gray-500 text-sm">{t.pricePerMonth}</span>
+                </div>
+
+                <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-[0.15em] mb-2">
+                  {t.premiumBenefits}
+                </p>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                  {premiumFeatures.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2 py-0.5">
+                      <span className="material-symbols-outlined text-purple-400 text-[14px] flex-shrink-0">{item.icon}</span>
+                      <span className="text-gray-300 text-xs">{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        )}
 
-        {/* Actions */}
-        <div className="p-6 space-y-3">
-          {isGuest ? (
-            <>
-              <button
-                onClick={() => {
-                  // Guest: abrir modal de registro (conta gratuita)
-                  if (onRegister) {
-                    onRegister();
-                  } else if (onLogin) {
-                    onLogin(); // Fallback para login se register não fornecido
-                  }
-                  onClose();
-                }}
-                className="w-full py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-xl text-white font-bold transition-all shadow-lg shadow-[#875faf]/30"
-              >
-                {t.createAccount}
-              </button>
-              <button
-                onClick={() => {
-                  onLogin?.(); // Abre modal de login para quem já tem conta
-                  onClose();
-                }}
-                className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-300 hover:text-white font-medium transition-all"
-              >
-                {t.login}
-              </button>
-            </>
-          ) : tier === 'free' ? (
-            <>
-              <button
-                onClick={() => {
-                  onCheckout?.();
-                  onClose();
-                }}
-                className="w-full py-4 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-xl text-white font-bold transition-all shadow-lg shadow-[#875faf]/30"
-              >
-                {t.upgrade}
-              </button>
-              <button
-                onClick={onClose}
-                className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-400 hover:text-white font-medium transition-all"
-              >
-                {t.maybeLater}
-              </button>
-            </>
-          ) : null}
+          {/* Actions */}
+          <div className="px-6 pb-5 pt-1 space-y-2">
+            {isGuest ? (
+              <>
+                <button
+                  onClick={() => {
+                    if (onRegister) {
+                      onRegister();
+                    } else if (onLogin) {
+                      onLogin();
+                    }
+                    onClose();
+                  }}
+                  className="w-full py-3.5 bg-gradient-to-r from-[#7c5aaf] to-[#9b6fd4] hover:from-[#8a68bd] hover:to-[#a97fe2] rounded-xl text-white text-sm font-bold tracking-wide transition-all"
+                >
+                  {t.createAccount}
+                </button>
+                <button
+                  onClick={() => {
+                    onLogin?.();
+                    onClose();
+                  }}
+                  className="w-full py-3 rounded-xl text-gray-400 hover:text-white text-sm font-medium transition-colors"
+                >
+                  {t.login}
+                </button>
+              </>
+            ) : tier === 'free' ? (
+              <>
+                <button
+                  onClick={() => {
+                    onCheckout?.();
+                    onClose();
+                  }}
+                  className="w-full py-3.5 bg-gradient-to-r from-[#7c5aaf] to-[#9b6fd4] hover:from-[#8a68bd] hover:to-[#a97fe2] rounded-xl text-white text-sm font-bold tracking-wide transition-all"
+                >
+                  {t.upgrade}
+                </button>
+                <div className="text-center">
+                  <span className="text-[11px] text-gray-600">{t.priceNote}</span>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="w-full py-2.5 rounded-xl text-gray-500 hover:text-gray-300 text-sm font-medium transition-colors"
+                >
+                  {t.maybeLater}
+                </button>
+              </>
+            ) : null}
+          </div>
         </div>
       </div>
     </>
@@ -326,13 +356,11 @@ export const usePaywall = () => {
       case 'aiSynthesis':
         return limits.hasAISynthesis;
       case 'history':
-        // Visitantes não têm acesso ao histórico
         if (isGuest) return false;
-        return true; // Acesso limitado para free
+        return true;
       case 'archive':
-        // Visitantes não têm acesso ao arquivo
         if (isGuest) return false;
-        return true; // Acesso limitado para free
+        return true;
       case 'export':
         return limits.hasPDFExport;
       case 'patterns':

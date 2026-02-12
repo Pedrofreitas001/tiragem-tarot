@@ -10,10 +10,14 @@ import { MinimalStarsBackground } from './MinimalStarsBackground';
 import { getDailyCardSynthesis, DailyCardSynthesis } from '../services/geminiService';
 
 // Header Component
+import { useAuth } from '../contexts/AuthContext';
+// ...existing code...
 const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
+    const { profile } = useAuth();
+    const isAdmin = Boolean(profile?.is_admin);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
 
@@ -52,6 +56,11 @@ const Header = () => {
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
+                            {isAdmin && (
+                                <button onClick={() => navigate('/admin')} className={`text-sm font-medium transition-colors ${isActive('/admin') ? 'text-yellow-400' : 'text-yellow-500/70 hover:text-yellow-400'}`}>
+                                    Admin
+                                </button>
+                            )}
                         </nav>
 
                         <div className="flex items-center gap-4 sm:gap-6">
@@ -68,20 +77,53 @@ const Header = () => {
                         </div>
                     </div>
 
-                    {/* Mobile Menu */}
-                    {mobileMenuOpen && (
-                        <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
-                            <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
-                            <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
-                            <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
-                        </nav>
-                    )}
                 </div>
             </header>
+
+            {/* Mobile Drawer Menu */}
+            {mobileMenuOpen && (
+                <div className="fixed inset-0 z-50 md:hidden">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+                    <nav className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-background-dark/98 backdrop-blur-xl border-l border-border-dark flex flex-col animate-slide-in-right">
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+                            <span className="text-white font-bold text-base">Menu</span>
+                            <button onClick={() => setMobileMenuOpen(false)} className="p-1 rounded-lg hover:bg-white/5">
+                                <span className="material-symbols-outlined text-gray-400 text-xl">close</span>
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto py-2 px-3">
+                            {[
+                                { icon: 'home', label: t.nav.home, path: '/', active: isActive('/') },
+                                { icon: 'style', label: t.nav.tarot, path: isPortuguese ? '/jogos-de-tarot' : '/spreads', active: isActive(isPortuguese ? '/jogos-de-tarot' : '/spreads') },
+                                { icon: 'today', label: isPortuguese ? 'Carta do Dia' : 'Daily Card', path: isPortuguese ? '/carta-do-dia' : '/daily-card', active: isActive('/carta-do-dia') || isActive('/daily-card') },
+                                { icon: 'stars', label: isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign', path: isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign', active: isActive('/tarot-por-signo') || isActive('/tarot-by-sign') },
+                                { icon: 'menu_book', label: isPortuguese ? 'Interpretação' : 'Interpretation', path: isPortuguese ? '/interpretacao' : '/interpretation', active: isActive('/interpretacao') || isActive('/interpretation') },
+                                { icon: 'auto_stories', label: t.nav.cardMeanings, path: exploreRoute, active: isActive('/explore') || isActive(exploreRoute) },
+                                { icon: 'history', label: t.nav.history, path: '/history', active: isActive('/history') },
+                            ].map((item) => (
+                                <button
+                                    key={item.path}
+                                    onClick={() => { navigate(item.path); setMobileMenuOpen(false); }}
+                                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all ${item.active ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                                >
+                                    <span className="material-symbols-outlined text-lg">{item.icon}</span>
+                                    {item.label}
+                                </button>
+                            ))}
+                            {isAdmin && (
+                                <button
+                                    onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }}
+                                    className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all"
+                                >
+                                    <span className="material-symbols-outlined text-lg">admin_panel_settings</span>
+                                    Admin
+                                </button>
+                            )}
+                        </div>
+                    </nav>
+                </div>
+            )}
+
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </>
     );
@@ -613,169 +655,169 @@ export const DailyCard = () => {
 
                         {/* Conteúdo com padding */}
                         <div className="relative z-10 px-6 md:px-8 lg:px-10 py-6 md:py-8">
-                    {/* Section Title */}
-                    <div className="text-center mb-6 md:mb-8">
-                        <h2 className="text-white text-3xl md:text-4xl font-light mb-3" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.02em' }}>
-                            {isPortuguese ? 'Energias do Dia' : 'Daily Energies'}
-                        </h2>
-                        <div className="w-16 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto opacity-60" />
-                    </div>
+                            {/* Section Title */}
+                            <div className="text-center mb-6 md:mb-8">
+                                <h2 className="text-white text-3xl md:text-4xl font-light mb-3" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.02em' }}>
+                                    {isPortuguese ? 'Energias do Dia' : 'Daily Energies'}
+                                </h2>
+                                <div className="w-16 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto opacity-60" />
+                            </div>
 
-                    {/* AI Loading State */}
-                    {isLoadingAI ? (
-                        <div className="flex flex-col items-center justify-center gap-4 py-20">
-                            <div className="w-8 h-8 border-2 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin"></div>
-                            <p className="text-gray-400 text-sm">{isPortuguese ? 'Consultando os astros...' : 'Consulting the stars...'}</p>
-                        </div>
-                    ) : (
-                        <div className="space-y-8 lg:space-y-10 max-w-5xl mx-auto">
-                            {/* Hero Header: Texto à esquerda, Carta à direita */}
-                            <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
-                                {/* Lado Esquerdo - Vibração Universal e Mensagem */}
-                                <div className="flex-1 flex flex-col justify-center text-center lg:text-left space-y-6">
-                                    {/* Vibração Universal - Título Principal */}
-                                    {aiSynthesis?.vibração_universal && (
-                                        <div>
-                                            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight" style={{
-                                                fontFamily: "'Crimson Text', serif",
-                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
-                                                WebkitBackgroundClip: 'text',
-                                                WebkitTextFillColor: 'transparent',
-                                                backgroundClip: 'text',
-                                            }}>
-                                                {aiSynthesis.vibração_universal}
-                                            </h3>
-                                        </div>
-                                    )}
-
-                                    {/* Divisor decorativo */}
-                                    <div className="flex items-center justify-center lg:justify-start gap-3">
-                                        <div className="w-12 h-px bg-gradient-to-r from-yellow-500/60 to-transparent"></div>
-                                        <div className="w-2 h-2 rounded-full bg-yellow-500/40"></div>
-                                        <div className="w-8 h-px bg-yellow-500/30"></div>
-                                    </div>
-
-                                    {/* Mensagem Coletiva - Subtexto */}
-                                    <div className="max-w-2xl lg:max-w-none">
-                                        {aiSynthesis?.mensagem_coletiva && aiSynthesis.mensagem_coletiva.includes('.') ? (
-                                            <p className="text-gray-200 text-lg md:text-xl lg:text-2xl leading-relaxed font-light" style={{
-                                                fontFamily: "'Crimson Text', serif"
-                                            }}>
-                                                {aiSynthesis.mensagem_coletiva.split(/\.\s+/).slice(1).join('. ').trim()}
-                                            </p>
-                                        ) : (
-                                            <p className="text-gray-200 text-lg md:text-xl lg:text-2xl leading-relaxed font-light" style={{
-                                                fontFamily: "'Crimson Text', serif"
-                                            }}>
-                                                {`"${meaning}"`}
-                                            </p>
-                                        )}
-                                    </div>
+                            {/* AI Loading State */}
+                            {isLoadingAI ? (
+                                <div className="flex flex-col items-center justify-center gap-4 py-20">
+                                    <div className="w-8 h-8 border-2 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin"></div>
+                                    <p className="text-gray-400 text-sm">{isPortuguese ? 'Consultando os astros...' : 'Consulting the stars...'}</p>
                                 </div>
+                            ) : (
+                                <div className="space-y-8 lg:space-y-10 max-w-5xl mx-auto">
+                                    {/* Hero Header: Texto à esquerda, Carta à direita */}
+                                    <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+                                        {/* Lado Esquerdo - Vibração Universal e Mensagem */}
+                                        <div className="flex-1 flex flex-col justify-center text-center lg:text-left space-y-6">
+                                            {/* Vibração Universal - Título Principal */}
+                                            {aiSynthesis?.vibração_universal && (
+                                                <div>
+                                                    <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight" style={{
+                                                        fontFamily: "'Crimson Text', serif",
+                                                        background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                        WebkitBackgroundClip: 'text',
+                                                        WebkitTextFillColor: 'transparent',
+                                                        backgroundClip: 'text',
+                                                    }}>
+                                                        {aiSynthesis.vibração_universal}
+                                                    </h3>
+                                                </div>
+                                            )}
 
-                                {/* Lado Direito - Carta em Miniatura */}
-                                <div className="flex-shrink-0 flex items-center justify-center">
-                                    <div className="relative group">
-                                        {/* Card container */}
-                                        <div className="relative rounded-xl p-3">
-                                            <img
-                                                src={dailyCard.imageUrl}
-                                                alt={cardName}
-                                                onError={handleImageError}
-                                                className="w-32 h-52 md:w-40 md:h-64 object-cover rounded-lg border border-white/10 transition-transform duration-300 group-hover:scale-[1.02] shadow-lg"
-                                            />
-                                            <div className="mt-3 text-center">
-                                                <p className="text-white text-sm md:text-base font-medium" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                                    {cardName}
-                                                </p>
+                                            {/* Divisor decorativo */}
+                                            <div className="flex items-center justify-center lg:justify-start gap-3">
+                                                <div className="w-12 h-px bg-gradient-to-r from-yellow-500/60 to-transparent"></div>
+                                                <div className="w-2 h-2 rounded-full bg-yellow-500/40"></div>
+                                                <div className="w-8 h-px bg-yellow-500/30"></div>
+                                            </div>
+
+                                            {/* Mensagem Coletiva - Subtexto */}
+                                            <div className="max-w-2xl lg:max-w-none">
+                                                {aiSynthesis?.mensagem_coletiva && aiSynthesis.mensagem_coletiva.includes('.') ? (
+                                                    <p className="text-gray-200 text-lg md:text-xl lg:text-2xl leading-relaxed font-light" style={{
+                                                        fontFamily: "'Crimson Text', serif"
+                                                    }}>
+                                                        {aiSynthesis.mensagem_coletiva.split(/\.\s+/).slice(1).join('. ').trim()}
+                                                    </p>
+                                                ) : (
+                                                    <p className="text-gray-200 text-lg md:text-xl lg:text-2xl leading-relaxed font-light" style={{
+                                                        fontFamily: "'Crimson Text', serif"
+                                                    }}>
+                                                        {`"${meaning}"`}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Lado Direito - Carta em Miniatura */}
+                                        <div className="flex-shrink-0 flex items-center justify-center">
+                                            <div className="relative group">
+                                                {/* Card container */}
+                                                <div className="relative rounded-xl p-3">
+                                                    <img
+                                                        src={dailyCard.imageUrl}
+                                                        alt={cardName}
+                                                        onError={handleImageError}
+                                                        className="w-32 h-52 md:w-40 md:h-64 object-cover rounded-lg border border-white/10 transition-transform duration-300 group-hover:scale-[1.02] shadow-lg"
+                                                    />
+                                                    <div className="mt-3 text-center">
+                                                        <p className="text-white text-sm md:text-base font-medium" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                            {cardName}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            {/* Separador místico */}
-                            <div className="flex items-center justify-center gap-3 py-4">
-                                <div className="w-16 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
-                                <span className="material-symbols-outlined text-yellow-400/40 text-sm">auto_awesome</span>
-                                <div className="w-16 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
-                            </div>
-
-                            {/* Sobre a Carta - Significado */}
-                            {aiSynthesis?.significado_carta && (
-                                <div className="bg-white/5 rounded-xl p-4 border border-white/10 mb-6">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="material-symbols-outlined text-yellow-400 text-base">auto_awesome</span>
-                                        <span className="text-white text-xs font-semibold uppercase tracking-wider">
-                                            {isPortuguese ? 'Sobre a Carta' : 'About the Card'}
-                                        </span>
+                                    {/* Separador místico */}
+                                    <div className="flex items-center justify-center gap-3 py-4">
+                                        <div className="w-16 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
+                                        <span className="material-symbols-outlined text-yellow-400/40 text-sm">auto_awesome</span>
+                                        <div className="w-16 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
                                     </div>
-                                    <p className="text-gray-200 text-sm leading-relaxed">
-                                        {aiSynthesis.significado_carta}
-                                    </p>
-                                </div>
-                            )}
 
-                            {/* Módulos - Lista Vertical */}
-                            {aiSynthesis && getDynamicModules().length > 0 && (
-                                <div className="space-y-4">
-                                    {getDynamicModules().map((module, index) => (
-                                        <div key={index} className={`relative pl-5 border-l-2 ${module.borderColor}`}>
-                                            <div className={`absolute -left-[7px] top-0 w-3 h-3 rounded-full ${module.dotColor} border-2`}></div>
-                                            <span className={`${module.textColor} text-xs font-semibold uppercase tracking-wider`}>
-                                                {module.title}
-                                            </span>
-                                            <p className={`${module.contentColor} text-sm leading-relaxed mt-1 ${module.color === 'cyan' ? 'italic' : ''}`}>
-                                                {module.content}
+                                    {/* Sobre a Carta - Significado */}
+                                    {aiSynthesis?.significado_carta && (
+                                        <div className="bg-white/5 rounded-xl p-4 border border-white/10 mb-6">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <span className="material-symbols-outlined text-yellow-400 text-base">auto_awesome</span>
+                                                <span className="text-white text-xs font-semibold uppercase tracking-wider">
+                                                    {isPortuguese ? 'Sobre a Carta' : 'About the Card'}
+                                                </span>
+                                            </div>
+                                            <p className="text-gray-200 text-sm leading-relaxed">
+                                                {aiSynthesis.significado_carta}
                                             </p>
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    )}
+
+                                    {/* Módulos - Lista Vertical */}
+                                    {aiSynthesis && getDynamicModules().length > 0 && (
+                                        <div className="space-y-4">
+                                            {getDynamicModules().map((module, index) => (
+                                                <div key={index} className={`relative pl-5 border-l-2 ${module.borderColor}`}>
+                                                    <div className={`absolute -left-[7px] top-0 w-3 h-3 rounded-full ${module.dotColor} border-2`}></div>
+                                                    <span className={`${module.textColor} text-xs font-semibold uppercase tracking-wider`}>
+                                                        {module.title}
+                                                    </span>
+                                                    <p className={`${module.contentColor} text-sm leading-relaxed mt-1 ${module.color === 'cyan' ? 'italic' : ''}`}>
+                                                        {module.content}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
 
 
 
-                            {/* Mantra Diário - Destaque Especial */}
-                            {aiSynthesis?.mantra_diário && (
-                                <div className="mt-10 text-center space-y-4">
-                                    <div className="flex items-center justify-center gap-3">
-                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
-                                        <span className="material-symbols-outlined text-yellow-400/50 text-lg">self_improvement</span>
-                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
-                                    </div>
-                                    <div className="relative">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 via-yellow-400/5 to-yellow-500/10 blur-xl rounded-2xl"></div>
-                                        <div className="relative bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-yellow-500/20 rounded-xl p-6">
-                                            <p className="text-yellow-100 text-2xl md:text-3xl font-medium leading-relaxed max-w-2xl mx-auto" style={{
-                                                fontFamily: "'Crimson Text', serif",
-                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
-                                                WebkitBackgroundClip: 'text',
-                                                WebkitTextFillColor: 'transparent',
-                                                backgroundClip: 'text',
-                                            }}>
-                                                "{aiSynthesis.mantra_diário}"
+                                    {/* Mantra Diário - Destaque Especial */}
+                                    {aiSynthesis?.mantra_diário && (
+                                        <div className="mt-10 text-center space-y-4">
+                                            <div className="flex items-center justify-center gap-3">
+                                                <div className="w-12 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
+                                                <span className="material-symbols-outlined text-yellow-400/50 text-lg">self_improvement</span>
+                                                <div className="w-12 h-px bg-gradient-to-l from-transparent to-yellow-500/30"></div>
+                                            </div>
+                                            <div className="relative">
+                                                <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 via-yellow-400/5 to-yellow-500/10 blur-xl rounded-2xl"></div>
+                                                <div className="relative bg-gradient-to-br from-[#1a1230]/40 to-[#12091a]/40 backdrop-blur-sm border border-yellow-500/20 rounded-xl p-6">
+                                                    <p className="text-yellow-100 text-2xl md:text-3xl font-medium leading-relaxed max-w-2xl mx-auto" style={{
+                                                        fontFamily: "'Crimson Text', serif",
+                                                        background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                        WebkitBackgroundClip: 'text',
+                                                        WebkitTextFillColor: 'transparent',
+                                                        backgroundClip: 'text',
+                                                    }}>
+                                                        "{aiSynthesis.mantra_diário}"
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Reflexão Final - se houver IA */}
+                                    {aiSynthesis?.reflexão_coletiva && (
+                                        <div className="mt-10 text-center space-y-4">
+                                            <div className="flex items-center justify-center gap-3">
+                                                <div className="w-12 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
+                                                <span className="material-symbols-outlined text-purple-400/50 text-lg">psychology</span>
+                                                <div className="w-12 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
+                                            </div>
+                                            <p className="text-purple-100 text-xl md:text-2xl font-medium italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                {aiSynthesis.reflexão_coletiva}
                                             </p>
                                         </div>
-                                    </div>
+                                    )}
+
                                 </div>
                             )}
-
-                            {/* Reflexão Final - se houver IA */}
-                            {aiSynthesis?.reflexão_coletiva && (
-                                <div className="mt-10 text-center space-y-4">
-                                    <div className="flex items-center justify-center gap-3">
-                                        <div className="w-12 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
-                                        <span className="material-symbols-outlined text-purple-400/50 text-lg">psychology</span>
-                                        <div className="w-12 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
-                                    </div>
-                                    <p className="text-purple-100 text-xl md:text-2xl font-medium italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        {aiSynthesis.reflexão_coletiva}
-                                    </p>
-                                </div>
-                            )}
-
-                        </div>
-                    )}
                         </div>
                     </div>
                 </div>

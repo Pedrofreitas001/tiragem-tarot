@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
+import { redirectToCheckout } from '../services/stripeService';
 
 interface FormData {
     fullName: string;
@@ -13,12 +14,6 @@ interface FormData {
 
 type Phase = 'plans' | 'account' | 'payment';
 type Plan = 'free' | 'premium';
-
-// Stripe configuration - will be set when credentials are provided
-const STRIPE_CONFIG = {
-    publishableKey: '', // Add your Stripe publishable key here
-    priceId: '', // Add your Stripe price ID for the premium plan
-};
 
 export const Checkout: React.FC = () => {
     const { isPortuguese } = useLanguage();
@@ -110,46 +105,33 @@ export const Checkout: React.FC = () => {
         setError(null);
 
         try {
-            // Simula processamento de pagamento
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            // Calcular data de expiração (1 mês a partir de hoje)
-            const expiresAt = new Date();
-            expiresAt.setMonth(expiresAt.getMonth() + 1);
-
-            if (isLoggedIn) {
-                // USUÁRIO LOGADO: Atualizar perfil existente para premium
-                const { error: updateError } = await updateProfile({
-                    subscription_tier: 'premium',
-                    subscription_expires_at: expiresAt.toISOString(),
-                });
-
-                if (updateError) {
-                    setError(updateError.message);
-                    return;
-                }
-
-                // Redirecionar para página de sucesso
-                navigate('/checkout/success');
-            } else {
-                // NOVO USUÁRIO: Criar conta com status PREMIUM (após pagamento confirmado)
+            // Se novo usuário, criar conta primeiro
+            if (!isLoggedIn) {
                 const { error: signUpError } = await signUp(
                     formData.email,
                     formData.password,
-                    formData.fullName,
-                    'premium' // Tier premium após pagamento
+                    formData.fullName
                 );
 
                 if (signUpError) {
                     setError(signUpError.message);
                     return;
                 }
-
-                // Redirecionar para página de sucesso
-                navigate('/checkout/success');
             }
+
+            // Redirecionar para Stripe Checkout
+            await redirectToCheckout({
+                email: isLoggedIn ? user?.email : formData.email,
+                customerName: isLoggedIn ? (profile?.full_name || '') : formData.fullName,
+                userId: user?.id || '',
+            });
+
+            // Se chegou aqui sem redirect, algo deu errado
         } catch (err: any) {
-            setError(isPortuguese ? 'Erro no pagamento' : 'Payment error');
+            console.error('Stripe checkout error:', err);
+            setError(isPortuguese
+                ? 'Erro ao redirecionar para o pagamento. Tente novamente.'
+                : 'Error redirecting to payment. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -468,9 +450,6 @@ export const Checkout: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg">
-                                            <div className="w-8 h-5 bg-gradient-to-r from-green-400 to-teal-500 rounded text-[8px] text-white flex items-center justify-center font-bold">PIX</div>
-                                        </div>
-                                        <div className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg">
                                             <div className="w-8 h-5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded text-[7px] text-white flex items-center justify-center font-bold">stripe</div>
                                         </div>
                                     </div>
@@ -775,30 +754,6 @@ export const Checkout: React.FC = () => {
                                             </p>
                                         </div>
 
-                                        {/* Divider */}
-                                        <div className="flex items-center gap-4 py-2">
-                                            <div className="flex-1 h-px bg-white/10"></div>
-                                            <span className="text-gray-500 text-xs uppercase">{isPortuguese ? 'ou pague com' : 'or pay with'}</span>
-                                            <div className="flex-1 h-px bg-white/10"></div>
-                                        </div>
-
-                                        {/* Alternative Payment Methods */}
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <button
-                                                type="button"
-                                                className="flex items-center justify-center gap-2 py-3 px-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all group"
-                                            >
-                                                <div className="w-6 h-4 bg-gradient-to-r from-green-400 to-teal-500 rounded text-[7px] text-white flex items-center justify-center font-bold">PIX</div>
-                                                <span className="text-gray-300 text-sm group-hover:text-white transition-colors">PIX</span>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="flex items-center justify-center gap-2 py-3 px-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all group"
-                                            >
-                                                <span className="material-symbols-outlined text-gray-400 group-hover:text-white transition-colors text-lg">credit_card</span>
-                                                <span className="text-gray-300 text-sm group-hover:text-white transition-colors">{isPortuguese ? 'Débito' : 'Debit'}</span>
-                                            </button>
-                                        </div>
                                     </div>
 
                                     {/* Security Features - More Visual */}

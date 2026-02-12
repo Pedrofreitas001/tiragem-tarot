@@ -75,6 +75,8 @@ Crie uma interpretação completa focada na ENERGIA COLETIVA do dia.
 
 IMPORTANTE: Forneça TODOS os 10 campos solicitados no JSON. Cada campo deve ter conteúdo significativo e único.
 
+REGRA CRÍTICA: Cada campo DEVE conter uma mensagem COMPLETA e coerente. NUNCA gere textos que precisem ser cortados. Respeite rigorosamente os limites de caracteres definidos no schema. Cada frase deve fazer sentido por si só, sem necessidade de continuação.
+
 Responda EXCLUSIVAMENTE em JSON válido com todos os campos obrigatórios preenchidos.`;
 
         const schema = {
@@ -86,7 +88,7 @@ Responda EXCLUSIVAMENTE em JSON válido com todos os campos obrigatórios preenc
                 },
                 vibração_universal: {
                     type: "string",
-                    description: "A vibração que permeia o universo hoje (3-6 palavras)"
+                    description: "A vibração que permeia o universo hoje (MÁXIMO 5 palavras, seja conciso)"
                 },
                 consciência_coletiva: {
                     type: "string",
@@ -106,11 +108,11 @@ Responda EXCLUSIVAMENTE em JSON válido com todos os campos obrigatórios preenc
                 },
                 energia_emocional: {
                     type: "string",
-                    description: "A energia emocional predominante no coletivo hoje (máx 30 palavras)"
+                    description: "A energia emocional predominante no coletivo hoje. IMPORTANTE: máximo 100 caracteres. Deve ser uma frase completa e coerente que caiba neste limite sem cortes."
                 },
                 significado_carta: {
                     type: "string",
-                    description: "Breve descrição objetiva do que esta carta representa e simboliza, sua essência e energia. Ex: 'O Mago representa a manifestação, a conexão entre céu e terra...' (máx 50 palavras)"
+                    description: "Breve descrição objetiva do que esta carta representa e simboliza, sua essência e energia. IMPORTANTE: máximo 120 caracteres. Deve ser uma frase completa e coerente que caiba neste limite sem cortes."
                 },
                 portal_transformação: {
                     type: "string",
@@ -118,7 +120,7 @@ Responda EXCLUSIVAMENTE em JSON válido com todos os campos obrigatórios preenc
                 },
                 mantra_diário: {
                     type: "string",
-                    description: "Uma afirmação ou mantra para sintonizar com a energia do dia (máx 15 palavras)"
+                    description: "Uma afirmação ou mantra curto para sintonizar com a energia do dia. IMPORTANTE: máximo 60 caracteres. Deve ser uma frase completa e impactante."
                 }
             },
             required: ["mensagem_coletiva", "vibração_universal", "consciência_coletiva", "movimento_planetário", "chamado_universal", "reflexão_coletiva", "energia_emocional", "significado_carta", "portal_transformação", "mantra_diário"]

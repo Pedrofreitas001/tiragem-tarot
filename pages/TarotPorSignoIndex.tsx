@@ -60,6 +60,8 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, isPortuguese } = useLanguage();
+    const { profile } = useAuth();
+    const isAdmin = Boolean(profile?.is_admin);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
 
@@ -71,7 +73,7 @@ const Header = () => {
         <>
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
                 <div className="flex flex-col w-full max-w-[1200px]">
-                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
+                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-4 lg:px-10 lg:py-5">
                         <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
                             <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>
@@ -98,6 +100,11 @@ const Header = () => {
                             <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
+                            {isAdmin && (
+                                <button onClick={() => navigate('/admin')} className={`text-sm font-medium transition-colors ${isActive('/admin') ? 'text-yellow-400' : 'text-yellow-500/70 hover:text-yellow-400'}`}>
+                                    Admin
+                                </button>
+                            )}
                         </nav>
 
                         <div className="flex items-center gap-4 sm:gap-6">
@@ -112,20 +119,53 @@ const Header = () => {
                         </div>
                     </div>
 
-                    {/* Mobile Menu */}
-                    {mobileMenuOpen && (
-                        <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
-                            <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
-                            <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
-                            <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
-                        </nav>
-                    )}
                 </div>
             </header>
+
+            {/* Mobile Drawer Menu */}
+            {mobileMenuOpen && (
+                <div className="fixed inset-0 z-50 md:hidden">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+                    <nav className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-background-dark/98 backdrop-blur-xl border-l border-border-dark flex flex-col animate-slide-in-right">
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+                            <span className="text-white font-bold text-base">Menu</span>
+                            <button onClick={() => setMobileMenuOpen(false)} className="p-1 rounded-lg hover:bg-white/5">
+                                <span className="material-symbols-outlined text-gray-400 text-xl">close</span>
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto py-2 px-3">
+                            {[
+                                { icon: 'home', label: t.nav.home, path: '/', active: isActive('/') && location.pathname === '/' },
+                                { icon: 'style', label: t.nav.tarot, path: isPortuguese ? '/jogos-de-tarot' : '/spreads', active: false },
+                                { icon: 'today', label: isPortuguese ? 'Carta do Dia' : 'Daily Card', path: isPortuguese ? '/carta-do-dia' : '/daily-card', active: isActive('/carta-do-dia') || isActive('/daily-card') },
+                                { icon: 'stars', label: isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign', path: isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign', active: isActive('/tarot-por-signo') || isActive('/tarot-by-sign') },
+                                { icon: 'menu_book', label: isPortuguese ? 'Interpretação' : 'Interpretation', path: isPortuguese ? '/interpretacao' : '/interpretation', active: isActive('/interpretacao') || isActive('/interpretation') },
+                                { icon: 'auto_stories', label: t.nav.cardMeanings, path: exploreRoute, active: isActive('/explore') || isActive(exploreRoute) },
+                                { icon: 'history', label: t.nav.history, path: '/history', active: isActive('/history') },
+                            ].map((item) => (
+                                <button
+                                    key={item.path}
+                                    onClick={() => { navigate(item.path); setMobileMenuOpen(false); }}
+                                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all ${item.active ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                                >
+                                    <span className="material-symbols-outlined text-lg">{item.icon}</span>
+                                    {item.label}
+                                </button>
+                            ))}
+                            {isAdmin && (
+                                <button
+                                    onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }}
+                                    className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all"
+                                >
+                                    <span className="material-symbols-outlined text-lg">admin_panel_settings</span>
+                                    Admin
+                                </button>
+                            )}
+                        </div>
+                    </nav>
+                </div>
+            )}
+
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </>
     );
@@ -195,6 +235,14 @@ export const TarotPorSignoIndex = () => {
         navigate(route);
     };
 
+    // Inverter gemeos e libra na ordem
+    const zodiacOrderSwapped = [...ZODIAC_ORDER];
+    const idxGemeos = zodiacOrderSwapped.indexOf('gemeos');
+    const idxLibra = zodiacOrderSwapped.indexOf('libra');
+    if (idxGemeos !== -1 && idxLibra !== -1) {
+        [zodiacOrderSwapped[idxGemeos], zodiacOrderSwapped[idxLibra]] = [zodiacOrderSwapped[idxLibra], zodiacOrderSwapped[idxGemeos]];
+    }
+
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden" style={{
             backgroundColor: '#1a1628',
@@ -215,7 +263,8 @@ export const TarotPorSignoIndex = () => {
                 <div className="container mx-auto px-4 relative z-10">
                     {/* Hero Section */}
                     <div className="text-center mb-8 max-w-3xl mx-auto">
-                        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-medium tracking-wide text-gradient-gold drop-shadow-lg mb-4">
+                        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-medium tracking-wide text-gradient-gold drop-shadow-lg mb-4"
+                            style={{ lineHeight: 1.25 }}>
                             {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
                         </h1>
                         <p className="text-gray-300 text-base md:text-lg font-light leading-relaxed">
@@ -226,9 +275,9 @@ export const TarotPorSignoIndex = () => {
                     </div>
 
                     {/* Grid de signos com ícones */}
-                    <div className="max-w-6xl mx-auto">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                            {ZODIAC_ORDER.map((sign) => {
+                    <div className="max-w-5xl mx-auto mt-10 md:mt-16">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+                            {zodiacOrderSwapped.map((sign) => {
                                 const signData = ZODIAC_SIGNS[sign];
                                 const iconPath = SIGN_ICONS[sign];
                                 const elementColors = ELEMENT_LIGHT_COLORS[signData.element];
@@ -237,25 +286,23 @@ export const TarotPorSignoIndex = () => {
                                     <button
                                         key={sign}
                                         onClick={() => handleSignClick(sign)}
-                                        className={`group relative overflow-hidden rounded-2xl bg-gradient-to-b ${elementColors.bg} ${elementColors.border} aspect-square transition-all duration-300 ${elementColors.hoverBorder} hover:scale-[1.03] hover:shadow-xl ${elementColors.shadow}`}
+                                        className={`group relative overflow-hidden rounded-2xl bg-gradient-to-b ${elementColors.bg} ${elementColors.border} aspect-square transition-all duration-200 ${elementColors.hoverBorder} hover:scale-[1.02]`}
                                     >
                                         {/* Ícone do signo centralizado - menor com mais padding */}
                                         <div className="absolute inset-0 flex items-center justify-center p-10 md:p-12 pb-16 md:pb-20">
                                             <img
                                                 src={iconPath}
                                                 alt={signData.name.pt}
-                                                className="w-full h-full object-contain opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-300"
+                                                className={`w-full h-full object-contain opacity-98 group-hover:opacity-100 group-hover:scale-103 transition-all duration-300${sign === 'gemeos' ? ' translate-x-[2.5px]' : ''}`}
+                                                style={{ filter: 'contrast(1.01) brightness(1.01) drop-shadow(0 0 0.5px #fff2)', ...(sign === 'gemeos' ? { marginLeft: '2.5px' } : {}) }}
                                             />
                                         </div>
 
                                         {/* Nome e data no rodapé */}
                                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1a1424]/90 via-[#1a1424]/70 to-transparent pt-8 pb-4 px-3 text-center">
-                                            <h3 className="text-white text-base md:text-lg font-semibold tracking-wide mb-1 drop-shadow-md">
+                                            <h3 className="text-base md:text-lg font-semibold tracking-wide mb-1 drop-shadow-md text-gradient-gold">
                                                 {isPortuguese ? signData.name.pt : signData.name.en}
                                             </h3>
-                                            <p className={`${elementColors.textDate} text-xs md:text-sm font-light`}>
-                                                {signData.dateRange.start.replace('-', '/')} - {signData.dateRange.end.replace('-', '/')}
-                                            </p>
                                         </div>
 
                                         {/* Borda interna brilhante */}
@@ -268,7 +315,7 @@ export const TarotPorSignoIndex = () => {
 
                     {/* CTA para criar conta */}
                     {isGuest && (
-                        <div className="max-w-md mx-auto mt-14 md:mt-16 bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-purple-500/10 border border-purple-500/20 rounded-xl p-4 text-center">
+                        <div className="max-w-xl mx-auto mt-14 md:mt-16 bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-purple-500/10 border border-purple-500/20 rounded-xl px-8 py-4 text-center">
                             <p className="text-gray-300 text-sm mb-3">
                                 {isPortuguese
                                     ? 'Crie sua conta para acessar automaticamente o tarot do seu signo.'

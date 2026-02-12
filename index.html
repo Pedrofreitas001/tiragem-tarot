@@ -343,6 +343,16 @@
       animation: fadeIn 0.2s ease-out forwards;
     }
 
+    /* Marquee scroll animation for promo banner */
+    @keyframes marquee-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .animate-marquee {
+      animation: marquee-scroll 20s linear infinite;
+    }
+
     /* Line clamp utilities */
     .line-clamp-2 {
       display: -webkit-box;

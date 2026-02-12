@@ -39,6 +39,15 @@
     "api/daily-card.js": {
       "maxDuration": 30
     },
+    "api/create-checkout-session.js": {
+      "maxDuration": 15
+    },
+    "api/create-portal-session.js": {
+      "maxDuration": 15
+    },
+    "api/webhooks/stripe.js": {
+      "maxDuration": 15
+    },
     "api/admin/stats.js": {
       "maxDuration": 15
     }

@@ -107,13 +107,13 @@ export const CashFlowChartGeneric: React.FC<Props> = ({
 
     return (
         <div className={`${isDark ? 'bg-card-dark border-border-dark' : 'bg-white border-gray-200'} border rounded-2xl p-6 shadow-lg flex flex-col h-full w-full overflow-hidden`}>
-            <div className="flex justify-between items-center mb-4 shrink-0">
-                <h3 className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold text-base`}>{title}</h3>
+            <div className="flex flex-col items-center justify-center mb-4 shrink-0 w-full">
+                <h3 className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold text-base w-full text-center`}>{title}</h3>
             </div>
             <div className="flex-1 w-full min-h-0 flex flex-col overflow-x-auto">
                 <div className="flex-1 min-h-0 min-w-[400px]">
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data} margin={{ top: 20, right: 10, left: -10, bottom: 5 }} barCategoryGap="10%">
+                        <BarChart data={data} margin={{ top: 20, right: 10, left: -10, bottom: 5 }} barCategoryGap="20%">
                             <CartesianGrid vertical={false} stroke={colors.gridStroke} strokeDasharray="3 3" />
                             <XAxis
                                 dataKey="label"
@@ -124,7 +124,7 @@ export const CashFlowChartGeneric: React.FC<Props> = ({
                                 tickFormatter={formatDayLabel}
                             />
                             <YAxis axisLine={false} tickLine={false} tick={{ fill: colors.tickFill, fontSize: 12 }} tickFormatter={formatYAxis} />
-                            <Bar dataKey="quantity" name={barLabel} fill={barColor} radius={[6, 6, 0, 0]} barSize={20} label={renderLabel} />
+                            <Bar dataKey="quantity" name={barLabel} fill={barColor} radius={[6, 6, 0, 0]} barSize={28} label={renderLabel} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

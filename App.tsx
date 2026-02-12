@@ -35,6 +35,7 @@ import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 import { TAROT_CARDS } from './tarotData';
+import { ZODIAC_SIGNS, ZODIAC_ORDER, ELEMENT_COLORS } from './data/zodiacData';
 
 // Extended CardLore with API description
 interface ExtendedCardLore extends CardLore {
@@ -163,13 +164,23 @@ const Header = () => {
 
     const exploreRoute = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
 
+    const mobileNavItems = [
+        { icon: 'home', label: t.nav.home, path: '/', active: isActive('/') },
+        { icon: 'style', label: t.nav.tarot, path: isPortuguese ? '/jogos-de-tarot' : '/spreads', active: false },
+        { icon: 'today', label: isPortuguese ? 'Carta do Dia' : 'Daily Card', path: isPortuguese ? '/carta-do-dia' : '/daily-card', active: isActive('/carta-do-dia') || isActive('/daily-card') },
+        { icon: 'stars', label: isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign', path: isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign', active: isActive('/tarot-por-signo') || isActive('/tarot-by-sign') },
+        { icon: 'menu_book', label: isPortuguese ? 'Interpretação' : 'Interpretation', path: isPortuguese ? '/interpretacao' : '/interpretation', active: isActive('/interpretacao') || isActive('/interpretation') },
+        { icon: 'auto_stories', label: t.nav.cardMeanings, path: exploreRoute, active: isActive('/explore') || isActive(exploreRoute) },
+        { icon: 'history', label: t.nav.history, path: '/history', active: isActive('/history') },
+    ];
+
     return (
         <>
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
-                <div className="flex flex-col w-full max-w-[1200px]">
-                    <div className="flex items-center justify-between whitespace-nowrap px-2 py-2 sm:px-4 sm:py-3 lg:px-10 lg:py-4 gap-2">
+                <div className="flex w-full max-w-[1200px]">
+                    <div className="flex items-center justify-between whitespace-nowrap w-full px-3 py-2.5 sm:px-4 sm:py-3 lg:px-10 lg:py-4 gap-2">
                         <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
-                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
+                            <h2 className="text-white text-base sm:text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>
 
                         <nav className="hidden md:flex items-center gap-8">
@@ -201,37 +212,75 @@ const Header = () => {
                             )}
                         </nav>
 
-                        <div className="flex items-center gap-4 sm:gap-6">
+                        <div className="flex items-center gap-3 sm:gap-6">
                             <LanguageToggle />
 
                             <UserMenu onLoginClick={() => setShowAuthModal(true)} />
 
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="md:hidden p-1.5 sm:p-2 rounded-lg hover:bg-white/5"
+                                className="md:hidden p-1.5 rounded-lg hover:bg-white/5"
                             >
-                                <span className="material-symbols-outlined text-white text-xl sm:text-2xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
+                                <span className="material-symbols-outlined text-white text-xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
                             </button>
                         </div>
                     </div>
-
-                    {/* Mobile Menu */}
-                    {mobileMenuOpen && (
-                        <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
-                            <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
-                            <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
-                            <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
-                            {isAdmin && (
-                                <button onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10">Admin</button>
-                            )}
-                        </nav>
-                    )}
                 </div>
             </header>
+
+            {/* Promotional Banner - Home only */}
+            {isActive('/') && (
+                <div
+                    className="w-full bg-red-700/90 cursor-pointer overflow-hidden sticky top-[45px] sm:top-[49px] lg:top-[56px] z-[39]"
+                    onClick={() => navigate('/checkout')}
+                >
+                    <div className="flex animate-marquee whitespace-nowrap py-1.5">
+                        {Array.from({ length: 16 }).map((_, i) => (
+                            <span key={i} className="text-white text-[11px] font-medium mx-8 tracking-wide flex-shrink-0">
+                                Assine o Premium com 15% de desconto
+                                <span className="mx-4 text-white/40">✦</span>
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Mobile Drawer Menu */}
+            {mobileMenuOpen && (
+                <div className="fixed inset-0 z-50 md:hidden">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+                    <nav className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-background-dark/98 backdrop-blur-xl border-l border-border-dark flex flex-col animate-slide-in-right">
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+                            <span className="text-white font-bold text-base">Menu</span>
+                            <button onClick={() => setMobileMenuOpen(false)} className="p-1 rounded-lg hover:bg-white/5">
+                                <span className="material-symbols-outlined text-gray-400 text-xl">close</span>
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto py-2 px-3">
+                            {mobileNavItems.map((item) => (
+                                <button
+                                    key={item.path}
+                                    onClick={() => { navigate(item.path); setMobileMenuOpen(false); }}
+                                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all ${item.active ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                                >
+                                    <span className="material-symbols-outlined text-lg">{item.icon}</span>
+                                    {item.label}
+                                </button>
+                            ))}
+                            {isAdmin && (
+                                <button
+                                    onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }}
+                                    className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all"
+                                >
+                                    <span className="material-symbols-outlined text-lg">admin_panel_settings</span>
+                                    Admin
+                                </button>
+                            )}
+                        </div>
+                    </nav>
+                </div>
+            )}
+
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </>
     );
@@ -307,11 +356,56 @@ const Home = () => {
     const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [showJourneyStories, setShowJourneyStories] = useState(false);
+    const [zoomedGalleryCard, setZoomedGalleryCard] = useState<{ name: string; img: string; vibracao: string; significado: string; energia: string; mantra: string } | null>(null);
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const { user, incrementReadingCount, tier, isGuest } = useAuth();
     const { isPortuguese: langIsPortuguese } = useLanguage();
     const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium'>('premium');
     const [whatsappSubscribed, setWhatsappSubscribed] = useState(false);
+    const [pendingGuestReading, setPendingGuestReading] = useState<any>(null);
+    const [regeneratingReading, setRegeneratingReading] = useState(false);
+    const [heroCardIndices, setHeroCardIndices] = useState([0, 7, 14]);
+
+    // Cycle hero mockup cards every 4 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setHeroCardIndices(prev => prev.map(i => (i + 1) % TAROT_CARDS.length));
+        }, 4000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Check for pending guest reading after sign-up
+    useEffect(() => {
+        if (user && !isGuest) {
+            const guestReading = getGuestReading();
+            if (guestReading) {
+                setPendingGuestReading(guestReading);
+            }
+        }
+    }, [user, isGuest]);
+
+    const handleRegenerateReading = async () => {
+        if (!pendingGuestReading || !user) return;
+        setRegeneratingReading(true);
+        try {
+            // Navigate to result page with the saved guest reading data
+            const spread = SPREADS.find(s => s.id === pendingGuestReading.spreadType) || SPREADS[0];
+            clearGuestReading();
+            setPendingGuestReading(null);
+            navigate('/result', {
+                state: {
+                    spread,
+                    cards: pendingGuestReading.cards,
+                    question: pendingGuestReading.question || '',
+                    timestamp: Date.now(),
+                }
+            });
+        } catch (err) {
+            console.error('Error regenerating reading:', err);
+        } finally {
+            setRegeneratingReading(false);
+        }
+    };
 
     // Carregar status da inscrição do WhatsApp
     useEffect(() => {
@@ -383,23 +477,55 @@ const Home = () => {
             <Header />
             <CartDrawer />
 
+            {/* Guest Reading Recovery Banner */}
+            {pendingGuestReading && user && !isGuest && (
+                <div className="relative z-20 mx-auto w-full max-w-[1200px] px-4 pt-4">
+                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-gradient-to-r from-amber-900/30 to-purple-900/30 border border-amber-500/20 rounded-xl px-5 py-4">
+                        <span className="material-symbols-outlined text-amber-400 text-2xl flex-shrink-0">auto_awesome</span>
+                        <div className="flex-1 text-center sm:text-left">
+                            <p className="text-white text-sm font-medium">
+                                {isPortuguese
+                                    ? 'Você tinha uma tiragem pendente! Deseja gerar a leitura completa com IA agora?'
+                                    : 'You had a pending reading! Would you like to generate the full AI reading now?'}
+                            </p>
+                        </div>
+                        <div className="flex gap-2 flex-shrink-0">
+                            <button
+                                onClick={handleRegenerateReading}
+                                disabled={regeneratingReading}
+                                className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white text-sm font-bold rounded-lg transition-all flex items-center gap-2 disabled:opacity-60"
+                            >
+                                {regeneratingReading ? (
+                                    <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                                ) : (
+                                    <span className="material-symbols-outlined text-sm">replay</span>
+                                )}
+                                {isPortuguese ? 'Gerar Leitura' : 'Generate Reading'}
+                            </button>
+                            <button
+                                onClick={() => { clearGuestReading(); setPendingGuestReading(null); }}
+                                className="px-3 py-2 text-gray-400 hover:text-white text-sm transition-colors"
+                            >
+                                {isPortuguese ? 'Dispensar' : 'Dismiss'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* <MinimalStarsBackground /> */}
 
             {/* Hero Section - Editorial Premium */}
             <section className="relative z-10 min-h-[90vh] flex items-center justify-center overflow-hidden py-16">
                 <style dangerouslySetInnerHTML={{
                     __html: `
-                    @keyframes rotate-slow {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(360deg); }
+                    @keyframes shimmer-gold {
+                        0% { background-position: -200% center; }
+                        100% { background-position: 200% center; }
                     }
-                    @keyframes rotate-reverse {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(-360deg); }
-                    }
-                    @keyframes pulse-subtle {
-                        0%, 100% { opacity: 0.4; }
-                        50% { opacity: 0.6; }
+                    @keyframes twinkle {
+                        0%, 100% { opacity: 0.2; }
+                        50% { opacity: 0.8; }
                     }
                     @keyframes fadeIn {
                         from {
@@ -411,18 +537,14 @@ const Home = () => {
                             transform: translateY(0);
                         }
                     }
-                    .arcane-ring-outer {
-                        animation: rotate-slow 30s linear infinite;
+                    .hero-daily-card {
                     }
-                    .arcane-ring-middle {
-                        animation: rotate-reverse 25s linear infinite;
-                    }
-                    .arcane-ring-inner {
-                        animation: rotate-slow 20s linear infinite;
-                    }
-                    .arcane-center {
-                        animation: pulse-subtle 4s ease-in-out infinite;
-                    }
+                    .hero-star-1 { animation: twinkle 3s ease-in-out infinite; }
+                    .hero-star-2 { animation: twinkle 4s ease-in-out 1s infinite; }
+                    .hero-star-3 { animation: twinkle 3.5s ease-in-out 0.5s infinite; }
+                    .hero-star-4 { animation: twinkle 4.5s ease-in-out 1.5s infinite; }
+                    .hero-star-5 { animation: twinkle 3s ease-in-out 2s infinite; }
+                    .hero-star-6 { animation: twinkle 5s ease-in-out 0.8s infinite; }
                     .animate-fadeIn {
                         animation: fadeIn 0.6s ease-out forwards;
                     }
@@ -449,6 +571,20 @@ const Home = () => {
                     }
                 `}} />
 
+                {/* Static star dots */}
+                <div className="absolute top-[12%] left-[8%] w-[2px] h-[2px] rounded-full bg-white/40 z-0"></div>
+                <div className="absolute top-[18%] right-[15%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[35%] left-[3%] w-[2px] h-[2px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[45%] right-[6%] w-[1.5px] h-[1.5px] rounded-full bg-white/35 z-0"></div>
+                <div className="absolute top-[60%] left-[12%] w-[1px] h-[1px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[70%] right-[22%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[25%] left-[45%] w-[1.5px] h-[1.5px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[80%] left-[30%] w-[1px] h-[1px] rounded-full bg-white/35 z-0"></div>
+                <div className="absolute top-[15%] left-[70%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[55%] right-[35%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[90%] right-[10%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[40%] left-[55%] w-[1.5px] h-[1.5px] rounded-full bg-white/20 z-0"></div>
+
                 <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-12 w-full">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
@@ -464,10 +600,10 @@ const Home = () => {
                                     : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
                             </p>
 
-                            <div className="flex md:flex-row gap-4 pt-4 justify-center lg:justify-start items-center lg:items-start">
+                            <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start items-stretch sm:items-center lg:items-start">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="group relative px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
+                                    className="group relative w-full sm:w-auto px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
                                     <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2">
@@ -477,7 +613,7 @@ const Home = () => {
                                 </button>
                                 <button
                                     onClick={() => navigate(isPortuguese ? '/arquivo-arcano' : '/arcane-archive')}
-                                    className="group px-6 py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-xs"
+                                    className="group w-full sm:w-auto px-4 py-3 md:px-6 md:py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-[10px] md:text-xs"
                                 >
                                     <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400">
                                         {isPortuguese ? 'Explorar o Arquivo Arcano' : 'Explore the Arcane Archive'}
@@ -485,49 +621,134 @@ const Home = () => {
                                     </span>
                                 </button>
                             </div>
-                        </div>
 
-                        {/* Right Column - Arcane Symbol (Mobile: appears first) */}
-                        <div className="flex items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-12">
-                            <div className="relative w-[300px] h-[300px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[440px] lg:h-[440px]">
-                                {/* Outer Ring */}
-                                <svg className="arcane-ring-outer absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="200" stroke="rgba(135, 95, 175, 0.45)" strokeWidth="1" fill="none" />
-                                    <circle cx="220" cy="40" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <circle cx="220" cy="400" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <circle cx="40" cy="220" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <circle cx="400" cy="220" r="3" fill="rgba(135, 95, 175, 0.7)" />
-                                    <path d="M 220,20 L 220,50" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                    <path d="M 220,390 L 220,420" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                    <path d="M 20,220 L 50,220" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                    <path d="M 390,220 L 420,220" stroke="rgba(135, 95, 175, 0.6)" strokeWidth="1" />
-                                </svg>
-
-                                {/* Middle Ring */}
-                                <svg className="arcane-ring-middle absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="140" stroke="rgba(135, 95, 175, 0.38)" strokeWidth="1" fill="none" />
-                                    <circle cx="220" cy="80" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="220" cy="360" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="80" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="360" cy="220" r="2.5" fill="rgba(255, 255, 255, 0.5)" />
-                                    <circle cx="130" cy="130" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                    <circle cx="310" cy="130" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                    <circle cx="130" cy="310" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                    <circle cx="310" cy="310" r="2" fill="rgba(135, 95, 175, 0.55)" />
-                                </svg>
-
-                                {/* Inner Ring */}
-                                <svg className="arcane-ring-inner absolute inset-0 w-full h-full" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="220" cy="220" r="80" stroke="rgba(135, 95, 175, 0.5)" strokeWidth="1.5" fill="none" />
-                                </svg>
-
-                                {/* Center Symbol */}
-                                <div className="arcane-center absolute inset-0 flex items-center justify-center">
-                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="6" cy="6" r="4" fill="rgba(135, 95, 175, 0.5)" />
-                                    </svg>
+                            {/* Subtle feature badges */}
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-4 justify-items-start lg:flex lg:flex-wrap lg:gap-5 lg:justify-start">
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                    <span className="material-symbols-outlined text-green-500/80 text-lg">chat</span>
+                                    <span>{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
+                                </div>
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                    <span className="material-symbols-outlined text-purple-400/80 text-lg">all_inclusive</span>
+                                    <span>{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
+                                </div>
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                    <span className="material-symbols-outlined text-yellow-500/80 text-lg">history</span>
+                                    <span>{isPortuguese ? 'Histórico da sua jornada' : 'Your journey history'}</span>
+                                </div>
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                    <span className="material-symbols-outlined text-blue-400/80 text-lg">auto_awesome</span>
+                                    <span>{isPortuguese ? 'Interpretação completa' : 'Complete interpretation'}</span>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Right Column - Floating Carta do Dia Mockup */}
+                        <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4 gap-5">
+                            <div className="hero-daily-card relative w-[260px] sm:w-[270px] md:w-[340px] lg:w-[380px]">
+                                {/* Subtle stars around the card */}
+                                <div className="hero-star-1 absolute -top-4 -left-6 text-yellow-300/30 text-[10px]">✦</div>
+                                <div className="hero-star-2 absolute -top-2 right-4 text-purple-300/25 text-xs">✦</div>
+                                <div className="hero-star-3 absolute top-1/4 -right-5 text-yellow-200/20 text-[10px]">✧</div>
+                                <div className="hero-star-4 absolute bottom-12 -left-4 text-purple-200/25 text-[8px]">✦</div>
+                                <div className="hero-star-5 absolute -bottom-3 right-8 text-yellow-300/20 text-[10px]">✧</div>
+                                <div className="hero-star-6 absolute top-1/2 -left-7 text-white/15 text-xs">·</div>
+
+                                {/* Main Card Container */}
+                                <div className="relative rounded-2xl overflow-hidden" style={{
+                                    background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
+                                    boxShadow: '0 30px 60px -15px rgba(0,0,0,0.6), 0 0 40px rgba(100, 60, 160, 0.2), inset 0 1px 0 0 rgba(255,255,255,0.08)',
+                                    border: '1.5px solid rgba(212, 175, 55, 0.3)'
+                                }}>
+
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between px-5 pt-4 pb-3">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="text-yellow-400/80 text-xs">✦</span>
+                                            <span className="text-gray-100/90 text-[11px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-gray-300/80 text-[9px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</div>
+                                            <div className="text-gray-300/50 text-[9px]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                                {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="mx-5 h-[0.5px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.2), transparent)' }}></div>
+
+                                    {/* Cards Area */}
+                                    <div className="relative px-5 py-6 md:py-10 flex items-center justify-center" style={{ minHeight: '200px' }}>
+                                        {/* Background constellation dots */}
+                                        <div className="absolute inset-0 overflow-hidden">
+                                            <div className="hero-star-1 absolute top-6 left-8 w-[2px] h-[2px] rounded-full bg-white/10"></div>
+                                            <div className="hero-star-3 absolute top-16 right-12 w-[1.5px] h-[1.5px] rounded-full bg-purple-300/15"></div>
+                                            <div className="hero-star-5 absolute bottom-10 left-16 w-[2px] h-[2px] rounded-full bg-white/8"></div>
+                                            <div className="hero-star-2 absolute bottom-16 right-8 w-[1.5px] h-[1.5px] rounded-full bg-yellow-300/10"></div>
+                                            <div className="hero-star-4 absolute top-1/2 left-6 w-[1px] h-[1px] rounded-full bg-white/10"></div>
+                                        </div>
+
+                                        {/* 3 Tarot Cards in fan layout */}
+                                        <div className="relative flex items-center justify-center" style={{ height: '220px', width: '220px' }}>
+                                            {heroCardIndices.map((cardIdx, i) => {
+                                                const card = TAROT_CARDS[cardIdx];
+                                                const rotations = [-12, 0, 12];
+                                                const offsets = [-40, 0, 40];
+                                                const zIndexes = [1, 3, 1];
+                                                const scales = [0.9, 1, 0.9];
+                                                return (
+                                                    <div
+                                                        key={`hero-card-${i}`}
+                                                        className="absolute transition-all duration-700 ease-in-out"
+                                                        style={{
+                                                            transform: `translateX(${offsets[i]}px) rotate(${rotations[i]}deg) scale(${scales[i]})`,
+                                                            zIndex: zIndexes[i],
+                                                        }}
+                                                    >
+                                                        <div className="w-[80px] h-[130px] sm:w-[90px] sm:h-[146px] md:w-[100px] md:h-[162px] rounded-lg overflow-hidden shadow-lg" style={{
+                                                            border: '1.5px solid rgba(212, 175, 55, 0.25)',
+                                                            boxShadow: i === 1
+                                                                ? '0 12px 30px rgba(0,0,0,0.5), 0 0 20px rgba(135, 95, 175, 0.15)'
+                                                                : '0 8px 20px rgba(0,0,0,0.4)',
+                                                        }}>
+                                                            <img
+                                                                src={card.imageUrl}
+                                                                alt={card.name_pt}
+                                                                className="w-full h-full object-cover"
+                                                                loading="lazy"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="mx-5 h-[0.5px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.2), transparent)' }}></div>
+
+                                    {/* Footer */}
+                                    <div className="px-5 pt-3 pb-4 text-center">
+                                        <div className="text-gradient-gold text-sm font-semibold tracking-wide" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                            Zaya Tarot
+                                        </div>
+                                        <div className="text-gray-300/60 text-[10px] tracking-widest uppercase mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            A Carta do Dia
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {/* Discrete button to Carta do Dia */}
+                            <button
+                                onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')}
+                                className="group flex items-center gap-2 px-4 py-2 rounded-lg border border-purple-400/25 text-gray-400 text-xs hover:text-white hover:border-purple-400/50 hover:bg-purple-500/10 transition-all duration-300"
+                            >
+                                <span className="material-symbols-outlined text-sm text-purple-400/70 group-hover:text-purple-300">auto_awesome</span>
+                                <span>{isPortuguese ? 'Receba sua Carta do Dia' : 'Get your Daily Card'}</span>
+                                <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                            </button>
                         </div>
 
                     </div>
@@ -535,7 +756,7 @@ const Home = () => {
             </section>
 
             {/* Interactive Stats Banner */}
-            <section className="mt-24 md:mt-32 py-3 md:py-4 px-4 md:px-6 relative overflow-hidden">
+            <section className="mt-14 md:mt-32 py-3 md:py-4 px-4 md:px-6 relative overflow-hidden">
                 <div className="absolute inset-0 border-y border-transparent"></div>
                 {/* Glassmorphism background */}
                 <div className="absolute inset-0 z-0 bg-white/10 backdrop-blur-sm border border-white/10" style={{ boxShadow: '0 1px 4px 0 rgba(0,0,0,0.01)' }}></div>
@@ -543,13 +764,13 @@ const Home = () => {
                     <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 md:gap-8">
                         <div className="text-center group">
                             <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                1.247
+                                8.247
                             </div>
                             <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Jornadas Ativas' : 'Active Journeys'}</div>
                         </div>
                         <div className="text-center group">
                             <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                8.432
+                                87.432
                             </div>
                             <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Leituras Realizadas' : 'Readings Performed'}</div>
                         </div>
@@ -570,11 +791,11 @@ const Home = () => {
             </section>
 
             {/* Spread Selection - Premium Cards Style */}
-            <section id="spreads" className="pt-24 md:pt-32 pb-16 md:pb-24 px-4 md:px-6 relative">
+            <section id="spreads" className="pt-24 md:pt-32 pb-0 md:pb-0 px-4 md:px-6 relative" style={{ backgroundColor: '#1a1628' }}>
+                {/* Cosmic Flame Background - Outside container to flow freely across sections */}
+                <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
+                <div className="absolute -right-32 top-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="max-w-[1200px] mx-auto relative">
-                    {/* Cosmic Flame Background - Positioned lower */}
-                    <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
-                    <div className="absolute -right-32 top-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
 
                     {/* Subtle Star Dots */}
                     <div className="absolute top-12 left-8 w-1 h-1 rounded-full bg-white/40 pointer-events-none"></div>
@@ -607,63 +828,291 @@ const Home = () => {
                         <p className="text-gray-400 text-lg md:text-xl max-w-xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>{t.home.chooseReadingSubtitle}</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 px-2 relative z-10">
-                        {SPREADS.map((spread) => {
-                            const translation = getSpreadTranslation(spread.id);
-                            const spreadImages: Record<string, string> = {
-                                'three_card': '/images/spreads/three_card.png',
-                                'celtic_cross': '/images/spreads/celtic_cross.png',
-                                'love_check': '/images/spreads/love_check.png',
-                                'yes_no': '/images/spreads/yes_no.png',
-                                'card_of_day': '/images/spreads/card_of_day.png',
-                            };
-                            return (
-                                <div
-                                    key={spread.id}
-                                    onClick={() => handleSelectSpread(spread)}
-                                    className="group relative flex flex-col h-[300px] md:h-[340px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
-                                >
-                                    {/* Background Image with subtle Zoom */}
+                    <div className="px-2 relative z-10">
+                        {/* Top row: 3 spreads */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                            {SPREADS.slice(0, 3).map((spread) => {
+                                const translation = getSpreadTranslation(spread.id);
+                                const spreadImages: Record<string, string> = {
+                                    'three_card': '/images/spreads/three_card.png',
+                                    'celtic_cross': '/images/spreads/celtic_cross.png',
+                                    'love_check': '/images/spreads/love_check.png',
+                                    'yes_no': '/images/spreads/yes_no.png',
+                                    'card_of_day': '/images/spreads/card_of_day.png',
+                                };
+                                const isPopular = spread.id === 'three_card' || spread.id === 'card_of_day';
+                                return (
                                     <div
-                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                                        style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }}
-                                    />
-
-                                    {/* Gradient Overlay - Dark red to purple */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d14] via-[#1a0f1e]/90 to-transparent group-hover:via-[#1a0f1e]/70 transition-colors duration-500" />
-
-                                    {/* Content */}
-                                    <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col justify-end">
-                                        <div className="flex flex-col gap-3">
-                                            <div className="flex items-center gap-2">
-                                                <span className="px-2.5 py-1 rounded-md bg-gradient-to-r from-[#875faf] to-[#a77fd4] backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10 shadow-lg shadow-purple-900/30">
-                                                    {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
-                                                </span>
+                                        key={spread.id}
+                                        onClick={() => handleSelectSpread(spread)}
+                                        className="group relative flex flex-col h-[260px] md:h-[290px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
+                                    >
+                                        {isPopular && (
+                                            <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-red-500/90 backdrop-blur-sm text-white text-[9px] font-bold uppercase tracking-wider shadow-lg">
+                                                +{isPortuguese ? 'mais popular' : 'most popular'}
                                             </div>
-
-                                            <h3 className="text-white text-2xl md:text-3xl font-bold tracking-tight">
-                                                {translation.name}
-                                            </h3>
-
-                                            <p className="text-gray-300 text-sm md:text-base leading-relaxed opacity-90">
-                                                {translation.description}
-                                            </p>
-
-                                            <div className="mt-3 flex items-center text-[#a77fd4] group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
-                                                {t.home.start}
-                                                <span className="material-symbols-outlined text-[18px] ml-2 transform group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                                        )}
+                                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }} />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d14] via-[#1a0f1e]/90 to-transparent group-hover:via-[#1a0f1e]/70 transition-colors duration-500" />
+                                        <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col justify-end">
+                                            <div className="flex flex-col gap-3">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="px-2.5 py-1 rounded-md bg-gradient-to-r from-[#875faf] to-[#a77fd4] backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10 shadow-lg shadow-purple-900/30">
+                                                        {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
+                                                    </span>
+                                                </div>
+                                                <h3 className="text-white text-2xl md:text-3xl font-bold tracking-tight">{translation.name}</h3>
+                                                <p className="text-gray-300 text-sm md:text-base leading-relaxed opacity-90">{translation.description}</p>
+                                                <div className="mt-3 flex items-center text-[#a77fd4] group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
+                                                    {t.home.start}
+                                                    <span className="material-symbols-outlined text-[18px] ml-2 transform group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                );
+                            })}
+                        </div>
+                        {/* Bottom row: 2 spreads centered */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6 md:max-w-[66.666%] md:mx-auto">
+                            {SPREADS.slice(3).map((spread) => {
+                                const translation = getSpreadTranslation(spread.id);
+                                const spreadImages: Record<string, string> = {
+                                    'three_card': '/images/spreads/three_card.png',
+                                    'celtic_cross': '/images/spreads/celtic_cross.png',
+                                    'love_check': '/images/spreads/love_check.png',
+                                    'yes_no': '/images/spreads/yes_no.png',
+                                    'card_of_day': '/images/spreads/card_of_day.png',
+                                };
+                                const isPopular = spread.id === 'three_card' || spread.id === 'card_of_day';
+                                return (
+                                    <div
+                                        key={spread.id}
+                                        onClick={() => handleSelectSpread(spread)}
+                                        className="group relative flex flex-col h-[260px] md:h-[290px] rounded-2xl overflow-hidden cursor-pointer shadow-2xl transition-transform duration-500 hover:-translate-y-1 border border-[#875faf]/30 hover:border-[#a77fd4]/60"
+                                    >
+                                        {isPopular && (
+                                            <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-red-500/90 backdrop-blur-sm text-white text-[9px] font-bold uppercase tracking-wider shadow-lg">
+                                                +{isPortuguese ? 'mais popular' : 'most popular'}
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: `url('${spreadImages[spread.id]}')` }} />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d14] via-[#1a0f1e]/90 to-transparent group-hover:via-[#1a0f1e]/70 transition-colors duration-500" />
+                                        <div className="relative z-10 mt-auto p-6 md:p-8 flex flex-col justify-end">
+                                            <div className="flex flex-col gap-3">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="px-2.5 py-1 rounded-md bg-gradient-to-r from-[#875faf] to-[#a77fd4] backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest border border-white/10 shadow-lg shadow-purple-900/30">
+                                                        {spread.cardCount} {isPortuguese ? 'cartas' : 'cards'}
+                                                    </span>
+                                                </div>
+                                                <h3 className="text-white text-2xl md:text-3xl font-bold tracking-tight">{translation.name}</h3>
+                                                <p className="text-gray-300 text-sm md:text-base leading-relaxed opacity-90">{translation.description}</p>
+                                                <div className="mt-3 flex items-center text-[#a77fd4] group-hover:text-white text-sm font-bold uppercase tracking-[0.15em] transition-colors">
+                                                    {t.home.start}
+                                                    <span className="material-symbols-outlined text-[18px] ml-2 transform group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Reflective Journey Section */}
+            <section className="relative z-10 pt-28 md:pt-40 pb-20 md:pb-28 px-4 md:px-6" style={{ backgroundColor: '#1a1628' }}>
+                {/* Purple blur background - like spreads section */}
+                <div className="absolute -left-40 top-10 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
+                <div className="absolute -right-32 bottom-10 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-purple-600/10 to-transparent blur-3xl pointer-events-none"></div>
+
+                <div className="max-w-[1300px] mx-auto relative">
+                    <div className="mb-10 md:mb-14 md:text-left px-2">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Por que o Tarot?' : 'Why Tarot?'}
+                        </h2>
+                        <p className="text-gray-400 text-base md:text-lg lg:text-xl font-light max-w-2xl leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                            {isPortuguese
+                                ? 'Para quem busca autoconhecimento, clareza e equilíbrio, o Tarot é uma ferramenta de reflexão profunda — um ritual diário que conecta você à sua intuição.'
+                                : 'For those seeking self-knowledge, clarity and balance, Tarot is a tool for deep reflection — a daily ritual that connects you to your intuition.'}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+                        {/* Left: Content with sections */}
+                        <div className="lg:col-span-7 order-2 lg:order-1">
+                            <div className="relative rounded-2xl overflow-hidden" style={{
+                                background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.5) 0%, rgba(45, 38, 65, 0.6) 50%, rgba(55, 45, 75, 0.5) 100%)',
+                                boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.06), 0 20px 40px -12px rgba(0,0,0,0.3)',
+                                border: '1px solid rgba(212, 175, 55, 0.15)'
+                            }}>
+                                {/* Gold top & bottom border */}
+                                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent" />
+                                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
+
+                                {/* Tarot-style corner ornaments */}
+                                {/* Top-left */}
+                                <div className="absolute top-3 left-3 w-8 h-8 pointer-events-none">
+                                    <div className="absolute top-0 left-0 w-6 h-px bg-gradient-to-r from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute top-0 left-0 w-px h-6 bg-gradient-to-b from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute top-1.5 left-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
                                 </div>
-                            );
-                        })}
+                                {/* Top-right */}
+                                <div className="absolute top-3 right-3 w-8 h-8 pointer-events-none">
+                                    <div className="absolute top-0 right-0 w-6 h-px bg-gradient-to-l from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute top-0 right-0 w-px h-6 bg-gradient-to-b from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
+                                </div>
+                                {/* Bottom-left */}
+                                <div className="absolute bottom-3 left-3 w-8 h-8 pointer-events-none">
+                                    <div className="absolute bottom-0 left-0 w-6 h-px bg-gradient-to-r from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute bottom-0 left-0 w-px h-6 bg-gradient-to-t from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute bottom-1.5 left-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
+                                </div>
+                                {/* Bottom-right */}
+                                <div className="absolute bottom-3 right-3 w-8 h-8 pointer-events-none">
+                                    <div className="absolute bottom-0 right-0 w-6 h-px bg-gradient-to-l from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute bottom-0 right-0 w-px h-6 bg-gradient-to-t from-yellow-500/50 to-transparent"></div>
+                                    <div className="absolute bottom-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
+                                </div>
+
+                                {/* Side ornament lines */}
+                                <div className="absolute top-1/2 -translate-y-1/2 left-1 w-px h-16 bg-gradient-to-b from-transparent via-yellow-500/20 to-transparent pointer-events-none"></div>
+                                <div className="absolute top-1/2 -translate-y-1/2 right-1 w-px h-16 bg-gradient-to-b from-transparent via-yellow-500/20 to-transparent pointer-events-none"></div>
+
+                                {/* Small diamond ornaments on sides */}
+                                <div className="absolute top-1/2 -translate-y-1/2 left-2.5 w-1 h-1 rotate-45 bg-yellow-500/25 pointer-events-none"></div>
+                                <div className="absolute top-1/2 -translate-y-1/2 right-2.5 w-1 h-1 rotate-45 bg-yellow-500/25 pointer-events-none"></div>
+
+                                <div className="relative z-10 px-6 md:px-8 py-12 md:py-16 space-y-8 md:space-y-10">
+                                    {/* Section 1 */}
+                                    <div className="flex gap-4 items-start">
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">visibility</span>
+                                        </div>
+                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                            {isPortuguese
+                                                ? 'Você já sentiu que precisa de um momento para refletir sobre si mesmo? O Tarot é um espelho da sua jornada, um convite para se conectar com sua intuição e evolução pessoal.'
+                                                : 'Have you ever felt the need for a moment to reflect on yourself? Tarot is a mirror of your journey, an invitation to connect with your intuition and personal evolution.'}
+                                        </p>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
+
+                                    {/* Section 2 */}
+                                    <div className="flex gap-4 items-start">
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">auto_awesome</span>
+                                        </div>
+                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                            {isPortuguese
+                                                ? 'A Carta do Dia oferece um insight diário exclusivo — energia, orientação e inspiração para enfrentar desafios e celebrar conquistas. Um lembrete do universo para alinhar seus objetivos.'
+                                                : 'The Daily Card offers an exclusive daily insight — energy, guidance and inspiration to face challenges and celebrate victories. A reminder from the universe to align your goals.'}
+                                        </p>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
+
+                                    {/* Section 3 */}
+                                    <div className="flex gap-4 items-start">
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">school</span>
+                                        </div>
+                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                            {isPortuguese
+                                                ? 'Consultas rápidas para explorar temas específicos e uma biblioteca completa que ensina cada carta, cada símbolo — do iniciante ao avançado, passo a passo.'
+                                                : 'Quick consultations to explore specific themes and a complete library teaching each card, each symbol — from beginner to advanced, step by step.'}
+                                        </p>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
+
+                                    {/* Section 4 */}
+                                    <div className="flex gap-4 items-start">
+                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">psychology</span>
+                                        </div>
+                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                            {isPortuguese
+                                                ? 'A experiência digital mantém toda a profundidade simbólica e energia de cada carta, combinando praticidade e clareza em leituras acessíveis a qualquer hora, em qualquer lugar.'
+                                                : 'The digital experience maintains all the symbolic depth and energy of each card, combining practicality and clarity in readings accessible anytime, anywhere.'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Discrete CTA buttons */}
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+                                <button
+                                    onClick={() => handleSelectSpread(SPREADS[0])}
+                                    className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-purple-400/25 text-sm text-gray-300 hover:text-white hover:border-purple-400/50 hover:bg-purple-500/10 transition-all duration-300"
+                                >
+                                    <span className="material-symbols-outlined text-base text-purple-400/70 group-hover:text-purple-300">style</span>
+                                    <span>{isPortuguese ? 'Comece sua primeira leitura' : 'Start your first reading'}</span>
+                                    <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        const journeySection = document.querySelector('[data-section="journey"]');
+                                        if (journeySection) journeySection.scrollIntoView({ behavior: 'smooth' });
+                                    }}
+                                    className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-yellow-500/20 text-sm text-gray-400 hover:text-yellow-200 hover:border-yellow-500/40 hover:bg-yellow-500/5 transition-all duration-300"
+                                >
+                                    <span className="material-symbols-outlined text-base text-yellow-500/60 group-hover:text-yellow-400">explore</span>
+                                    <span>{isPortuguese ? 'Explore a Jornada do Herói' : 'Explore the Hero\'s Journey'}</span>
+                                    <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Right: Mini Tarot Cards Mockup */}
+                        <div className="lg:col-span-5 flex items-center justify-center order-1 lg:order-2 -mt-4 lg:-mt-8">
+                            <div className="relative">
+                                {/* Purple glow behind cards */}
+                                <div className="absolute inset-0 scale-[2.5] rounded-full bg-purple-500/10 blur-3xl pointer-events-none"></div>
+
+                                {/* Subtle white stars around mockup */}
+                                <div className="absolute -top-10 -left-6 w-[3px] h-[3px] rounded-full bg-white/30"></div>
+                                <div className="absolute -top-5 right-4 w-[2px] h-[2px] rounded-full bg-white/25"></div>
+                                <div className="absolute top-1/3 -left-12 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+                                <div className="absolute top-1/2 -right-10 w-[3px] h-[3px] rounded-full bg-white/15"></div>
+                                <div className="absolute -bottom-6 left-5 w-[2px] h-[2px] rounded-full bg-white/25"></div>
+                                <div className="absolute -bottom-10 right-12 w-[3px] h-[3px] rounded-full bg-white/20"></div>
+                                <div className="absolute bottom-1/3 -left-10 w-[2px] h-[2px] rounded-full bg-white/15"></div>
+                                <div className="absolute top-12 -right-6 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+
+                                <div className="relative flex items-end justify-center gap-5 py-6">
+                                    {[TAROT_CARDS[1], TAROT_CARDS[2], TAROT_CARDS[5]].map((card, i) => {
+                                        const rotations = [-8, 0, 8];
+                                        const yOffsets = [10, 0, 10];
+                                        return (
+                                            <div key={`story-card-${i}`} className="relative transition-transform duration-500" style={{
+                                                transform: `rotate(${rotations[i]}deg) translateY(${yOffsets[i]}px)`,
+                                            }}>
+                                                <div className="w-[100px] h-[165px] sm:w-[115px] sm:h-[188px] md:w-[130px] md:h-[213px] rounded-lg overflow-hidden" style={{
+                                                    border: '1.5px solid rgba(212, 175, 55, 0.25)',
+                                                    boxShadow: i === 1
+                                                        ? '0 16px 40px rgba(0,0,0,0.5), 0 0 30px rgba(135, 95, 175, 0.25)'
+                                                        : '0 10px 25px rgba(0,0,0,0.4), 0 0 20px rgba(135, 95, 175, 0.1)',
+                                                }}>
+                                                    <img src={card.imageUrl} alt={card.name_pt} className="w-full h-full object-cover" loading="lazy" />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
             {/* Features Presentation Section */}
-            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/5 to-background-dark overflow-hidden">
+            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
                 {/* Decorative Stars */}
                 <div className="absolute inset-0 pointer-events-none">
                     {/* Around Image - Top */}
@@ -860,7 +1309,7 @@ const Home = () => {
             </section>
 
             {/* WhatsApp Daily Card Subscription Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/5 to-background-dark pb-32 md:pb-48 lg:pb-64">
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 pb-32 md:pb-48 lg:pb-64" style={{ backgroundColor: '#1a1628' }}>
                 <style>{`
                     .home-glass-card {
                         background: rgba(255, 255, 255, 0.04);
@@ -884,7 +1333,21 @@ const Home = () => {
                     }
                 `}</style>
 
-                <div className="max-w-6xl mx-auto">
+                {/* Static star dots */}
+                <div className="absolute top-[8%] left-[5%] w-[2px] h-[2px] rounded-full bg-white/35 z-0"></div>
+                <div className="absolute top-[14%] right-[12%] w-[1.5px] h-[1.5px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[28%] left-[10%] w-[1px] h-[1px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[22%] right-[8%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[42%] left-[4%] w-[1.5px] h-[1.5px] rounded-full bg-white/35 z-0"></div>
+                <div className="absolute top-[50%] right-[18%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[35%] left-[48%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[65%] left-[15%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[58%] right-[5%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[75%] left-[35%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[82%] right-[25%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[90%] left-[8%] w-[1px] h-[1px] rounded-full bg-white/35 z-0"></div>
+
+                <div className="max-w-6xl mx-auto relative z-10">
                     {/* Feature Presentation Header */}
                     <div className="text-left mb-14 md:mb-20 px-2">
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold-home mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -897,16 +1360,160 @@ const Home = () => {
                         </p>
                     </div>
 
-                    {/* Form Card + Feature Circles */}
-                    <div className="flex flex-col lg:flex-row items-start gap-6 md:gap-8 lg:gap-10 relative">
-                        {/* Cosmic Flame Background - menos intenso e mais baixo */}
-                        <div className="absolute -left-40 -top-36 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
-                        <div className="absolute -left-32 -top-28 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
+                    {/* Gallery - Example Daily Card Downloads */}
+                    <div className="mb-16 md:mb-24 relative">
+                        {/* Purple flame blur behind gallery */}
+                        <div className="absolute -left-32 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/18 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -right-24 top-16 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-pink-500/12 to-transparent blur-3xl pointer-events-none"></div>
 
-                        {/* Form Card - Left Side */}
-                        <div className="home-glass-card w-full lg:flex-1 rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative flex flex-col lg:flex-row items-stretch">
-                            {/* Form Content */}
-                            <div className="flex-1 p-6 lg:p-12 order-2 lg:order-1">
+                        {/* Cards Layout - Center card elevated, scaled down on mobile */}
+                        <style dangerouslySetInnerHTML={{ __html: `
+                            .gallery-cards-wrapper { --gallery-scale: 1; }
+                            @media (max-width: 639px) { .gallery-cards-wrapper { --gallery-scale: 0.88; margin-bottom: -10%; } }
+                            @media (min-width: 640px) and (max-width: 767px) { .gallery-cards-wrapper { --gallery-scale: 0.92; margin-bottom: -6%; } }
+                            @media (min-width: 768px) and (max-width: 1023px) { .gallery-cards-wrapper { --gallery-scale: 0.95; margin-bottom: -3%; } }
+                            @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+                            .animate-scaleIn { animation: scaleIn 0.2s ease-out; }
+                            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                            .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+                        `}} />
+                        <div className="gallery-cards-wrapper relative z-10">
+                        <div className="flex items-end justify-center gap-4 md:gap-6 lg:gap-8 origin-top" style={{ transform: 'scale(var(--gallery-scale, 1))' }}>
+                            {[
+                                { name: 'O Mundo', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg', vibracao: 'Completude e plenitude', significado: 'O Mundo representa a conclusão de um ciclo, a integração e a realização plena.', energia: 'Harmonia universal e gratidão profunda.', mantra: 'Eu celebro minha jornada.', featured: false },
+                                { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.', featured: true },
+                                { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.', featured: false },
+                            ].map((card) => (
+                                <div
+                                    key={card.name}
+                                    className={`relative group transition-all duration-500 cursor-pointer ${card.featured ? 'w-[240px] -mb-2' : 'w-[195px] opacity-85'}`}
+                                    onClick={() => setZoomedGalleryCard(card)}
+                                >
+                                    {/* Tap hint on mobile */}
+                                    <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1 text-gray-400/60 text-[8px] md:hidden z-20 whitespace-nowrap">
+                                        <span className="material-symbols-outlined text-[10px]">touch_app</span>
+                                        <span>{isPortuguese ? 'Toque para ampliar' : 'Tap to zoom'}</span>
+                                    </div>
+                                    <div className={`relative rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
+                                        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
+                                        border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
+                                    }}>
+                                        {/* Red Badge Header */}
+                                        <div className="bg-red-600 text-white text-[7px] font-bold uppercase tracking-wider text-center py-1.5 px-2">
+                                            {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
+                                        {/* Card Image */}
+                                        <div className="flex justify-center py-3 px-4">
+                                            <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${card.featured ? 'w-[120px] h-[190px]' : 'w-[95px] h-[152px]'}`} loading="lazy" />
+                                        </div>
+                                        {/* Card Name */}
+                                        <p className={`font-bold text-white text-center ${card.featured ? 'text-xs' : 'text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
+                                        {/* Vibração */}
+                                        <p className={`italic text-center px-2 mb-2 ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
+                                        {/* Significado */}
+                                        <div className="bg-white/5 rounded mx-2.5 px-2 py-1.5 mb-1.5">
+                                            <p className={`text-gray-300 leading-snug text-center ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.significado}</p>
+                                        </div>
+                                        {/* Energia */}
+                                        <div className="flex items-start gap-1.5 px-2.5 mb-2">
+                                            <span className="text-[6px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
+                                            <div>
+                                                <span className={`font-semibold uppercase tracking-wide ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>Energia</span>
+                                                <p className={`text-gray-300 leading-snug ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.energia}</p>
+                                            </div>
+                                        </div>
+                                        {/* Divider */}
+                                        <div className="mx-2.5 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1.5"></div>
+                                        {/* Mantra */}
+                                        <div className="px-2.5 pb-2.5 text-center">
+                                            <p className={`font-semibold uppercase tracking-wide mb-1 ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>Mantra do Dia</p>
+                                            <div className="bg-white/5 rounded px-2 py-1.5 border border-yellow-500/15">
+                                                <p className={`italic ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
+                                            </div>
+                                        </div>
+                                        {/* Footer */}
+                                        <p className="text-gray-500 text-[6px] tracking-wider text-center pb-2">zayatarot.com</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        </div>
+
+                        {/* Zoom Modal */}
+                        {zoomedGalleryCard && (
+                            <div
+                                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn"
+                                onClick={() => setZoomedGalleryCard(null)}
+                            >
+                                <div className="relative w-full max-w-[320px] animate-scaleIn" onClick={(e) => e.stopPropagation()}>
+                                    <button
+                                        onClick={() => setZoomedGalleryCard(null)}
+                                        className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors flex items-center gap-1 text-xs"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">close</span>
+                                        {isPortuguese ? 'Fechar' : 'Close'}
+                                    </button>
+                                    <div className="rounded-2xl overflow-hidden shadow-2xl" style={{
+                                        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
+                                        border: '1.5px solid rgba(212, 175, 55, 0.35)',
+                                    }}>
+                                        {/* Red Badge Header */}
+                                        <div className="bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider text-center py-2 px-4 rounded-t-2xl">
+                                            {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
+                                        </div>
+                                        <div className="mx-4 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
+                                        {/* Card Image */}
+                                        <div className="flex justify-center py-4 px-6">
+                                            <img src={zoomedGalleryCard.img} alt={zoomedGalleryCard.name} className="object-cover rounded-lg shadow-lg border border-yellow-500/20 w-[160px] h-[254px]" />
+                                        </div>
+                                        {/* Card Name */}
+                                        <p className="font-bold text-white text-center text-base" style={{ fontFamily: "'Crimson Text', serif" }}>{zoomedGalleryCard.name}</p>
+                                        {/* Vibração */}
+                                        <p className="italic text-center px-4 mb-3 text-sm" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{zoomedGalleryCard.vibracao}"</p>
+                                        {/* Significado */}
+                                        <div className="bg-white/5 rounded mx-4 px-3 py-2 mb-2">
+                                            <p className="text-gray-300 leading-relaxed text-center text-xs">{zoomedGalleryCard.significado}</p>
+                                        </div>
+                                        {/* Energia */}
+                                        <div className="flex items-start gap-2 px-4 mb-3">
+                                            <span className="text-xs mt-0.5" style={{ color: '#d4af37' }}>●</span>
+                                            <div>
+                                                <span className="font-semibold uppercase tracking-wide text-xs" style={{ color: '#d4af37' }}>Energia</span>
+                                                <p className="text-gray-300 leading-relaxed text-xs">{zoomedGalleryCard.energia}</p>
+                                            </div>
+                                        </div>
+                                        <div className="mx-4 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-2"></div>
+                                        {/* Mantra */}
+                                        <div className="px-4 pb-4 text-center">
+                                            <p className="font-semibold uppercase tracking-wide mb-1.5 text-xs" style={{ color: '#d4af37' }}>Mantra do Dia</p>
+                                            <div className="bg-white/5 rounded px-3 py-2 border border-yellow-500/15">
+                                                <p className="italic text-sm" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{zoomedGalleryCard.mantra}"</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-gray-500 text-[8px] tracking-wider text-center pb-3">zayatarot.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Form Card with Key Features */}
+                    <div className="relative">
+                        {/* Cosmic Flame Background */}
+                        <div className="absolute -left-40 -top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -right-32 -top-10 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
+
+                        <div className="home-glass-card w-full max-w-4xl mx-auto rounded-xl sm:rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative">
+                            {/* Subscriber Badge */}
+                            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 bg-red-600 text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-lg flex items-center gap-1.5">
+                                <span className="material-symbols-outlined text-[12px]">group</span>
+                                {isPortuguese ? '+ 2 mil assinantes' : '+ 2k subscribers'}
+                            </div>
+                            <div className="flex flex-col lg:flex-row items-stretch">
+                                {/* Form Content - Left */}
+                                <div className="flex-1 p-6 pt-12 sm:pt-6 lg:p-10">
                                 <header className="mb-6 text-center lg:text-left">
                                     <h3 className="font-display text-2xl md:text-3xl text-white mb-4 leading-tight">
                                         {isPortuguese ? 'Cadastre-se Agora' : 'Sign Up Now'}
@@ -1050,6 +1657,13 @@ const Home = () => {
                                             onClick={(e) => {
                                                 e.preventDefault();
 
+                                                // Guests/não logados: mostrar modal de autenticação
+                                                if (!user || isGuest) {
+                                                    setAuthModalMode('register');
+                                                    setShowAuthModal(true);
+                                                    return;
+                                                }
+
                                                 // Usuários FREE: mostrar modal de upgrade para premium
                                                 if (tier === 'free') {
                                                     setShowPaywallForm(true);
@@ -1061,9 +1675,6 @@ const Home = () => {
                                                     setShowWhatsAppModal(true);
                                                     return;
                                                 }
-
-                                                // Guests/não logados: criar conta
-                                                setShowPaywallForm(true);
                                             }}
                                             className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
                                             type="button"
@@ -1088,174 +1699,109 @@ const Home = () => {
                                 </form>
                             </div>
 
-                            {/* iPhone Mockup - WhatsApp Style */}
-                            <div className="lg:w-[380px] bg-white/[0.02] border-l border-white/5 flex items-center justify-center p-3 sm:p-6 lg:p-10 order-1 lg:order-2 relative overflow-hidden">
-                                <div className="absolute w-full h-full top-0 left-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
-                                <div className="relative z-10">
-                                    {/* iPhone Frame */}
-                                    <div className="relative w-[140px] sm:w-[180px] md:w-[220px] h-[295px] sm:h-[380px] md:h-[460px] bg-black rounded-[1.5rem] sm:rounded-[2rem] lg:rounded-[2.5rem] p-[5px] sm:p-[6px] lg:p-[8px] shadow-[0_0_50px_rgba(168,85,247,0.25),0_20px_40px_rgba(0,0,0,0.5)]">
-                                        {/* Dynamic Island */}
-                                        <div className="absolute top-1 sm:top-1.5 md:top-2 left-1/2 -translate-x-1/2 w-12 sm:w-16 md:w-20 h-2.5 sm:h-3.5 md:h-5 bg-black rounded-full z-10"></div>
-
-                                        {/* Screen */}
-                                        <div className="w-full h-full rounded-[2rem] overflow-hidden bg-[#0b141a] flex flex-col">
-                                            {/* Status Bar */}
-                                            <div className="h-6 bg-[#0b141a] flex items-center justify-between px-4 pt-1 flex-shrink-0">
-                                                <span className="text-white text-[9px] font-semibold">9:41</span>
-                                                <div className="flex items-center gap-[2px] sm:gap-[3px]">
-                                                    <svg className="w-[9px] sm:w-[12px] h-[7px] sm:h-[9px] text-white" viewBox="0 0 18 12" fill="currentColor">
-                                                        <rect x="0" y="8" width="3" height="4" rx="0.5" />
-                                                        <rect x="4" y="5" width="3" height="7" rx="0.5" />
-                                                        <rect x="8" y="2" width="3" height="10" rx="0.5" />
-                                                        <rect x="12" y="0" width="3" height="12" rx="0.5" />
-                                                    </svg>
-                                                    <div className="flex items-center">
-                                                        <div className="w-[16px] sm:w-[20px] h-[7px] sm:h-[9px] border border-white rounded-[2px] flex items-center p-[1px]">
-                                                            <div className="w-[10px] sm:w-[14px] h-[3px] sm:h-[5px] bg-white rounded-[1px]"></div>
-                                                        </div>
-                                                        <div className="w-[1px] h-[2px] sm:h-[3px] bg-white rounded-r ml-[1px]"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* WhatsApp Header */}
-                                            <div className="bg-[#1f2c34] px-1 sm:px-1.5 md:px-2 py-0.5 sm:py-1 flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
-                                                <svg className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                                </svg>
-                                                <div className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-                                                    <span className="material-symbols-outlined text-white text-[6px] sm:text-[8px] md:text-[10px]">auto_awesome</span>
-                                                </div>
-                                                <div className="flex-1 ml-0.5 sm:ml-1">
-                                                    <h4 className="text-white text-[7px] sm:text-[9px] md:text-[10px] font-medium leading-tight">Zaya Tarot</h4>
-                                                    <p className="text-emerald-400 text-[6px] sm:text-[7px] md:text-[8px]">online</p>
-                                                </div>
-                                                <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
-                                                    <svg className="w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M17 12c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm3 7h-2v2h-2v-2h-2v-2h2v-2h2v2h2v2zM18 6c0-1.1-.9-2-2-2H8C5.79 4 4 5.79 4 8v10c0 1.1.9 2 2 2h5c0-.73.1-1.43.28-2.1-.34.06-.69.1-1.05.1-2.79 0-5.06-2.27-5.06-5.06 0-1.51.66-2.86 1.71-3.78L12 3.97l5.12 5.19c.5.44.88 1 1.09 1.62.55-.5 1.17-.91 1.85-1.22C20.02 8.42 20 7.22 20 6h-2z" />
-                                                    </svg>
-                                                    <svg className="w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-
-                                            {/* Chat Background Pattern - flex-1 to fill remaining space */}
-                                            <div className="flex-1 relative overflow-hidden" style={{
-                                                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23182229' fill-opacity='0.6'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                                                backgroundColor: '#0b141a'
-                                            }}>
-                                                <div className="absolute inset-0 p-1.5 sm:p-2 overflow-hidden flex flex-col items-start">
-                                                    {/* Message Bubble - Vertical Layout */}
-                                                    <div className="max-w-[95%] bg-[#1f2c34] rounded-lg rounded-tl-none shadow-lg overflow-hidden">
-                                                        {/* Card Image - Smaller */}
-                                                        <div className="p-1 sm:p-1.5 md:p-2">
-                                                            <div className="relative rounded-md overflow-hidden">
-                                                                <img
-                                                                    alt="Sacerdotisa"
-                                                                    className="w-16 sm:w-24 md:w-32 h-20 sm:h-32 md:h-44 object-cover object-center"
-                                                                    src="/sarcedo.jpg"
-                                                                    onError={handleImageError}
-                                                                />
-                                                            </div>
-                                                        </div>
-
-                                                        {/* Message Text - Below Image */}
-                                                        <div className="px-1 sm:px-1.5 md:px-2 pb-1 sm:pb-1.5 md:pb-2">
-                                                            <p className="text-white/90 text-[5px] sm:text-[6px] md:text-[8px] leading-relaxed font-normal">
-                                                                <span className="font-semibold text-yellow-400 text-[6px] sm:text-[7px] md:text-[9px]">{cardName}</span>
-                                                                <br /><br />
-                                                                {isPortuguese
-                                                                    ? 'Bom dia! Sua carta de hoje traz uma mensagem especial sobre novos caminhos.'
-                                                                    : 'Good morning! Your card today brings a special message about new paths.'}
-                                                            </p>
-                                                            <div className="flex items-center justify-end gap-0.5 mt-0.5">
-                                                                <span className="text-[3px] md:text-[7px] text-gray-400">08:00</span>
-                                                                <svg className="w-1 md:w-3 h-1 md:h-2 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                                                    <path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" />
-                                                                </svg>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Input Bar - at very bottom */}
-                                            <div className="bg-[#1f2c34] px-1.5 py-1.5 sm:px-2 sm:py-1.5 md:px-2 md:py-1.5 flex items-center gap-1 sm:gap-1.5 md:gap-2 flex-shrink-0">
-                                                <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
-                                                </svg>
-                                                <div className="flex-1 bg-[#2a3942] rounded-full h-5 sm:h-6 md:h-7 px-2 sm:px-2.5 md:px-3 flex items-center min-w-0">
-                                                    <span className="text-gray-500 text-[6px] sm:text-[8px] md:text-[10px] truncate">
-                                                        {isPortuguese ? 'Mensagem' : 'Message'}
-                                                    </span>
-                                                </div>
-                                                <svg className="w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
-                                                </svg>
-                                            </div>
-                                        </div>
-
-                                        {/* Home Indicator */}
-                                        <div className="hidden md:block absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/30 rounded-full"></div>
+                            {/* Key Features - Right Side */}
+                            <div className="lg:w-[340px] bg-white/[0.02] border-l border-white/5 p-6 lg:p-8 flex flex-col justify-center gap-6">
+                                {/* Feature 1 */}
+                                <div className="flex items-start gap-4 group">
+                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
+                                        <span className="material-symbols-outlined text-yellow-500 text-xl">auto_awesome</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            {isPortuguese ? 'Personalizada' : 'Personalized'}
+                                        </h4>
+                                        <p className="text-gray-400 text-xs leading-relaxed">
+                                            {isPortuguese ? 'Cada carta é interpretada com inteligência artificial para trazer insights únicos.' : 'Each card is interpreted with AI to bring unique insights.'}
+                                        </p>
                                     </div>
                                 </div>
-
-                                {/* Decorative Elements */}
-                                <div className="absolute top-4 sm:top-6 md:top-8 right-4 sm:right-6 md:right-8 text-primary/20 block md:block">
-                                    <span className="material-symbols-outlined text-3xl sm:text-4xl md:text-5xl">stars</span>
+                                {/* Feature 2 */}
+                                <div className="flex items-start gap-4 group">
+                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
+                                        <span className="material-symbols-outlined text-yellow-500 text-xl">schedule</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
+                                        </h4>
+                                        <p className="text-gray-400 text-xs leading-relaxed">
+                                            {isPortuguese ? 'Escolha o melhor horário: manhã, tarde ou noite para receber sua mensagem.' : 'Choose the best time: morning, afternoon or evening to receive your message.'}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-4 sm:left-6 md:left-8 text-yellow-500/20 block md:block">
-                                    <span className="material-symbols-outlined text-4xl sm:text-5xl md:text-6xl">auto_awesome</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Circular Cards - Right Side */}
-                        <div className="hidden lg:flex flex-col items-center gap-4 md:gap-5 lg:gap-6 mt-12 lg:mt-20">
-                            {/* Card 1 - Circular */}
-                            <div className="flex flex-col items-center gap-3 group">
-                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
-                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">auto_awesome</span>
-                                </div>
-                                <div className="text-center">
-                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                        {isPortuguese ? 'Personalizada' : 'Personalized'}
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Card 2 - Circular */}
-                            <div className="flex flex-col items-center gap-3 group">
-                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
-                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">schedule</span>
-                                </div>
-                                <div className="text-center">
-                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                        {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Card 3 - Circular */}
-                            <div className="flex flex-col items-center gap-3 group">
-                                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#1a1230]/60 to-[#12091a]/60 backdrop-blur-sm border border-white/10 flex items-center justify-center transition-all duration-300 hover:border-yellow-500/40 hover:shadow-lg hover:shadow-yellow-500/20 group-hover:scale-105">
-                                    <span className="material-symbols-outlined text-yellow-500 text-3xl">chat</span>
-                                </div>
-                                <div className="text-center">
-                                    <h3 className="text-white text-xs md:text-sm font-medium tracking-wider uppercase opacity-90" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                        {isPortuguese ? 'WhatsApp' : 'WhatsApp'}
-                                    </h3>
+                                {/* Feature 3 */}
+                                <div className="flex items-start gap-4 group">
+                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
+                                        <span className="material-symbols-outlined text-yellow-500 text-xl">chat</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            {isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}
+                                        </h4>
+                                        <p className="text-gray-400 text-xs leading-relaxed">
+                                            {isPortuguese ? 'Receba diretamente no seu WhatsApp com imagem e interpretação completa.' : 'Receive directly on your WhatsApp with image and full interpretation.'}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    </div>
                 </div>
             </section>
 
+            {/* Tarot por Signo - Quick Access Section */}
+            <section className="relative z-10 pt-12 md:pt-16 pb-28 md:pb-36 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
+                <div className="max-w-[1000px] mx-auto relative">
+                    <div className="text-center mb-12 md:mb-16">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
+                        </h2>
+                        <p className="text-gray-400 text-lg md:text-xl max-w-xl mx-auto font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
+                            {isPortuguese
+                                ? 'Descubra as energias do tarot personalizadas para o seu signo hoje.'
+                                : 'Discover personalized tarot energies for your sign today.'}
+                        </p>
+                    </div>
+
+                    {/* Grid wrapper with golden blur behind cards only */}
+                    <div className="relative">
+                        {/* Golden rectangular blur - behind cards grid only */}
+                        <div className="absolute -inset-x-8 -inset-y-6 rounded-2xl bg-gradient-to-br from-yellow-500/5 via-amber-500/4 to-yellow-600/3 blur-3xl pointer-events-none"></div>
+                        <div className="absolute -inset-x-4 -inset-y-3 rounded-2xl bg-gradient-to-t from-yellow-400/3 to-amber-500/2 blur-2xl pointer-events-none"></div>
+
+                    <div className="relative grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-5">
+                        {ZODIAC_ORDER.map((slug) => {
+                            const sign = ZODIAC_SIGNS[slug];
+                            return (
+                                <button
+                                    key={slug}
+                                    onClick={() => navigate(isPortuguese ? `/tarot-por-signo/${slug}` : `/tarot-by-sign/${slug}`)}
+                                    className="group flex items-center justify-center py-5 px-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-yellow-500/30 transition-all duration-200 hover:scale-[1.04]"
+                                >
+                                    <span className="text-base md:text-lg font-semibold text-gradient-gold tracking-wide group-hover:opacity-90 transition-opacity" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        {isPortuguese ? sign.name.pt : sign.name.en}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                    </div>{/* end grid wrapper with blur */}
+
+                    <div className="text-center mt-10">
+                        <button
+                            onClick={() => navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign')}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-white/10 text-sm text-gray-400 hover:text-white hover:border-white/20 transition-all"
+                        >
+                            {isPortuguese ? 'Ver todos os signos' : 'View all signs'}
+                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
 
             {/* Journey Section - A Jornada do Herói */}
-            <div className="relative">
+            <div className="relative" data-section="journey">
                 <JourneySection
                     onStartReading={() => handleSelectSpread(SPREADS[0])}
                     onOpenAuthModal={() => setShowAuthModal(true)}
@@ -2204,6 +2750,38 @@ const CardDetails = () => {
     const [lore, setLore] = useState<ExtendedCardLore | null>(null);
     const [isLoadingApi, setIsLoadingApi] = useState(true);
 
+    // SEO: Update document title and meta tags for card pages
+    useEffect(() => {
+        if (card) {
+            const cardName = getCardName(card.id, isPortuguese);
+            const title = isPortuguese
+                ? `${cardName} - Significado e Interpretação | Zaya Tarot`
+                : `${cardName} - Meaning & Interpretation | Zaya Tarot`;
+            const description = isPortuguese
+                ? `Descubra o significado completo da carta ${cardName} no tarot. Interpretação, simbolismo e orientações práticas.`
+                : `Discover the complete meaning of the ${cardName} tarot card. Interpretation, symbolism and practical guidance.`;
+
+            document.title = title;
+
+            // Update or create meta tags
+            const setMeta = (name: string, content: string, attr = 'name') => {
+                let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement;
+                if (!el) {
+                    el = document.createElement('meta');
+                    el.setAttribute(attr, name);
+                    document.head.appendChild(el);
+                }
+                el.content = content;
+            };
+            setMeta('description', description);
+            setMeta('og:title', title, 'property');
+            setMeta('og:description', description, 'property');
+            setMeta('og:type', 'article', 'property');
+            setMeta('og:image', card.imageUrl, 'property');
+        }
+        return () => { document.title = 'Zaya Tarot'; };
+    }, [card, isPortuguese]);
+
     useEffect(() => {
         const deck = generateDeck();
         let foundCard: TarotCard | undefined;
@@ -2253,6 +2831,28 @@ const CardDetails = () => {
             <Header />
             <CartDrawer />
 
+            {/* Static subtle stars background */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                <div className="absolute w-[2px] h-[2px] bg-white/20 rounded-full" style={{ top: '8%', left: '5%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/30 rounded-full" style={{ top: '12%', left: '15%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '6%', right: '10%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/25 rounded-full" style={{ top: '18%', right: '25%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/20 rounded-full" style={{ top: '22%', left: '40%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '30%', left: '8%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/25 rounded-full" style={{ top: '35%', right: '5%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/20 rounded-full" style={{ top: '28%', right: '40%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '45%', left: '3%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/30 rounded-full" style={{ top: '50%', left: '20%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/20 rounded-full" style={{ top: '55%', right: '15%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '60%', right: '30%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/25 rounded-full" style={{ top: '65%', left: '12%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/20 rounded-full" style={{ top: '70%', left: '35%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '75%', right: '8%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/25 rounded-full" style={{ top: '80%', right: '45%' }}></div>
+                <div className="absolute w-[1px] h-[1px] bg-white/20 rounded-full" style={{ top: '85%', left: '25%' }}></div>
+                <div className="absolute w-[2px] h-[2px] bg-white/15 rounded-full" style={{ top: '90%', left: '50%' }}></div>
+            </div>
+
             <main className="relative z-10 flex-1 w-full max-w-[1200px] mx-auto px-6 py-12">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div className="flex items-center gap-2 text-sm text-gray-400">
@@ -2275,10 +2875,14 @@ const CardDetails = () => {
                         {/* Description Section - below the card image */}
                         {lore?.description && (
                             <div className="mt-6 w-full max-w-[350px] p-5 bg-[#1a1320]/60 backdrop-blur-sm border border-[#875faf]/20 rounded-xl">
-                                <h4 className="text-[#a77fd4] font-bold text-xs mb-2 uppercase tracking-wider flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-sm">image</span>
-                                    {isPortuguese ? 'Descrição Visual' : 'Visual Description'}
-                                </h4>
+                                <h4 className="font-bold text-base mb-2 tracking-wider text-gradient-gold-home text-center" style={{
+                                    fontFamily: "'Crimson Text', serif",
+                                    background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text',
+                                    textTransform: 'none',
+                                }}>{isPortuguese ? 'Descrição visual' : 'Visual description'}</h4>
                                 <p className="text-gray-400 text-sm leading-relaxed italic">{lore.description}</p>
                             </div>
                         )}
@@ -2291,7 +2895,13 @@ const CardDetails = () => {
                                     {card.arcana === ArcanaType.MAJOR ? (isPortuguese ? 'Arcano Maior' : 'Major Arcana') : (isPortuguese ? 'Arcano Menor' : 'Minor Arcana')} {card.suit !== Suit.NONE && `• ${isPortuguese ? (card.suit === 'Wands' ? 'Paus' : card.suit === 'Cups' ? 'Copas' : card.suit === 'Swords' ? 'Espadas' : 'Ouros') : card.suit}`}
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-normal leading-tight text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>{getCardName(card.id, isPortuguese)}</h1>
+                            <h1 className="text-4xl md:text-5xl font-normal leading-tight mb-2 text-gradient-gold-home" style={{
+                                fontFamily: "'Crimson Text', serif",
+                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                            }}>{getCardName(card.id, isPortuguese)}</h1>
                         </div>
 
                         {lore && (
@@ -2306,60 +2916,50 @@ const CardDetails = () => {
 
                                 <div className="space-y-6">
                                     <div className="prose prose-invert max-w-none">
-                                        <h3 className="text-xl font-bold flex items-center gap-2 text-white mb-3">
-                                            <span className="material-symbols-outlined text-[#875faf]">auto_awesome</span>
-                                            {t.cardDetails.upright}
-                                        </h3>
-                                        <p className="text-gray-300 leading-relaxed text-lg bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#875faf]/20">{lore.generalMeaning}</p>
+                                        <h3 className="text-2xl font-bold mb-5 text-gradient-gold-home" style={{
+                                            fontFamily: "'Crimson Text', serif",
+                                            background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            backgroundClip: 'text',
+                                        }}>{isPortuguese ? 'Significado' : 'Meaning'}</h3>
+                                        <p className="text-gray-300 leading-relaxed text-base bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#875faf]/20">{lore.generalMeaning}</p>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-pink-500/20 hover:border-pink-500/40 transition-all group">
-                                            <div className="size-10 rounded-full bg-pink-500/10 text-pink-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                <span className="material-symbols-outlined">favorite</span>
-                                            </div>
-                                            <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.love}</h4>
+                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#b88a44]/40 hover:border-[#b88a44]/70 transition-all group">
+                                            <h4 className="text-2xl font-bold mb-4 text-gradient-gold-home text-center" style={{
+                                                fontFamily: "'Crimson Text', serif",
+                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                backgroundClip: 'text',
+                                            }}>{t.cardDetails.love}</h4>
                                             <p className="text-gray-400 text-sm leading-relaxed">{lore.love}</p>
                                         </div>
-                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-blue-500/20 hover:border-blue-500/40 transition-all group">
-                                            <div className="size-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                <span className="material-symbols-outlined">work</span>
-                                            </div>
-                                            <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.career}</h4>
+                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#b88a44]/40 hover:border-[#b88a44]/70 transition-all group">
+                                            <h4 className="text-2xl font-bold mb-4 text-gradient-gold-home text-center" style={{
+                                                fontFamily: "'Crimson Text', serif",
+                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                backgroundClip: 'text',
+                                            }}>{t.cardDetails.career}</h4>
                                             <p className="text-gray-400 text-sm leading-relaxed">{lore.career}</p>
                                         </div>
-                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#875faf]/20 hover:border-[#875faf]/40 transition-all md:col-span-2 group">
-                                            <div className="size-10 rounded-full bg-[#875faf]/10 text-[#a77fd4] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                <span className="material-symbols-outlined">lightbulb</span>
-                                            </div>
-                                            <h4 className="text-lg font-bold text-white mb-2">{t.cardDetails.advice}</h4>
+                                        <div className="bg-[#1a1320]/60 backdrop-blur-sm p-6 rounded-xl border border-[#b88a44]/40 hover:border-[#b88a44]/70 transition-all md:col-span-2 group">
+                                            <h4 className="text-2xl font-bold mb-4 text-gradient-gold-home text-center" style={{
+                                                fontFamily: "'Crimson Text', serif",
+                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                backgroundClip: 'text',
+                                            }}>{t.cardDetails.advice}</h4>
                                             <p className="text-gray-400 text-sm leading-relaxed">{lore.advice}</p>
                                         </div>
                                     </div>
 
-                                    <div className="p-5 bg-red-500/5 border border-red-500/20 rounded-xl">
-                                        <h4 className="text-red-400 font-bold text-sm mb-2 uppercase tracking-wide flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-lg">rotate_right</span>
-                                            {t.cardDetails.reversed}
-                                        </h4>
-                                        <p className="text-gray-400 text-sm leading-relaxed">{lore.apiMeaningRev || lore.reversed}</p>
-                                    </div>
-
-                                    {lore.apiDescription ? (
-                                        <div className="p-6 bg-gradient-to-br from-[#875faf]/10 to-transparent border border-[#875faf]/20 rounded-xl">
-                                            <h4 className="text-[#a77fd4] font-bold text-sm mb-3 uppercase tracking-wide flex items-center gap-2">
-                                                <span className="material-symbols-outlined text-lg">menu_book</span>
-                                                {t.cardDetails.historicalSymbolism}
-                                            </h4>
-                                            <p className="text-gray-300 text-sm leading-relaxed italic">{lore.apiDescription}</p>
-                                        </div>
-                                    ) : isLoadingApi ? (
-                                        <div className="p-6 bg-[#1a1320]/40 border border-white/5 rounded-xl animate-pulse">
-                                            <div className="h-4 bg-white/10 rounded w-1/3 mb-3"></div>
-                                            <div className="h-3 bg-white/10 rounded w-full mb-2"></div>
-                                            <div className="h-3 bg-white/10 rounded w-5/6"></div>
-                                        </div>
-                                    ) : null}
+                                    {/* Boxes de Significado Invertido e Simbolismo Histórico removidos */}
                                 </div>
                             </>
                         )}
@@ -3075,6 +3675,96 @@ const History = () => {
                         </div>
                     )}
                 </div>
+
+                {/* Account Management Section - Only for logged-in users */}
+                {user && !isGuest && (
+                    <div className="mt-16 pt-8 border-t border-white/5">
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-6">
+                            {isPortuguese ? 'Gerenciar Conta' : 'Manage Account'}
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {/* Change Plan */}
+                            <button
+                                onClick={() => navigate('/checkout')}
+                                className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-purple-500/30 rounded-lg transition-all text-left group"
+                            >
+                                <span className="material-symbols-outlined text-purple-400 text-lg">swap_horiz</span>
+                                <div>
+                                    <p className="text-white text-sm font-medium">{isPortuguese ? 'Mudar Plano' : 'Change Plan'}</p>
+                                    <p className="text-gray-500 text-[10px]">{isPremium ? 'Premium' : 'Free'}</p>
+                                </div>
+                            </button>
+
+                            {/* Cancel Subscription */}
+                            {isPremium && (
+                                <button
+                                    onClick={async () => {
+                                        const confirmed = window.confirm(
+                                            isPortuguese
+                                                ? 'Tem certeza que deseja cancelar sua assinatura Premium? Você perderá o acesso aos recursos premium ao final do período.'
+                                                : 'Are you sure you want to cancel your Premium subscription? You will lose access to premium features at the end of the period.'
+                                        );
+                                        if (!confirmed) return;
+                                        try {
+                                            const { openCustomerPortal } = await import('./services/stripeService');
+                                            await openCustomerPortal(user.id);
+                                        } catch (err) {
+                                            console.error('Error opening portal:', err);
+                                            alert(isPortuguese ? 'Erro ao abrir portal. Entre em contato com o suporte.' : 'Error opening portal. Please contact support.');
+                                        }
+                                    }}
+                                    className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] hover:bg-red-500/5 border border-white/10 hover:border-red-500/20 rounded-lg transition-all text-left group"
+                                >
+                                    <span className="material-symbols-outlined text-red-400/70 text-lg">cancel</span>
+                                    <div>
+                                        <p className="text-white text-sm font-medium">{isPortuguese ? 'Cancelar Assinatura' : 'Cancel Subscription'}</p>
+                                        <p className="text-gray-500 text-[10px]">{isPortuguese ? 'Via portal Stripe' : 'Via Stripe portal'}</p>
+                                    </div>
+                                </button>
+                            )}
+
+                            {/* Delete Account */}
+                            <button
+                                onClick={async () => {
+                                    const confirmed = window.confirm(
+                                        isPortuguese
+                                            ? 'ATENÇÃO: Esta ação é irreversível! Todos os seus dados, histórico e configurações serão permanentemente excluídos. Deseja continuar?'
+                                            : 'WARNING: This action is irreversible! All your data, history and settings will be permanently deleted. Do you want to continue?'
+                                    );
+                                    if (!confirmed) return;
+                                    const doubleConfirm = window.confirm(
+                                        isPortuguese
+                                            ? 'Última confirmação: Deseja realmente excluir sua conta?'
+                                            : 'Final confirmation: Do you really want to delete your account?'
+                                    );
+                                    if (!doubleConfirm) return;
+                                    try {
+                                        const { supabase } = await import('./lib/supabase');
+                                        if (!supabase) return;
+                                        // Delete user data
+                                        await (supabase as any).from('readings').delete().eq('user_id', user.id);
+                                        await (supabase as any).from('whatsapp_subscriptions').delete().eq('user_id', user.id);
+                                        await (supabase as any).from('profiles').delete().eq('id', user.id);
+                                        // Sign out
+                                        await (supabase as any).auth.signOut();
+                                        localStorage.clear();
+                                        navigate('/');
+                                    } catch (err) {
+                                        console.error('Error deleting account:', err);
+                                        alert(isPortuguese ? 'Erro ao excluir conta. Entre em contato com o suporte.' : 'Error deleting account. Please contact support.');
+                                    }
+                                }}
+                                className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] hover:bg-red-500/5 border border-white/10 hover:border-red-500/20 rounded-lg transition-all text-left group"
+                            >
+                                <span className="material-symbols-outlined text-red-400/70 text-lg">person_remove</span>
+                                <div>
+                                    <p className="text-white text-sm font-medium">{isPortuguese ? 'Excluir Conta' : 'Delete Account'}</p>
+                                    <p className="text-gray-500 text-[10px]">{isPortuguese ? 'Ação irreversível' : 'Irreversible action'}</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                )}
             </main>
             <Footer />
 
@@ -4244,7 +4934,7 @@ const Session = () => {
                                     </div>
                                     <span className="uppercase tracking-widest text-[9px] md:text-[10px] font-bold text-primary text-center">
                                         {isPortuguese
-                                            ? (spread.positions[idx]?.name_pt || positionName)
+                                            ? (spread.positions[idx] && (spread.positions[idx] as any).name_pt ? (spread.positions[idx] as any).name_pt : positionName)
                                             : positionName
                                         }
                                     </span>
@@ -4490,9 +5180,15 @@ const Result = () => {
             // Declarar rawSynthesis no escopo correto
             let rawSynthesis: any = null;
 
-            // Se é guest, NÃO gerar síntese - apenas mostrar resultado sem salvar (PAYWALL)
+            // Se é guest, NÃO gerar síntese - salvar cartas para recuperação pós-cadastro
             if (!user) {
-                // Guest mode: mostrar resultado, sem síntese, sem salvar
+                // Save guest reading to localStorage for recovery after signup
+                saveGuestReading({
+                    spreadType: state.spread.id,
+                    cards: state.cards,
+                    question: state.question || '',
+                    createdAt: new Date().toISOString(),
+                });
                 setStructuredSynthesis(null);
                 setIsLoading(false);
                 return;
@@ -4819,7 +5515,41 @@ const Result = () => {
                                     <>
                                         {/* LAYOUT MÍSTICO INTEGRADO */}
                                         {(structuredSynthesis as any).sintese_geral ? (
-                                            <div className="bg-gradient-to-br from-[#1a1230]/80 to-[#12091a]/80 backdrop-blur-sm border border-white/10 rounded-2xl p-8 md:p-10 space-y-10 relative">
+                                            <div
+                                                className="relative rounded-3xl overflow-hidden"
+                                                style={{
+                                                    background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.95) 0%, rgba(45, 38, 65, 0.98) 50%, rgba(55, 45, 75, 0.95) 100%)',
+                                                    boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.1), 0 25px 50px -12px rgba(0,0,0,0.5)'
+                                                }}
+                                            >
+                                                {/* Gold top border */}
+                                                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent" />
+
+                                                {/* Corner decorations */}
+                                                <div className="absolute top-4 left-4 w-12 h-12 pointer-events-none">
+                                                    <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-yellow-500/50 to-transparent" />
+                                                    <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-yellow-500/50 to-transparent" />
+                                                </div>
+                                                <div className="absolute top-4 right-4 w-12 h-12 pointer-events-none">
+                                                    <div className="absolute top-0 right-0 w-full h-px bg-gradient-to-l from-yellow-500/50 to-transparent" />
+                                                    <div className="absolute top-0 right-0 h-full w-px bg-gradient-to-b from-yellow-500/50 to-transparent" />
+                                                </div>
+                                                <div className="absolute bottom-4 left-4 w-12 h-12 pointer-events-none">
+                                                    <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-yellow-500/50 to-transparent" />
+                                                    <div className="absolute bottom-0 left-0 h-full w-px bg-gradient-to-t from-yellow-500/50 to-transparent" />
+                                                </div>
+                                                <div className="absolute bottom-4 right-4 w-12 h-12 pointer-events-none">
+                                                    <div className="absolute bottom-0 right-0 w-full h-px bg-gradient-to-l from-yellow-500/50 to-transparent" />
+                                                    <div className="absolute bottom-0 right-0 h-full w-px bg-gradient-to-t from-yellow-500/50 to-transparent" />
+                                                </div>
+
+                                                {/* Subtle center glow */}
+                                                <div
+                                                    className="absolute inset-0 pointer-events-none"
+                                                    style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(255, 215, 150, 0.06) 0%, transparent 70%)' }}
+                                                />
+
+                                            <div className="relative z-10 p-8 md:p-10 space-y-10">
                                                 {/* Ornamento decorativo superior */}
                                                 <div className="flex justify-center mb-6">
                                                     <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
@@ -4945,6 +5675,7 @@ const Result = () => {
                                                 <div className="flex justify-center mt-8">
                                                     <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
                                                 </div>
+                                            </div>
                                             </div>
                                         ) : (
                                             <>

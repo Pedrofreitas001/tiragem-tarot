@@ -44,8 +44,8 @@ export default async function handler(req, res) {
 
         // Construir URL de retorno
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
-                       process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
-                       'http://localhost:3000';
+                       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
+                       'http://localhost:3000');
 
         const finalReturnUrl = returnUrl || `${baseUrl}/#/settings`;
 

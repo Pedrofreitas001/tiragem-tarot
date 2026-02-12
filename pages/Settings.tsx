@@ -370,13 +370,29 @@ export const Settings: React.FC = () => {
                                             </div>
 
                                             {tier === 'premium' && (
-                                                <div className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-lg">
-                                                    <span className="material-symbols-outlined text-[#a77fd4]">info</span>
-                                                    <p className="text-sm text-gray-400">
-                                                        {isPortuguese
-                                                            ? 'Para gerenciar sua assinatura, entre em contato com o suporte.'
-                                                            : 'To manage your subscription, please contact support.'}
-                                                    </p>
+                                                <div className="flex flex-col gap-3">
+                                                    <button
+                                                        onClick={async () => {
+                                                            try {
+                                                                const { openCustomerPortal } = await import('../services/stripeService');
+                                                                if (user) await openCustomerPortal(user.id);
+                                                            } catch (err) {
+                                                                console.error('Error opening portal:', err);
+                                                            }
+                                                        }}
+                                                        className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 hover:border-[#875faf]/30 rounded-lg transition-all cursor-pointer"
+                                                    >
+                                                        <span className="material-symbols-outlined text-[#a77fd4]">manage_accounts</span>
+                                                        <div className="text-left">
+                                                            <p className="text-sm text-white font-medium">
+                                                                {isPortuguese ? 'Gerenciar Assinatura' : 'Manage Subscription'}
+                                                            </p>
+                                                            <p className="text-xs text-gray-500">
+                                                                {isPortuguese ? 'Alterar forma de pagamento, cancelar ou ver faturas' : 'Change payment method, cancel or view invoices'}
+                                                            </p>
+                                                        </div>
+                                                        <span className="material-symbols-outlined text-gray-500 ml-auto text-sm">open_in_new</span>
+                                                    </button>
                                                 </div>
                                             )}
                                         </div>
