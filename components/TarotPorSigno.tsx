@@ -3,6 +3,7 @@ import { useLanguage, LanguageToggle } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getCardName } from '../tarotData';
 import React, { useState, useEffect } from 'react';
+import { SEO } from './SEO';
 import { UserMenu } from './UserMenu';
 import { AuthModal } from './AuthModal';
 import { PaywallModal } from './PaywallModal';
@@ -271,11 +272,24 @@ export const TarotPorSigno = () => {
     const signName = getSignName(currentSign, isPortuguese);
     const formattedDate = getFormattedDate(isPortuguese);
 
+    const signDisplayName = isPortuguese ? signData.name : (signData as any).nameEn || signData.name;
+    const seoSignTitle = isPortuguese
+        ? `Tarot para ${signDisplayName} - Leitura de Hoje`
+        : `Tarot for ${signDisplayName} - Today's Reading`;
+    const seoSignDescription = isPortuguese
+        ? `Leitura de tarot personalizada para ${signDisplayName}. Descubra o que as cartas revelam para o seu signo hoje.`
+        : `Personalized tarot reading for ${signDisplayName}. Discover what the cards reveal for your sign today.`;
+
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden" style={{
             backgroundColor: '#1a1628',
             backgroundAttachment: 'fixed'
         }}>
+            <SEO
+                title={seoSignTitle}
+                description={seoSignDescription}
+                path={isPortuguese ? `/tarot-por-signo/${currentSign}` : `/tarot-by-sign/${currentSign}`}
+            />
             <style>{orbitStyles}</style>
             <MinimalStarsBackground />
             <Header />

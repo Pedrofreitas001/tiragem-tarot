@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { HashRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
 import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured, AnySynthesis, CanonicalSynthesis, convertToLegacySynthesis } from './services/geminiService';
@@ -31,6 +31,9 @@ import { AdminPanel } from './pages/AdminPanel';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfUse } from './pages/TermsOfUse';
 import { CookieConsent } from './components/CookieConsent';
+import { HelmetProvider } from 'react-helmet-async';
+import { SEO } from './components/SEO';
+import { ScrollToTop } from './components/ScrollToTop';
 import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
@@ -474,6 +477,13 @@ const Home = () => {
             backgroundColor: '#1a1628',
             backgroundAttachment: 'fixed'
         }}>
+            <SEO
+                title={isPortuguese ? 'Tiragem de Tarot Online Grátis | Leitura de Cartas' : 'Free Online Tarot Reading | Card Reading'}
+                description={isPortuguese
+                    ? 'Descubra seu destino com tiragem de tarot online grátis. Leitura de cartas profissional com interpretações detalhadas. Tarot do amor, carreira e orientação espiritual.'
+                    : 'Discover your destiny with free online tarot reading. Professional card reading with detailed interpretations.'}
+                path="/"
+            />
             <Header />
             <CartDrawer />
 
@@ -2750,37 +2760,26 @@ const CardDetails = () => {
     const [lore, setLore] = useState<ExtendedCardLore | null>(null);
     const [isLoadingApi, setIsLoadingApi] = useState(true);
 
-    // SEO: Update document title and meta tags for card pages
-    useEffect(() => {
-        if (card) {
-            const cardName = getCardName(card.id, isPortuguese);
-            const title = isPortuguese
-                ? `${cardName} - Significado e Interpretação | Zaya Tarot`
-                : `${cardName} - Meaning & Interpretation | Zaya Tarot`;
-            const description = isPortuguese
-                ? `Descubra o significado completo da carta ${cardName} no tarot. Interpretação, simbolismo e orientações práticas.`
-                : `Discover the complete meaning of the ${cardName} tarot card. Interpretation, symbolism and practical guidance.`;
+    // SEO: dynamic meta tags via react-helmet-async
+    const cardSeoName = card ? getCardName(card.id, isPortuguese) : '';
+    const cardSeoTitle = card ? (isPortuguese
+        ? `${cardSeoName} - Significado e Interpretação`
+        : `${cardSeoName} - Meaning & Interpretation`) : '';
+    const cardSeoDescription = card ? (isPortuguese
+        ? `Descubra o significado completo da carta ${cardSeoName} no tarot. Interpretação, simbolismo e orientações práticas.`
+        : `Discover the complete meaning of the ${cardSeoName} tarot card. Interpretation, symbolism and practical guidance.`) : '';
+    const cardSeoPath = isPortuguese ? `/arquivo-arcano/${params.cardSlug || params.cardId}` : `/arcane-archive/${params.cardSlug || params.cardId}`;
 
-            document.title = title;
-
-            // Update or create meta tags
-            const setMeta = (name: string, content: string, attr = 'name') => {
-                let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement;
-                if (!el) {
-                    el = document.createElement('meta');
-                    el.setAttribute(attr, name);
-                    document.head.appendChild(el);
-                }
-                el.content = content;
-            };
-            setMeta('description', description);
-            setMeta('og:title', title, 'property');
-            setMeta('og:description', description, 'property');
-            setMeta('og:type', 'article', 'property');
-            setMeta('og:image', card.imageUrl, 'property');
-        }
-        return () => { document.title = 'Zaya Tarot'; };
-    }, [card, isPortuguese]);
+    // Render SEO helmet for card pages
+    const cardSeoHelmet = card ? (
+        <SEO
+            title={cardSeoTitle}
+            description={cardSeoDescription}
+            path={cardSeoPath}
+            image={card.imageUrl}
+            type="article"
+        />
+    ) : null;
 
     useEffect(() => {
         const deck = generateDeck();
@@ -2828,6 +2827,7 @@ const CardDetails = () => {
 
     return (
         <div className="relative flex flex-col min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
+            {cardSeoHelmet}
             <Header />
             <CartDrawer />
 
@@ -6596,27 +6596,29 @@ const Interpretacao = () => {
 
 const App = () => {
     return (
+        <HelmetProvider>
         <LanguageProvider>
             <AuthProvider>
                 <CartProvider>
                     <Router>
+                        <ScrollToTop />
                         <Routes>
                             <Route path="/" element={<Home />} />
 
                             {/* Spreads Page - Available in both languages */}
-                            <Route path="/spreads" element={<Spreads />} />
-                            <Route path="/jogos-de-tarot" element={<Spreads />} />
+                            <Route path="/spreads" element={<><SEO title="Tarot Spreads" description="Explore different tarot spreads: Three Card, Celtic Cross, Love Check, Yes/No and more. Choose your spread and get your reading." path="/spreads" /><Spreads /></>} />
+                            <Route path="/jogos-de-tarot" element={<><SEO title="Jogos de Tarot" description="Explore diferentes jogos de tarot: Três Cartas, Cruz Celta, Tarot do Amor, Sim/Não e mais. Escolha seu jogo e receba sua leitura." path="/jogos-de-tarot" /><Spreads /></>} />
 
                             {/* Physical Reading Interpretation */}
-                            <Route path="/interpretacao" element={<Interpretacao />} />
-                            <Route path="/interpretation" element={<Interpretacao />} />
+                            <Route path="/interpretacao" element={<><SEO title="Interpretação de Tarot" description="Guia completo de interpretação de tarot. Aprenda a ler e interpretar as cartas de tarot com orientações detalhadas." path="/interpretacao" /><Interpretacao /></>} />
+                            <Route path="/interpretation" element={<><SEO title="Tarot Interpretation" description="Complete tarot interpretation guide. Learn how to read and interpret tarot cards with detailed guidance." path="/interpretation" /><Interpretacao /></>} />
 
                             {/* Rotas em Português */}
-                            <Route path="/arquivo-arcano" element={<Explore />} />
+                            <Route path="/arquivo-arcano" element={<><SEO title="Arquivo Arcano - Todas as Cartas de Tarot" description="Explore todas as 78 cartas do tarot. Significado, simbolismo e interpretação de cada arcano maior e menor." path="/arquivo-arcano" /><Explore /></>} />
                             <Route path="/arquivo-arcano/:cardSlug" element={<CardDetails />} />
 
                             {/* Rotas em Inglês */}
-                            <Route path="/arcane-archive" element={<Explore />} />
+                            <Route path="/arcane-archive" element={<><SEO title="Arcane Archive - All Tarot Cards" description="Explore all 78 tarot cards. Meaning, symbolism and interpretation of each major and minor arcana." path="/arcane-archive" /><Explore /></>} />
                             <Route path="/arcane-archive/:cardSlug" element={<CardDetails />} />
 
                             {/* Rotas antigas (manter compatibilidade) */}
@@ -6626,12 +6628,12 @@ const App = () => {
                             <Route path="/session" element={<Session />} />
                             <Route path="/result" element={<Result />} />
                             <Route path="/history" element={<History />} />
-                            <Route path="/numerology" element={<Numerology />} />
-                            <Route path="/cosmic" element={<CosmicCalendar />} />
-                            <Route path="/carta-do-dia" element={<DailyCard />} />
-                            <Route path="/daily-card" element={<DailyCard />} />
-                            <Route path="/tarot-por-signo" element={<TarotPorSignoIndex />} />
-                            <Route path="/tarot-by-sign" element={<TarotPorSignoIndex />} />
+                            <Route path="/numerology" element={<><SEO title="Numerologia" description="Descubra seu perfil numerológico completo. Calcule seu número do destino, alma e personalidade." path="/numerology" /><Numerology /></>} />
+                            <Route path="/cosmic" element={<><SEO title="Calendário Cósmico" description="Acompanhe as fases da lua, energia cósmica do dia e alinhamento planetário." path="/cosmic" /><CosmicCalendar /></>} />
+                            <Route path="/carta-do-dia" element={<><SEO title="Carta do Dia - Tarot Diário" description="Descubra a carta de tarot do dia. Receba orientação diária com interpretação completa e conselho espiritual." path="/carta-do-dia" /><DailyCard /></>} />
+                            <Route path="/daily-card" element={<><SEO title="Daily Tarot Card" description="Discover your daily tarot card. Receive daily guidance with complete interpretation and spiritual advice." path="/daily-card" /><DailyCard /></>} />
+                            <Route path="/tarot-por-signo" element={<><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodíaco. Descubra o que as cartas revelam para o seu signo hoje." path="/tarot-por-signo" /><TarotPorSignoIndex /></>} />
+                            <Route path="/tarot-by-sign" element={<><SEO title="Tarot by Zodiac Sign" description="Personalized tarot reading for each zodiac sign. Discover what the cards reveal for your sign today." path="/tarot-by-sign" /><TarotPorSignoIndex /></>} />
                             <Route path="/tarot-por-signo/:signo" element={<TarotPorSigno />} />
                             <Route path="/tarot-by-sign/:signo" element={<TarotPorSigno />} />
                             <Route path="/charts-demo" element={<SideBySideExample />} />
@@ -6640,16 +6642,17 @@ const App = () => {
                             <Route path="/settings" element={<Settings />} />
                             <Route path="/configuracoes" element={<Settings />} />
                             <Route path="/admin" element={<AdminPanel />} />
-                            <Route path="/privacidade" element={<PrivacyPolicy />} />
-                            <Route path="/privacy" element={<PrivacyPolicy />} />
-                            <Route path="/termos" element={<TermsOfUse />} />
-                            <Route path="/terms" element={<TermsOfUse />} />
+                            <Route path="/privacidade" element={<><SEO title="Política de Privacidade" description="Política de privacidade do Zaya Tarot. Saiba como protegemos seus dados e respeitamos sua privacidade." path="/privacidade" /><PrivacyPolicy /></>} />
+                            <Route path="/privacy" element={<><SEO title="Privacy Policy" description="Zaya Tarot privacy policy. Learn how we protect your data and respect your privacy." path="/privacy" /><PrivacyPolicy /></>} />
+                            <Route path="/termos" element={<><SEO title="Termos de Uso" description="Termos de uso do Zaya Tarot. Condições para utilização da plataforma de tarot online." path="/termos" /><TermsOfUse /></>} />
+                            <Route path="/terms" element={<><SEO title="Terms of Use" description="Zaya Tarot terms of use. Conditions for using the online tarot platform." path="/terms" /><TermsOfUse /></>} />
                         </Routes>
                         <CookieConsent />
                     </Router>
                 </CartProvider>
             </AuthProvider>
         </LanguageProvider>
+        </HelmetProvider>
     );
 };
 

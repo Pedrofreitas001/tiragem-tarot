@@ -26,9 +26,9 @@ export const STRIPE_CONFIG = {
     // Price ID do plano premium (carregado do ambiente - OBRIGATÓRIO para checkout)
     priceId: import.meta.env.VITE_STRIPE_PREMIUM_PRICE_ID || '',
 
-    // Success and cancel URLs for Stripe Checkout (usa HashRouter)
-    successUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/#/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancelUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/#/checkout`,
+    // Success and cancel URLs for Stripe Checkout
+    successUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancelUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/checkout`,
 };
 
 // ============================================
