@@ -14,7 +14,7 @@ export const TermsOfUse = () => {
 
             {/* Header simples */}
             <header className="sticky top-0 z-40 bg-background-dark/95 backdrop-blur-md border-b border-border-dark">
-                <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+                <div className="max-w-4xl mx-auto px-3 sm:px-4 py-1.5 sm:py-2 lg:py-3 flex items-center justify-between">
                     <button
                         onClick={() => navigate('/')}
                         className="flex items-center gap-2 text-white hover:text-primary transition-colors"
