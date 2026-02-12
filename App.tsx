@@ -6644,8 +6644,8 @@ const App = () => {
                             <Route path="/session" element={<AuthGuard><Session /></AuthGuard>} />
                             <Route path="/result" element={<AuthGuard><Result /></AuthGuard>} />
 
-                            {/* History — requer login (não existe histórico sem conta) */}
-                            <Route path="/history" element={<ProtectedRoute requiredTier="authenticated"><History /></ProtectedRoute>} />
+                            {/* History — acessível a todos, paywall inline para guest */}
+                            <Route path="/history" element={<AuthGuard><History /></AuthGuard>} />
 
                             {/* Conteúdo público com paywall inline diferenciado */}
                             <Route path="/numerology" element={<AuthGuard><SEO title="Numerologia" description="Descubra seu perfil numerológico completo. Calcule seu número do destino, alma e personalidade." path="/numerology" /><Numerology /></AuthGuard>} />
