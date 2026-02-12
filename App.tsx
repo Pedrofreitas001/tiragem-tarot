@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
@@ -16,11 +16,7 @@ import { PaywallModal, usePaywall } from './components/PaywallModal';
 import WhatsAppModal from './components/WhatsAppModal';
 import { JourneySection } from './components/journey';
 import HeroJourneyStories from './components/journey/HeroJourneyStories';
-import { DailyCard } from './components/DailyCard';
-import { TarotPorSigno } from './components/TarotPorSigno';
 import { TarotPorSignoIndex } from './pages/TarotPorSignoIndex';
-import { HistoryFiltered } from './components/HistoryFiltered';
-import { SideBySideExample } from './components/Charts/SideBySideExample';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import Spreads from './pages/Spreads';
@@ -40,6 +36,24 @@ import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, N
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 import { TAROT_CARDS } from './tarotData';
 import { ZODIAC_SIGNS, ZODIAC_ORDER, ELEMENT_COLORS } from './data/zodiacData';
+
+// Lazy-loaded components (route-level code splitting)
+const DailyCard = lazy(() => import('./components/DailyCard').then(m => ({ default: m.DailyCard })));
+const TarotPorSigno = lazy(() => import('./components/TarotPorSigno').then(m => ({ default: m.TarotPorSigno })));
+const HistoryFiltered = lazy(() => import('./components/HistoryFiltered').then(m => ({ default: m.HistoryFiltered })));
+const SideBySideExample = lazy(() => import('./components/Charts/SideBySideExample').then(m => ({ default: m.SideBySideExample })));
+
+// Suspense fallback for lazy-loaded routes
+const RouteFallback = () => (
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background-dark via-[#1a1628] to-background-dark">
+        <div className="text-center">
+            <div className="mb-6 flex justify-center">
+                <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+            </div>
+            <p className="text-gray-400 text-sm">Carregando...</p>
+        </div>
+    </div>
+);
 
 // Extended CardLore with API description
 interface ExtendedCardLore extends CardLore {
@@ -658,7 +672,7 @@ const Home = () => {
 
                         {/* Right Column - Floating Carta do Dia Mockup */}
                         <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4 gap-5">
-                            <div className="hero-daily-card relative w-[260px] sm:w-[270px] md:w-[340px] lg:w-[380px]">
+                            <div className="hero-daily-card relative w-[260px] sm:w-[270px] md:w-[340px] lg:w-[380px] aspect-[3/4]">
 
                                 {/* Removed stars behind the card mockup */}
 
@@ -828,7 +842,7 @@ const Home = () => {
             </section>
 
             {/* Spread Selection - Premium Cards Style */}
-            <section id="spreads" className="pt-24 md:pt-32 pb-0 md:pb-0 px-4 md:px-6 relative" style={{ backgroundColor: '#110e1a' }}>
+            <section id="spreads" className="pt-24 md:pt-32 pb-20 md:pb-28 px-4 md:px-6 relative" style={{ backgroundColor: '#110e1a' }}>
                 {/* Cosmic Flame Background - Outside container to flow freely across sections */}
                 <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="absolute -right-32 top-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
@@ -3582,13 +3596,15 @@ const History = () => {
                         <div className="space-y-8">
                             {/* Filters and Chart Section */}
                             <div className="bg-white/3 rounded-xl p-6 border border-white/5">
-                                <HistoryFiltered
-                                    readings={savedReadings}
-                                    isPortuguese={isPortuguese}
-                                    onSelect={handleOpenReading}
-                                    onDelete={deleteReading}
-                                    onFilterChange={setFilteredReadings}
-                                />
+                                <Suspense fallback={<div className="text-center py-8 text-gray-400">Carregando...</div>}>
+                                    <HistoryFiltered
+                                        readings={savedReadings}
+                                        isPortuguese={isPortuguese}
+                                        onSelect={handleOpenReading}
+                                        onDelete={deleteReading}
+                                        onFilterChange={setFilteredReadings}
+                                    />
+                                </Suspense>
                             </div>
 
                             {/* Readings Grid */}
@@ -6677,14 +6693,14 @@ const App = () => {
                                 {/* Conteúdo público com paywall inline diferenciado */}
                                 <Route path="/numerology" element={<AuthGuard><SEO title="Numerologia" description="Descubra seu perfil numerológico completo. Calcule seu número do destino, alma e personalidade." path="/numerology" /><Numerology /></AuthGuard>} />
                                 <Route path="/cosmic" element={<AuthGuard><SEO title="Calendário Cósmico" description="Acompanhe as fases da lua, energia cósmica do dia e alinhamento planetário." path="/cosmic" /><CosmicCalendar /></AuthGuard>} />
-                                <Route path="/carta-do-dia" element={<AuthGuard><SEO title="Carta do Dia - Tarot Diário" description="Descubra a carta de tarot do dia. Receba orientação diária com interpretação completa e conselho espiritual." path="/carta-do-dia" /><DailyCard /></AuthGuard>} />
-                                <Route path="/daily-card" element={<AuthGuard><SEO title="Daily Tarot Card" description="Discover your daily tarot card. Receive daily guidance with complete interpretation and spiritual advice." path="/daily-card" /><DailyCard /></AuthGuard>} />
+                                <Route path="/carta-do-dia" element={<AuthGuard><SEO title="Carta do Dia - Tarot Diário" description="Descubra a carta de tarot do dia. Receba orientação diária com interpretação completa e conselho espiritual." path="/carta-do-dia" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
+                                <Route path="/daily-card" element={<AuthGuard><SEO title="Daily Tarot Card" description="Discover your daily tarot card. Receive daily guidance with complete interpretation and spiritual advice." path="/daily-card" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
                                 <Route path="/tarot-por-signo" element={<AuthGuard><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodíaco. Descubra o que as cartas revelam para o seu signo hoje." path="/tarot-por-signo" /><TarotPorSignoIndex /></AuthGuard>} />
                                 <Route path="/tarot-by-sign" element={<AuthGuard><SEO title="Tarot by Zodiac Sign" description="Personalized tarot reading for each zodiac sign. Discover what the cards reveal for your sign today." path="/tarot-by-sign" /><TarotPorSignoIndex /></AuthGuard>} />
-                                <Route path="/tarot-por-signo/:signo" element={<AuthGuard><TarotPorSigno /></AuthGuard>} />
-                                <Route path="/tarot-by-sign/:signo" element={<AuthGuard><TarotPorSigno /></AuthGuard>} />
+                                <Route path="/tarot-por-signo/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
+                                <Route path="/tarot-by-sign/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
 
-                                <Route path="/charts-demo" element={<SideBySideExample />} />
+                                <Route path="/charts-demo" element={<Suspense fallback={<RouteFallback />}><SideBySideExample /></Suspense>} />
                                 <Route path="/checkout" element={<Checkout />} />
                                 <Route path="/checkout/success" element={<CheckoutSuccess />} />
 

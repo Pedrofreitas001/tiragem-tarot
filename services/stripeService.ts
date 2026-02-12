@@ -18,7 +18,7 @@
 
 export const STRIPE_CONFIG = {
     // Chave publicável do Stripe (carregada do ambiente em produção)
-    publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51SvSCpQfequPVfiy4XTSkIDHUtTiC8ZyRD53eviQdDqvzXtThFcgSx5BsQsY0c6dWoV00UvyH5KnQi5QhxEuj95D0010SHywCt',
+    publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
 
     // Product ID (para referência)
     productId: 'prod_TuEXZVRLRlGKSn',

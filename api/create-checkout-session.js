@@ -45,9 +45,10 @@ export default async function handler(req, res) {
         hasPriceId: !!(process.env.STRIPE_PREMIUM_PRICE_ID || process.env.VITE_STRIPE_PREMIUM_PRICE_ID),
     });
 
-    // CORS
+    // CORS - restrito ao domínio da aplicação
+    const allowedOrigin = process.env.ALLOWED_ORIGIN || req.headers.origin || '*';
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
