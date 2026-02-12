@@ -1369,9 +1369,9 @@ const Home = () => {
                         {/* Cards Layout - Center card elevated, scaled down on mobile */}
                         <style dangerouslySetInnerHTML={{ __html: `
                             .gallery-cards-wrapper { --gallery-scale: 1; }
-                            @media (max-width: 639px) { .gallery-cards-wrapper { --gallery-scale: 0.75; margin-bottom: -22%; } }
-                            @media (min-width: 640px) and (max-width: 767px) { .gallery-cards-wrapper { --gallery-scale: 0.82; margin-bottom: -14%; } }
-                            @media (min-width: 768px) and (max-width: 1023px) { .gallery-cards-wrapper { --gallery-scale: 0.9; margin-bottom: -5%; } }
+                            @media (max-width: 639px) { .gallery-cards-wrapper { --gallery-scale: 0.88; margin-bottom: -10%; } }
+                            @media (min-width: 640px) and (max-width: 767px) { .gallery-cards-wrapper { --gallery-scale: 0.92; margin-bottom: -6%; } }
+                            @media (min-width: 768px) and (max-width: 1023px) { .gallery-cards-wrapper { --gallery-scale: 0.95; margin-bottom: -3%; } }
                             @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
                             .animate-scaleIn { animation: scaleIn 0.2s ease-out; }
                             @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -1398,17 +1398,9 @@ const Home = () => {
                                         background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
                                         border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
                                     }}>
-                                        {/* Red Badge */}
-                                        <div className="absolute top-1.5 right-1.5 z-10 bg-red-600 text-white text-[5px] md:text-[6px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm shadow-lg" style={{ lineHeight: '1.2' }}>
+                                        {/* Red Badge Header */}
+                                        <div className="bg-red-600 text-white text-[7px] font-bold uppercase tracking-wider text-center py-1.5 px-2">
                                             {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
-                                        </div>
-                                        {/* Header */}
-                                        <div className="flex items-center justify-between px-2.5 pt-2.5 pb-1.5">
-                                            <div className="flex items-center gap-1">
-                                                <span className="text-yellow-400/80 text-[7px]">✦</span>
-                                                <span className="text-gray-100/90 text-[8px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
-                                            </div>
-                                            <p className="text-gray-300/60 text-[7px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</p>
                                         </div>
                                         {/* Divider */}
                                         <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
@@ -1467,13 +1459,9 @@ const Home = () => {
                                         background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
                                         border: '1.5px solid rgba(212, 175, 55, 0.35)',
                                     }}>
-                                        {/* Header */}
-                                        <div className="flex items-center justify-between px-4 pt-4 pb-2">
-                                            <div className="flex items-center gap-1.5">
-                                                <span className="text-yellow-400/80 text-xs">✦</span>
-                                                <span className="text-gray-100/90 text-[11px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
-                                            </div>
-                                            <p className="text-gray-300/60 text-[9px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</p>
+                                        {/* Red Badge Header */}
+                                        <div className="bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider text-center py-2 px-4 rounded-t-2xl">
+                                            {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
                                         </div>
                                         <div className="mx-4 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
                                         {/* Card Image */}
@@ -1525,7 +1513,7 @@ const Home = () => {
                             </div>
                             <div className="flex flex-col lg:flex-row items-stretch">
                                 {/* Form Content - Left */}
-                                <div className="flex-1 p-6 lg:p-10">
+                                <div className="flex-1 p-6 pt-12 sm:pt-6 lg:p-10">
                                 <header className="mb-6 text-center lg:text-left">
                                     <h3 className="font-display text-2xl md:text-3xl text-white mb-4 leading-tight">
                                         {isPortuguese ? 'Cadastre-se Agora' : 'Sign Up Now'}
