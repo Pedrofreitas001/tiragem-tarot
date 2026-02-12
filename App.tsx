@@ -596,16 +596,23 @@ const Home = () => {
 
                         {/* Left Column - Content (Mobile: appears after orbit) */}
                         <div className="space-y-8 lg:pr-8 order-2 lg:order-1 text-center lg:text-left">
-                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
-                            </h1>
-
-                            <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
-                                {isPortuguese
-                                    ? 'Um Tarot digital para registrar padrões, refletir escolhas e acompanhar sua jornada simbólica.'
-                                    : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
-                            </p>
-
+                            {/* Purple blur background for hero text (extreme left and higher) */}
+                            {/* ...existing code... */}
+                            {/* Raise only the hero text for visual balance */}
+                            <div className="relative z-10 -mt-8 lg:-mt-12">
+                                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    <span className="block -mt-6 lg:-mt-14">
+                                        {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
+                                    </span>
+                                </h1>
+                                <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
+                                    <span className="block mt-8 lg:mt-12">
+                                        {isPortuguese
+                                            ? 'Um Tarot digital para registrar padrões, refletir escolhas e acompanhar sua jornada simbólica.'
+                                            : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
+                                    </span>
+                                </p>
+                            </div>
                             <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start items-stretch sm:items-center lg:items-start">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
