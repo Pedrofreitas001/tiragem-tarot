@@ -26,13 +26,23 @@ const Header = () => {
 
     const exploreRoute = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
 
+    const mobileNavItems = [
+        { icon: 'home', label: t.nav.home, path: '/', active: isActive('/') && location.pathname === '/' },
+        { icon: 'style', label: t.nav.tarot, path: isPortuguese ? '/jogos-de-tarot' : '/spreads', active: false },
+        { icon: 'today', label: isPortuguese ? 'Carta do Dia' : 'Daily Card', path: isPortuguese ? '/carta-do-dia' : '/daily-card', active: isActive('/carta-do-dia') || isActive('/daily-card') },
+        { icon: 'stars', label: isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign', path: isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign', active: isActive('/tarot-por-signo') || isActive('/tarot-by-sign') },
+        { icon: 'menu_book', label: isPortuguese ? 'Interpretação' : 'Interpretation', path: isPortuguese ? '/interpretacao' : '/interpretation', active: isActive('/interpretacao') || isActive('/interpretation') },
+        { icon: 'auto_stories', label: t.nav.cardMeanings, path: exploreRoute, active: isActive('/explore') || isActive(exploreRoute) },
+        { icon: 'history', label: t.nav.history, path: '/history', active: isActive('/history') },
+    ];
+
     return (
         <>
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
                 <div className="flex w-full max-w-[1200px]">
                     <div className="flex items-center justify-between whitespace-nowrap w-full px-3 py-2.5 sm:px-4 sm:py-3 lg:px-10 lg:py-4 gap-2">
                         <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
-                            <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
+                            <h2 className="text-white text-base sm:text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>
 
                         <nav className="hidden md:flex items-center gap-8">
@@ -64,35 +74,56 @@ const Header = () => {
                             )}
                         </nav>
 
-                        <div className="flex items-center gap-4 sm:gap-6">
+                        <div className="flex items-center gap-3 sm:gap-6">
                             <LanguageToggle />
                             <UserMenu onLoginClick={() => setShowAuthModal(true)} />
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="md:hidden p-1.5 sm:p-2 rounded-lg hover:bg-white/5"
+                                className="md:hidden p-1.5 rounded-lg hover:bg-white/5"
                             >
-                                <span className="material-symbols-outlined text-white text-xl sm:text-2xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
+                                <span className="material-symbols-outlined text-white text-xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
                             </button>
                         </div>
                     </div>
-
-                    {/* Mobile Menu */}
-                    {mobileMenuOpen && (
-                        <nav className="md:hidden border-t border-border-dark p-4 space-y-2 animate-fade-in">
-                            <button onClick={() => { navigate('/'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.home}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.tarot}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/carta-do-dia' : '/daily-card'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Carta do Dia' : 'Daily Card'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</button>
-                            <button onClick={() => { navigate(isPortuguese ? '/interpretacao' : '/interpretation'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{isPortuguese ? 'Interpretação' : 'Interpretation'}</button>
-                            <button onClick={() => { navigate(exploreRoute); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.cardMeanings}</button>
-                            <button onClick={() => { navigate('/history'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">{t.nav.history}</button>
-                            {isAdmin && (
-                                <button onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10">Admin</button>
-                            )}
-                        </nav>
-                    )}
                 </div>
             </header>
+
+            {/* Mobile Drawer Menu */}
+            {mobileMenuOpen && (
+                <div className="fixed inset-0 z-50 md:hidden">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+                    <nav className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-background-dark/98 backdrop-blur-xl border-l border-border-dark flex flex-col animate-slide-in-right">
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-border-dark">
+                            <span className="text-white font-bold text-base">Menu</span>
+                            <button onClick={() => setMobileMenuOpen(false)} className="p-1 rounded-lg hover:bg-white/5">
+                                <span className="material-symbols-outlined text-gray-400 text-xl">close</span>
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto py-2 px-3">
+                            {mobileNavItems.map((item) => (
+                                <button
+                                    key={item.path}
+                                    onClick={() => { navigate(item.path); setMobileMenuOpen(false); }}
+                                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all ${item.active ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                                >
+                                    <span className="material-symbols-outlined text-lg">{item.icon}</span>
+                                    {item.label}
+                                </button>
+                            ))}
+                            {isAdmin && (
+                                <button
+                                    onClick={() => { navigate('/admin'); setMobileMenuOpen(false); }}
+                                    className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all"
+                                >
+                                    <span className="material-symbols-outlined text-lg">admin_panel_settings</span>
+                                    Admin
+                                </button>
+                            )}
+                        </div>
+                    </nav>
+                </div>
+            )}
+
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </>
     );
