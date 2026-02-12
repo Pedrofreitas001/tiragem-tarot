@@ -340,7 +340,7 @@ export const AdminPanel = () => {
         <div className="min-h-screen bg-gradient-to-b from-[#1a0a2e] via-[#16082a] to-[#0d0015] flex flex-col">
             {/* Header com navegação */}
             <header className="sticky top-0 z-50 backdrop-blur-md bg-[#1a0a2e]/80 border-b border-white/10">
-                <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-3 sm:px-4 py-1.5 sm:py-2 lg:py-3 flex items-center justify-between">
                     <button
                         onClick={() => navigate('/')}
                         className="text-white text-lg font-bold leading-tight tracking-tight hover:text-purple-400 transition-colors"
@@ -367,437 +367,435 @@ export const AdminPanel = () => {
             </header>
 
             <div className="flex-1 py-8 px-4">
-            <div className="max-w-7xl mx-auto">
-                {/* Page Title */}
-                <div className="mb-6">
-                    <h1 className="text-3xl font-bold text-white mb-2">Painel Administrativo</h1>
-                    <p className="text-gray-400">Gestão e análise do Zaya Tarot</p>
-                </div>
-
-                {/* Tabs */}
-                <div className="flex gap-2 mb-8 border-b border-white/10 pb-4">
-                    <button
-                        onClick={() => setActiveTab('stats')}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all ${
-                            activeTab === 'stats'
-                                ? 'bg-purple-600 text-white'
-                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-lg">analytics</span>
-                        Estatísticas
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('images')}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all ${
-                            activeTab === 'images'
-                                ? 'bg-purple-600 text-white'
-                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
-                        }`}
-                    >
-                        <span className="material-symbols-outlined text-lg">image</span>
-                        Gerador de Imagens
-                    </button>
-                </div>
-
-                {/* Tab Content: Estatísticas */}
-                {activeTab === 'stats' && (
-                    <div className="space-y-6">
-                        {/* Header com botão refresh */}
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-semibold text-white">Visão Geral</h2>
-                            <button
-                                onClick={loadStats}
-                                disabled={statsLoading}
-                                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors disabled:opacity-50"
-                            >
-                                <span className={`material-symbols-outlined text-lg ${statsLoading ? 'animate-spin' : ''}`}>
-                                    refresh
-                                </span>
-                                Atualizar
-                            </button>
-                        </div>
-
-                        {/* Erro */}
-                        {statsError && (
-                            <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
-                                {statsError}
-                            </div>
-                        )}
-
-                        {/* Loading */}
-                        {statsLoading && !stats && (
-                            <div className="flex items-center justify-center py-12">
-                                <div className="w-8 h-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>
-                            </div>
-                        )}
-
-                        {/* Stats Cards */}
-                        {stats && (
-                            <>
-                                {/* Principais métricas */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {/* Total de Usuários */}
-                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <span className="material-symbols-outlined text-2xl text-purple-400">group</span>
-                                            <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">Total</span>
-                                        </div>
-                                        <p className="text-3xl font-bold text-white mb-1">{stats.totalUsers.toLocaleString()}</p>
-                                        <p className="text-sm text-gray-400">Usuários cadastrados</p>
-                                    </div>
-
-                                    {/* Usuários Premium */}
-                                    <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 rounded-xl p-5 border border-yellow-500/20">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <span className="material-symbols-outlined text-2xl text-yellow-400">workspace_premium</span>
-                                            <span className="text-xs text-yellow-400/70 bg-yellow-500/10 px-2 py-1 rounded">Premium</span>
-                                        </div>
-                                        <p className="text-3xl font-bold text-white mb-1">{stats.premiumUsers.toLocaleString()}</p>
-                                        <p className="text-sm text-gray-400">Assinantes ativos</p>
-                                    </div>
-
-                                    {/* WhatsApp */}
-                                    <div className="bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-xl p-5 border border-green-500/20">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <span className="material-symbols-outlined text-2xl text-green-400">chat</span>
-                                            <span className="text-xs text-green-400/70 bg-green-500/10 px-2 py-1 rounded">WhatsApp</span>
-                                        </div>
-                                        <p className="text-3xl font-bold text-white mb-1">{stats.whatsappSubscriptions.toLocaleString()}</p>
-                                        <p className="text-sm text-gray-400">Inscrições ativas</p>
-                                    </div>
-
-                                    {/* Taxa de Conversão */}
-                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <span className="material-symbols-outlined text-2xl text-blue-400">trending_up</span>
-                                            <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">Conversão</span>
-                                        </div>
-                                        <p className="text-3xl font-bold text-white mb-1">{stats.conversionRate}%</p>
-                                        <p className="text-sm text-gray-400">Free → Premium</p>
-                                    </div>
-                                </div>
-
-                                {/* Métricas secundárias */}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    {/* Novos usuários (7 dias) */}
-                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className="material-symbols-outlined text-xl text-purple-400">person_add</span>
-                                            <span className="text-sm text-gray-400">Novos usuários (7 dias)</span>
-                                        </div>
-                                        <p className="text-2xl font-bold text-white">{stats.newUsersWeek.toLocaleString()}</p>
-                                    </div>
-
-                                    {/* Novos usuários (30 dias) */}
-                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className="material-symbols-outlined text-xl text-purple-400">calendar_month</span>
-                                            <span className="text-sm text-gray-400">Novos usuários (30 dias)</span>
-                                        </div>
-                                        <p className="text-2xl font-bold text-white">{stats.newUsersMonth.toLocaleString()}</p>
-                                    </div>
-
-                                    {/* Total de leituras */}
-                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className="material-symbols-outlined text-xl text-purple-400">auto_awesome</span>
-                                            <span className="text-sm text-gray-400">Total de leituras</span>
-                                        </div>
-                                        <p className="text-2xl font-bold text-white">{stats.totalReadings.toLocaleString()}</p>
-                                    </div>
-                                </div>
-
-                                {/* Info de atualização */}
-                                <div className="text-center text-xs text-gray-500">
-                                    Última atualização: {new Date(stats.generatedAt).toLocaleString('pt-BR')}
-                                </div>
-                            </>
-                        )}
-                    </div>
-                )}
-
-                {/* Tab Content: Gerador de Imagens */}
-                {activeTab === 'images' && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Coluna 1: Seleção de Carta */}
-                    <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-                        <h2 className="text-xl font-semibold text-white mb-4">Selecionar Carta</h2>
-
-                        <div className="mb-4">
-                            <select
-                                value={selectedCard?.id || ''}
-                                onChange={(e) => {
-                                    const card = TAROT_CARDS.find(c => c.id === e.target.value);
-                                    setSelectedCard(card || null);
-                                }}
-                                className="w-full bg-[#1a1628] text-white border border-white/20 rounded-lg px-4 py-3 [&>option]:bg-[#1a1628] [&>option]:text-white [&>optgroup]:bg-[#0d0015] [&>optgroup]:text-gray-400 [&>optgroup]:font-semibold"
-                                style={{ colorScheme: 'dark' }}
-                            >
-                                <option value="" className="text-gray-400">Escolha uma carta...</option>
-                                <optgroup label="Arcanos Maiores">
-                                    {TAROT_CARDS.filter(c => c.arcana === 'major').map(card => (
-                                        <option key={card.id} value={card.id}>{card.name_pt}</option>
-                                    ))}
-                                </optgroup>
-                                <optgroup label="Copas">
-                                    {TAROT_CARDS.filter(c => c.suit === 'Cups').map(card => (
-                                        <option key={card.id} value={card.id}>{card.name_pt}</option>
-                                    ))}
-                                </optgroup>
-                                <optgroup label="Ouros">
-                                    {TAROT_CARDS.filter(c => c.suit === 'Pentacles').map(card => (
-                                        <option key={card.id} value={card.id}>{card.name_pt}</option>
-                                    ))}
-                                </optgroup>
-                                <optgroup label="Espadas">
-                                    {TAROT_CARDS.filter(c => c.suit === 'Swords').map(card => (
-                                        <option key={card.id} value={card.id}>{card.name_pt}</option>
-                                    ))}
-                                </optgroup>
-                                <optgroup label="Paus">
-                                    {TAROT_CARDS.filter(c => c.suit === 'Wands').map(card => (
-                                        <option key={card.id} value={card.id}>{card.name_pt}</option>
-                                    ))}
-                                </optgroup>
-                            </select>
-                        </div>
-
-                        {selectedCard && (
-                            <div className="text-center p-4 bg-white/5 rounded-lg">
-                                <img
-                                    src={selectedCard.imageUrl}
-                                    alt={selectedCard.name_pt}
-                                    className="w-24 h-40 object-cover rounded-lg mx-auto mb-2"
-                                />
-                                <p className="text-white font-medium">{selectedCard.name_pt}</p>
-                            </div>
-                        )}
-
-                        <div className="mt-6 space-y-3">
-                            <button
-                                onClick={generateDailyCard}
-                                disabled={!selectedCard || isGenerating}
-                                className="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isGenerating && generatingType === 'daily' ? 'Gerando...' : 'Gerar Carta do Dia'}
-                            </button>
-
-                            <button
-                                onClick={generateAllDailyCards}
-                                disabled={isGenerating}
-                                className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isGenerating ? 'Gerando...' : 'Gerar TODAS as 78 Cartas'}
-                            </button>
-                        </div>
-
-                        {/* Progress */}
-                        {currentProgress.total > 0 && (
-                            <div className="mt-4 p-4 bg-white/5 rounded-lg">
-                                <div className="flex justify-between text-sm text-gray-400 mb-2">
-                                    <span>{currentProgress.message}</span>
-                                    <span>{currentProgress.current}/{currentProgress.total}</span>
-                                </div>
-                                <div className="w-full bg-white/10 rounded-full h-2">
-                                    <div
-                                        className="bg-yellow-500 h-2 rounded-full transition-all"
-                                        style={{ width: `${(currentProgress.current / currentProgress.total) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-                        )}
+                <div className="max-w-7xl mx-auto">
+                    {/* Page Title */}
+                    <div className="mb-6">
+                        <h1 className="text-3xl font-bold text-white mb-2">Painel Administrativo</h1>
+                        <p className="text-gray-400">Gestão e análise do Zaya Tarot</p>
                     </div>
 
-                    {/* Coluna 2: Preview da Imagem */}
-                    <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-                        <h2 className="text-xl font-semibold text-white mb-4">Preview</h2>
-
-                        {/* Canvas para geração - altura dinâmica */}
-                        <div className="flex justify-center">
-                            <div
-                                ref={canvasRef}
-                                className="w-[280px] rounded-xl overflow-hidden"
-                                style={{
-                                    background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 40%, #1a1628 100%)',
-                                    minHeight: '498px', /* 280 * 16/9 */
-                                }}
-                            >
-                                <div className="flex flex-col p-4">
-                                    {/* Header */}
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-1.5">
-                                            <span className="material-symbols-outlined text-yellow-400 text-sm">auto_awesome</span>
-                                            <span className="text-white font-bold text-xs">Zaya Tarot</span>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-gray-400 text-[9px] uppercase tracking-wider">Carta do Dia</p>
-                                            <p className="text-gray-300 text-[10px]">{getFormattedDate()}</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Imagem da Carta */}
-                                    <div className="flex justify-center mb-3">
-                                        {imageBase64 ? (
-                                            <img
-                                                src={imageBase64}
-                                                alt={selectedCard?.name_pt || 'Carta'}
-                                                className="w-[120px] h-[190px] object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
-                                            />
-                                        ) : (
-                                            <div className="w-[120px] h-[190px] bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
-                                                <span className="text-gray-500 text-xs">Selecione</span>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Nome da Carta */}
-                                    <h2
-                                        className="text-lg font-bold text-white text-center mb-1"
-                                        style={{ fontFamily: "'Crimson Text', serif" }}
-                                    >
-                                        {selectedCard?.name_pt || 'Nome da Carta'}
-                                    </h2>
-
-                                    {/* Vibração Universal */}
-                                    {aiSynthesis?.vibração_universal && (
-                                        <p
-                                            className="text-sm font-medium italic text-center mb-3"
-                                            style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}
-                                        >
-                                            "{aiSynthesis.vibração_universal.length > 50
-                                                ? aiSynthesis.vibração_universal.substring(0, 50) + '...'
-                                                : aiSynthesis.vibração_universal}"
-                                        </p>
-                                    )}
-
-                                    {/* Significado - limitado a 180 caracteres */}
-                                    {aiSynthesis?.significado_carta && (
-                                        <div className="bg-white/5 rounded-lg px-3 py-2 mb-2">
-                                            <p className="text-gray-300 text-[10px] leading-snug text-center">
-                                                {aiSynthesis.significado_carta.length > 180
-                                                    ? aiSynthesis.significado_carta.substring(0, 180) + '...'
-                                                    : aiSynthesis.significado_carta}
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    {/* Energia - limitado a 150 caracteres */}
-                                    {aiSynthesis?.energia_emocional && (
-                                        <div className="flex items-start gap-2 px-1 mb-3">
-                                            <span className="text-[9px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
-                                            <div>
-                                                <span className="text-[9px] font-semibold uppercase tracking-wide" style={{ color: '#d4af37' }}>
-                                                    Energia
-                                                </span>
-                                                <p className="text-gray-300 text-[9px] leading-snug mt-0.5">
-                                                    {aiSynthesis.energia_emocional.length > 150
-                                                        ? aiSynthesis.energia_emocional.substring(0, 150) + '...'
-                                                        : aiSynthesis.energia_emocional}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent my-2"></div>
-
-                                    {/* Mantra do Dia */}
-                                    {aiSynthesis?.mantra_diário && (
-                                        <>
-                                            <p
-                                                className="text-[9px] font-semibold uppercase tracking-wide mb-2 text-center"
-                                                style={{ color: '#d4af37' }}
-                                            >
-                                                Mantra do Dia
-                                            </p>
-                                            <div className="bg-white/5 rounded-lg px-3 py-3 border border-yellow-500/20 flex items-center justify-center">
-                                                <p
-                                                    className="text-[11px] font-medium text-center italic"
-                                                    style={{ fontFamily: "'Crimson Text', serif", color: '#d4af37' }}
-                                                >
-                                                    "{aiSynthesis.mantra_diário.length > 80
-                                                        ? aiSynthesis.mantra_diário.substring(0, 80) + '...'
-                                                        : aiSynthesis.mantra_diário}"
-                                                </p>
-                                            </div>
-                                        </>
-                                    )}
-
-                                    <div className="mt-2 text-center">
-                                        <p className="text-gray-500 text-[8px] tracking-wider">zayatarot.com</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    {/* Tabs */}
+                    <div className="flex gap-2 mb-8 border-b border-white/10 pb-4">
+                        <button
+                            onClick={() => setActiveTab('stats')}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all ${activeTab === 'stats'
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                                }`}
+                        >
+                            <span className="material-symbols-outlined text-lg">analytics</span>
+                            Estatísticas
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('images')}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all ${activeTab === 'images'
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                                }`}
+                        >
+                            <span className="material-symbols-outlined text-lg">image</span>
+                            Gerador de Imagens
+                        </button>
                     </div>
 
-                    {/* Coluna 3: Imagens Geradas */}
-                    <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xl font-semibold text-white">
-                                Imagens Geradas ({generatedImages.length})
-                            </h2>
-                            {generatedImages.length > 0 && (
+                    {/* Tab Content: Estatísticas */}
+                    {activeTab === 'stats' && (
+                        <div className="space-y-6">
+                            {/* Header com botão refresh */}
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-xl font-semibold text-white">Visão Geral</h2>
                                 <button
-                                    onClick={clearGenerated}
-                                    className="text-sm text-gray-400 hover:text-white"
+                                    onClick={loadStats}
+                                    disabled={statsLoading}
+                                    className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors disabled:opacity-50"
                                 >
-                                    Limpar
+                                    <span className={`material-symbols-outlined text-lg ${statsLoading ? 'animate-spin' : ''}`}>
+                                        refresh
+                                    </span>
+                                    Atualizar
                                 </button>
+                            </div>
+
+                            {/* Erro */}
+                            {statsError && (
+                                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+                                    {statsError}
+                                </div>
                             )}
-                        </div>
 
-                        {generatedImages.length > 0 && (
-                            <button
-                                onClick={downloadAllPending}
-                                className="w-full mb-4 px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-medium rounded-lg"
-                            >
-                                Baixar Todas ({generatedImages.filter(i => !i.downloaded).length} pendentes)
-                            </button>
-                        )}
+                            {/* Loading */}
+                            {statsLoading && !stats && (
+                                <div className="flex items-center justify-center py-12">
+                                    <div className="w-8 h-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>
+                                </div>
+                            )}
 
-                        <div className="space-y-3 max-h-[500px] overflow-y-auto">
-                            {generatedImages.length === 0 ? (
-                                <p className="text-gray-500 text-center py-8">
-                                    Nenhuma imagem gerada ainda
-                                </p>
-                            ) : (
-                                generatedImages.map(image => (
-                                    <div
-                                        key={image.id}
-                                        className={`flex items-center gap-3 p-3 rounded-lg ${image.downloaded ? 'bg-green-500/10' : 'bg-white/5'
-                                            }`}
-                                    >
-                                        <img
-                                            src={image.dataUrl}
-                                            alt={image.cardName}
-                                            className="w-12 h-20 object-cover rounded"
-                                        />
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-white text-sm font-medium truncate">
-                                                {image.cardName}
-                                            </p>
-                                            <p className="text-gray-400 text-xs truncate">
-                                                {image.fileName}
-                                            </p>
+                            {/* Stats Cards */}
+                            {stats && (
+                                <>
+                                    {/* Principais métricas */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        {/* Total de Usuários */}
+                                        <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="material-symbols-outlined text-2xl text-purple-400">group</span>
+                                                <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">Total</span>
+                                            </div>
+                                            <p className="text-3xl font-bold text-white mb-1">{stats.totalUsers.toLocaleString()}</p>
+                                            <p className="text-sm text-gray-400">Usuários cadastrados</p>
                                         </div>
-                                        <button
-                                            onClick={() => downloadImage(image)}
-                                            className={`px-3 py-1.5 rounded text-sm font-medium ${image.downloaded
-                                                    ? 'bg-green-500/20 text-green-400'
-                                                    : 'bg-yellow-500 text-black hover:bg-yellow-400'
-                                                }`}
-                                        >
-                                            {image.downloaded ? '✓' : 'Baixar'}
-                                        </button>
+
+                                        {/* Usuários Premium */}
+                                        <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 rounded-xl p-5 border border-yellow-500/20">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="material-symbols-outlined text-2xl text-yellow-400">workspace_premium</span>
+                                                <span className="text-xs text-yellow-400/70 bg-yellow-500/10 px-2 py-1 rounded">Premium</span>
+                                            </div>
+                                            <p className="text-3xl font-bold text-white mb-1">{stats.premiumUsers.toLocaleString()}</p>
+                                            <p className="text-sm text-gray-400">Assinantes ativos</p>
+                                        </div>
+
+                                        {/* WhatsApp */}
+                                        <div className="bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-xl p-5 border border-green-500/20">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="material-symbols-outlined text-2xl text-green-400">chat</span>
+                                                <span className="text-xs text-green-400/70 bg-green-500/10 px-2 py-1 rounded">WhatsApp</span>
+                                            </div>
+                                            <p className="text-3xl font-bold text-white mb-1">{stats.whatsappSubscriptions.toLocaleString()}</p>
+                                            <p className="text-sm text-gray-400">Inscrições ativas</p>
+                                        </div>
+
+                                        {/* Taxa de Conversão */}
+                                        <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="material-symbols-outlined text-2xl text-blue-400">trending_up</span>
+                                                <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">Conversão</span>
+                                            </div>
+                                            <p className="text-3xl font-bold text-white mb-1">{stats.conversionRate}%</p>
+                                            <p className="text-sm text-gray-400">Free → Premium</p>
+                                        </div>
                                     </div>
-                                ))
+
+                                    {/* Métricas secundárias */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        {/* Novos usuários (7 dias) */}
+                                        <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span className="material-symbols-outlined text-xl text-purple-400">person_add</span>
+                                                <span className="text-sm text-gray-400">Novos usuários (7 dias)</span>
+                                            </div>
+                                            <p className="text-2xl font-bold text-white">{stats.newUsersWeek.toLocaleString()}</p>
+                                        </div>
+
+                                        {/* Novos usuários (30 dias) */}
+                                        <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span className="material-symbols-outlined text-xl text-purple-400">calendar_month</span>
+                                                <span className="text-sm text-gray-400">Novos usuários (30 dias)</span>
+                                            </div>
+                                            <p className="text-2xl font-bold text-white">{stats.newUsersMonth.toLocaleString()}</p>
+                                        </div>
+
+                                        {/* Total de leituras */}
+                                        <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span className="material-symbols-outlined text-xl text-purple-400">auto_awesome</span>
+                                                <span className="text-sm text-gray-400">Total de leituras</span>
+                                            </div>
+                                            <p className="text-2xl font-bold text-white">{stats.totalReadings.toLocaleString()}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Info de atualização */}
+                                    <div className="text-center text-xs text-gray-500">
+                                        Última atualização: {new Date(stats.generatedAt).toLocaleString('pt-BR')}
+                                    </div>
+                                </>
                             )}
                         </div>
-                    </div>
+                    )}
+
+                    {/* Tab Content: Gerador de Imagens */}
+                    {activeTab === 'images' && (
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            {/* Coluna 1: Seleção de Carta */}
+                            <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                                <h2 className="text-xl font-semibold text-white mb-4">Selecionar Carta</h2>
+
+                                <div className="mb-4">
+                                    <select
+                                        value={selectedCard?.id || ''}
+                                        onChange={(e) => {
+                                            const card = TAROT_CARDS.find(c => c.id === e.target.value);
+                                            setSelectedCard(card || null);
+                                        }}
+                                        className="w-full bg-[#1a1628] text-white border border-white/20 rounded-lg px-4 py-3 [&>option]:bg-[#1a1628] [&>option]:text-white [&>optgroup]:bg-[#0d0015] [&>optgroup]:text-gray-400 [&>optgroup]:font-semibold"
+                                        style={{ colorScheme: 'dark' }}
+                                    >
+                                        <option value="" className="text-gray-400">Escolha uma carta...</option>
+                                        <optgroup label="Arcanos Maiores">
+                                            {TAROT_CARDS.filter(c => c.arcana === 'major').map(card => (
+                                                <option key={card.id} value={card.id}>{card.name_pt}</option>
+                                            ))}
+                                        </optgroup>
+                                        <optgroup label="Copas">
+                                            {TAROT_CARDS.filter(c => c.suit === 'Cups').map(card => (
+                                                <option key={card.id} value={card.id}>{card.name_pt}</option>
+                                            ))}
+                                        </optgroup>
+                                        <optgroup label="Ouros">
+                                            {TAROT_CARDS.filter(c => c.suit === 'Pentacles').map(card => (
+                                                <option key={card.id} value={card.id}>{card.name_pt}</option>
+                                            ))}
+                                        </optgroup>
+                                        <optgroup label="Espadas">
+                                            {TAROT_CARDS.filter(c => c.suit === 'Swords').map(card => (
+                                                <option key={card.id} value={card.id}>{card.name_pt}</option>
+                                            ))}
+                                        </optgroup>
+                                        <optgroup label="Paus">
+                                            {TAROT_CARDS.filter(c => c.suit === 'Wands').map(card => (
+                                                <option key={card.id} value={card.id}>{card.name_pt}</option>
+                                            ))}
+                                        </optgroup>
+                                    </select>
+                                </div>
+
+                                {selectedCard && (
+                                    <div className="text-center p-4 bg-white/5 rounded-lg">
+                                        <img
+                                            src={selectedCard.imageUrl}
+                                            alt={selectedCard.name_pt}
+                                            className="w-24 h-40 object-cover rounded-lg mx-auto mb-2"
+                                        />
+                                        <p className="text-white font-medium">{selectedCard.name_pt}</p>
+                                    </div>
+                                )}
+
+                                <div className="mt-6 space-y-3">
+                                    <button
+                                        onClick={generateDailyCard}
+                                        disabled={!selectedCard || isGenerating}
+                                        className="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isGenerating && generatingType === 'daily' ? 'Gerando...' : 'Gerar Carta do Dia'}
+                                    </button>
+
+                                    <button
+                                        onClick={generateAllDailyCards}
+                                        disabled={isGenerating}
+                                        className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isGenerating ? 'Gerando...' : 'Gerar TODAS as 78 Cartas'}
+                                    </button>
+                                </div>
+
+                                {/* Progress */}
+                                {currentProgress.total > 0 && (
+                                    <div className="mt-4 p-4 bg-white/5 rounded-lg">
+                                        <div className="flex justify-between text-sm text-gray-400 mb-2">
+                                            <span>{currentProgress.message}</span>
+                                            <span>{currentProgress.current}/{currentProgress.total}</span>
+                                        </div>
+                                        <div className="w-full bg-white/10 rounded-full h-2">
+                                            <div
+                                                className="bg-yellow-500 h-2 rounded-full transition-all"
+                                                style={{ width: `${(currentProgress.current / currentProgress.total) * 100}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Coluna 2: Preview da Imagem */}
+                            <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                                <h2 className="text-xl font-semibold text-white mb-4">Preview</h2>
+
+                                {/* Canvas para geração - altura dinâmica */}
+                                <div className="flex justify-center">
+                                    <div
+                                        ref={canvasRef}
+                                        className="w-[280px] rounded-xl overflow-hidden"
+                                        style={{
+                                            background: 'linear-gradient(180deg, #1e0b2b 0%, #2d1b4e 40%, #1a1628 100%)',
+                                            minHeight: '498px', /* 280 * 16/9 */
+                                        }}
+                                    >
+                                        <div className="flex flex-col p-4">
+                                            {/* Header */}
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="material-symbols-outlined text-yellow-400 text-sm">auto_awesome</span>
+                                                    <span className="text-white font-bold text-xs">Zaya Tarot</span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-gray-400 text-[9px] uppercase tracking-wider">Carta do Dia</p>
+                                                    <p className="text-gray-300 text-[10px]">{getFormattedDate()}</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Imagem da Carta */}
+                                            <div className="flex justify-center mb-3">
+                                                {imageBase64 ? (
+                                                    <img
+                                                        src={imageBase64}
+                                                        alt={selectedCard?.name_pt || 'Carta'}
+                                                        className="w-[120px] h-[190px] object-cover rounded-lg shadow-2xl border-2 border-yellow-500/30"
+                                                    />
+                                                ) : (
+                                                    <div className="w-[120px] h-[190px] bg-purple-900/50 rounded-lg flex items-center justify-center border-2 border-yellow-500/30">
+                                                        <span className="text-gray-500 text-xs">Selecione</span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Nome da Carta */}
+                                            <h2
+                                                className="text-lg font-bold text-white text-center mb-1"
+                                                style={{ fontFamily: "'Crimson Text', serif" }}
+                                            >
+                                                {selectedCard?.name_pt || 'Nome da Carta'}
+                                            </h2>
+
+                                            {/* Vibração Universal */}
+                                            {aiSynthesis?.vibração_universal && (
+                                                <p
+                                                    className="text-sm font-medium italic text-center mb-3"
+                                                    style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}
+                                                >
+                                                    "{aiSynthesis.vibração_universal.length > 50
+                                                        ? aiSynthesis.vibração_universal.substring(0, 50) + '...'
+                                                        : aiSynthesis.vibração_universal}"
+                                                </p>
+                                            )}
+
+                                            {/* Significado - limitado a 180 caracteres */}
+                                            {aiSynthesis?.significado_carta && (
+                                                <div className="bg-white/5 rounded-lg px-3 py-2 mb-2">
+                                                    <p className="text-gray-300 text-[10px] leading-snug text-center">
+                                                        {aiSynthesis.significado_carta.length > 180
+                                                            ? aiSynthesis.significado_carta.substring(0, 180) + '...'
+                                                            : aiSynthesis.significado_carta}
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            {/* Energia - limitado a 150 caracteres */}
+                                            {aiSynthesis?.energia_emocional && (
+                                                <div className="flex items-start gap-2 px-1 mb-3">
+                                                    <span className="text-[9px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
+                                                    <div>
+                                                        <span className="text-[9px] font-semibold uppercase tracking-wide" style={{ color: '#d4af37' }}>
+                                                            Energia
+                                                        </span>
+                                                        <p className="text-gray-300 text-[9px] leading-snug mt-0.5">
+                                                            {aiSynthesis.energia_emocional.length > 150
+                                                                ? aiSynthesis.energia_emocional.substring(0, 150) + '...'
+                                                                : aiSynthesis.energia_emocional}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <div className="w-full h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent my-2"></div>
+
+                                            {/* Mantra do Dia */}
+                                            {aiSynthesis?.mantra_diário && (
+                                                <>
+                                                    <p
+                                                        className="text-[9px] font-semibold uppercase tracking-wide mb-2 text-center"
+                                                        style={{ color: '#d4af37' }}
+                                                    >
+                                                        Mantra do Dia
+                                                    </p>
+                                                    <div className="bg-white/5 rounded-lg px-3 py-3 border border-yellow-500/20 flex items-center justify-center">
+                                                        <p
+                                                            className="text-[11px] font-medium text-center italic"
+                                                            style={{ fontFamily: "'Crimson Text', serif", color: '#d4af37' }}
+                                                        >
+                                                            "{aiSynthesis.mantra_diário.length > 80
+                                                                ? aiSynthesis.mantra_diário.substring(0, 80) + '...'
+                                                                : aiSynthesis.mantra_diário}"
+                                                        </p>
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            <div className="mt-2 text-center">
+                                                <p className="text-gray-500 text-[8px] tracking-wider">zayatarot.com</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Coluna 3: Imagens Geradas */}
+                            <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="text-xl font-semibold text-white">
+                                        Imagens Geradas ({generatedImages.length})
+                                    </h2>
+                                    {generatedImages.length > 0 && (
+                                        <button
+                                            onClick={clearGenerated}
+                                            className="text-sm text-gray-400 hover:text-white"
+                                        >
+                                            Limpar
+                                        </button>
+                                    )}
+                                </div>
+
+                                {generatedImages.length > 0 && (
+                                    <button
+                                        onClick={downloadAllPending}
+                                        className="w-full mb-4 px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-medium rounded-lg"
+                                    >
+                                        Baixar Todas ({generatedImages.filter(i => !i.downloaded).length} pendentes)
+                                    </button>
+                                )}
+
+                                <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                                    {generatedImages.length === 0 ? (
+                                        <p className="text-gray-500 text-center py-8">
+                                            Nenhuma imagem gerada ainda
+                                        </p>
+                                    ) : (
+                                        generatedImages.map(image => (
+                                            <div
+                                                key={image.id}
+                                                className={`flex items-center gap-3 p-3 rounded-lg ${image.downloaded ? 'bg-green-500/10' : 'bg-white/5'
+                                                    }`}
+                                            >
+                                                <img
+                                                    src={image.dataUrl}
+                                                    alt={image.cardName}
+                                                    className="w-12 h-20 object-cover rounded"
+                                                />
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-white text-sm font-medium truncate">
+                                                        {image.cardName}
+                                                    </p>
+                                                    <p className="text-gray-400 text-xs truncate">
+                                                        {image.fileName}
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    onClick={() => downloadImage(image)}
+                                                    className={`px-3 py-1.5 rounded text-sm font-medium ${image.downloaded
+                                                        ? 'bg-green-500/20 text-green-400'
+                                                        : 'bg-yellow-500 text-black hover:bg-yellow-400'
+                                                        }`}
+                                                >
+                                                    {image.downloaded ? '✓' : 'Baixar'}
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-                )}
-            </div>
             </div>
 
             {/* Footer */}

@@ -24,11 +24,16 @@
     content="Descubra seu destino com tiragem de tarot online grátis. Leitura de cartas com interpretações detalhadas para amor, carreira e orientação espiritual." />
   <meta property="og:image" content="https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg" />
 
-  <!-- Google Fonts - Cinzel Decorative for mystical hero text -->
+  <!-- Google Fonts - Preconnect early -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Critical fonts (body/UI) loaded with display=swap -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <!-- Decorative font loaded with display=optional (no layout shift) -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=optional"
     rel="stylesheet">
   <meta property="og:locale" content="pt_BR" />
 
@@ -67,14 +72,12 @@
   <link rel="icon" type="image/svg+xml"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>" />
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Body/Display Fonts - reduced weight range -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap"
     rel="stylesheet" />
-  <!-- Material Symbols -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+  <!-- Material Symbols - single weight for faster load -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,400,0&display=swap"
     rel="stylesheet" />
 
   <!-- Tailwind CSS -->
@@ -375,8 +378,8 @@
 </script>
 </head>
 
-<body class="bg-background-dark text-white font-body antialiased selection:bg-primary selection:text-white">
-  <div id="root"></div>
+<body class="bg-background-dark text-white font-body antialiased selection:bg-primary selection:text-white" style="background-color:#161118;color:#fff">
+  <div id="root" style="min-height:100vh"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
 

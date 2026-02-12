@@ -24,8 +24,8 @@ const Header = ({ onLoginClick }: { onLoginClick: () => void }) => {
     return (
         <>
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
-                <div className="flex flex-col w-full max-w-[1200px]">
-                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-3 lg:px-10 lg:py-4">
+                <div className="flex w-full max-w-[1200px]">
+                    <div className="flex items-center justify-between whitespace-nowrap w-full px-3 py-2.5 sm:px-4 sm:py-3 lg:px-10 lg:py-4 gap-2">
                         <div className="flex items-center text-white cursor-pointer" onClick={() => navigate('/')}>
                             <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>

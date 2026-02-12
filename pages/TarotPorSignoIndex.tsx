@@ -41,18 +41,18 @@ const ELEMENT_LIGHT_COLORS: Record<ZodiacElement, { bg: string; border: string; 
 
 // Mapeamento de signos para ícones PNG
 const SIGN_ICONS: Record<ZodiacSign, string> = {
-    aries: '/images/aries_icon.png',
-    touro: '/images/touro_icon.png',
-    gemeos: '/images/gemeos_icon.png',
-    cancer: '/images/cancer_icon.png',
-    leao: '/images/leao_icon.png',
-    virgem: '/images/virgem_icon.png',
-    libra: '/images/libra_icon.png',
-    escorpiao: '/images/escorpiao_icon.png',
-    sagitario: '/images/sagitario_icon.png',
-    capricornio: '/images/capricornio_icon.png',
-    aquario: '/images/aquario_icon.png',
-    peixes: '/images/peixes_icon.png',
+    aries: '/images/aries_icon.svg',
+    touro: '/images/touro_icon.svg',
+    gemeos: '/images/gemeos_icon.svg',
+    cancer: '/images/cancer_icon.svg',
+    leao: '/images/leao_icon.svg',
+    virgem: '/images/virgem_icon.svg',
+    libra: '/images/libra_icon.svg',
+    escorpiao: '/images/escorpiao_icon.svg',
+    sagitario: '/images/sagitario_icon.svg',
+    capricornio: '/images/capricornio_icon.svg',
+    aquario: '/images/aquario_icon.svg',
+    peixes: '/images/peixes_icon.svg',
 };
 
 // Header Component
@@ -72,8 +72,8 @@ const Header = () => {
     return (
         <>
             <header className="flex justify-center w-full bg-background-dark/95 backdrop-blur-md sticky top-0 z-40 border-b border-border-dark">
-                <div className="flex flex-col w-full max-w-[1200px]">
-                    <div className="flex items-center justify-between whitespace-nowrap px-4 py-4 lg:px-10 lg:py-5">
+                <div className="flex w-full max-w-[1200px]">
+                    <div className="flex items-center justify-between whitespace-nowrap w-full px-3 py-2.5 sm:px-4 sm:py-3 lg:px-10 lg:py-4 gap-2">
                         <div className="flex items-center text-white cursor-pointer flex-shrink-0" onClick={() => navigate('/')}>
                             <h2 className="text-white text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>
@@ -286,9 +286,20 @@ export const TarotPorSignoIndex = () => {
                                     <button
                                         key={sign}
                                         onClick={() => handleSignClick(sign)}
-                                        className={`group relative overflow-hidden rounded-2xl bg-gradient-to-b ${elementColors.bg} ${elementColors.border} aspect-square transition-all duration-200 ${elementColors.hoverBorder} hover:scale-[1.02]`}
+                                        className={`group relative overflow-hidden aspect-square transition-all duration-200 hover:scale-[1.02]`}
                                     >
-                                        {/* Ícone do signo centralizado - menor com mais padding */}
+                                        {/* Ornamento dourado estilo carta de tarot */}
+                                        {/* Borda premium: SVG dourado ao redor do card */}
+                                        <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <defs>
+                                                <linearGradient id="tarot-gold-border" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse">
+                                                    <stop stopColor="#fffebb" />
+                                                    <stop offset="0.4" stopColor="#e0c080" />
+                                                    <stop offset="1" stopColor="#b88a44" />
+                                                </linearGradient>
+                                            </defs>
+                                            <rect x="3" y="3" width="94" height="94" rx="16" stroke="url(#tarot-gold-border)" strokeWidth="1.5" fill="none" />
+                                        </svg>
                                         <div className="absolute inset-0 flex items-center justify-center p-10 md:p-12 pb-16 md:pb-20">
                                             <img
                                                 src={iconPath}

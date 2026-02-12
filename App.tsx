@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
@@ -16,11 +16,7 @@ import { PaywallModal, usePaywall } from './components/PaywallModal';
 import WhatsAppModal from './components/WhatsAppModal';
 import { JourneySection } from './components/journey';
 import HeroJourneyStories from './components/journey/HeroJourneyStories';
-import { DailyCard } from './components/DailyCard';
-import { TarotPorSigno } from './components/TarotPorSigno';
 import { TarotPorSignoIndex } from './pages/TarotPorSignoIndex';
-import { HistoryFiltered } from './components/HistoryFiltered';
-import { SideBySideExample } from './components/Charts/SideBySideExample';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
 import Spreads from './pages/Spreads';
@@ -40,6 +36,24 @@ import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, N
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 import { TAROT_CARDS } from './tarotData';
 import { ZODIAC_SIGNS, ZODIAC_ORDER, ELEMENT_COLORS } from './data/zodiacData';
+
+// Lazy-loaded components (route-level code splitting)
+const DailyCard = lazy(() => import('./components/DailyCard').then(m => ({ default: m.DailyCard })));
+const TarotPorSigno = lazy(() => import('./components/TarotPorSigno').then(m => ({ default: m.TarotPorSigno })));
+const HistoryFiltered = lazy(() => import('./components/HistoryFiltered').then(m => ({ default: m.HistoryFiltered })));
+const SideBySideExample = lazy(() => import('./components/Charts/SideBySideExample').then(m => ({ default: m.SideBySideExample })));
+
+// Suspense fallback for lazy-loaded routes
+const RouteFallback = () => (
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background-dark via-[#1a1628] to-background-dark">
+        <div className="text-center">
+            <div className="mb-6 flex justify-center">
+                <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+            </div>
+            <p className="text-gray-400 text-sm">Carregando...</p>
+        </div>
+    </div>
+);
 
 // Extended CardLore with API description
 interface ExtendedCardLore extends CardLore {
@@ -427,9 +441,9 @@ const Home = () => {
                     .from('whatsapp_subscriptions')
                     .select('is_active')
                     .eq('user_id', user.id)
-                    .single();
+                    .maybeSingle();
 
-                setWhatsappSubscribed(data?.is_active || false);
+                setWhatsappSubscribed(data?.is_active ?? false);
             } catch (err) {
                 console.error('Error loading WhatsApp status:', err);
             }
@@ -550,12 +564,7 @@ const Home = () => {
                     }
                     .hero-daily-card {
                     }
-                    .hero-star-1 { animation: twinkle 3s ease-in-out infinite; }
-                    .hero-star-2 { animation: twinkle 4s ease-in-out 1s infinite; }
-                    .hero-star-3 { animation: twinkle 3.5s ease-in-out 0.5s infinite; }
-                    .hero-star-4 { animation: twinkle 4.5s ease-in-out 1.5s infinite; }
-                    .hero-star-5 { animation: twinkle 3s ease-in-out 2s infinite; }
-                    .hero-star-6 { animation: twinkle 5s ease-in-out 0.8s infinite; }
+                    /* Removed twinkle animation from hero-star elements */
                     .animate-fadeIn {
                         animation: fadeIn 0.6s ease-out forwards;
                     }
@@ -601,16 +610,23 @@ const Home = () => {
 
                         {/* Left Column - Content (Mobile: appears after orbit) */}
                         <div className="space-y-8 lg:pr-8 order-2 lg:order-1 text-center lg:text-left">
-                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
-                            </h1>
-
-                            <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
-                                {isPortuguese
-                                    ? 'Um Tarot digital para registrar padrões, refletir escolhas e acompanhar sua jornada simbólica.'
-                                    : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
-                            </p>
-
+                            {/* Purple blur background for hero text (extreme left and higher) */}
+                            {/* ...existing code... */}
+                            {/* Raise only the hero text for visual balance */}
+                            <div className="relative z-10 -mt-8 lg:-mt-12">
+                                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    <span className="block -mt-6 lg:-mt-14">
+                                        {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
+                                    </span>
+                                </h1>
+                                <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
+                                    <span className="block mt-8 lg:mt-12">
+                                        {isPortuguese
+                                            ? 'Um Tarot digital para registrar padrões, refletir escolhas e acompanhar sua jornada simbólica.'
+                                            : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
+                                    </span>
+                                </p>
+                            </div>
                             <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start items-stretch sm:items-center lg:items-start">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
@@ -656,14 +672,9 @@ const Home = () => {
 
                         {/* Right Column - Floating Carta do Dia Mockup */}
                         <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4 gap-5">
-                            <div className="hero-daily-card relative w-[260px] sm:w-[270px] md:w-[340px] lg:w-[380px]">
-                                {/* Subtle stars around the card */}
-                                <div className="hero-star-1 absolute -top-4 -left-6 text-yellow-300/30 text-[10px]">✦</div>
-                                <div className="hero-star-2 absolute -top-2 right-4 text-purple-300/25 text-xs">✦</div>
-                                <div className="hero-star-3 absolute top-1/4 -right-5 text-yellow-200/20 text-[10px]">✧</div>
-                                <div className="hero-star-4 absolute bottom-12 -left-4 text-purple-200/25 text-[8px]">✦</div>
-                                <div className="hero-star-5 absolute -bottom-3 right-8 text-yellow-300/20 text-[10px]">✧</div>
-                                <div className="hero-star-6 absolute top-1/2 -left-7 text-white/15 text-xs">·</div>
+                            <div className="hero-daily-card relative w-[260px] sm:w-[270px] md:w-[340px] lg:w-[380px] aspect-[3/4]">
+
+                                {/* Removed stars behind the card mockup */}
 
                                 {/* Main Card Container */}
                                 <div className="relative rounded-2xl overflow-hidden" style={{
@@ -671,6 +682,35 @@ const Home = () => {
                                     boxShadow: '0 30px 60px -15px rgba(0,0,0,0.6), 0 0 40px rgba(100, 60, 160, 0.2), inset 0 1px 0 0 rgba(255,255,255,0.08)',
                                     border: '1.5px solid rgba(212, 175, 55, 0.3)'
                                 }}>
+                                    {/* Dense white star dots inside the card mockup */}
+                                    <div className="absolute inset-0 pointer-events-none">
+                                        <div className="absolute top-6 left-8 w-[3px] h-[3px] rounded-full bg-white/70"></div>
+                                        <div className="absolute top-16 right-12 w-[2px] h-[2px] rounded-full bg-white/60"></div>
+                                        <div className="absolute bottom-10 left-16 w-[3px] h-[3px] rounded-full bg-white/50"></div>
+                                        <div className="absolute bottom-16 right-8 w-[2px] h-[2px] rounded-full bg-white/40"></div>
+                                        <div className="absolute top-1/2 left-6 w-[1.5px] h-[1.5px] rounded-full bg-white/60"></div>
+                                        <div className="absolute top-1/3 right-10 w-[3px] h-[3px] rounded-full bg-white/30"></div>
+                                        <div className="absolute bottom-1/3 left-10 w-[2px] h-[2px] rounded-full bg-white/35"></div>
+                                        <div className="absolute top-12 right-6 w-[3px] h-[3px] rounded-full bg-white/20"></div>
+                                        <div className="absolute top-8 left-20 w-[2px] h-[2px] rounded-full bg-white/55"></div>
+                                        <div className="absolute top-20 left-12 w-[3px] h-[3px] rounded-full bg-white/40"></div>
+                                        <div className="absolute top-24 left-24 w-[1.5px] h-[1.5px] rounded-full bg-white/60"></div>
+                                        <div className="absolute top-32 left-10 w-[3px] h-[3px] rounded-full bg-white/30"></div>
+                                        <div className="absolute top-36 left-18 w-[2px] h-[2px] rounded-full bg-white/35"></div>
+                                        <div className="absolute top-40 left-28 w-[3px] h-[3px] rounded-full bg-white/20"></div>
+                                        <div className="absolute bottom-8 right-20 w-[2px] h-[2px] rounded-full bg-white/55"></div>
+                                        <div className="absolute bottom-20 right-12 w-[3px] h-[3px] rounded-full bg-white/40"></div>
+                                        <div className="absolute bottom-24 right-24 w-[1.5px] h-[1.5px] rounded-full bg-white/60"></div>
+                                        <div className="absolute bottom-32 right-10 w-[3px] h-[3px] rounded-full bg-white/30"></div>
+                                        <div className="absolute bottom-36 right-18 w-[2px] h-[2px] rounded-full bg-white/35"></div>
+                                        <div className="absolute bottom-40 right-28 w-[3px] h-[3px] rounded-full bg-white/20"></div>
+                                        <div className="absolute top-10 left-1/2 w-[3px] h-[3px] rounded-full bg-white/50"></div>
+                                        <div className="absolute bottom-10 left-1/2 w-[2px] h-[2px] rounded-full bg-white/40"></div>
+                                        <div className="absolute top-1/2 left-1/3 w-[1.5px] h-[1.5px] rounded-full bg-white/60"></div>
+                                        <div className="absolute top-1/2 right-1/3 w-[3px] h-[3px] rounded-full bg-white/30"></div>
+                                        <div className="absolute top-1/4 left-1/4 w-[2px] h-[2px] rounded-full bg-white/35"></div>
+                                        <div className="absolute bottom-1/4 right-1/4 w-[3px] h-[3px] rounded-full bg-white/20"></div>
+                                    </div>
 
                                     {/* Header */}
                                     <div className="flex items-center justify-between px-5 pt-4 pb-3">
@@ -802,7 +842,7 @@ const Home = () => {
             </section>
 
             {/* Spread Selection - Premium Cards Style */}
-            <section id="spreads" className="pt-24 md:pt-32 pb-0 md:pb-0 px-4 md:px-6 relative" style={{ backgroundColor: '#1a1628' }}>
+            <section id="spreads" className="pt-24 md:pt-32 pb-20 md:pb-28 px-4 md:px-6 relative" style={{ backgroundColor: '#110e1a' }}>
                 {/* Cosmic Flame Background - Outside container to flow freely across sections */}
                 <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="absolute -right-32 top-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
@@ -1122,8 +1162,451 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* WhatsApp Daily Card Subscription Section */}
+            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 pb-32 md:pb-48 lg:pb-64" style={{ backgroundColor: '#110e1a' }}>
+                <style>{`
+                    .home-glass-card {
+                        background: rgba(255, 255, 255, 0.04);
+                        backdrop-filter: blur(24px);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                    }
+                    .home-glow-border:focus-within {
+                        border-color: #A855F7;
+                        box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+                    }
+                    .home-frequency-card input:checked + div {
+                        border-color: #A855F7;
+                        background: rgba(168, 85, 247, 0.15);
+                        box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
+                    }
+                    .text-gradient-gold-home {
+                        background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                    }
+                `}</style>
+
+                {/* Static star dots */}
+                <div className="absolute top-[8%] left-[5%] w-[2px] h-[2px] rounded-full bg-white/35 z-0"></div>
+                <div className="absolute top-[14%] right-[12%] w-[1.5px] h-[1.5px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[28%] left-[10%] w-[1px] h-[1px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[22%] right-[8%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[42%] left-[4%] w-[1.5px] h-[1.5px] rounded-full bg-white/35 z-0"></div>
+                <div className="absolute top-[50%] right-[18%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[35%] left-[48%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[65%] left-[15%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[58%] right-[5%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
+                <div className="absolute top-[75%] left-[35%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
+                <div className="absolute top-[82%] right-[25%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
+                <div className="absolute top-[90%] left-[8%] w-[1px] h-[1px] rounded-full bg-white/35 z-0"></div>
+
+                <div className="max-w-6xl mx-auto relative z-10">
+                    {/* Feature Presentation Header */}
+                    <div className="text-left mb-14 md:mb-20 px-2">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold-home mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
+                        </h2>
+                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
+                            {isPortuguese
+                                ? 'Receba diariamente uma mensagem personalizada com orientações do tarot diretamente no seu celular.'
+                                : 'Receive daily personalized tarot guidance messages directly on your phone.'}
+                        </p>
+                    </div>
+
+                    {/* Gallery - Example Daily Card Downloads */}
+                    <div className="mb-16 md:mb-24 relative">
+                        {/* Purple flame blur behind gallery */}
+                        <div className="absolute -left-32 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/18 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -right-24 top-16 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-pink-500/12 to-transparent blur-3xl pointer-events-none"></div>
+
+                        {/* Cards Layout - Center card elevated, scaled down on mobile */}
+                        <style dangerouslySetInnerHTML={{
+                            __html: `
+                            .gallery-cards-wrapper { --gallery-scale: 1; }
+                            @media (max-width: 639px) { .gallery-cards-wrapper { --gallery-scale: 0.88; margin-bottom: -10%; } }
+                            @media (min-width: 640px) and (max-width: 767px) { .gallery-cards-wrapper { --gallery-scale: 0.92; margin-bottom: -6%; } }
+                            @media (min-width: 768px) and (max-width: 1023px) { .gallery-cards-wrapper { --gallery-scale: 0.95; margin-bottom: -3%; } }
+                            @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+                            .animate-scaleIn { animation: scaleIn 0.2s ease-out; }
+                            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                            .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+                        `}} />
+                        <div className="gallery-cards-wrapper relative z-10">
+                            <div className="flex items-end justify-center gap-4 md:gap-6 lg:gap-8 origin-top" style={{ transform: 'scale(var(--gallery-scale, 1))' }}>
+                                {[
+                                    { name: 'O Mundo', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg', vibracao: 'Completude e plenitude', significado: 'O Mundo representa a conclusão de um ciclo, a integração e a realização plena.', energia: 'Harmonia universal e gratidão profunda.', mantra: 'Eu celebro minha jornada.', featured: false },
+                                    { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.', featured: true },
+                                    { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.', featured: false },
+                                ].map((card) => (
+                                    <div
+                                        key={card.name}
+                                        className={`relative group transition-all duration-500 cursor-pointer ${card.featured ? 'w-[240px] -mb-2' : 'w-[195px] opacity-85'}`}
+                                        onClick={() => setZoomedGalleryCard(card)}
+                                    >
+                                        {/* Tap hint on mobile */}
+                                        <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1 text-gray-400/60 text-[8px] md:hidden z-20 whitespace-nowrap">
+                                            <span className="material-symbols-outlined text-[10px]">touch_app</span>
+                                            <span>{isPortuguese ? 'Toque para ampliar' : 'Tap to zoom'}</span>
+                                        </div>
+                                        <div className={`relative rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
+                                            background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
+                                            border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
+                                        }}>
+                                            {/* Red Badge Header */}
+                                            <div className="bg-red-600 text-white text-[7px] font-bold uppercase tracking-wider text-center py-1.5 px-2">
+                                                {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
+                                            </div>
+                                            {/* Divider */}
+                                            <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
+                                            {/* Card Image */}
+                                            <div className="flex justify-center py-3 px-4">
+                                                <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${card.featured ? 'w-[120px] h-[190px]' : 'w-[95px] h-[152px]'}`} loading="lazy" />
+                                            </div>
+                                            {/* Card Name */}
+                                            <p className={`font-bold text-white text-center ${card.featured ? 'text-xs' : 'text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
+                                            {/* Vibração */}
+                                            <p className={`italic text-center px-2 mb-2 ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
+                                            {/* Significado */}
+                                            <div className="bg-white/5 rounded mx-2.5 px-2 py-1.5 mb-1.5">
+                                                <p className={`text-gray-300 leading-snug text-center ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.significado}</p>
+                                            </div>
+                                            {/* Energia */}
+                                            <div className="flex items-start gap-1.5 px-2.5 mb-2">
+                                                <span className="text-[6px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
+                                                <div>
+                                                    <span className={`font-semibold uppercase tracking-wide ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>Energia</span>
+                                                    <p className={`text-gray-300 leading-snug ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.energia}</p>
+                                                </div>
+                                            </div>
+                                            {/* Divider */}
+                                            <div className="mx-2.5 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1.5"></div>
+                                            {/* Mantra */}
+                                            <div className="px-2.5 pb-2.5 text-center">
+                                                <p className={`font-semibold uppercase tracking-wide mb-1 ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>Mantra do Dia</p>
+                                                <div className="bg-white/5 rounded px-2 py-1.5 border border-yellow-500/15">
+                                                    <p className={`italic ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
+                                                </div>
+                                            </div>
+                                            {/* Footer */}
+                                            <p className="text-gray-500 text-[6px] tracking-wider text-center pb-2">zayatarot.com</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Zoom Modal */}
+                        {zoomedGalleryCard && (
+                            <div
+                                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn"
+                                onClick={() => setZoomedGalleryCard(null)}
+                            >
+                                <div className="relative w-full max-w-[320px] animate-scaleIn" onClick={(e) => e.stopPropagation()}>
+                                    <button
+                                        onClick={() => setZoomedGalleryCard(null)}
+                                        className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors flex items-center gap-1 text-xs"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">close</span>
+                                        {isPortuguese ? 'Fechar' : 'Close'}
+                                    </button>
+                                    <div className="rounded-2xl overflow-hidden shadow-2xl" style={{
+                                        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
+                                        border: '1.5px solid rgba(212, 175, 55, 0.35)',
+                                    }}>
+                                        {/* Red Badge Header */}
+                                        <div className="bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider text-center py-2 px-4 rounded-t-2xl">
+                                            {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
+                                        </div>
+                                        <div className="mx-4 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
+                                        {/* Card Image */}
+                                        <div className="flex justify-center py-4 px-6">
+                                            <img src={zoomedGalleryCard.img} alt={zoomedGalleryCard.name} className="object-cover rounded-lg shadow-lg border border-yellow-500/20 w-[160px] h-[254px]" />
+                                        </div>
+                                        {/* Card Name */}
+                                        <p className="font-bold text-white text-center text-base" style={{ fontFamily: "'Crimson Text', serif" }}>{zoomedGalleryCard.name}</p>
+                                        {/* Vibração */}
+                                        <p className="italic text-center px-4 mb-3 text-sm" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{zoomedGalleryCard.vibracao}"</p>
+                                        {/* Significado */}
+                                        <div className="bg-white/5 rounded mx-4 px-3 py-2 mb-2">
+                                            <p className="text-gray-300 leading-relaxed text-center text-xs">{zoomedGalleryCard.significado}</p>
+                                        </div>
+                                        {/* Energia */}
+                                        <div className="flex items-start gap-2 px-4 mb-3">
+                                            <span className="text-xs mt-0.5" style={{ color: '#d4af37' }}>●</span>
+                                            <div>
+                                                <span className="font-semibold uppercase tracking-wide text-xs" style={{ color: '#d4af37' }}>Energia</span>
+                                                <p className="text-gray-300 leading-relaxed text-xs">{zoomedGalleryCard.energia}</p>
+                                            </div>
+                                        </div>
+                                        <div className="mx-4 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-2"></div>
+                                        {/* Mantra */}
+                                        <div className="px-4 pb-4 text-center">
+                                            <p className="font-semibold uppercase tracking-wide mb-1.5 text-xs" style={{ color: '#d4af37' }}>Mantra do Dia</p>
+                                            <div className="bg-white/5 rounded px-3 py-2 border border-yellow-500/15">
+                                                <p className="italic text-sm" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{zoomedGalleryCard.mantra}"</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-gray-500 text-[8px] tracking-wider text-center pb-3">zayatarot.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Form Card with Key Features */}
+                    <div className="relative">
+                        {/* Cosmic Flame Background */}
+                        <div className="absolute -left-40 -top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
+                        <div className="absolute -right-32 -top-10 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
+
+                        <div className="home-glass-card w-full max-w-4xl mx-auto rounded-xl sm:rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative">
+                            {/* Subscriber Badge */}
+                            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 bg-red-600 text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-lg flex items-center gap-1.5">
+                                <span className="material-symbols-outlined text-[12px]">group</span>
+                                {isPortuguese ? '+ 2 mil assinantes' : '+ 2k subscribers'}
+                            </div>
+                            <div className="flex flex-col lg:flex-row items-stretch">
+                                {/* Form Content - Left */}
+                                <div className="flex-1 p-6 pt-12 sm:pt-6 lg:p-10">
+                                    <header className="mb-6 text-center lg:text-left">
+                                        <h3 className="font-display text-2xl md:text-3xl text-white mb-4 leading-tight">
+                                            {isPortuguese ? 'Cadastre-se Agora' : 'Sign Up Now'}
+                                        </h3>
+                                        <p className="text-gray-400 text-sm max-w-lg">
+                                            {isPortuguese
+                                                ? 'Preencha seus dados e comece a receber orientações místicas.'
+                                                : 'Fill in your details and start receiving mystic guidance.'}
+                                        </p>
+                                    </header>
+
+                                    <form action="#" className="space-y-5">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                                    {isPortuguese ? 'Nome Completo' : 'Full Name'}
+                                                </label>
+                                                <div className="relative group">
+                                                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">person</span>
+                                                    <input
+                                                        className="w-full pl-10 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
+                                                        placeholder={isPortuguese ? 'Seu nome' : 'Your name'}
+                                                        type="text"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">WhatsApp</label>
+                                                <div className="relative group">
+                                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
+                                                        <img alt="Brasil Flag" className="w-4 h-auto rounded-sm opacity-80" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/32px-Flag_of_Brazil.svg.png" />
+                                                    </div>
+                                                    <input
+                                                        className="w-full pl-14 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
+                                                        placeholder="+55 (00) 00000-0000"
+                                                        type="tel"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                                {isPortuguese ? 'Estado' : 'State'}
+                                            </label>
+                                            <div className="relative group">
+                                                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">location_on</span>
+                                                <select
+                                                    className="w-full pl-10 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white appearance-none cursor-pointer text-sm"
+                                                    style={{ backgroundImage: 'none' }}
+                                                    defaultValue=""
+                                                >
+                                                    <option value="" disabled className="bg-[#1a1628] text-gray-400">
+                                                        {isPortuguese ? 'Selecione seu estado' : 'Select your state'}
+                                                    </option>
+                                                    <option value="AC" className="bg-[#1a1628]">Acre (AC)</option>
+                                                    <option value="AL" className="bg-[#1a1628]">Alagoas (AL)</option>
+                                                    <option value="AP" className="bg-[#1a1628]">Amapá (AP)</option>
+                                                    <option value="AM" className="bg-[#1a1628]">Amazonas (AM)</option>
+                                                    <option value="BA" className="bg-[#1a1628]">Bahia (BA)</option>
+                                                    <option value="CE" className="bg-[#1a1628]">Ceará (CE)</option>
+                                                    <option value="DF" className="bg-[#1a1628]">Distrito Federal (DF)</option>
+                                                    <option value="ES" className="bg-[#1a1628]">Espírito Santo (ES)</option>
+                                                    <option value="GO" className="bg-[#1a1628]">Goiás (GO)</option>
+                                                    <option value="MA" className="bg-[#1a1628]">Maranhão (MA)</option>
+                                                    <option value="MT" className="bg-[#1a1628]">Mato Grosso (MT)</option>
+                                                    <option value="MS" className="bg-[#1a1628]">Mato Grosso do Sul (MS)</option>
+                                                    <option value="MG" className="bg-[#1a1628]">Minas Gerais (MG)</option>
+                                                    <option value="PA" className="bg-[#1a1628]">Pará (PA)</option>
+                                                    <option value="PB" className="bg-[#1a1628]">Paraíba (PB)</option>
+                                                    <option value="PR" className="bg-[#1a1628]">Paraná (PR)</option>
+                                                    <option value="PE" className="bg-[#1a1628]">Pernambuco (PE)</option>
+                                                    <option value="PI" className="bg-[#1a1628]">Piauí (PI)</option>
+                                                    <option value="RJ" className="bg-[#1a1628]">Rio de Janeiro (RJ)</option>
+                                                    <option value="RN" className="bg-[#1a1628]">Rio Grande do Norte (RN)</option>
+                                                    <option value="RS" className="bg-[#1a1628]">Rio Grande do Sul (RS)</option>
+                                                    <option value="RO" className="bg-[#1a1628]">Rondônia (RO)</option>
+                                                    <option value="RR" className="bg-[#1a1628]">Roraima (RR)</option>
+                                                    <option value="SC" className="bg-[#1a1628]">Santa Catarina (SC)</option>
+                                                    <option value="SP" className="bg-[#1a1628]">São Paulo (SP)</option>
+                                                    <option value="SE" className="bg-[#1a1628]">Sergipe (SE)</option>
+                                                    <option value="TO" className="bg-[#1a1628]">Tocantins (TO)</option>
+                                                </select>
+                                                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-lg">expand_more</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
+                                                {isPortuguese ? 'Melhor Período' : 'Best Period'}
+                                            </label>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                <label className="home-frequency-card cursor-pointer group">
+                                                    <input defaultChecked className="hidden" name="home-freq" type="radio" value="manha" />
+                                                    <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                        <span className="material-symbols-outlined text-lg mb-1 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
+                                                        <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                            {isPortuguese ? 'Manhã' : 'Morning'}
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                                <label className="home-frequency-card cursor-pointer group">
+                                                    <input className="hidden" name="home-freq" type="radio" value="tarde" />
+                                                    <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                        <span className="material-symbols-outlined text-lg mb-1 text-primary group-hover:scale-110 transition-transform">routine</span>
+                                                        <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                            {isPortuguese ? 'Tarde' : 'Afternoon'}
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                                <label className="home-frequency-card cursor-pointer group">
+                                                    <input className="hidden" name="home-freq" type="radio" value="noite" />
+                                                    <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
+                                                        <span className="material-symbols-outlined text-lg mb-1 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
+                                                        <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
+                                                            {isPortuguese ? 'Noite' : 'Night'}
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="flex items-start gap-2.5 cursor-pointer group">
+                                                <div className="relative flex-shrink-0 mt-0.5">
+                                                    <input type="checkbox" className="peer sr-only" required />
+                                                    <div className="w-4 h-4 rounded border-2 border-white/20 bg-white/5 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center group-hover:border-primary/50">
+                                                        <span className="material-symbols-outlined text-white opacity-0 peer-checked:opacity-100 transition-opacity" style={{ fontSize: '12px' }}>check</span>
+                                                    </div>
+                                                </div>
+                                                <span className="text-[11px] text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
+                                                    {isPortuguese
+                                                        ? 'Concordo em receber mensagens via WhatsApp.'
+                                                        : 'I agree to receive messages via WhatsApp.'}
+                                                </span>
+                                            </label>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+
+                                                    // Guests/não logados: mostrar modal de autenticação
+                                                    if (!user || isGuest) {
+                                                        setAuthModalMode('register');
+                                                        setShowAuthModal(true);
+                                                        return;
+                                                    }
+
+                                                    // Usuários FREE: mostrar modal de upgrade para premium
+                                                    if (tier === 'free') {
+                                                        setShowPaywallForm(true);
+                                                        return;
+                                                    }
+
+                                                    // Usuários PREMIUM: abrir modal de configuração do WhatsApp
+                                                    if (tier === 'premium') {
+                                                        setShowWhatsAppModal(true);
+                                                        return;
+                                                    }
+                                                }}
+                                                className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
+                                                type="button"
+                                            >
+                                                <span className="relative z-10 flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
+                                                    {tier === 'premium'
+                                                        ? (whatsappSubscribed
+                                                            ? (isPortuguese ? 'Inscrito' : 'Subscribed')
+                                                            : (isPortuguese ? 'Não Cadastrado' : 'Not Registered'))
+                                                        : (isPortuguese ? 'Começar a Receber' : 'Start Receiving')}
+                                                    <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
+                                                        {tier === 'premium' ? 'settings' : 'arrow_forward'}
+                                                    </span>
+                                                </span>
+                                                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            </button>
+                                            <div className="flex items-center gap-1.5 text-[9px] text-gray-500 uppercase tracking-[0.15em]">
+                                                <span className="material-symbols-outlined text-[12px]">lock</span>
+                                                <p>{isPortuguese ? 'Dados protegidos' : 'Protected data'}</p>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                {/* Key Features - Right Side */}
+                                <div className="lg:w-[340px] bg-white/[0.02] border-l border-white/5 p-6 lg:p-8 flex flex-col justify-center gap-6">
+                                    {/* Feature 1 */}
+                                    <div className="flex items-start gap-4 group">
+                                        <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
+                                            <span className="material-symbols-outlined text-yellow-500 text-xl">auto_awesome</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                                {isPortuguese ? 'Personalizada' : 'Personalized'}
+                                            </h4>
+                                            <p className="text-gray-400 text-xs leading-relaxed">
+                                                {isPortuguese ? 'Cada carta é interpretada com inteligência artificial para trazer insights únicos.' : 'Each card is interpreted with AI to bring unique insights.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {/* Feature 2 */}
+                                    <div className="flex items-start gap-4 group">
+                                        <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
+                                            <span className="material-symbols-outlined text-yellow-500 text-xl">schedule</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                                {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
+                                            </h4>
+                                            <p className="text-gray-400 text-xs leading-relaxed">
+                                                {isPortuguese ? 'Escolha o melhor horário: manhã, tarde ou noite para receber sua mensagem.' : 'Choose the best time: morning, afternoon or evening to receive your message.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {/* Feature 3 */}
+                                    <div className="flex items-start gap-4 group">
+                                        <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
+                                            <span className="material-symbols-outlined text-yellow-500 text-xl">chat</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                                {isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}
+                                            </h4>
+                                            <p className="text-gray-400 text-xs leading-relaxed">
+                                                {isPortuguese ? 'Receba diretamente no seu WhatsApp com imagem e interpretação completa.' : 'Receive directly on your WhatsApp with image and full interpretation.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Features Presentation Section */}
-            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
+            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-[#1a1628] overflow-hidden">
                 {/* Decorative Stars */}
                 <div className="absolute inset-0 pointer-events-none">
                     {/* Around Image - Top */}
@@ -1319,448 +1802,6 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* WhatsApp Daily Card Subscription Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 pb-32 md:pb-48 lg:pb-64" style={{ backgroundColor: '#1a1628' }}>
-                <style>{`
-                    .home-glass-card {
-                        background: rgba(255, 255, 255, 0.04);
-                        backdrop-filter: blur(24px);
-                        border: 1px solid rgba(255, 255, 255, 0.1);
-                    }
-                    .home-glow-border:focus-within {
-                        border-color: #A855F7;
-                        box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
-                    }
-                    .home-frequency-card input:checked + div {
-                        border-color: #A855F7;
-                        background: rgba(168, 85, 247, 0.15);
-                        box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
-                    }
-                    .text-gradient-gold-home {
-                        background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                        background-clip: text;
-                    }
-                `}</style>
-
-                {/* Static star dots */}
-                <div className="absolute top-[8%] left-[5%] w-[2px] h-[2px] rounded-full bg-white/35 z-0"></div>
-                <div className="absolute top-[14%] right-[12%] w-[1.5px] h-[1.5px] rounded-full bg-white/25 z-0"></div>
-                <div className="absolute top-[28%] left-[10%] w-[1px] h-[1px] rounded-full bg-white/30 z-0"></div>
-                <div className="absolute top-[22%] right-[8%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
-                <div className="absolute top-[42%] left-[4%] w-[1.5px] h-[1.5px] rounded-full bg-white/35 z-0"></div>
-                <div className="absolute top-[50%] right-[18%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
-                <div className="absolute top-[35%] left-[48%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
-                <div className="absolute top-[65%] left-[15%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
-                <div className="absolute top-[58%] right-[5%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
-                <div className="absolute top-[75%] left-[35%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
-                <div className="absolute top-[82%] right-[25%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
-                <div className="absolute top-[90%] left-[8%] w-[1px] h-[1px] rounded-full bg-white/35 z-0"></div>
-
-                <div className="max-w-6xl mx-auto relative z-10">
-                    {/* Feature Presentation Header */}
-                    <div className="text-left mb-14 md:mb-20 px-2">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold-home mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
-                        </h2>
-                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
-                            {isPortuguese
-                                ? 'Receba diariamente uma mensagem personalizada com orientações do tarot diretamente no seu celular.'
-                                : 'Receive daily personalized tarot guidance messages directly on your phone.'}
-                        </p>
-                    </div>
-
-                    {/* Gallery - Example Daily Card Downloads */}
-                    <div className="mb-16 md:mb-24 relative">
-                        {/* Purple flame blur behind gallery */}
-                        <div className="absolute -left-32 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/18 to-transparent blur-3xl pointer-events-none"></div>
-                        <div className="absolute -right-24 top-16 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-pink-500/12 to-transparent blur-3xl pointer-events-none"></div>
-
-                        {/* Cards Layout - Center card elevated, scaled down on mobile */}
-                        <style dangerouslySetInnerHTML={{ __html: `
-                            .gallery-cards-wrapper { --gallery-scale: 1; }
-                            @media (max-width: 639px) { .gallery-cards-wrapper { --gallery-scale: 0.88; margin-bottom: -10%; } }
-                            @media (min-width: 640px) and (max-width: 767px) { .gallery-cards-wrapper { --gallery-scale: 0.92; margin-bottom: -6%; } }
-                            @media (min-width: 768px) and (max-width: 1023px) { .gallery-cards-wrapper { --gallery-scale: 0.95; margin-bottom: -3%; } }
-                            @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-                            .animate-scaleIn { animation: scaleIn 0.2s ease-out; }
-                            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-                            .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
-                        `}} />
-                        <div className="gallery-cards-wrapper relative z-10">
-                        <div className="flex items-end justify-center gap-4 md:gap-6 lg:gap-8 origin-top" style={{ transform: 'scale(var(--gallery-scale, 1))' }}>
-                            {[
-                                { name: 'O Mundo', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg', vibracao: 'Completude e plenitude', significado: 'O Mundo representa a conclusão de um ciclo, a integração e a realização plena.', energia: 'Harmonia universal e gratidão profunda.', mantra: 'Eu celebro minha jornada.', featured: false },
-                                { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.', featured: true },
-                                { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.', featured: false },
-                            ].map((card) => (
-                                <div
-                                    key={card.name}
-                                    className={`relative group transition-all duration-500 cursor-pointer ${card.featured ? 'w-[240px] -mb-2' : 'w-[195px] opacity-85'}`}
-                                    onClick={() => setZoomedGalleryCard(card)}
-                                >
-                                    {/* Tap hint on mobile */}
-                                    <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1 text-gray-400/60 text-[8px] md:hidden z-20 whitespace-nowrap">
-                                        <span className="material-symbols-outlined text-[10px]">touch_app</span>
-                                        <span>{isPortuguese ? 'Toque para ampliar' : 'Tap to zoom'}</span>
-                                    </div>
-                                    <div className={`relative rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
-                                        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
-                                        border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
-                                    }}>
-                                        {/* Red Badge Header */}
-                                        <div className="bg-red-600 text-white text-[7px] font-bold uppercase tracking-wider text-center py-1.5 px-2">
-                                            {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
-                                        </div>
-                                        {/* Divider */}
-                                        <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
-                                        {/* Card Image */}
-                                        <div className="flex justify-center py-3 px-4">
-                                            <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${card.featured ? 'w-[120px] h-[190px]' : 'w-[95px] h-[152px]'}`} loading="lazy" />
-                                        </div>
-                                        {/* Card Name */}
-                                        <p className={`font-bold text-white text-center ${card.featured ? 'text-xs' : 'text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
-                                        {/* Vibração */}
-                                        <p className={`italic text-center px-2 mb-2 ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
-                                        {/* Significado */}
-                                        <div className="bg-white/5 rounded mx-2.5 px-2 py-1.5 mb-1.5">
-                                            <p className={`text-gray-300 leading-snug text-center ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.significado}</p>
-                                        </div>
-                                        {/* Energia */}
-                                        <div className="flex items-start gap-1.5 px-2.5 mb-2">
-                                            <span className="text-[6px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
-                                            <div>
-                                                <span className={`font-semibold uppercase tracking-wide ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>Energia</span>
-                                                <p className={`text-gray-300 leading-snug ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.energia}</p>
-                                            </div>
-                                        </div>
-                                        {/* Divider */}
-                                        <div className="mx-2.5 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1.5"></div>
-                                        {/* Mantra */}
-                                        <div className="px-2.5 pb-2.5 text-center">
-                                            <p className={`font-semibold uppercase tracking-wide mb-1 ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>Mantra do Dia</p>
-                                            <div className="bg-white/5 rounded px-2 py-1.5 border border-yellow-500/15">
-                                                <p className={`italic ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
-                                            </div>
-                                        </div>
-                                        {/* Footer */}
-                                        <p className="text-gray-500 text-[6px] tracking-wider text-center pb-2">zayatarot.com</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        </div>
-
-                        {/* Zoom Modal */}
-                        {zoomedGalleryCard && (
-                            <div
-                                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn"
-                                onClick={() => setZoomedGalleryCard(null)}
-                            >
-                                <div className="relative w-full max-w-[320px] animate-scaleIn" onClick={(e) => e.stopPropagation()}>
-                                    <button
-                                        onClick={() => setZoomedGalleryCard(null)}
-                                        className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors flex items-center gap-1 text-xs"
-                                    >
-                                        <span className="material-symbols-outlined text-sm">close</span>
-                                        {isPortuguese ? 'Fechar' : 'Close'}
-                                    </button>
-                                    <div className="rounded-2xl overflow-hidden shadow-2xl" style={{
-                                        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
-                                        border: '1.5px solid rgba(212, 175, 55, 0.35)',
-                                    }}>
-                                        {/* Red Badge Header */}
-                                        <div className="bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider text-center py-2 px-4 rounded-t-2xl">
-                                            {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
-                                        </div>
-                                        <div className="mx-4 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
-                                        {/* Card Image */}
-                                        <div className="flex justify-center py-4 px-6">
-                                            <img src={zoomedGalleryCard.img} alt={zoomedGalleryCard.name} className="object-cover rounded-lg shadow-lg border border-yellow-500/20 w-[160px] h-[254px]" />
-                                        </div>
-                                        {/* Card Name */}
-                                        <p className="font-bold text-white text-center text-base" style={{ fontFamily: "'Crimson Text', serif" }}>{zoomedGalleryCard.name}</p>
-                                        {/* Vibração */}
-                                        <p className="italic text-center px-4 mb-3 text-sm" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{zoomedGalleryCard.vibracao}"</p>
-                                        {/* Significado */}
-                                        <div className="bg-white/5 rounded mx-4 px-3 py-2 mb-2">
-                                            <p className="text-gray-300 leading-relaxed text-center text-xs">{zoomedGalleryCard.significado}</p>
-                                        </div>
-                                        {/* Energia */}
-                                        <div className="flex items-start gap-2 px-4 mb-3">
-                                            <span className="text-xs mt-0.5" style={{ color: '#d4af37' }}>●</span>
-                                            <div>
-                                                <span className="font-semibold uppercase tracking-wide text-xs" style={{ color: '#d4af37' }}>Energia</span>
-                                                <p className="text-gray-300 leading-relaxed text-xs">{zoomedGalleryCard.energia}</p>
-                                            </div>
-                                        </div>
-                                        <div className="mx-4 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-2"></div>
-                                        {/* Mantra */}
-                                        <div className="px-4 pb-4 text-center">
-                                            <p className="font-semibold uppercase tracking-wide mb-1.5 text-xs" style={{ color: '#d4af37' }}>Mantra do Dia</p>
-                                            <div className="bg-white/5 rounded px-3 py-2 border border-yellow-500/15">
-                                                <p className="italic text-sm" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{zoomedGalleryCard.mantra}"</p>
-                                            </div>
-                                        </div>
-                                        <p className="text-gray-500 text-[8px] tracking-wider text-center pb-3">zayatarot.com</p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Form Card with Key Features */}
-                    <div className="relative">
-                        {/* Cosmic Flame Background */}
-                        <div className="absolute -left-40 -top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
-                        <div className="absolute -right-32 -top-10 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
-
-                        <div className="home-glass-card w-full max-w-4xl mx-auto rounded-xl sm:rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative">
-                            {/* Subscriber Badge */}
-                            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 bg-red-600 text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-lg flex items-center gap-1.5">
-                                <span className="material-symbols-outlined text-[12px]">group</span>
-                                {isPortuguese ? '+ 2 mil assinantes' : '+ 2k subscribers'}
-                            </div>
-                            <div className="flex flex-col lg:flex-row items-stretch">
-                                {/* Form Content - Left */}
-                                <div className="flex-1 p-6 pt-12 sm:pt-6 lg:p-10">
-                                <header className="mb-6 text-center lg:text-left">
-                                    <h3 className="font-display text-2xl md:text-3xl text-white mb-4 leading-tight">
-                                        {isPortuguese ? 'Cadastre-se Agora' : 'Sign Up Now'}
-                                    </h3>
-                                    <p className="text-gray-400 text-sm max-w-lg">
-                                        {isPortuguese
-                                            ? 'Preencha seus dados e comece a receber orientações místicas.'
-                                            : 'Fill in your details and start receiving mystic guidance.'}
-                                    </p>
-                                </header>
-
-                                <form action="#" className="space-y-5">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-1.5">
-                                            <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                                {isPortuguese ? 'Nome Completo' : 'Full Name'}
-                                            </label>
-                                            <div className="relative group">
-                                                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">person</span>
-                                                <input
-                                                    className="w-full pl-10 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
-                                                    placeholder={isPortuguese ? 'Seu nome' : 'Your name'}
-                                                    type="text"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">WhatsApp</label>
-                                            <div className="relative group">
-                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
-                                                    <img alt="Brasil Flag" className="w-4 h-auto rounded-sm opacity-80" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/32px-Flag_of_Brazil.svg.png" />
-                                                </div>
-                                                <input
-                                                    className="w-full pl-14 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
-                                                    placeholder="+55 (00) 00000-0000"
-                                                    type="tel"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                            {isPortuguese ? 'Estado' : 'State'}
-                                        </label>
-                                        <div className="relative group">
-                                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">location_on</span>
-                                            <select
-                                                className="w-full pl-10 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white appearance-none cursor-pointer text-sm"
-                                                style={{ backgroundImage: 'none' }}
-                                                defaultValue=""
-                                            >
-                                                <option value="" disabled className="bg-[#1a1628] text-gray-400">
-                                                    {isPortuguese ? 'Selecione seu estado' : 'Select your state'}
-                                                </option>
-                                                <option value="AC" className="bg-[#1a1628]">Acre (AC)</option>
-                                                <option value="AL" className="bg-[#1a1628]">Alagoas (AL)</option>
-                                                <option value="AP" className="bg-[#1a1628]">Amapá (AP)</option>
-                                                <option value="AM" className="bg-[#1a1628]">Amazonas (AM)</option>
-                                                <option value="BA" className="bg-[#1a1628]">Bahia (BA)</option>
-                                                <option value="CE" className="bg-[#1a1628]">Ceará (CE)</option>
-                                                <option value="DF" className="bg-[#1a1628]">Distrito Federal (DF)</option>
-                                                <option value="ES" className="bg-[#1a1628]">Espírito Santo (ES)</option>
-                                                <option value="GO" className="bg-[#1a1628]">Goiás (GO)</option>
-                                                <option value="MA" className="bg-[#1a1628]">Maranhão (MA)</option>
-                                                <option value="MT" className="bg-[#1a1628]">Mato Grosso (MT)</option>
-                                                <option value="MS" className="bg-[#1a1628]">Mato Grosso do Sul (MS)</option>
-                                                <option value="MG" className="bg-[#1a1628]">Minas Gerais (MG)</option>
-                                                <option value="PA" className="bg-[#1a1628]">Pará (PA)</option>
-                                                <option value="PB" className="bg-[#1a1628]">Paraíba (PB)</option>
-                                                <option value="PR" className="bg-[#1a1628]">Paraná (PR)</option>
-                                                <option value="PE" className="bg-[#1a1628]">Pernambuco (PE)</option>
-                                                <option value="PI" className="bg-[#1a1628]">Piauí (PI)</option>
-                                                <option value="RJ" className="bg-[#1a1628]">Rio de Janeiro (RJ)</option>
-                                                <option value="RN" className="bg-[#1a1628]">Rio Grande do Norte (RN)</option>
-                                                <option value="RS" className="bg-[#1a1628]">Rio Grande do Sul (RS)</option>
-                                                <option value="RO" className="bg-[#1a1628]">Rondônia (RO)</option>
-                                                <option value="RR" className="bg-[#1a1628]">Roraima (RR)</option>
-                                                <option value="SC" className="bg-[#1a1628]">Santa Catarina (SC)</option>
-                                                <option value="SP" className="bg-[#1a1628]">São Paulo (SP)</option>
-                                                <option value="SE" className="bg-[#1a1628]">Sergipe (SE)</option>
-                                                <option value="TO" className="bg-[#1a1628]">Tocantins (TO)</option>
-                                            </select>
-                                            <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-lg">expand_more</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                            {isPortuguese ? 'Melhor Período' : 'Best Period'}
-                                        </label>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            <label className="home-frequency-card cursor-pointer group">
-                                                <input defaultChecked className="hidden" name="home-freq" type="radio" value="manha" />
-                                                <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                    <span className="material-symbols-outlined text-lg mb-1 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
-                                                    <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                        {isPortuguese ? 'Manhã' : 'Morning'}
-                                                    </span>
-                                                </div>
-                                            </label>
-                                            <label className="home-frequency-card cursor-pointer group">
-                                                <input className="hidden" name="home-freq" type="radio" value="tarde" />
-                                                <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                    <span className="material-symbols-outlined text-lg mb-1 text-primary group-hover:scale-110 transition-transform">routine</span>
-                                                    <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                        {isPortuguese ? 'Tarde' : 'Afternoon'}
-                                                    </span>
-                                                </div>
-                                            </label>
-                                            <label className="home-frequency-card cursor-pointer group">
-                                                <input className="hidden" name="home-freq" type="radio" value="noite" />
-                                                <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                    <span className="material-symbols-outlined text-lg mb-1 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
-                                                    <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                        {isPortuguese ? 'Noite' : 'Night'}
-                                                    </span>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="flex items-start gap-2.5 cursor-pointer group">
-                                            <div className="relative flex-shrink-0 mt-0.5">
-                                                <input type="checkbox" className="peer sr-only" required />
-                                                <div className="w-4 h-4 rounded border-2 border-white/20 bg-white/5 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center group-hover:border-primary/50">
-                                                    <span className="material-symbols-outlined text-white opacity-0 peer-checked:opacity-100 transition-opacity" style={{ fontSize: '12px' }}>check</span>
-                                                </div>
-                                            </div>
-                                            <span className="text-[11px] text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
-                                                {isPortuguese
-                                                    ? 'Concordo em receber mensagens via WhatsApp.'
-                                                    : 'I agree to receive messages via WhatsApp.'}
-                                            </span>
-                                        </label>
-                                    </div>
-
-                                    <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
-                                        <button
-                                            onClick={(e) => {
-                                                e.preventDefault();
-
-                                                // Guests/não logados: mostrar modal de autenticação
-                                                if (!user || isGuest) {
-                                                    setAuthModalMode('register');
-                                                    setShowAuthModal(true);
-                                                    return;
-                                                }
-
-                                                // Usuários FREE: mostrar modal de upgrade para premium
-                                                if (tier === 'free') {
-                                                    setShowPaywallForm(true);
-                                                    return;
-                                                }
-
-                                                // Usuários PREMIUM: abrir modal de configuração do WhatsApp
-                                                if (tier === 'premium') {
-                                                    setShowWhatsAppModal(true);
-                                                    return;
-                                                }
-                                            }}
-                                            className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
-                                            type="button"
-                                        >
-                                            <span className="relative z-10 flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
-                                                {tier === 'premium'
-                                                    ? (whatsappSubscribed
-                                                        ? (isPortuguese ? 'Inscrito' : 'Subscribed')
-                                                        : (isPortuguese ? 'Não Cadastrado' : 'Not Registered'))
-                                                    : (isPortuguese ? 'Começar a Receber' : 'Start Receiving')}
-                                                <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
-                                                    {tier === 'premium' ? 'settings' : 'arrow_forward'}
-                                                </span>
-                                            </span>
-                                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                        </button>
-                                        <div className="flex items-center gap-1.5 text-[9px] text-gray-500 uppercase tracking-[0.15em]">
-                                            <span className="material-symbols-outlined text-[12px]">lock</span>
-                                            <p>{isPortuguese ? 'Dados protegidos' : 'Protected data'}</p>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-
-                            {/* Key Features - Right Side */}
-                            <div className="lg:w-[340px] bg-white/[0.02] border-l border-white/5 p-6 lg:p-8 flex flex-col justify-center gap-6">
-                                {/* Feature 1 */}
-                                <div className="flex items-start gap-4 group">
-                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
-                                        <span className="material-symbols-outlined text-yellow-500 text-xl">auto_awesome</span>
-                                    </div>
-                                    <div>
-                                        <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                            {isPortuguese ? 'Personalizada' : 'Personalized'}
-                                        </h4>
-                                        <p className="text-gray-400 text-xs leading-relaxed">
-                                            {isPortuguese ? 'Cada carta é interpretada com inteligência artificial para trazer insights únicos.' : 'Each card is interpreted with AI to bring unique insights.'}
-                                        </p>
-                                    </div>
-                                </div>
-                                {/* Feature 2 */}
-                                <div className="flex items-start gap-4 group">
-                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
-                                        <span className="material-symbols-outlined text-yellow-500 text-xl">schedule</span>
-                                    </div>
-                                    <div>
-                                        <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                            {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
-                                        </h4>
-                                        <p className="text-gray-400 text-xs leading-relaxed">
-                                            {isPortuguese ? 'Escolha o melhor horário: manhã, tarde ou noite para receber sua mensagem.' : 'Choose the best time: morning, afternoon or evening to receive your message.'}
-                                        </p>
-                                    </div>
-                                </div>
-                                {/* Feature 3 */}
-                                <div className="flex items-start gap-4 group">
-                                    <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
-                                        <span className="material-symbols-outlined text-yellow-500 text-xl">chat</span>
-                                    </div>
-                                    <div>
-                                        <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                            {isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}
-                                        </h4>
-                                        <p className="text-gray-400 text-xs leading-relaxed">
-                                            {isPortuguese ? 'Receba diretamente no seu WhatsApp com imagem e interpretação completa.' : 'Receive directly on your WhatsApp with image and full interpretation.'}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </section>
-
             {/* Tarot por Signo - Quick Access Section */}
             <section className="relative z-10 pt-12 md:pt-16 pb-28 md:pb-36 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
                 <div className="max-w-[1000px] mx-auto relative">
@@ -1781,22 +1822,22 @@ const Home = () => {
                         <div className="absolute -inset-x-8 -inset-y-6 rounded-2xl bg-gradient-to-br from-yellow-500/5 via-amber-500/4 to-yellow-600/3 blur-3xl pointer-events-none"></div>
                         <div className="absolute -inset-x-4 -inset-y-3 rounded-2xl bg-gradient-to-t from-yellow-400/3 to-amber-500/2 blur-2xl pointer-events-none"></div>
 
-                    <div className="relative grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-5">
-                        {ZODIAC_ORDER.map((slug) => {
-                            const sign = ZODIAC_SIGNS[slug];
-                            return (
-                                <button
-                                    key={slug}
-                                    onClick={() => navigate(isPortuguese ? `/tarot-por-signo/${slug}` : `/tarot-by-sign/${slug}`)}
-                                    className="group flex items-center justify-center py-5 px-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-yellow-500/30 transition-all duration-200 hover:scale-[1.04]"
-                                >
-                                    <span className="text-base md:text-lg font-semibold text-gradient-gold tracking-wide group-hover:opacity-90 transition-opacity" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        {isPortuguese ? sign.name.pt : sign.name.en}
-                                    </span>
-                                </button>
-                            );
-                        })}
-                    </div>
+                        <div className="relative grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-5">
+                            {ZODIAC_ORDER.map((slug) => {
+                                const sign = ZODIAC_SIGNS[slug];
+                                return (
+                                    <button
+                                        key={slug}
+                                        onClick={() => navigate(isPortuguese ? `/tarot-por-signo/${slug}` : `/tarot-by-sign/${slug}`)}
+                                        className="group flex items-center justify-center py-5 px-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-yellow-500/30 transition-all duration-200 hover:scale-[1.04]"
+                                    >
+                                        <span className="text-base md:text-lg font-semibold text-gradient-gold tracking-wide group-hover:opacity-90 transition-opacity" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                            {isPortuguese ? sign.name.pt : sign.name.en}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>{/* end grid wrapper with blur */}
 
                     <div className="text-center mt-10">
@@ -2141,8 +2182,8 @@ const Home = () => {
                                 .from('whatsapp_subscriptions')
                                 .select('is_active')
                                 .eq('user_id', user.id)
-                                .single();
-                            setWhatsappSubscribed(data?.is_active || false);
+                                .maybeSingle();
+                            setWhatsappSubscribed(data?.is_active ?? false);
                         } catch (err) {
                             console.error('Error reloading WhatsApp status:', err);
                         }
@@ -3555,13 +3596,15 @@ const History = () => {
                         <div className="space-y-8">
                             {/* Filters and Chart Section */}
                             <div className="bg-white/3 rounded-xl p-6 border border-white/5">
-                                <HistoryFiltered
-                                    readings={savedReadings}
-                                    isPortuguese={isPortuguese}
-                                    onSelect={handleOpenReading}
-                                    onDelete={deleteReading}
-                                    onFilterChange={setFilteredReadings}
-                                />
+                                <Suspense fallback={<div className="text-center py-8 text-gray-400">Carregando...</div>}>
+                                    <HistoryFiltered
+                                        readings={savedReadings}
+                                        isPortuguese={isPortuguese}
+                                        onSelect={handleOpenReading}
+                                        onDelete={deleteReading}
+                                        onFilterChange={setFilteredReadings}
+                                    />
+                                </Suspense>
                             </div>
 
                             {/* Readings Grid */}
@@ -5562,133 +5605,133 @@ const Result = () => {
                                                     style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(255, 215, 150, 0.06) 0%, transparent 70%)' }}
                                                 />
 
-                                            <div className="relative z-10 p-8 md:p-10 space-y-10">
-                                                {/* Ornamento decorativo superior */}
-                                                <div className="flex justify-center mb-6">
-                                                    <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-                                                </div>
+                                                <div className="relative z-10 p-8 md:p-10 space-y-10">
+                                                    {/* Ornamento decorativo superior */}
+                                                    <div className="flex justify-center mb-6">
+                                                        <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+                                                    </div>
 
-                                                {/* Tema Central - Sem pill, apenas título */}
-                                                {(structuredSynthesis as any).tema_central && (
-                                                    <div className="text-center space-y-3 mb-8">
-                                                        <h3 className="text-3xl md:text-4xl font-bold font-serif italic leading-relaxed px-4" style={{
-                                                            fontFamily: "'Crimson Text', serif",
-                                                            background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
-                                                            WebkitBackgroundClip: 'text',
-                                                            WebkitTextFillColor: 'transparent',
-                                                            backgroundClip: 'text',
+                                                    {/* Tema Central - Sem pill, apenas título */}
+                                                    {(structuredSynthesis as any).tema_central && (
+                                                        <div className="text-center space-y-3 mb-8">
+                                                            <h3 className="text-3xl md:text-4xl font-bold font-serif italic leading-relaxed px-4" style={{
+                                                                fontFamily: "'Crimson Text', serif",
+                                                                background: 'linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%)',
+                                                                WebkitBackgroundClip: 'text',
+                                                                WebkitTextFillColor: 'transparent',
+                                                                backgroundClip: 'text',
+                                                            }}>
+                                                                {(structuredSynthesis as any).tema_central}
+                                                            </h3>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Síntese Geral - Narrativa principal */}
+                                                    <div className="prose prose-invert max-w-none">
+                                                        <p className="text-white text-lg md:text-xl leading-loose font-normal text-center" style={{
+                                                            fontFamily: "'Crimson Text', serif"
                                                         }}>
-                                                            {(structuredSynthesis as any).tema_central}
-                                                        </h3>
-                                                    </div>
-                                                )}
-
-                                                {/* Síntese Geral - Narrativa principal */}
-                                                <div className="prose prose-invert max-w-none">
-                                                    <p className="text-white text-lg md:text-xl leading-loose font-normal text-center" style={{
-                                                        fontFamily: "'Crimson Text', serif"
-                                                    }}>
-                                                        {(structuredSynthesis as any).sintese_geral}
-                                                    </p>
-                                                </div>
-
-                                                {/* Separador místico */}
-                                                <div className="flex items-center justify-center gap-3 py-4">
-                                                    <div className="w-16 h-px bg-gradient-to-r from-transparent to-primary/30"></div>
-                                                    <span className="material-symbols-outlined text-primary/40 text-sm">auto_awesome</span>
-                                                    <div className="w-16 h-px bg-gradient-to-l from-transparent to-primary/30"></div>
-                                                </div>
-
-                                                {/* Simbolismo das Cartas */}
-                                                {(structuredSynthesis as any).simbolismo_cartas && (
-                                                    <div className="relative pl-6 border-l-2 border-purple-500/20">
-                                                        <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-purple-500/30 border-2 border-purple-400/50"></div>
-                                                        <div className="mb-4">
-                                                            <span className="text-purple-200 text-sm font-semibold uppercase tracking-wider">
-                                                                {isPortuguese ? 'Simbolismo' : 'Symbolism'}
-                                                            </span>
-                                                        </div>
-                                                        <p className="text-purple-50 text-lg leading-relaxed">
-                                                            {(structuredSynthesis as any).simbolismo_cartas}
+                                                            {(structuredSynthesis as any).sintese_geral}
                                                         </p>
                                                     </div>
-                                                )}
 
-                                                {/* Separador místico */}
-                                                <div className="flex items-center justify-center gap-3 py-4">
-                                                    <div className="w-16 h-px bg-gradient-to-r from-transparent to-primary/30"></div>
-                                                    <span className="material-symbols-outlined text-primary/40 text-sm">auto_awesome</span>
-                                                    <div className="w-16 h-px bg-gradient-to-l from-transparent to-primary/30"></div>
-                                                </div>
-
-                                                {/* Dinâmica das Cartas - Integrada ao texto */}
-                                                {(structuredSynthesis as any).dinamica_das_cartas && (
-                                                    <div className="relative pl-6 border-l-2 border-cyan-500/20">
-                                                        <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-cyan-500/30 border-2 border-cyan-400/50"></div>
-                                                        <p className="text-cyan-50 text-lg leading-relaxed italic">
-                                                            {(structuredSynthesis as any).dinamica_das_cartas}
-                                                        </p>
+                                                    {/* Separador místico */}
+                                                    <div className="flex items-center justify-center gap-3 py-4">
+                                                        <div className="w-16 h-px bg-gradient-to-r from-transparent to-primary/30"></div>
+                                                        <span className="material-symbols-outlined text-primary/40 text-sm">auto_awesome</span>
+                                                        <div className="w-16 h-px bg-gradient-to-l from-transparent to-primary/30"></div>
                                                     </div>
-                                                )}
 
-                                                {/* Cards lado a lado: Observe e Aja */}
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-                                                    {/* Ponto de Atenção */}
-                                                    {(structuredSynthesis as any).ponto_de_atencao && (
-                                                        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-900/20 via-transparent to-transparent border border-orange-500/10 p-6">
-                                                            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full blur-3xl"></div>
-                                                            <div className="relative">
-                                                                <div className="flex items-center gap-2 mb-3">
-                                                                    <span className="material-symbols-outlined text-orange-300 text-xl">visibility</span>
-                                                                    <span className="text-orange-200 text-sm font-semibold uppercase tracking-wider">
-                                                                        {isPortuguese ? 'Observe' : 'Notice'}
-                                                                    </span>
-                                                                </div>
-                                                                <p className="text-orange-50 text-lg leading-relaxed">
-                                                                    {(structuredSynthesis as any).ponto_de_atencao}
-                                                                </p>
+                                                    {/* Simbolismo das Cartas */}
+                                                    {(structuredSynthesis as any).simbolismo_cartas && (
+                                                        <div className="relative pl-6 border-l-2 border-purple-500/20">
+                                                            <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-purple-500/30 border-2 border-purple-400/50"></div>
+                                                            <div className="mb-4">
+                                                                <span className="text-purple-200 text-sm font-semibold uppercase tracking-wider">
+                                                                    {isPortuguese ? 'Simbolismo' : 'Symbolism'}
+                                                                </span>
                                                             </div>
+                                                            <p className="text-purple-50 text-lg leading-relaxed">
+                                                                {(structuredSynthesis as any).simbolismo_cartas}
+                                                            </p>
                                                         </div>
                                                     )}
 
-                                                    {/* Conselho Prático */}
-                                                    {(structuredSynthesis as any).conselho_pratico && (
-                                                        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-900/20 via-transparent to-transparent border border-amber-500/10 p-6">
-                                                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl"></div>
-                                                            <div className="relative">
-                                                                <div className="flex items-center gap-2 mb-3">
-                                                                    <span className="material-symbols-outlined text-amber-300 text-xl">tips_and_updates</span>
-                                                                    <span className="text-amber-200 text-sm font-semibold uppercase tracking-wider">
-                                                                        {isPortuguese ? 'Aja' : 'Act'}
-                                                                    </span>
-                                                                </div>
-                                                                <p className="text-amber-50 text-lg leading-relaxed font-medium">
-                                                                    {(structuredSynthesis as any).conselho_pratico}
-                                                                </p>
-                                                            </div>
+                                                    {/* Separador místico */}
+                                                    <div className="flex items-center justify-center gap-3 py-4">
+                                                        <div className="w-16 h-px bg-gradient-to-r from-transparent to-primary/30"></div>
+                                                        <span className="material-symbols-outlined text-primary/40 text-sm">auto_awesome</span>
+                                                        <div className="w-16 h-px bg-gradient-to-l from-transparent to-primary/30"></div>
+                                                    </div>
+
+                                                    {/* Dinâmica das Cartas - Integrada ao texto */}
+                                                    {(structuredSynthesis as any).dinamica_das_cartas && (
+                                                        <div className="relative pl-6 border-l-2 border-cyan-500/20">
+                                                            <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-cyan-500/30 border-2 border-cyan-400/50"></div>
+                                                            <p className="text-cyan-50 text-lg leading-relaxed italic">
+                                                                {(structuredSynthesis as any).dinamica_das_cartas}
+                                                            </p>
                                                         </div>
                                                     )}
-                                                </div>
 
-                                                {/* Reflexão Final - Pergunta contemplativa */}
-                                                {(structuredSynthesis as any).reflexao_final && (
-                                                    <div className="mt-10 text-center space-y-4">
-                                                        <div className="flex items-center justify-center gap-3">
-                                                            <div className="w-12 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
-                                                            <span className="material-symbols-outlined text-purple-400/50 text-lg">psychology</span>
-                                                            <div className="w-12 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
-                                                        </div>
-                                                        <p className="text-purple-100 text-xl md:text-2xl font-medium italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                                            {(structuredSynthesis as any).reflexao_final}
-                                                        </p>
+                                                    {/* Cards lado a lado: Observe e Aja */}
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                                                        {/* Ponto de Atenção */}
+                                                        {(structuredSynthesis as any).ponto_de_atencao && (
+                                                            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-900/20 via-transparent to-transparent border border-orange-500/10 p-6">
+                                                                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full blur-3xl"></div>
+                                                                <div className="relative">
+                                                                    <div className="flex items-center gap-2 mb-3">
+                                                                        <span className="material-symbols-outlined text-orange-300 text-xl">visibility</span>
+                                                                        <span className="text-orange-200 text-sm font-semibold uppercase tracking-wider">
+                                                                            {isPortuguese ? 'Observe' : 'Notice'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <p className="text-orange-50 text-lg leading-relaxed">
+                                                                        {(structuredSynthesis as any).ponto_de_atencao}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Conselho Prático */}
+                                                        {(structuredSynthesis as any).conselho_pratico && (
+                                                            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-900/20 via-transparent to-transparent border border-amber-500/10 p-6">
+                                                                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl"></div>
+                                                                <div className="relative">
+                                                                    <div className="flex items-center gap-2 mb-3">
+                                                                        <span className="material-symbols-outlined text-amber-300 text-xl">tips_and_updates</span>
+                                                                        <span className="text-amber-200 text-sm font-semibold uppercase tracking-wider">
+                                                                            {isPortuguese ? 'Aja' : 'Act'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <p className="text-amber-50 text-lg leading-relaxed font-medium">
+                                                                        {(structuredSynthesis as any).conselho_pratico}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                )}
 
-                                                {/* Ornamento decorativo inferior */}
-                                                <div className="flex justify-center mt-8">
-                                                    <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+                                                    {/* Reflexão Final - Pergunta contemplativa */}
+                                                    {(structuredSynthesis as any).reflexao_final && (
+                                                        <div className="mt-10 text-center space-y-4">
+                                                            <div className="flex items-center justify-center gap-3">
+                                                                <div className="w-12 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
+                                                                <span className="material-symbols-outlined text-purple-400/50 text-lg">psychology</span>
+                                                                <div className="w-12 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
+                                                            </div>
+                                                            <p className="text-purple-100 text-xl md:text-2xl font-medium italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                                {(structuredSynthesis as any).reflexao_final}
+                                                            </p>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Ornamento decorativo inferior */}
+                                                    <div className="flex justify-center mt-8">
+                                                        <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+                                                    </div>
                                                 </div>
-                                            </div>
                                             </div>
                                         ) : (
                                             <>
@@ -6614,71 +6657,71 @@ const Interpretacao = () => {
 const App = () => {
     return (
         <HelmetProvider>
-        <LanguageProvider>
-            <AuthProvider>
-                <CartProvider>
-                    <Router>
-                        <ScrollToTop />
-                        <Routes>
-                            <Route path="/" element={<Home />} />
+            <LanguageProvider>
+                <AuthProvider>
+                    <CartProvider>
+                        <Router>
+                            <ScrollToTop />
+                            <Routes>
+                                <Route path="/" element={<Home />} />
 
-                            {/* Spreads — acessível a todos, paywall inline no click */}
-                            <Route path="/spreads" element={<AuthGuard><SEO title="Tarot Spreads" description="Explore different tarot spreads: Three Card, Celtic Cross, Love Check, Yes/No and more. Choose your spread and get your reading." path="/spreads" /><Spreads /></AuthGuard>} />
-                            <Route path="/jogos-de-tarot" element={<AuthGuard><SEO title="Jogos de Tarot" description="Explore diferentes jogos de tarot: Três Cartas, Cruz Celta, Tarot do Amor, Sim/Não e mais. Escolha seu jogo e receba sua leitura." path="/jogos-de-tarot" /><Spreads /></AuthGuard>} />
+                                {/* Spreads — acessível a todos, paywall inline no click */}
+                                <Route path="/spreads" element={<AuthGuard><SEO title="Tarot Spreads" description="Explore different tarot spreads: Three Card, Celtic Cross, Love Check, Yes/No and more. Choose your spread and get your reading." path="/spreads" /><Spreads /></AuthGuard>} />
+                                <Route path="/jogos-de-tarot" element={<AuthGuard><SEO title="Jogos de Tarot" description="Explore diferentes jogos de tarot: Três Cartas, Cruz Celta, Tarot do Amor, Sim/Não e mais. Escolha seu jogo e receba sua leitura." path="/jogos-de-tarot" /><Spreads /></AuthGuard>} />
 
-                            {/* Interpretação física — acessível a todos, botão "gerar" é premium */}
-                            <Route path="/interpretacao" element={<AuthGuard><SEO title="Interpretação de Tarot" description="Guia completo de interpretação de tarot. Aprenda a ler e interpretar as cartas de tarot com orientações detalhadas." path="/interpretacao" /><Interpretacao /></AuthGuard>} />
-                            <Route path="/interpretation" element={<AuthGuard><SEO title="Tarot Interpretation" description="Complete tarot interpretation guide. Learn how to read and interpret tarot cards with detailed guidance." path="/interpretation" /><Interpretacao /></AuthGuard>} />
+                                {/* Interpretação física — acessível a todos, botão "gerar" é premium */}
+                                <Route path="/interpretacao" element={<AuthGuard><SEO title="Interpretação de Tarot" description="Guia completo de interpretação de tarot. Aprenda a ler e interpretar as cartas de tarot com orientações detalhadas." path="/interpretacao" /><Interpretacao /></AuthGuard>} />
+                                <Route path="/interpretation" element={<AuthGuard><SEO title="Tarot Interpretation" description="Complete tarot interpretation guide. Learn how to read and interpret tarot cards with detailed guidance." path="/interpretation" /><Interpretacao /></AuthGuard>} />
 
-                            {/* Arquivo Arcano — acessível a todos, cards limitados por tier */}
-                            <Route path="/arquivo-arcano" element={<AuthGuard><SEO title="Arquivo Arcano - Todas as Cartas de Tarot" description="Explore todas as 78 cartas do tarot. Significado, simbolismo e interpretação de cada arcano maior e menor." path="/arquivo-arcano" /><Explore /></AuthGuard>} />
-                            <Route path="/arquivo-arcano/:cardSlug" element={<AuthGuard><CardDetails /></AuthGuard>} />
-                            <Route path="/arcane-archive" element={<AuthGuard><SEO title="Arcane Archive - All Tarot Cards" description="Explore all 78 tarot cards. Meaning, symbolism and interpretation of each major and minor arcana." path="/arcane-archive" /><Explore /></AuthGuard>} />
-                            <Route path="/arcane-archive/:cardSlug" element={<AuthGuard><CardDetails /></AuthGuard>} />
+                                {/* Arquivo Arcano — acessível a todos, cards limitados por tier */}
+                                <Route path="/arquivo-arcano" element={<AuthGuard><SEO title="Arquivo Arcano - Todas as Cartas de Tarot" description="Explore todas as 78 cartas do tarot. Significado, simbolismo e interpretação de cada arcano maior e menor." path="/arquivo-arcano" /><Explore /></AuthGuard>} />
+                                <Route path="/arquivo-arcano/:cardSlug" element={<AuthGuard><CardDetails /></AuthGuard>} />
+                                <Route path="/arcane-archive" element={<AuthGuard><SEO title="Arcane Archive - All Tarot Cards" description="Explore all 78 tarot cards. Meaning, symbolism and interpretation of each major and minor arcana." path="/arcane-archive" /><Explore /></AuthGuard>} />
+                                <Route path="/arcane-archive/:cardSlug" element={<AuthGuard><CardDetails /></AuthGuard>} />
 
-                            {/* Rotas antigas (manter compatibilidade) */}
-                            <Route path="/explore" element={<AuthGuard><Explore /></AuthGuard>} />
-                            <Route path="/explore/:cardId" element={<AuthGuard><CardDetails /></AuthGuard>} />
+                                {/* Rotas antigas (manter compatibilidade) */}
+                                <Route path="/explore" element={<AuthGuard><Explore /></AuthGuard>} />
+                                <Route path="/explore/:cardId" element={<AuthGuard><CardDetails /></AuthGuard>} />
 
-                            {/* Session/Result — paywall inline (readings limit, síntese) */}
-                            <Route path="/session" element={<AuthGuard><Session /></AuthGuard>} />
-                            <Route path="/result" element={<AuthGuard><Result /></AuthGuard>} />
+                                {/* Session/Result — paywall inline (readings limit, síntese) */}
+                                <Route path="/session" element={<AuthGuard><Session /></AuthGuard>} />
+                                <Route path="/result" element={<AuthGuard><Result /></AuthGuard>} />
 
-                            {/* History — acessível a todos, paywall inline para guest */}
-                            <Route path="/history" element={<AuthGuard><History /></AuthGuard>} />
+                                {/* History — acessível a todos, paywall inline para guest */}
+                                <Route path="/history" element={<AuthGuard><History /></AuthGuard>} />
 
-                            {/* Conteúdo público com paywall inline diferenciado */}
-                            <Route path="/numerology" element={<AuthGuard><SEO title="Numerologia" description="Descubra seu perfil numerológico completo. Calcule seu número do destino, alma e personalidade." path="/numerology" /><Numerology /></AuthGuard>} />
-                            <Route path="/cosmic" element={<AuthGuard><SEO title="Calendário Cósmico" description="Acompanhe as fases da lua, energia cósmica do dia e alinhamento planetário." path="/cosmic" /><CosmicCalendar /></AuthGuard>} />
-                            <Route path="/carta-do-dia" element={<AuthGuard><SEO title="Carta do Dia - Tarot Diário" description="Descubra a carta de tarot do dia. Receba orientação diária com interpretação completa e conselho espiritual." path="/carta-do-dia" /><DailyCard /></AuthGuard>} />
-                            <Route path="/daily-card" element={<AuthGuard><SEO title="Daily Tarot Card" description="Discover your daily tarot card. Receive daily guidance with complete interpretation and spiritual advice." path="/daily-card" /><DailyCard /></AuthGuard>} />
-                            <Route path="/tarot-por-signo" element={<AuthGuard><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodíaco. Descubra o que as cartas revelam para o seu signo hoje." path="/tarot-por-signo" /><TarotPorSignoIndex /></AuthGuard>} />
-                            <Route path="/tarot-by-sign" element={<AuthGuard><SEO title="Tarot by Zodiac Sign" description="Personalized tarot reading for each zodiac sign. Discover what the cards reveal for your sign today." path="/tarot-by-sign" /><TarotPorSignoIndex /></AuthGuard>} />
-                            <Route path="/tarot-por-signo/:signo" element={<AuthGuard><TarotPorSigno /></AuthGuard>} />
-                            <Route path="/tarot-by-sign/:signo" element={<AuthGuard><TarotPorSigno /></AuthGuard>} />
+                                {/* Conteúdo público com paywall inline diferenciado */}
+                                <Route path="/numerology" element={<AuthGuard><SEO title="Numerologia" description="Descubra seu perfil numerológico completo. Calcule seu número do destino, alma e personalidade." path="/numerology" /><Numerology /></AuthGuard>} />
+                                <Route path="/cosmic" element={<AuthGuard><SEO title="Calendário Cósmico" description="Acompanhe as fases da lua, energia cósmica do dia e alinhamento planetário." path="/cosmic" /><CosmicCalendar /></AuthGuard>} />
+                                <Route path="/carta-do-dia" element={<AuthGuard><SEO title="Carta do Dia - Tarot Diário" description="Descubra a carta de tarot do dia. Receba orientação diária com interpretação completa e conselho espiritual." path="/carta-do-dia" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
+                                <Route path="/daily-card" element={<AuthGuard><SEO title="Daily Tarot Card" description="Discover your daily tarot card. Receive daily guidance with complete interpretation and spiritual advice." path="/daily-card" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
+                                <Route path="/tarot-por-signo" element={<AuthGuard><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodíaco. Descubra o que as cartas revelam para o seu signo hoje." path="/tarot-por-signo" /><TarotPorSignoIndex /></AuthGuard>} />
+                                <Route path="/tarot-by-sign" element={<AuthGuard><SEO title="Tarot by Zodiac Sign" description="Personalized tarot reading for each zodiac sign. Discover what the cards reveal for your sign today." path="/tarot-by-sign" /><TarotPorSignoIndex /></AuthGuard>} />
+                                <Route path="/tarot-por-signo/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
+                                <Route path="/tarot-by-sign/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
 
-                            <Route path="/charts-demo" element={<SideBySideExample />} />
-                            <Route path="/checkout" element={<Checkout />} />
-                            <Route path="/checkout/success" element={<CheckoutSuccess />} />
+                                <Route path="/charts-demo" element={<Suspense fallback={<RouteFallback />}><SideBySideExample /></Suspense>} />
+                                <Route path="/checkout" element={<Checkout />} />
+                                <Route path="/checkout/success" element={<CheckoutSuccess />} />
 
-                            {/* Settings — requer login */}
-                            <Route path="/settings" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />
-                            <Route path="/configuracoes" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />
+                                {/* Settings — requer login */}
+                                <Route path="/settings" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />
+                                <Route path="/configuracoes" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />
 
-                            {/* Admin — somente admin autenticado no Supabase */}
-                            <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminPanel /></ProtectedRoute>} />
+                                {/* Admin — somente admin autenticado no Supabase */}
+                                <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminPanel /></ProtectedRoute>} />
 
-                            {/* Páginas públicas sem paywall */}
-                            <Route path="/privacidade" element={<><SEO title="Política de Privacidade" description="Política de privacidade do Zaya Tarot. Saiba como protegemos seus dados e respeitamos sua privacidade." path="/privacidade" /><PrivacyPolicy /></>} />
-                            <Route path="/privacy" element={<><SEO title="Privacy Policy" description="Zaya Tarot privacy policy. Learn how we protect your data and respect your privacy." path="/privacy" /><PrivacyPolicy /></>} />
-                            <Route path="/termos" element={<><SEO title="Termos de Uso" description="Termos de uso do Zaya Tarot. Condições para utilização da plataforma de tarot online." path="/termos" /><TermsOfUse /></>} />
-                            <Route path="/terms" element={<><SEO title="Terms of Use" description="Zaya Tarot terms of use. Conditions for using the online tarot platform." path="/terms" /><TermsOfUse /></>} />
-                        </Routes>
-                        <CookieConsent />
-                    </Router>
-                </CartProvider>
-            </AuthProvider>
-        </LanguageProvider>
+                                {/* Páginas públicas sem paywall */}
+                                <Route path="/privacidade" element={<><SEO title="Política de Privacidade" description="Política de privacidade do Zaya Tarot. Saiba como protegemos seus dados e respeitamos sua privacidade." path="/privacidade" /><PrivacyPolicy /></>} />
+                                <Route path="/privacy" element={<><SEO title="Privacy Policy" description="Zaya Tarot privacy policy. Learn how we protect your data and respect your privacy." path="/privacy" /><PrivacyPolicy /></>} />
+                                <Route path="/termos" element={<><SEO title="Termos de Uso" description="Termos de uso do Zaya Tarot. Condições para utilização da plataforma de tarot online." path="/termos" /><TermsOfUse /></>} />
+                                <Route path="/terms" element={<><SEO title="Terms of Use" description="Zaya Tarot terms of use. Conditions for using the online tarot platform." path="/terms" /><TermsOfUse /></>} />
+                            </Routes>
+                            <CookieConsent />
+                        </Router>
+                    </CartProvider>
+                </AuthProvider>
+            </LanguageProvider>
         </HelmetProvider>
     );
 };
