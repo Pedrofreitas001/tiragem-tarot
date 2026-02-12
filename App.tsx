@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
 import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, isGeminiConfigured, AnySynthesis, CanonicalSynthesis, convertToLegacySynthesis } from './services/geminiService';
@@ -34,7 +34,7 @@ import { CookieConsent } from './components/CookieConsent';
 import { HelmetProvider } from 'react-helmet-async';
 import { SEO } from './components/SEO';
 import { ScrollToTop } from './components/ScrollToTop';
-import { ProtectedRoute } from './components/ProtectedRoute';
+import { ProtectedRoute, AuthGuard } from './components/ProtectedRoute';
 import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
@@ -2757,6 +2757,7 @@ const CardDetails = () => {
     const cardSlug = params.cardSlug;
     const navigate = useNavigate();
     const { t, isPortuguese } = useLanguage();
+    const { getArchiveLimit, isGuest, isPremium } = usePaywall();
     const [card, setCard] = useState<TarotCard | null>(null);
     const [lore, setLore] = useState<ExtendedCardLore | null>(null);
     const [isLoadingApi, setIsLoadingApi] = useState(true);
@@ -2824,7 +2825,18 @@ const CardDetails = () => {
         }
     }, [cardId, cardSlug, navigate, isPortuguese]);
 
+    // Paywall: check if this card is beyond the user's archive limit
+    const archiveLimit = getArchiveLimit();
+    const cardIndex = card ? TAROT_CARDS.findIndex(tc => tc.id === card.id) : -1;
+    const isCardLocked = !isPremium && (isGuest || cardIndex >= archiveLimit);
+
     if (!card) return null;
+
+    // If card is locked, redirect to archive listing (where the paywall modal shows)
+    if (isCardLocked) {
+        const archivePath = isPortuguese ? '/arquivo-arcano' : '/arcane-archive';
+        return <Navigate to={archivePath} state={{ lockedCard: true }} replace />;
+    }
 
     return (
         <div className="relative flex flex-col min-h-screen overflow-x-hidden" style={{ backgroundColor: '#1a1628' }}>
@@ -6610,43 +6622,53 @@ const App = () => {
                         <Routes>
                             <Route path="/" element={<Home />} />
 
-                            {/* Spreads Page - Available in both languages */}
-                            <Route path="/spreads" element={<><SEO title="Tarot Spreads" description="Explore different tarot spreads: Three Card, Celtic Cross, Love Check, Yes/No and more. Choose your spread and get your reading." path="/spreads" /><Spreads /></>} />
-                            <Route path="/jogos-de-tarot" element={<><SEO title="Jogos de Tarot" description="Explore diferentes jogos de tarot: Três Cartas, Cruz Celta, Tarot do Amor, Sim/Não e mais. Escolha seu jogo e receba sua leitura." path="/jogos-de-tarot" /><Spreads /></>} />
+                            {/* Spreads — acessível a todos, paywall inline no click */}
+                            <Route path="/spreads" element={<AuthGuard><SEO title="Tarot Spreads" description="Explore different tarot spreads: Three Card, Celtic Cross, Love Check, Yes/No and more. Choose your spread and get your reading." path="/spreads" /><Spreads /></AuthGuard>} />
+                            <Route path="/jogos-de-tarot" element={<AuthGuard><SEO title="Jogos de Tarot" description="Explore diferentes jogos de tarot: Três Cartas, Cruz Celta, Tarot do Amor, Sim/Não e mais. Escolha seu jogo e receba sua leitura." path="/jogos-de-tarot" /><Spreads /></AuthGuard>} />
 
-                            {/* Physical Reading Interpretation - Premium only */}
-                            <Route path="/interpretacao" element={<ProtectedRoute requiredTier="premium"><SEO title="Interpretação de Tarot" description="Guia completo de interpretação de tarot. Aprenda a ler e interpretar as cartas de tarot com orientações detalhadas." path="/interpretacao" /><Interpretacao /></ProtectedRoute>} />
-                            <Route path="/interpretation" element={<ProtectedRoute requiredTier="premium"><SEO title="Tarot Interpretation" description="Complete tarot interpretation guide. Learn how to read and interpret tarot cards with detailed guidance." path="/interpretation" /><Interpretacao /></ProtectedRoute>} />
+                            {/* Interpretação física — acessível a todos, botão "gerar" é premium */}
+                            <Route path="/interpretacao" element={<AuthGuard><SEO title="Interpretação de Tarot" description="Guia completo de interpretação de tarot. Aprenda a ler e interpretar as cartas de tarot com orientações detalhadas." path="/interpretacao" /><Interpretacao /></AuthGuard>} />
+                            <Route path="/interpretation" element={<AuthGuard><SEO title="Tarot Interpretation" description="Complete tarot interpretation guide. Learn how to read and interpret tarot cards with detailed guidance." path="/interpretation" /><Interpretacao /></AuthGuard>} />
 
-                            {/* Rotas em Português */}
-                            <Route path="/arquivo-arcano" element={<><SEO title="Arquivo Arcano - Todas as Cartas de Tarot" description="Explore todas as 78 cartas do tarot. Significado, simbolismo e interpretação de cada arcano maior e menor." path="/arquivo-arcano" /><Explore /></>} />
-                            <Route path="/arquivo-arcano/:cardSlug" element={<CardDetails />} />
-
-                            {/* Rotas em Inglês */}
-                            <Route path="/arcane-archive" element={<><SEO title="Arcane Archive - All Tarot Cards" description="Explore all 78 tarot cards. Meaning, symbolism and interpretation of each major and minor arcana." path="/arcane-archive" /><Explore /></>} />
-                            <Route path="/arcane-archive/:cardSlug" element={<CardDetails />} />
+                            {/* Arquivo Arcano — acessível a todos, cards limitados por tier */}
+                            <Route path="/arquivo-arcano" element={<AuthGuard><SEO title="Arquivo Arcano - Todas as Cartas de Tarot" description="Explore todas as 78 cartas do tarot. Significado, simbolismo e interpretação de cada arcano maior e menor." path="/arquivo-arcano" /><Explore /></AuthGuard>} />
+                            <Route path="/arquivo-arcano/:cardSlug" element={<AuthGuard><CardDetails /></AuthGuard>} />
+                            <Route path="/arcane-archive" element={<AuthGuard><SEO title="Arcane Archive - All Tarot Cards" description="Explore all 78 tarot cards. Meaning, symbolism and interpretation of each major and minor arcana." path="/arcane-archive" /><Explore /></AuthGuard>} />
+                            <Route path="/arcane-archive/:cardSlug" element={<AuthGuard><CardDetails /></AuthGuard>} />
 
                             {/* Rotas antigas (manter compatibilidade) */}
-                            <Route path="/explore" element={<Explore />} />
-                            <Route path="/explore/:cardId" element={<CardDetails />} />
+                            <Route path="/explore" element={<AuthGuard><Explore /></AuthGuard>} />
+                            <Route path="/explore/:cardId" element={<AuthGuard><CardDetails /></AuthGuard>} />
 
-                            <Route path="/session" element={<Session />} />
-                            <Route path="/result" element={<Result />} />
+                            {/* Session/Result — paywall inline (readings limit, síntese) */}
+                            <Route path="/session" element={<AuthGuard><Session /></AuthGuard>} />
+                            <Route path="/result" element={<AuthGuard><Result /></AuthGuard>} />
+
+                            {/* History — requer login (não existe histórico sem conta) */}
                             <Route path="/history" element={<ProtectedRoute requiredTier="authenticated"><History /></ProtectedRoute>} />
-                            <Route path="/numerology" element={<><SEO title="Numerologia" description="Descubra seu perfil numerológico completo. Calcule seu número do destino, alma e personalidade." path="/numerology" /><Numerology /></>} />
-                            <Route path="/cosmic" element={<><SEO title="Calendário Cósmico" description="Acompanhe as fases da lua, energia cósmica do dia e alinhamento planetário." path="/cosmic" /><CosmicCalendar /></>} />
-                            <Route path="/carta-do-dia" element={<><SEO title="Carta do Dia - Tarot Diário" description="Descubra a carta de tarot do dia. Receba orientação diária com interpretação completa e conselho espiritual." path="/carta-do-dia" /><DailyCard /></>} />
-                            <Route path="/daily-card" element={<><SEO title="Daily Tarot Card" description="Discover your daily tarot card. Receive daily guidance with complete interpretation and spiritual advice." path="/daily-card" /><DailyCard /></>} />
-                            <Route path="/tarot-por-signo" element={<><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodíaco. Descubra o que as cartas revelam para o seu signo hoje." path="/tarot-por-signo" /><TarotPorSignoIndex /></>} />
-                            <Route path="/tarot-by-sign" element={<><SEO title="Tarot by Zodiac Sign" description="Personalized tarot reading for each zodiac sign. Discover what the cards reveal for your sign today." path="/tarot-by-sign" /><TarotPorSignoIndex /></>} />
-                            <Route path="/tarot-por-signo/:signo" element={<TarotPorSigno />} />
-                            <Route path="/tarot-by-sign/:signo" element={<TarotPorSigno />} />
+
+                            {/* Conteúdo público com paywall inline diferenciado */}
+                            <Route path="/numerology" element={<AuthGuard><SEO title="Numerologia" description="Descubra seu perfil numerológico completo. Calcule seu número do destino, alma e personalidade." path="/numerology" /><Numerology /></AuthGuard>} />
+                            <Route path="/cosmic" element={<AuthGuard><SEO title="Calendário Cósmico" description="Acompanhe as fases da lua, energia cósmica do dia e alinhamento planetário." path="/cosmic" /><CosmicCalendar /></AuthGuard>} />
+                            <Route path="/carta-do-dia" element={<AuthGuard><SEO title="Carta do Dia - Tarot Diário" description="Descubra a carta de tarot do dia. Receba orientação diária com interpretação completa e conselho espiritual." path="/carta-do-dia" /><DailyCard /></AuthGuard>} />
+                            <Route path="/daily-card" element={<AuthGuard><SEO title="Daily Tarot Card" description="Discover your daily tarot card. Receive daily guidance with complete interpretation and spiritual advice." path="/daily-card" /><DailyCard /></AuthGuard>} />
+                            <Route path="/tarot-por-signo" element={<AuthGuard><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodíaco. Descubra o que as cartas revelam para o seu signo hoje." path="/tarot-por-signo" /><TarotPorSignoIndex /></AuthGuard>} />
+                            <Route path="/tarot-by-sign" element={<AuthGuard><SEO title="Tarot by Zodiac Sign" description="Personalized tarot reading for each zodiac sign. Discover what the cards reveal for your sign today." path="/tarot-by-sign" /><TarotPorSignoIndex /></AuthGuard>} />
+                            <Route path="/tarot-por-signo/:signo" element={<AuthGuard><TarotPorSigno /></AuthGuard>} />
+                            <Route path="/tarot-by-sign/:signo" element={<AuthGuard><TarotPorSigno /></AuthGuard>} />
+
                             <Route path="/charts-demo" element={<SideBySideExample />} />
                             <Route path="/checkout" element={<Checkout />} />
                             <Route path="/checkout/success" element={<CheckoutSuccess />} />
+
+                            {/* Settings — requer login */}
                             <Route path="/settings" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />
                             <Route path="/configuracoes" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />
+
+                            {/* Admin — somente admin autenticado no Supabase */}
                             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminPanel /></ProtectedRoute>} />
+
+                            {/* Páginas públicas sem paywall */}
                             <Route path="/privacidade" element={<><SEO title="Política de Privacidade" description="Política de privacidade do Zaya Tarot. Saiba como protegemos seus dados e respeitamos sua privacidade." path="/privacidade" /><PrivacyPolicy /></>} />
                             <Route path="/privacy" element={<><SEO title="Privacy Policy" description="Zaya Tarot privacy policy. Learn how we protect your data and respect your privacy." path="/privacy" /><PrivacyPolicy /></>} />
                             <Route path="/termos" element={<><SEO title="Termos de Uso" description="Termos de uso do Zaya Tarot. Condições para utilização da plataforma de tarot online." path="/termos" /><TermsOfUse /></>} />

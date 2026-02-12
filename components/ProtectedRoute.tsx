@@ -4,24 +4,32 @@ import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { SubscriptionTier } from '../types/database';
 
+/**
+ * Loading spinner consistent with the app theme.
+ * Used by both ProtectedRoute and AuthGuard.
+ */
+const AuthLoadingSpinner: React.FC = () => (
+  <div className="min-h-screen bg-[#0d0512] flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+  </div>
+);
+
+// --- ProtectedRoute: blocks access and redirects ---
+
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  /** Minimum tier required: 'free' = must be logged in, 'premium' = must have active premium */
   requiredTier?: SubscriptionTier | 'authenticated';
-  /** If true, only admins can access */
   requireAdmin?: boolean;
-  /** Custom redirect path (defaults to '/') */
   redirectTo?: string;
 }
 
 /**
- * Route-level guard that validates authentication and subscription tier
- * via Supabase before rendering child components.
+ * Route-level guard that blocks access entirely.
+ * Redirects unauthenticated users to home, non-premium to checkout, non-admin to home.
  *
- * Usage:
- *   <Route path="/history" element={<ProtectedRoute requiredTier="free"><History /></ProtectedRoute>} />
- *   <Route path="/interpretacao" element={<ProtectedRoute requiredTier="premium"><Interpretacao /></ProtectedRoute>} />
- *   <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminPanel /></ProtectedRoute>} />
+ * Use for pages that should NEVER render for unauthorized users:
+ *   /history, /settings → requiredTier="authenticated"
+ *   /admin → requireAdmin
  */
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
@@ -33,39 +41,44 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { isPortuguese } = useLanguage();
   const location = useLocation();
 
-  // While auth state is loading, show a minimal spinner to avoid flash
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0d0512] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <AuthLoadingSpinner />;
 
-  // Not authenticated → redirect to home (where they can login)
   if (!user) {
     const target = redirectTo || '/';
     return <Navigate to={target} state={{ from: location.pathname, authRequired: true }} replace />;
   }
 
-  // Admin check
   if (requireAdmin && !profile?.is_admin) {
     return <Navigate to="/" replace />;
   }
 
-  // Premium check: user is logged in but doesn't have premium
   if (requiredTier === 'premium' && tier !== 'premium') {
-    const target = redirectTo || (isPortuguese ? '/checkout' : '/checkout');
-    return (
-      <Navigate
-        to={target}
-        state={{ from: location.pathname, upgradRequired: true }}
-        replace
-      />
-    );
+    return <Navigate to={redirectTo || '/checkout'} state={{ from: location.pathname }} replace />;
   }
 
-  // All checks passed
+  return <>{children}</>;
+};
+
+// --- AuthGuard: waits for auth, then renders (no redirect) ---
+
+interface AuthGuardProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Lightweight wrapper that waits for auth state to resolve before rendering children.
+ * Does NOT block or redirect — it just prevents components from rendering while
+ * auth is loading, so their inline paywall checks (usePaywall, useAuth) have
+ * correct tier/user data instead of stale defaults.
+ *
+ * Use for pages with inline paywall logic that ALL users can visit:
+ *   /session, /result, /interpretacao, /arquivo-arcano, etc.
+ */
+export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
+  const { loading } = useAuth();
+
+  if (loading) return <AuthLoadingSpinner />;
+
   return <>{children}</>;
 };
 
