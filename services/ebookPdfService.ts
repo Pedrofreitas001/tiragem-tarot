@@ -315,68 +315,78 @@ function drawCover(doc: jsPDF) {
 }
 
 // ============================================================
-// INTRODUÇÃO
+// PÁGINA 2: Jornada do Herói + Citação Jung (centralizado)
 // ============================================================
-function drawIntro(doc: jsPDF): number {
+function drawJornadaPage(doc: jsPDF) {
   newPage(doc, 2);
-  let y = 30;
 
-  // Titulo
-  doc.setFontSize(26);
+  const cy = PH / 2; // centro vertical da página
+
+  // Titulo centralizado
+  doc.setFontSize(30);
   sc(doc, C.GOLD, 't');
   doc.setFont('times', 'normal');
-  doc.text('A Jornada do Heroi no Tarot', PW / 2, y, { align: 'center' });
-  y += 6;
-  y = divider(doc, y) + 4;
+  doc.text('A Jornada do Heroi', PW / 2, cy - 50, { align: 'center' });
 
-  const intros = [
-    'Os 22 Arcanos Maiores do Tarot sao muito mais do que simples cartas de adivinhacao. Eles representam uma jornada completa de desenvolvimento humano — desde o Louco, que da o primeiro passo no desconhecido, ate o Mundo, que danca na completude da realizacao.',
-    'Esta e a Jornada do Heroi, o mito universal descrito por Joseph Campbell, mas codificado nos simbolos ancestrais do Tarot. Cada arcano representa um estagio arquetipico — desafios, realizacoes, provacoes e revelacoes que todos nos enfrentamos em nossa evolucao pessoal e espiritual.',
-    'Neste ebook, voce descobrira como cada uma das 22 cartas reflete aspectos profundos de sua propria jornada. Nao importa onde voce esteja agora — em algum ponto, voce ja viveu ou vivera cada um desses arquetipos. O Tarot e um mapa da consciencia humana.',
-    'Prepare-se para uma jornada de autoconhecimento. Cada arcano oferece nao apenas conhecimento simbolico, mas insights praticos sobre como esses arquetipos aparecem em sua vida cotidiana — e como voce pode trabalhar conscientemente com eles.',
-  ];
-
-  doc.setFontSize(12);
-  sc(doc, C.TEXTO, 't');
-  doc.setFont('times', 'normal');
-  for (const t of intros) {
-    y = wrapText(doc, t, M + 4, y, CW - 8, 5.8);
-    y += 4;
-  }
-
-  y += 2;
-  y = divider(doc, y) + 5;
-
-  // Citacao Jung
   doc.setFontSize(14);
   sc(doc, C.GOLD_LIGHT, 't');
+  doc.setFont('times', 'normal');
+  doc.text('no Tarot', PW / 2, cy - 38, { align: 'center' });
+
+  // Divider
+  divider(doc, cy - 28);
+
+  // Texto introdutório
+  doc.setFontSize(12);
+  sc(doc, C.TEXTO, 't');
   doc.setFont('times', 'italic');
-  doc.text('"O privilegio de uma vida e', PW / 2, y, { align: 'center' });
-  y += 7;
-  doc.text('tornar-se quem voce realmente e."', PW / 2, y, { align: 'center' });
-  y += 8;
-  doc.setFontSize(11);
+  const intro1 = 'Os 22 Arcanos Maiores representam uma jornada completa';
+  const intro2 = 'de desenvolvimento humano — o mito universal do Heroi,';
+  const intro3 = 'codificado nos simbolos ancestrais do Tarot.';
+  doc.text(intro1, PW / 2, cy - 14, { align: 'center' });
+  doc.text(intro2, PW / 2, cy - 7, { align: 'center' });
+  doc.text(intro3, PW / 2, cy, { align: 'center' });
+
+  // Divider
+  divider(doc, cy + 14);
+
+  // Citacao Jung
+  doc.setFontSize(16);
+  sc(doc, C.GOLD_LIGHT, 't');
+  doc.setFont('times', 'italic');
+  doc.text('"O privilegio de uma vida e', PW / 2, cy + 34, { align: 'center' });
+  doc.text('tornar-se quem voce realmente e."', PW / 2, cy + 44, { align: 'center' });
+
+  doc.setFontSize(12);
   sc(doc, C.TEXTO_MUTED, 't');
   doc.setFont('times', 'normal');
-  doc.text('— Carl Gustav Jung', PW / 2, y, { align: 'center' });
-  y += 10;
+  doc.text('— Carl Gustav Jung', PW / 2, cy + 56, { align: 'center' });
+}
 
-  y = divider(doc, y) + 6;
+// ============================================================
+// PÁGINA 3: Sumário - Os 22 Portais da Consciência
+// ============================================================
+function drawSummaryPage(doc: jsPDF) {
+  newPage(doc, 3);
 
-  // Sumario
-  doc.setFontSize(18);
+  let y = 45;
+
+  // Titulo
+  doc.setFontSize(24);
   sc(doc, C.GOLD, 't');
   doc.setFont('times', 'normal');
   doc.text('Os 22 Portais da Consciencia', PW / 2, y, { align: 'center' });
-  y += 9;
+  y += 6;
+  y = divider(doc, y) + 10;
 
-  doc.setFontSize(10);
-  const c1 = M + 6, c2 = PW / 2 + 4;
+  // Lista em duas colunas
+  doc.setFontSize(11);
+  const c1 = M + 8, c2 = PW / 2 + 6;
 
   for (let i = 0; i < ARCANOS.length; i++) {
     const a = ARCANOS[i];
     const x = i < 11 ? c1 : c2;
-    const ry = i < 11 ? y + i * 6.5 : y + (i - 11) * 6.5;
+    const ry = i < 11 ? y + i * 8.5 : y + (i - 11) * 8.5;
 
     sc(doc, C.GOLD_DEEP, 't');
     doc.setFont('times', 'bold');
@@ -384,117 +394,145 @@ function drawIntro(doc: jsPDF): number {
 
     sc(doc, C.TEXTO, 't');
     doc.setFont('times', 'normal');
-    doc.text(`${a.nome}  —  ${a.arquetipo}`, x + 14, ry);
-  }
+    doc.text(`${a.nome}`, x + 16, ry);
 
-  return 3;
+    doc.setFontSize(9);
+    sc(doc, C.TEXTO_MUTED, 't');
+    doc.setFont('times', 'italic');
+    doc.text(a.arquetipo, x + 16, ry + 4);
+    doc.setFontSize(11);
+  }
 }
 
 // ============================================================
-// PÁGINA DO ARCANO (tudo em uma única página)
+// PÁGINA DO ARCANO (tudo em uma única página, bem distribuído)
 // ============================================================
 function drawArcano(
   doc: jsPDF, arc: typeof ARCANOS[0], img: string | null, pg: number
 ): number {
   newPage(doc, pg);
 
-  let y = 26;
-  const textX = M + 2;
-  const textW = CW - 4;
+  const maxY = PH - 22; // limite inferior (footer)
+  const topY = 26;      // início do conteúdo
+  let y = topY;
+  const textX = M + 3;
+  const textW = CW - 6;
 
-  // ---- TOPO: Imagem centralizada ----
-  const imgW = 34, imgH = 54;
+  // ---- TOPO: Nome da carta em gold ----
+  doc.setFontSize(28);
+  sc(doc, C.GOLD, 't');
+  doc.setFont('times', 'normal');
+  doc.text(arc.nome, PW / 2, y, { align: 'center' });
+  y += 6;
+
+  // Número romano + Arquetipo
+  doc.setFontSize(11);
+  sc(doc, C.GOLD_DEEP, 't');
+  doc.setFont('times', 'bold');
+  doc.text(`Arcano ${arc.numero}`, PW / 2, y, { align: 'center' });
+  y += 5;
+
+  doc.setFontSize(12);
+  sc(doc, C.ROXO_CLARO, 't');
+  doc.setFont('times', 'italic');
+  doc.text(arc.arquetipo, PW / 2, y, { align: 'center' });
+  y += 4;
+
+  // Linha dourada separadora
+  sc(doc, C.BORDER_GOLD, 'd');
+  doc.setLineWidth(0.3);
+  doc.line(M + 15, y, PW - M - 15, y);
+  y += 5;
+
+  // ---- IMAGEM da carta centralizada ----
+  const imgW = 42, imgH = 67;
 
   if (img) {
     try {
       const imgX = (PW - imgW) / 2;
+      // Borda dourada
       sc(doc, C.BORDER_GOLD, 'd');
-      doc.setLineWidth(0.5);
-      doc.roundedRect(imgX - 0.8, y - 0.8, imgW + 1.6, imgH + 1.6, 1.2, 1.2, 'S');
+      doc.setLineWidth(0.6);
+      doc.roundedRect(imgX - 1, y - 1, imgW + 2, imgH + 2, 1.5, 1.5, 'S');
       doc.addImage(img, 'JPEG', imgX, y, imgW, imgH);
-      y += imgH + 3;
+      y += imgH + 5;
     } catch (_) {
-      y += 3;
+      y += 5;
     }
   }
 
-  // ---- NOME DA CARTA (abaixo da imagem, sem sobrepor) ----
-  doc.setFontSize(24);
-  sc(doc, C.GOLD, 't');
-  doc.setFont('times', 'normal');
-  doc.text(arc.nome, PW / 2, y, { align: 'center' });
-  y += 5;
-
-  // Numero romano + Arquetipo na mesma linha
-  doc.setFontSize(10);
-  sc(doc, C.GOLD_DEEP, 't');
-  doc.setFont('times', 'bold');
-  doc.text(`Arcano ${arc.numero}`, PW / 2, y, { align: 'center' });
-  y += 4;
-
-  doc.setFontSize(11);
-  sc(doc, C.ROXO_CLARO, 't');
-  doc.setFont('times', 'italic');
-  doc.text(arc.arquetipo, PW / 2, y, { align: 'center' });
-  y += 3;
-
-  // Linha dourada separadora fina
-  sc(doc, C.BORDER_GOLD, 'd');
-  doc.setLineWidth(0.3);
-  doc.line(M + 20, y, PW - M - 20, y);
-  y += 5;
-
-  // ---- BOX PRINCIPAL: Significado Essencial ----
-  const boxPadX = 5;
-  const boxPadY = 3;
-  const boxTextW = CW - boxPadX * 2 - 3;
-  const bodyLH = 4.3;
-
-  doc.setFontSize(10);
-  const sigH = textHeight(doc, arc.significado, boxTextW, bodyLH);
-  const boxH = boxPadY + 5 + 1 + sigH + boxPadY;
-
-  drawSectionBox(doc, M, y, CW, boxH);
-
-  const boxTxtX = M + boxPadX + 2;
-  let ty = y + boxPadY + 3.5;
-  doc.setFontSize(11);
-  sc(doc, C.GOLD, 't');
-  doc.setFont('times', 'bold');
-  doc.text('Significado Essencial', boxTxtX, ty);
-  ty += 5;
-
-  doc.setFontSize(10);
-  sc(doc, C.TEXTO, 't');
-  doc.setFont('times', 'normal');
-  wrapText(doc, arc.significado, boxTxtX, ty, boxTextW, bodyLH);
-
-  y += boxH + 4;
-
-  // ---- SEÇÕES RESTANTES: texto corrido com títulos dourados ----
-  const flowSections = [
-    { title: 'Simbologia da Carta', text: arc.simbolos },
-    { title: 'Contexto Psicologico e Espiritual', text: arc.psicologia },
-    { title: 'Como Aparece na Vida Real', text: arc.vida_real },
-    { title: 'Mensagem de Evolucao', text: arc.mensagem },
+  // ---- Calcular espaço restante para distribuir seções ----
+  // Todas as 5 seções: significado (box) + 4 parágrafos
+  const sections = [
+    { title: 'Significado Essencial', text: arc.significado, isBox: true },
+    { title: 'Simbologia da Carta', text: arc.simbolos, isBox: false },
+    { title: 'Contexto Psicologico e Espiritual', text: arc.psicologia, isBox: false },
+    { title: 'Como Aparece na Vida Real', text: arc.vida_real, isBox: false },
+    { title: 'Mensagem de Evolucao', text: arc.mensagem, isBox: false },
   ];
 
-  const flowLH = 4.2;
+  const bodyLH = 4.8;
+  const boxPadX = 5;
+  const boxPadY = 3.5;
+  const boxTextW = CW - boxPadX * 2 - 3;
 
-  for (const sec of flowSections) {
-    // Titulo da seção
-    doc.setFontSize(10);
-    sc(doc, C.GOLD, 't');
-    doc.setFont('times', 'bold');
-    doc.text(sec.title, textX, y);
-    y += 4.5;
+  // Calcular altura total necessária para todas as seções
+  let totalContentH = 0;
+  const sectionHeights: number[] = [];
+  for (const sec of sections) {
+    doc.setFontSize(11);
+    const tH = textHeight(doc, sec.text, sec.isBox ? boxTextW : textW, bodyLH);
+    const secH = sec.isBox
+      ? boxPadY + 5.5 + tH + boxPadY  // box: padding + title + text + padding
+      : 5.5 + tH;                      // paragraph: title + text
+    sectionHeights.push(secH);
+    totalContentH += secH;
+  }
 
-    // Texto corrido
-    doc.setFontSize(9.5);
-    sc(doc, C.TEXTO, 't');
-    doc.setFont('times', 'normal');
-    y = wrapText(doc, sec.text, textX, y, textW, flowLH);
-    y += 3;
+  // Distribuir espaço restante como gap entre seções
+  const availableH = maxY - y;
+  const baseGap = 4;
+  const extraGap = Math.max(0, (availableH - totalContentH - baseGap * sections.length) / sections.length);
+  const gap = Math.min(baseGap + extraGap, 10); // cap gap at 10mm
+
+  // ---- Renderizar seções ----
+  for (let si = 0; si < sections.length; si++) {
+    const sec = sections[si];
+
+    if (sec.isBox) {
+      // Box estilizado para Significado Essencial
+      const boxH = sectionHeights[si];
+      drawSectionBox(doc, M, y, CW, boxH);
+
+      const bx = M + boxPadX + 2;
+      let by = y + boxPadY + 3.5;
+
+      doc.setFontSize(12);
+      sc(doc, C.GOLD, 't');
+      doc.setFont('times', 'bold');
+      doc.text(sec.title, bx, by);
+      by += 5.5;
+
+      doc.setFontSize(11);
+      sc(doc, C.TEXTO, 't');
+      doc.setFont('times', 'normal');
+      wrapText(doc, sec.text, bx, by, boxTextW, bodyLH);
+
+      y += boxH + gap;
+    } else {
+      // Parágrafo corrido com título dourado
+      doc.setFontSize(12);
+      sc(doc, C.GOLD, 't');
+      doc.setFont('times', 'bold');
+      doc.text(sec.title, textX, y);
+      y += 5.5;
+
+      doc.setFontSize(11);
+      sc(doc, C.TEXTO, 't');
+      doc.setFont('times', 'normal');
+      y = wrapText(doc, sec.text, textX, y, textW, bodyLH);
+      y += gap;
+    }
   }
 
   return pg;
@@ -607,10 +645,14 @@ export async function generateEbookPdf(onProgress: EbookProgressCallback): Promi
   // 3. Capa
   drawCover(doc);
 
-  // 5. Introducao
+  // 4. Página 2: Jornada do Herói + Jung
   step++;
   onProgress(step, total, 'Gerando introducao...');
-  let pg = drawIntro(doc);
+  drawJornadaPage(doc);
+
+  // 5. Página 3: Sumário
+  drawSummaryPage(doc);
+  let pg = 3;
 
   // 6. Arcanos
   step++;
