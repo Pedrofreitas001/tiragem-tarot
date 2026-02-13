@@ -377,16 +377,20 @@ function drawSummaryPage(doc: jsPDF) {
   doc.setFont('times', 'normal');
   doc.text('Os 22 Portais da Consciencia', PW / 2, y, { align: 'center' });
   y += 6;
-  y = divider(doc, y) + 10;
+  y = divider(doc, y) + 12;
 
-  // Lista em duas colunas
-  doc.setFontSize(11);
-  const c1 = M + 8, c2 = PW / 2 + 6;
+  // Distribuir 11 itens por coluna usando espaço disponível
+  const bottomLimit = PH - 28; // acima do footer
+  const itemH = (bottomLimit - y) / 11; // espaço por item (distribuído)
+  const c1 = M + 10, c2 = PW / 2 + 8;
 
+  doc.setFontSize(12);
   for (let i = 0; i < ARCANOS.length; i++) {
     const a = ARCANOS[i];
-    const x = i < 11 ? c1 : c2;
-    const ry = i < 11 ? y + i * 8.5 : y + (i - 11) * 8.5;
+    const col = i < 11 ? 0 : 1;
+    const row = i < 11 ? i : i - 11;
+    const x = col === 0 ? c1 : c2;
+    const ry = y + row * itemH;
 
     sc(doc, C.GOLD_DEEP, 't');
     doc.setFont('times', 'bold');
@@ -396,11 +400,11 @@ function drawSummaryPage(doc: jsPDF) {
     doc.setFont('times', 'normal');
     doc.text(`${a.nome}`, x + 16, ry);
 
-    doc.setFontSize(9);
+    doc.setFontSize(9.5);
     sc(doc, C.TEXTO_MUTED, 't');
     doc.setFont('times', 'italic');
-    doc.text(a.arquetipo, x + 16, ry + 4);
-    doc.setFontSize(11);
+    doc.text(a.arquetipo, x + 16, ry + 5);
+    doc.setFontSize(12);
   }
 }
 
@@ -413,7 +417,7 @@ function drawArcano(
   newPage(doc, pg);
 
   const maxY = PH - 22; // limite inferior (footer)
-  const topY = 26;      // início do conteúdo
+  const topY = 33;      // início do conteúdo (abaixo da linha do header em y=20)
   let y = topY;
   const textX = M + 3;
   const textW = CW - 6;
