@@ -432,6 +432,16 @@ export const DailyCard = () => {
     const keywords = isPortuguese ? dailyCard.keywords_pt : dailyCard.keywords;
     const advice = isPortuguese ? dailyCard.advice_pt : dailyCard.advice;
     const description = isPortuguese ? dailyCard.description_pt : dailyCard.description;
+    const normalizedSynthesis = aiSynthesis ? {
+        mensagem_coletiva: (aiSynthesis as any).mensagem_coletiva,
+        vibracao_universal: (aiSynthesis as any).vibracao_universal ?? (aiSynthesis as any)['vibração_universal'],
+        consciencia_coletiva: (aiSynthesis as any).consciencia_coletiva ?? (aiSynthesis as any)['consciência_coletiva'],
+        movimento_planetario: (aiSynthesis as any).movimento_planetario ?? (aiSynthesis as any)['movimento_planetário'],
+        energia_emocional: (aiSynthesis as any).energia_emocional,
+        significado_carta: (aiSynthesis as any).significado_carta,
+        mantra_diario: (aiSynthesis as any).mantra_diario ?? (aiSynthesis as any)['mantra_diário'],
+        reflexao_coletiva: (aiSynthesis as any).reflexao_coletiva ?? (aiSynthesis as any)['reflexão_coletiva'],
+    } : null;
 
     // Buscar sintese da IA automaticamente
     useEffect(() => {
@@ -457,12 +467,12 @@ export const DailyCard = () => {
 
     // Definir modulos dinamicos
     const getDynamicModules = () => {
-        if (!aiSynthesis) return [];
+        if (!normalizedSynthesis) return [];
 
         return [
             {
                 title: isPortuguese ? 'Consciencia Coletiva' : 'Collective Consciousness',
-                content: aiSynthesis.consciencia_coletiva,
+                content: normalizedSynthesis.consciencia_coletiva,
                 color: 'purple',
                 borderColor: 'border-purple-500/20',
                 dotColor: 'bg-purple-500/30 border-purple-400/50',
@@ -471,7 +481,7 @@ export const DailyCard = () => {
             },
             {
                 title: isPortuguese ? 'Energia Emocional' : 'Emotional Energy',
-                content: aiSynthesis.energia_emocional,
+                content: normalizedSynthesis.energia_emocional,
                 color: 'pink',
                 borderColor: 'border-pink-500/20',
                 dotColor: 'bg-pink-500/30 border-pink-400/50',
@@ -480,7 +490,7 @@ export const DailyCard = () => {
             },
             {
                 title: isPortuguese ? 'Movimento Planetario' : 'Planetary Movement',
-                content: aiSynthesis.movimento_planetario,
+                content: normalizedSynthesis.movimento_planetario,
                 color: 'cyan',
                 borderColor: 'border-cyan-500/20',
                 dotColor: 'bg-cyan-500/30 border-cyan-400/50',
@@ -677,7 +687,7 @@ export const DailyCard = () => {
                                         {/* Lado Esquerdo - Vibracao Universal e Mensagem */}
                                         <div className="flex-1 flex flex-col justify-center text-center lg:text-left space-y-6">
                                             {/* Vibracao Universal - Titulo Principal */}
-                                            {aiSynthesis?.vibracao_universal && (
+                                            {normalizedSynthesis?.vibracao_universal && (
                                                 <div>
                                                     <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight" style={{
                                                         fontFamily: "'Crimson Text', serif",
@@ -686,7 +696,7 @@ export const DailyCard = () => {
                                                         WebkitTextFillColor: 'transparent',
                                                         backgroundClip: 'text',
                                                     }}>
-                                                        {aiSynthesis.vibracao_universal}
+                                                        {normalizedSynthesis.vibracao_universal}
                                                     </h3>
                                                 </div>
                                             )}
@@ -700,11 +710,11 @@ export const DailyCard = () => {
 
                                             {/* Mensagem Coletiva - Subtexto */}
                                             <div className="max-w-2xl lg:max-w-none">
-                                                {aiSynthesis?.mensagem_coletiva && aiSynthesis.mensagem_coletiva.includes('.') ? (
+                                                {normalizedSynthesis?.mensagem_coletiva && normalizedSynthesis.mensagem_coletiva.includes('.') ? (
                                                     <p className="text-gray-200 text-lg md:text-xl lg:text-2xl leading-relaxed font-light" style={{
                                                         fontFamily: "'Crimson Text', serif"
                                                     }}>
-                                                        {aiSynthesis.mensagem_coletiva.split(/\.\s+/).slice(1).join('. ').trim()}
+                                                        {normalizedSynthesis.mensagem_coletiva.split(/\.\s+/).slice(1).join('. ').trim()}
                                                     </p>
                                                 ) : (
                                                     <p className="text-gray-200 text-lg md:text-xl lg:text-2xl leading-relaxed font-light" style={{
@@ -745,7 +755,7 @@ export const DailyCard = () => {
                                     </div>
 
                                     {/* Sobre a Carta - Significado */}
-                                    {aiSynthesis?.significado_carta && (
+                                    {normalizedSynthesis?.significado_carta && (
                                         <div className="bg-white/5 rounded-xl p-4 border border-white/10 mb-6">
                                             <div className="flex items-center gap-2 mb-2">
                                                 <span className="material-symbols-outlined text-yellow-400 text-base">auto_awesome</span>
@@ -754,7 +764,7 @@ export const DailyCard = () => {
                                                 </span>
                                             </div>
                                             <p className="text-gray-200 text-sm leading-relaxed">
-                                                {aiSynthesis.significado_carta}
+                                                {normalizedSynthesis.significado_carta}
                                             </p>
                                         </div>
                                     )}
@@ -779,7 +789,7 @@ export const DailyCard = () => {
 
 
                                     {/* Mantra Diario - Destaque Especial */}
-                                    {aiSynthesis?.mantra_diario && (
+                                    {normalizedSynthesis?.mantra_diario && (
                                         <div className="mt-10 text-center space-y-4">
                                             <div className="flex items-center justify-center gap-3">
                                                 <div className="w-12 h-px bg-gradient-to-r from-transparent to-yellow-500/30"></div>
@@ -796,7 +806,7 @@ export const DailyCard = () => {
                                                         WebkitTextFillColor: 'transparent',
                                                         backgroundClip: 'text',
                                                     }}>
-                                                        "{aiSynthesis.mantra_diario}"
+                                                        "{normalizedSynthesis.mantra_diario}"
                                                     </p>
                                                 </div>
                                             </div>
@@ -804,7 +814,7 @@ export const DailyCard = () => {
                                     )}
 
                                     {/* Reflexao Final - se houver IA */}
-                                    {aiSynthesis?.reflexao_coletiva && (
+                                    {normalizedSynthesis?.reflexao_coletiva && (
                                         <div className="mt-10 text-center space-y-4">
                                             <div className="flex items-center justify-center gap-3">
                                                 <div className="w-12 h-px bg-gradient-to-r from-transparent to-purple-500/30"></div>
@@ -812,7 +822,7 @@ export const DailyCard = () => {
                                                 <div className="w-12 h-px bg-gradient-to-l from-transparent to-purple-500/30"></div>
                                             </div>
                                             <p className="text-purple-100 text-xl md:text-2xl font-medium italic leading-relaxed max-w-2xl mx-auto" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                                {aiSynthesis.reflexao_coletiva}
+                                                {normalizedSynthesis.reflexao_coletiva}
                                             </p>
                                         </div>
                                     )}
