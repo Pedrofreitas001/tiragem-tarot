@@ -971,197 +971,323 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+            {/* Premium Ebook + Why Tarot Combined Section */}
+            <section className="relative z-10 pt-28 md:pt-40 pb-20 md:pb-28 px-4 md:px-6 bg-[#1a1628] overflow-hidden">
+                <style>{`
+                    .home-ebook-container { perspective: 1500px; }
+                    .home-ebook-cover {
+                        transform-style: preserve-3d;
+                        transform: rotateY(-20deg) rotateX(4deg);
+                        box-shadow: -20px 20px 60px rgba(0,0,0,0.6);
+                        transition: transform 0.35s ease;
+                    }
+                    .home-ebook-cover:hover { transform: rotateY(-14deg) rotateX(2deg) scale(1.01); }
+                    @keyframes home-ebook-float {
+                        0%, 100% { transform: translateY(0); }
+                        50% { transform: translateY(-12px); }
+                    }
+                    .home-ebook-float { animation: home-ebook-float 6s ease-in-out infinite; }
+                    .home-ebook-page {
+                        transform-style: preserve-3d;
+                        transform: rotateY(-20deg) rotateX(4deg);
+                        clip-path: inset(0 0 0 12%);
+                    }
+                    .home-ebook-content {
+                        transform-origin: top center;
+                    }
+                    .home-ebook-frame {
+                        position: absolute;
+                        inset: 8px;
+                    }
+                    @media (max-width: 1200px) {
+                        .home-ebook-content {
+                            transform: scale(0.9);
+                            justify-content: flex-start;
+                            gap: 8px;
+                            padding-bottom: 10px;
+                        }
+                    }
+                    @media (max-width: 1024px) {
+                        .home-ebook-content {
+                            transform: scale(0.84);
+                            justify-content: flex-start;
+                            gap: 8px;
+                            padding-bottom: 12px;
+                        }
+                    }
+                    @media (max-width: 900px) {
+                        .home-ebook-content {
+                            transform: scale(0.8);
+                            gap: 7px;
+                            padding-bottom: 12px;
+                        }
+                    }
+                    @media (max-width: 768px) {
+                        .home-ebook-content {
+                            transform: scale(0.76);
+                            gap: 7px;
+                            padding-bottom: 13px;
+                        }
+                    }
+                    @media (max-width: 640px) {
+                        .home-ebook-cover {
+                            transform: none;
+                            aspect-ratio: 2 / 3;
+                        }
+                        .home-ebook-cover:hover {
+                            transform: none;
+                        }
+                        .home-ebook-float {
+                            animation: none;
+                        }
+                        .home-ebook-frame {
+                            inset: 6px;
+                        }
+                        .home-ebook-content {
+                            transform: scale(0.72);
+                            justify-content: flex-start;
+                            gap: 6px;
+                            padding-bottom: 12px;
+                        }
+                    }
+                    @media (max-width: 520px) {
+                        .home-ebook-content {
+                            transform: scale(0.68);
+                            gap: 5px;
+                            padding-bottom: 13px;
+                        }
+                    }
+                    @media (max-width: 420px) {
+                        .home-ebook-content {
+                            transform: scale(0.64);
+                            gap: 5px;
+                            padding-bottom: 14px;
+                        }
+                    }
+                `}</style>
 
-            {/* Reflective Journey Section */}
-            <section className="relative z-10 pt-28 md:pt-40 pb-20 md:pb-28 px-4 md:px-6" style={{ backgroundColor: '#1a1628' }}>
-                {/* Purple blur background - like spreads section */}
                 <div className="absolute -left-40 top-10 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="absolute -right-32 bottom-10 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-purple-600/10 to-transparent blur-3xl pointer-events-none"></div>
+                <div className="absolute top-[18%] left-[8%] w-[2px] h-[2px] rounded-full bg-white/35"></div>
+                <div className="absolute top-[24%] right-[12%] w-[1.5px] h-[1.5px] rounded-full bg-white/25"></div>
+                <div className="absolute top-[78%] left-[15%] w-[1px] h-[1px] rounded-full bg-white/30"></div>
+                <div className="absolute top-[85%] right-[18%] w-[2px] h-[2px] rounded-full bg-white/20"></div>
 
-                <div className="max-w-[1300px] mx-auto relative">
-                    <div className="mb-10 md:mb-14 md:text-left px-2">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Por que o Tarot?' : 'Why Tarot?'}
-                        </h2>
-                        <p className="text-gray-400 text-base md:text-lg lg:text-xl font-light max-w-2xl leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                            {isPortuguese
-                                ? 'Para quem busca autoconhecimento, clareza e equilíbrio, o Tarot é uma ferramenta de reflexão profunda — um ritual diário que conecta você à sua intuição.'
-                                : 'For those seeking self-knowledge, clarity and balance, Tarot is a tool for deep reflection — a daily ritual that connects you to your intuition.'}
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-                        {/* Left: Content with sections */}
-                        <div className="lg:col-span-7 order-2 lg:order-1">
-                            <div className="relative rounded-2xl overflow-hidden" style={{
-                                background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.5) 0%, rgba(45, 38, 65, 0.6) 50%, rgba(55, 45, 75, 0.5) 100%)',
-                                boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.06), 0 20px 40px -12px rgba(0,0,0,0.3)',
-                                border: '1px solid rgba(212, 175, 55, 0.15)'
-                            }}>
-                                {/* Gold top & bottom border */}
-                                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent" />
-                                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
-
-                                {/* Tarot-style corner ornaments */}
-                                {/* Top-left */}
-                                <div className="absolute top-3 left-3 w-8 h-8 pointer-events-none">
-                                    <div className="absolute top-0 left-0 w-6 h-px bg-gradient-to-r from-yellow-500/50 to-transparent"></div>
-                                    <div className="absolute top-0 left-0 w-px h-6 bg-gradient-to-b from-yellow-500/50 to-transparent"></div>
-                                    <div className="absolute top-1.5 left-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
-                                </div>
-                                {/* Top-right */}
-                                <div className="absolute top-3 right-3 w-8 h-8 pointer-events-none">
-                                    <div className="absolute top-0 right-0 w-6 h-px bg-gradient-to-l from-yellow-500/50 to-transparent"></div>
-                                    <div className="absolute top-0 right-0 w-px h-6 bg-gradient-to-b from-yellow-500/50 to-transparent"></div>
-                                    <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
-                                </div>
-                                {/* Bottom-left */}
-                                <div className="absolute bottom-3 left-3 w-8 h-8 pointer-events-none">
-                                    <div className="absolute bottom-0 left-0 w-6 h-px bg-gradient-to-r from-yellow-500/50 to-transparent"></div>
-                                    <div className="absolute bottom-0 left-0 w-px h-6 bg-gradient-to-t from-yellow-500/50 to-transparent"></div>
-                                    <div className="absolute bottom-1.5 left-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
-                                </div>
-                                {/* Bottom-right */}
-                                <div className="absolute bottom-3 right-3 w-8 h-8 pointer-events-none">
-                                    <div className="absolute bottom-0 right-0 w-6 h-px bg-gradient-to-l from-yellow-500/50 to-transparent"></div>
-                                    <div className="absolute bottom-0 right-0 w-px h-6 bg-gradient-to-t from-yellow-500/50 to-transparent"></div>
-                                    <div className="absolute bottom-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500/30"></div>
-                                </div>
-
-                                {/* Side ornament lines */}
-                                <div className="absolute top-1/2 -translate-y-1/2 left-1 w-px h-16 bg-gradient-to-b from-transparent via-yellow-500/20 to-transparent pointer-events-none"></div>
-                                <div className="absolute top-1/2 -translate-y-1/2 right-1 w-px h-16 bg-gradient-to-b from-transparent via-yellow-500/20 to-transparent pointer-events-none"></div>
-
-                                {/* Small diamond ornaments on sides */}
-                                <div className="absolute top-1/2 -translate-y-1/2 left-2.5 w-1 h-1 rotate-45 bg-yellow-500/25 pointer-events-none"></div>
-                                <div className="absolute top-1/2 -translate-y-1/2 right-2.5 w-1 h-1 rotate-45 bg-yellow-500/25 pointer-events-none"></div>
-
-                                <div className="relative z-10 px-6 md:px-8 py-12 md:py-16 space-y-8 md:space-y-10">
-                                    {/* Section 1 */}
-                                    <div className="flex gap-4 items-start">
-                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">visibility</span>
-                                        </div>
-                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
-                                            {isPortuguese
-                                                ? 'Você já sentiu que precisa de um momento para refletir sobre si mesmo? O Tarot é um espelho da sua jornada, um convite para se conectar com sua intuição e evolução pessoal.'
-                                                : 'Have you ever felt the need for a moment to reflect on yourself? Tarot is a mirror of your journey, an invitation to connect with your intuition and personal evolution.'}
-                                        </p>
-                                    </div>
-
-                                    {/* Divider */}
-                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
-
-                                    {/* Section 2 */}
-                                    <div className="flex gap-4 items-start">
-                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">auto_awesome</span>
-                                        </div>
-                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
-                                            {isPortuguese
-                                                ? 'A Carta do Dia oferece um insight diário exclusivo — energia, orientação e inspiração para enfrentar desafios e celebrar conquistas. Um lembrete do universo para alinhar seus objetivos.'
-                                                : 'The Daily Card offers an exclusive daily insight — energy, guidance and inspiration to face challenges and celebrate victories. A reminder from the universe to align your goals.'}
-                                        </p>
-                                    </div>
-
-                                    {/* Divider */}
-                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
-
-                                    {/* Section 3 */}
-                                    <div className="flex gap-4 items-start">
-                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">school</span>
-                                        </div>
-                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
-                                            {isPortuguese
-                                                ? 'Consultas rápidas para explorar temas específicos e uma biblioteca completa que ensina cada carta, cada símbolo — do iniciante ao avançado, passo a passo.'
-                                                : 'Quick consultations to explore specific themes and a complete library teaching each card, each symbol — from beginner to advanced, step by step.'}
-                                        </p>
-                                    </div>
-
-                                    {/* Divider */}
-                                    <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
-
-                                    {/* Section 4 */}
-                                    <div className="flex gap-4 items-start">
-                                        <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-yellow-400/80 text-sm">psychology</span>
-                                        </div>
-                                        <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
-                                            {isPortuguese
-                                                ? 'A experiência digital mantém toda a profundidade simbólica e energia de cada carta, combinando praticidade e clareza em leituras acessíveis a qualquer hora, em qualquer lugar.'
-                                                : 'The digital experience maintains all the symbolic depth and energy of each card, combining practicality and clarity in readings accessible anytime, anywhere.'}
-                                        </p>
-                                    </div>
-                                </div>
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div className="space-y-8 text-center lg:text-left">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/40 bg-primary/10 backdrop-blur-md">
+                                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                <span className="text-xs uppercase tracking-[0.2em] text-primary font-bold">
+                                    {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
+                                </span>
                             </div>
 
-                            {/* Discrete CTA buttons */}
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-                                <button
-                                    onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-purple-400/25 text-sm text-gray-300 hover:text-white hover:border-purple-400/50 hover:bg-purple-500/10 transition-all duration-300"
-                                >
-                                    <span className="material-symbols-outlined text-base text-purple-400/70 group-hover:text-purple-300">style</span>
-                                    <span>{isPortuguese ? 'Comece sua primeira leitura' : 'Start your first reading'}</span>
-                                    <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
-                                </button>
+                            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                {isPortuguese ? 'Decifre os 22 Arquétipos da Sua Alma' : 'Decode the 22 Archetypes of Your Soul'}
+                            </h2>
+
+                            <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
+                                {isPortuguese
+                                    ? 'Um ebook exclusivo para aprofundar sua pr�tica com os Arcanos Maiores e transformar leitura em autoconhecimento aplicado.'
+                                    : 'An exclusive ebook to deepen your Major Arcana practice and turn reading into applied self-knowledge.'}
+                            </p>
+
+                            <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start items-stretch sm:items-center lg:items-start">
                                 <button
                                     onClick={() => {
-                                        const journeySection = document.querySelector('[data-section="journey"]');
-                                        if (journeySection) journeySection.scrollIntoView({ behavior: 'smooth' });
+                                        if (!user || isGuest) {
+                                            setAuthModalMode('register');
+                                            setShowAuthModal(true);
+                                            return;
+                                        }
+                                        if (tier === 'free') {
+                                            navigate('/checkout');
+                                            return;
+                                        }
+                                        navigate('/arquivo-arcano');
                                     }}
-                                    className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-yellow-500/20 text-sm text-gray-400 hover:text-yellow-200 hover:border-yellow-500/40 hover:bg-yellow-500/5 transition-all duration-300"
+                                    className="group relative w-full sm:w-auto px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
                                 >
-                                    <span className="material-symbols-outlined text-base text-yellow-500/60 group-hover:text-yellow-400">explore</span>
-                                    <span>{isPortuguese ? 'Explore a Jornada do Herói' : 'Explore the Hero\'s Journey'}</span>
-                                    <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
+                                    <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2">
+                                        {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </span>
+                                </button>
+                                <button
+                                    onClick={() => navigate('/arquivo-arcano')}
+                                    className="group w-full sm:w-auto px-4 py-3 md:px-6 md:py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-[10px] md:text-xs"
+                                >
+                                    <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400">
+                                        {isPortuguese ? 'Ver eBook' : 'View eBook'}
+                                        <span className="material-symbols-outlined text-sm">auto_stories</span>
+                                    </span>
                                 </button>
                             </div>
                         </div>
 
-                        {/* Right: Mini Tarot Cards Mockup */}
-                        <div className="lg:col-span-5 flex items-center justify-center order-1 lg:order-2 -mt-4 lg:-mt-8">
-                            <div className="relative">
-                                {/* Purple glow behind cards */}
-                                <div className="absolute inset-0 scale-[2.5] rounded-full bg-purple-500/10 blur-3xl pointer-events-none"></div>
-
-                                {/* Subtle white stars around mockup */}
-                                <div className="absolute -top-10 -left-6 w-[3px] h-[3px] rounded-full bg-white/30"></div>
-                                <div className="absolute -top-5 right-4 w-[2px] h-[2px] rounded-full bg-white/25"></div>
-                                <div className="absolute top-1/3 -left-12 w-[2px] h-[2px] rounded-full bg-white/20"></div>
-                                <div className="absolute top-1/2 -right-10 w-[3px] h-[3px] rounded-full bg-white/15"></div>
-                                <div className="absolute -bottom-6 left-5 w-[2px] h-[2px] rounded-full bg-white/25"></div>
-                                <div className="absolute -bottom-10 right-12 w-[3px] h-[3px] rounded-full bg-white/20"></div>
-                                <div className="absolute bottom-1/3 -left-10 w-[2px] h-[2px] rounded-full bg-white/15"></div>
-                                <div className="absolute top-12 -right-6 w-[2px] h-[2px] rounded-full bg-white/20"></div>
-
-                                <div className="relative flex items-end justify-center gap-5 py-6">
-                                    {[TAROT_CARDS[1], TAROT_CARDS[2], TAROT_CARDS[5]].map((card, i) => {
-                                        const rotations = [-8, 0, 8];
-                                        const yOffsets = [10, 0, 10];
-                                        return (
-                                            <div key={`story-card-${i}`} className="relative transition-transform duration-500" style={{
-                                                transform: `rotate(${rotations[i]}deg) translateY(${yOffsets[i]}px)`,
-                                            }}>
-                                                <div className="w-[100px] h-[165px] sm:w-[115px] sm:h-[188px] md:w-[130px] md:h-[213px] rounded-lg overflow-hidden" style={{
-                                                    border: '1.5px solid rgba(212, 175, 55, 0.25)',
-                                                    boxShadow: i === 1
-                                                        ? '0 16px 40px rgba(0,0,0,0.5), 0 0 30px rgba(135, 95, 175, 0.25)'
-                                                        : '0 10px 25px rgba(0,0,0,0.4), 0 0 20px rgba(135, 95, 175, 0.1)',
-                                                }}>
-                                                    <img src={card.imageUrl} alt={card.name_pt} className="w-full h-full object-cover" loading="lazy" />
-                                                </div>
+                        <div className="relative flex justify-center lg:justify-end lg:-translate-x-14">
+                            <div className="absolute w-[145%] h-[145%] bg-gradient-to-r from-purple-600/30 via-pink-500/15 to-transparent blur-[100px] -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                            <div className="home-ebook-container w-[210px] sm:w-64 md:w-80 lg:w-96 relative home-ebook-float overflow-hidden sm:overflow-visible pb-2 sm:pb-0">
+                                <div className="absolute top-3 right-3 z-30 bg-red-600 text-white text-[10px] tracking-wide px-2.5 py-1 rounded-md shadow-lg">
+                                    Ebook Exclusivo
+                                </div>
+                                <div className="home-ebook-cover aspect-[2/3] rounded-r-md border-l-2 sm:border-l-4 border-gray-900 relative overflow-hidden bg-gradient-to-b from-[#120724] via-[#1b0833] to-[#230b3f] mx-auto">
+                                    <div className="home-ebook-frame border border-yellow-500/45 rounded-sm p-3 sm:p-4">
+                                        <div className="home-ebook-content h-full flex flex-col justify-between">
+                                            <div className="w-full flex justify-between opacity-60">
+                                                <div className="w-4 h-4 border-t border-l border-yellow-500/80"></div>
+                                                <div className="w-4 h-4 border-t border-r border-yellow-500/80"></div>
                                             </div>
-                                        );
-                                    })}
+
+                                            <div className="text-center space-y-1 sm:space-y-2 mt-3 sm:mt-6">
+                                                <p className="text-[9px] sm:text-[10px] italic text-white/80" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                    {isPortuguese ? 'Um ebook exclusivo por' : 'An exclusive ebook by'}
+                                                </p>
+                                                <h3 className="text-white tracking-widest text-[34px] sm:text-3xl font-semibold leading-[0.95]" style={{ fontFamily: "'Crimson Text', serif" }}>ZAYA TAROT</h3>
+                                                <p className="text-[9px] sm:text-[10px] italic text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                    {isPortuguese ? 'Sabedoria ancestral para o caminho moderno' : 'Ancestral wisdom for the modern path'}
+                                                </p>
+                                                <div className="h-px w-44 bg-yellow-500/60 mx-auto"></div>
+                                            </div>
+
+                                            <div className="flex justify-center mt-3 sm:mt-6">
+                                                <svg viewBox="0 0 280 120" className="w-40 sm:w-52 h-auto text-yellow-500/90">
+                                                    <ellipse cx="140" cy="60" rx="92" ry="46" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                                                    <ellipse cx="140" cy="60" rx="82" ry="38" fill="none" stroke="currentColor" strokeWidth="1" />
+                                                    <circle cx="140" cy="60" r="4.5" fill="currentColor" />
+                                                    <circle cx="58" cy="60" r="2.5" fill="currentColor" />
+                                                    <circle cx="222" cy="60" r="2.5" fill="currentColor" />
+                                                    <circle cx="140" cy="22" r="2.5" fill="currentColor" />
+                                                    <circle cx="140" cy="98" r="2.5" fill="currentColor" />
+                                                </svg>
+                                            </div>
+
+                                            <div className="text-center mt-1 sm:mt-2">
+                                                <h4 className="text-gradient-gold text-[38px] sm:text-5xl leading-[0.9]" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                    {isPortuguese ? 'Jornada do Heroi' : 'Hero Journey'}
+                                                </h4>
+                                                <p className="text-white text-[12px] sm:text-lg mt-1 sm:mt-3" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                    {isPortuguese ? 'Os 22 Arcanos Maiores do Tarot' : 'The 22 Major Arcana of Tarot'}
+                                                </p>
+                                                <p className="italic text-[7px] sm:text-[10px] mt-1.5 sm:mt-6 px-4 sm:px-8 text-gradient-gold" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                    {isPortuguese
+                                                        ? 'Uma jornada de autoconhecimento atraves dos arquetipos ancestrais do Tarot'
+                                                        : 'A self-knowledge journey through the ancestral archetypes of Tarot'}
+                                                </p>
+                                                <div className="h-px w-40 sm:w-44 bg-yellow-500/50 mx-auto mt-1.5 sm:mt-4"></div>
+                                                <p className="text-gradient-gold uppercase tracking-widest text-[8px] sm:text-[11px] mt-1 sm:mt-3 font-semibold" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                    {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
+                                                </p>
+                                                <p className="text-white/70 text-[7px] sm:text-[9px] mt-0.5 sm:mt-1" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                    {isPortuguese ? 'Material exclusivo para desenvolvimento pessoal e espiritual' : 'Exclusive material for personal and spiritual development'}
+                                                </p>
+                                            </div>
+
+                                            <div className="w-full flex justify-between opacity-60 mt-3">
+                                                <div className="w-4 h-4 border-b border-l border-yellow-500/80"></div>
+                                                <div className="w-4 h-4 border-b border-r border-yellow-500/80"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-black/60 to-transparent z-20"></div>
+                                </div>
+                                <div className="hidden sm:block home-ebook-page absolute top-2 -right-8 w-[82%] h-[98%] rounded-r-md border border-gray-700/90 -z-10 bg-[#2a193d]"></div>
+                                <div className="hidden md:block home-ebook-page absolute top-4 -right-14 w-[74%] h-[96%] rounded-r-md border border-gray-700/80 -z-20 bg-[#231533]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-16 md:mt-24">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+                            <div className="lg:col-span-7 order-2 lg:order-1">
+                                <div className="relative rounded-2xl overflow-hidden" style={{
+                                    background: 'linear-gradient(135deg, rgba(60, 50, 80, 0.5) 0%, rgba(45, 38, 65, 0.6) 50%, rgba(55, 45, 75, 0.5) 100%)',
+                                    boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.06), 0 20px 40px -12px rgba(0,0,0,0.3)',
+                                    border: '1px solid rgba(212, 175, 55, 0.15)'
+                                }}>
+                                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent" />
+                                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
+
+                                    <div className="relative z-10 px-6 md:px-8 py-12 md:py-16 space-y-8 md:space-y-10">
+                                        <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                            {isPortuguese ? 'Por que o Tarot?' : 'Why Tarot?'}
+                                        </h3>
+                                        <p className="text-gray-400 text-base md:text-lg lg:text-xl font-light max-w-3xl leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            {isPortuguese
+                                                ? 'Para quem busca autoconhecimento, clareza e equilibrio, o Tarot e uma ferramenta de reflexao profunda.'
+                                                : 'For those seeking self-knowledge, clarity and balance, Tarot is a tool for deep reflection.'}
+                                        </p>
+
+                                        <div className="flex gap-4 items-start">
+                                            <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-yellow-400/80 text-sm">visibility</span>
+                                            </div>
+                                            <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                                {isPortuguese
+                                                    ? 'Voce ja sentiu que precisa de um momento para refletir sobre si mesmo? O Tarot e um espelho da sua jornada e um convite para se conectar com sua intuicao.'
+                                                    : 'Have you ever felt the need for a moment to reflect on yourself? Tarot mirrors your journey and invites you to connect with your intuition.'}
+                                            </p>
+                                        </div>
+
+                                        <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
+
+                                        <div className="flex gap-4 items-start">
+                                            <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-yellow-400/80 text-sm">auto_awesome</span>
+                                            </div>
+                                            <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                                {isPortuguese
+                                                    ? 'A Carta do Dia oferece insight diario com energia, orientacao e inspiracao para enfrentar desafios e celebrar conquistas.'
+                                                    : 'The Daily Card offers daily insight with energy, guidance and inspiration to face challenges and celebrate wins.'}
+                                            </p>
+                                        </div>
+
+                                        <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
+
+                                        <div className="flex gap-4 items-start">
+                                            <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-yellow-400/80 text-sm">school</span>
+                                            </div>
+                                            <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                                {isPortuguese
+                                                    ? 'Consultas rapidas para temas especificos e uma biblioteca completa que ensina cada carta e cada simbolo, do iniciante ao avancado.'
+                                                    : 'Quick consultations for specific themes and a full library that teaches every card and symbol, from beginner to advanced.'}
+                                            </p>
+                                        </div>
+
+                                        <div className="h-px mx-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)' }}></div>
+
+                                        <div className="flex gap-4 items-start">
+                                            <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-yellow-400/80 text-sm">psychology</span>
+                                            </div>
+                                            <p className="text-gray-300/90 text-sm md:text-base leading-relaxed font-light">
+                                                {isPortuguese
+                                                    ? 'A experiencia digital mantem a profundidade simbolica de cada carta, com praticidade e clareza em leituras acessiveis a qualquer hora.'
+                                                    : 'The digital experience preserves the symbolic depth of each card, with practical and clear readings anytime.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="lg:col-span-5 flex items-stretch justify-center order-1 lg:order-2">
+                                <div className="relative w-full min-h-[240px] md:min-h-[320px] overflow-hidden">
+                                    <div className="absolute inset-0 scale-[1.35] rounded-full bg-gradient-to-br from-purple-500/16 via-purple-400/10 to-transparent blur-3xl pointer-events-none"></div>
+                                    <div className="absolute top-8 left-8 w-[2px] h-[2px] rounded-full bg-white/30"></div>
+                                    <div className="absolute top-16 right-14 w-[1.5px] h-[1.5px] rounded-full bg-white/24"></div>
+                                    <div className="absolute top-1/3 left-1/4 w-[1.5px] h-[1.5px] rounded-full bg-white/22"></div>
+                                    <div className="absolute top-1/2 right-1/3 w-[2px] h-[2px] rounded-full bg-white/18"></div>
+                                    <div className="absolute bottom-12 left-12 w-[2px] h-[2px] rounded-full bg-white/20"></div>
+                                    <div className="absolute bottom-16 right-10 w-[1.5px] h-[1.5px] rounded-full bg-white/20"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-
             {/* WhatsApp Daily Card Subscription Section */}
             <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 pb-32 md:pb-48 lg:pb-64" style={{ backgroundColor: '#110e1a' }}>
                 <style>{`
@@ -1604,7 +1730,6 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-
             {/* Features Presentation Section */}
             <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-[#1a1628] overflow-hidden">
                 {/* Decorative Stars */}
