@@ -1,4 +1,4 @@
-import { TranslationKeys } from './pt';
+﻿import { TranslationKeys } from './pt';
 
 export const en: TranslationKeys = {
   // Header
@@ -43,9 +43,9 @@ export const en: TranslationKeys = {
     recommended: "Recommended",
     startNow: "Start Now",
     accessArchive: "Access Arcane Archive",
-    cancelAnytime: "Cancel anytime • No commitment",
+    cancelAnytime: "Cancel anytime - No commitment",
     features: {
-      dailyReadings: "1 reading per day",
+      dailyReadings: "2 readings per day",
       basicAccess: "Basic card access",
       simpleInterpretation: "Simple interpretation",
       noAI: "No AI analysis",
@@ -62,7 +62,7 @@ export const en: TranslationKeys = {
       completeHistoryDesc: "All your readings saved",
       patternAnalysisDesc: "Identify trends in your journey",
       exclusiveContentDesc: "Special spreads and guides",
-      detailedReportsDesc: "PDF export",
+      detailedReportsDesc: "Advanced journey insights",
       adFree: "Ad-free",
       adFreeDesc: "Pure and focused experience",
     },
@@ -500,3 +500,6 @@ export const en: TranslationKeys = {
     noCardsFound: "No cards found",
   },
 };
+
+
+

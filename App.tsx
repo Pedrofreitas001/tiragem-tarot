@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
+﻿import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
@@ -36,6 +36,8 @@ import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, N
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 import { TAROT_CARDS } from './tarotData';
 import { ZODIAC_SIGNS, ZODIAC_ORDER, ELEMENT_COLORS } from './data/zodiacData';
+import { generateEbookPdf, getEbookInfo } from './services/ebookPdfService';
+import { WhatsAppShowcaseSection } from './components/WhatsAppShowcaseSection';
 
 // Lazy-loaded components (route-level code splitting)
 const DailyCard = lazy(() => import('./components/DailyCard').then(m => ({ default: m.DailyCard })));
@@ -187,7 +189,7 @@ const Header = () => {
         { icon: 'style', label: t.nav.tarot, path: isPortuguese ? '/jogos-de-tarot' : '/spreads', active: false },
         { icon: 'today', label: isPortuguese ? 'Carta do Dia' : 'Daily Card', path: isPortuguese ? '/carta-do-dia' : '/daily-card', active: isActive('/carta-do-dia') || isActive('/daily-card') },
         { icon: 'stars', label: isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign', path: isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign', active: isActive('/tarot-por-signo') || isActive('/tarot-by-sign') },
-        { icon: 'menu_book', label: isPortuguese ? 'Interpretação' : 'Interpretation', path: isPortuguese ? '/interpretacao' : '/interpretation', active: isActive('/interpretacao') || isActive('/interpretation') },
+        { icon: 'menu_book', label: isPortuguese ? 'Interpretacao' : 'Interpretation', path: isPortuguese ? '/interpretacao' : '/interpretation', active: isActive('/interpretacao') || isActive('/interpretation') },
         { icon: 'auto_stories', label: t.nav.cardMeanings, path: exploreRoute, active: isActive('/explore') || isActive(exploreRoute) },
         { icon: 'history', label: t.nav.history, path: '/history', active: isActive('/history') },
     ];
@@ -215,7 +217,7 @@ const Header = () => {
                                 {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
                             </button>
                             <button onClick={() => navigate(isPortuguese ? '/interpretacao' : '/interpretation')} className={`text-sm font-medium transition-colors ${(isActive('/interpretacao') || isActive('/interpretation')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
-                                {isPortuguese ? 'Interpretação' : 'Interpretation'}
+                                {isPortuguese ? 'Interpretacao' : 'Interpretation'}
                             </button>
                             <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.cardMeanings}
@@ -256,7 +258,7 @@ const Header = () => {
                         {Array.from({ length: 16 }).map((_, i) => (
                             <span key={i} className="text-white text-[11px] font-medium mx-8 tracking-wide flex-shrink-0">
                                 Assine o Premium com 15% de desconto
-                                <span className="mx-4 text-white/40">✦</span>
+                                <span className="mx-4 text-white/40">*</span>
                             </span>
                         ))}
                     </div>
@@ -340,7 +342,7 @@ const Footer = () => {
                         <h4 className="text-white font-bold text-sm mb-4">{t.footer.support}</h4>
                         <div className="flex flex-col gap-2">
                             <button onClick={() => navigate(isPortuguese ? '/privacidade' : '/privacy')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">
-                                {isPortuguese ? 'Política de Privacidade' : 'Privacy Policy'}
+                                {isPortuguese ? 'Politica de Privacidade' : 'Privacy Policy'}
                             </button>
                             <button onClick={() => navigate(isPortuguese ? '/termos' : '/terms')} className="text-gray-400 text-sm hover:text-primary text-left transition-colors">
                                 {isPortuguese ? 'Termos de Uso' : 'Terms of Use'}
@@ -374,7 +376,6 @@ const Home = () => {
     const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [showJourneyStories, setShowJourneyStories] = useState(false);
-    const [zoomedGalleryCard, setZoomedGalleryCard] = useState<{ name: string; img: string; vibracao: string; significado: string; energia: string; mantra: string } | null>(null);
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const { user, incrementReadingCount, tier, isGuest } = useAuth();
     const { isPortuguese: langIsPortuguese } = useLanguage();
@@ -382,6 +383,7 @@ const Home = () => {
     const [whatsappSubscribed, setWhatsappSubscribed] = useState(false);
     const [pendingGuestReading, setPendingGuestReading] = useState<any>(null);
     const [regeneratingReading, setRegeneratingReading] = useState(false);
+    const [downloadingEbook, setDownloadingEbook] = useState(false);
     const [heroCardIndices, setHeroCardIndices] = useState([0, 7, 14]);
 
     // Cycle hero mockup cards every 4 seconds
@@ -425,7 +427,44 @@ const Home = () => {
         }
     };
 
-    // Carregar status da inscrição do WhatsApp
+    const handleDownloadEbook = async () => {
+        if (!user || isGuest) {
+            setAuthModalMode('register');
+            setShowAuthModal(true);
+            return;
+        }
+
+        if (tier === 'free') {
+            setShowPaywallForm(true);
+            return;
+        }
+
+        try {
+            setDownloadingEbook(true);
+            const blob = await generateEbookPdf(() => {});
+            const info = getEbookInfo();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = info.fileName;
+            link.click();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Error downloading ebook:', err);
+        } finally {
+            setDownloadingEbook(false);
+        }
+    };
+
+    const handleEbookPrimaryCta = () => {
+        if (tier === 'premium') {
+            navigate('/');
+            return;
+        }
+        navigate('/checkout');
+    };
+
+    // Carregar status da inscricao do WhatsApp
     useEffect(() => {
         const loadWhatsAppStatus = async () => {
             if (!user) {
@@ -493,9 +532,9 @@ const Home = () => {
             backgroundAttachment: 'fixed'
         }}>
             <SEO
-                title={isPortuguese ? 'Tiragem de Tarot Online Grátis | Leitura de Cartas' : 'Free Online Tarot Reading | Card Reading'}
+                title={isPortuguese ? 'Tiragem de Tarot Online Gratis | Leitura de Cartas' : 'Free Online Tarot Reading | Card Reading'}
                 description={isPortuguese
-                    ? 'Descubra seu destino com tiragem de tarot online grátis. Leitura de cartas profissional com interpretações detalhadas. Tarot do amor, carreira e orientação espiritual.'
+                    ? 'Descubra seu destino com tiragem de tarot online gratis. Leitura de cartas profissional com interpretacoes detalhadas. Tarot do amor, carreira e orientacao espiritual.'
                     : 'Discover your destiny with free online tarot reading. Professional card reading with detailed interpretations.'}
                 path="/"
             />
@@ -510,7 +549,7 @@ const Home = () => {
                         <div className="flex-1 text-center sm:text-left">
                             <p className="text-white text-sm font-medium">
                                 {isPortuguese
-                                    ? 'Você tinha uma tiragem pendente! Deseja gerar a leitura completa com IA agora?'
+                                    ? 'Voce tinha uma tiragem pendente! Deseja gerar a leitura completa com IA agora?'
                                     : 'You had a pending reading! Would you like to generate the full AI reading now?'}
                             </p>
                         </div>
@@ -622,7 +661,7 @@ const Home = () => {
                                 <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
                                     <span className="block mt-8 lg:mt-12">
                                         {isPortuguese
-                                            ? 'Um Tarot digital para registrar padrões, refletir escolhas e acompanhar sua jornada simbólica.'
+                                            ? 'Um Tarot digital para registrar padroes, refletir escolhas e acompanhar sua jornada simbolica.'
                                             : 'A digital Tarot to record patterns, reflect on choices, and track your symbolic journey.'}
                                     </span>
                                 </p>
@@ -650,22 +689,26 @@ const Home = () => {
                             </div>
 
                             {/* Subtle feature badges */}
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-4 justify-items-start lg:flex lg:flex-wrap lg:gap-5 lg:justify-start">
-                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                            <div className="flex flex-wrap gap-x-4 gap-y-3 pt-4 justify-center lg:justify-start">
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base w-full sm:w-auto sm:min-w-[220px] justify-center lg:justify-start">
                                     <span className="material-symbols-outlined text-green-500/80 text-lg">chat</span>
                                     <span>{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
                                 </div>
-                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base w-full sm:w-auto sm:min-w-[220px] justify-center lg:justify-start">
                                     <span className="material-symbols-outlined text-purple-400/80 text-lg">all_inclusive</span>
                                     <span>{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
                                 </div>
-                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base w-full sm:w-auto sm:min-w-[220px] justify-center lg:justify-start">
                                     <span className="material-symbols-outlined text-yellow-500/80 text-lg">history</span>
-                                    <span>{isPortuguese ? 'Histórico da sua jornada' : 'Your journey history'}</span>
+                                    <span>{isPortuguese ? 'Historico da sua jornada' : 'Your journey history'}</span>
                                 </div>
-                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base">
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base w-full sm:w-auto sm:min-w-[220px] justify-center lg:justify-start">
                                     <span className="material-symbols-outlined text-blue-400/80 text-lg">auto_awesome</span>
-                                    <span>{isPortuguese ? 'Interpretação completa' : 'Complete interpretation'}</span>
+                                    <span>{isPortuguese ? 'Interpretacao completa' : 'Complete interpretation'}</span>
+                                </div>
+                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base w-full sm:w-auto sm:min-w-[220px] justify-center lg:justify-start">
+                                    <span className="material-symbols-outlined text-amber-400/80 text-lg">menu_book</span>
+                                    <span>{isPortuguese ? 'E-book Arquivo Arcano' : 'Arcane Archive e-book'}</span>
                                 </div>
                             </div>
                         </div>
@@ -715,7 +758,7 @@ const Home = () => {
                                     {/* Header */}
                                     <div className="flex items-center justify-between px-5 pt-4 pb-3">
                                         <div className="flex items-center gap-1.5">
-                                            <span className="text-yellow-400/80 text-xs">✦</span>
+                                            <span className="text-yellow-400/80 text-xs">*</span>
                                             <span className="text-gray-100/90 text-[11px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
                                         </div>
                                         <div className="text-right">
@@ -829,13 +872,13 @@ const Home = () => {
                             <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 78
                             </div>
-                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Arcanos Disponíveis' : 'Available Arcana'}</div>
+                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Arcanos Disponiveis' : 'Available Arcana'}</div>
                         </div>
                         <div className="text-center group">
                             <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 24/7
                             </div>
-                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Disponível Sempre' : 'Always Available'}</div>
+                            <div className="text-gray-400 text-[8px] sm:text-[10px] md:text-xs lg:text-sm">{isPortuguese ? 'Disponivel Sempre' : 'Always Available'}</div>
                         </div>
                     </div>
                 </div>
@@ -972,7 +1015,7 @@ const Home = () => {
                 </div>
             </section>
             {/* Premium Ebook + Why Tarot Combined Section */}
-            <section className="relative z-10 pt-28 md:pt-40 pb-20 md:pb-28 px-4 md:px-6 bg-[#1a1628] overflow-hidden">
+            <section className="relative z-10 pt-16 md:pt-24 lg:pt-32 pb-12 md:pb-16 lg:pb-24 px-4 md:px-6 bg-[#1a1628] overflow-hidden">
                 <style>{`
                     .home-ebook-container { perspective: 1500px; }
                     .home-ebook-cover {
@@ -1084,44 +1127,40 @@ const Home = () => {
                             </div>
 
                             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Decifre os 22 Arquétipos da Sua Alma' : 'Decode the 22 Archetypes of Your Soul'}
+                                {isPortuguese ? 'Decifre os 22 Arquetipos da Sua Alma' : 'Decode the 22 Archetypes of Your Soul'}
                             </h2>
 
                             <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
                                 {isPortuguese
-                                    ? 'Um ebook exclusivo para aprofundar sua pr�tica com os Arcanos Maiores e transformar leitura em autoconhecimento aplicado.'
+                                    ? 'Um ebook exclusivo para aprofundar sua pratica com os Arcanos Maiores e transformar leitura em autoconhecimento aplicado.'
                                     : 'An exclusive ebook to deepen your Major Arcana practice and turn reading into applied self-knowledge.'}
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start items-stretch sm:items-center lg:items-start">
                                 <button
-                                    onClick={() => {
-                                        if (!user || isGuest) {
-                                            setAuthModalMode('register');
-                                            setShowAuthModal(true);
-                                            return;
-                                        }
-                                        if (tier === 'free') {
-                                            navigate('/checkout');
-                                            return;
-                                        }
-                                        navigate('/arquivo-arcano');
-                                    }}
+                                    onClick={handleEbookPrimaryCta}
                                     className="group relative w-full sm:w-auto px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
                                     <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2">
-                                        {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                        {tier === 'premium'
+                                            ? (isPortuguese ? 'Ir para Home' : 'Go to Home')
+                                            : (isPortuguese ? 'Assinar Premium' : 'Subscribe Premium')}
                                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                     </span>
                                 </button>
                                 <button
-                                    onClick={() => navigate('/arquivo-arcano')}
+                                    onClick={handleDownloadEbook}
+                                    disabled={downloadingEbook}
                                     className="group w-full sm:w-auto px-4 py-3 md:px-6 md:py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-[10px] md:text-xs"
                                 >
                                     <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400">
-                                        {isPortuguese ? 'Ver eBook' : 'View eBook'}
-                                        <span className="material-symbols-outlined text-sm">auto_stories</span>
+                                        {downloadingEbook
+                                            ? (isPortuguese ? 'Gerando download...' : 'Preparing download...')
+                                            : (isPortuguese ? 'Baixar E-book' : 'Download E-book')}
+                                        <span className="material-symbols-outlined text-sm">
+                                            download
+                                        </span>
                                     </span>
                                 </button>
                             </div>
@@ -1199,7 +1238,7 @@ const Home = () => {
                         </div>
                     </div>
 
-                    <div className="mt-16 md:mt-24">
+                    <div className="mt-3 sm:mt-5 md:mt-8 lg:mt-20">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
                             <div className="lg:col-span-7 order-2 lg:order-1">
                                 <div className="relative rounded-2xl overflow-hidden" style={{
@@ -1288,443 +1327,59 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-            {/* WhatsApp Daily Card Subscription Section */}
-            <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 pb-32 md:pb-48 lg:pb-64" style={{ backgroundColor: '#110e1a' }}>
-                <style>{`
-                    .home-glass-card {
-                        background: rgba(255, 255, 255, 0.04);
-                        backdrop-filter: blur(24px);
-                        border: 1px solid rgba(255, 255, 255, 0.1);
-                    }
-                    .home-glow-border:focus-within {
-                        border-color: #A855F7;
-                        box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
-                    }
-                    .home-frequency-card input:checked + div {
-                        border-color: #A855F7;
-                        background: rgba(168, 85, 247, 0.15);
-                        box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
-                    }
-                    .text-gradient-gold-home {
-                        background: linear-gradient(180deg, #fffebb 0%, #e0c080 40%, #b88a44 100%);
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                        background-clip: text;
-                    }
-                `}</style>
-
-                {/* Static star dots */}
-                <div className="absolute top-[8%] left-[5%] w-[2px] h-[2px] rounded-full bg-white/35 z-0"></div>
-                <div className="absolute top-[14%] right-[12%] w-[1.5px] h-[1.5px] rounded-full bg-white/25 z-0"></div>
-                <div className="absolute top-[28%] left-[10%] w-[1px] h-[1px] rounded-full bg-white/30 z-0"></div>
-                <div className="absolute top-[22%] right-[8%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
-                <div className="absolute top-[42%] left-[4%] w-[1.5px] h-[1.5px] rounded-full bg-white/35 z-0"></div>
-                <div className="absolute top-[50%] right-[18%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
-                <div className="absolute top-[35%] left-[48%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
-                <div className="absolute top-[65%] left-[15%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
-                <div className="absolute top-[58%] right-[5%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
-                <div className="absolute top-[75%] left-[35%] w-[2px] h-[2px] rounded-full bg-white/20 z-0"></div>
-                <div className="absolute top-[82%] right-[25%] w-[1.5px] h-[1.5px] rounded-full bg-white/30 z-0"></div>
-                <div className="absolute top-[90%] left-[8%] w-[1px] h-[1px] rounded-full bg-white/35 z-0"></div>
-
-                <div className="max-w-6xl mx-auto relative z-10">
-                    {/* Feature Presentation Header */}
-                    <div className="text-left mb-14 md:mb-20 px-2">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold-home mb-6 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
-                        </h2>
-                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
-                            {isPortuguese
-                                ? 'Receba diariamente uma mensagem personalizada com orientações do tarot diretamente no seu celular.'
-                                : 'Receive daily personalized tarot guidance messages directly on your phone.'}
-                        </p>
+                        {/* WhatsApp Daily Card Subscription Section */}
+            <WhatsAppShowcaseSection
+                isPortuguese={isPortuguese}
+                showForm={false}
+                onPrimaryAction={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')}
+                primaryLabel={isPortuguese ? 'Receba sua mensagem do Tarot todos os dias' : 'Receive your Tarot message every day'}
+                className="bg-[#110e1a] pb-20"
+            />
+            {/* Social Proof - Community Carousel */}
+            <section className="relative z-10 mt-8 md:mt-12 px-4 md:px-6 py-14 md:py-16 bg-[#110e1a] overflow-hidden">
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="text-center mb-8 md:mb-10">
+                        <h3 className="text-3xl md:text-4xl lg:text-5xl text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Avaliacao da nossa comunidade' : 'Community rating'}
+                        </h3>
                     </div>
-
-                    {/* Gallery - Example Daily Card Downloads */}
-                    <div className="mb-16 md:mb-24 relative">
-                        {/* Purple flame blur behind gallery */}
-                        <div className="absolute -left-32 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/18 to-transparent blur-3xl pointer-events-none"></div>
-                        <div className="absolute -right-24 top-16 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-pink-500/12 to-transparent blur-3xl pointer-events-none"></div>
-
-                        {/* Cards Layout - Center card elevated, scaled down on mobile */}
-                        <style dangerouslySetInnerHTML={{
-                            __html: `
-                            .gallery-cards-wrapper { --gallery-scale: 1; }
-                            @media (max-width: 639px) { .gallery-cards-wrapper { --gallery-scale: 0.88; margin-bottom: -10%; } }
-                            @media (min-width: 640px) and (max-width: 767px) { .gallery-cards-wrapper { --gallery-scale: 0.92; margin-bottom: -6%; } }
-                            @media (min-width: 768px) and (max-width: 1023px) { .gallery-cards-wrapper { --gallery-scale: 0.95; margin-bottom: -3%; } }
-                            @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-                            .animate-scaleIn { animation: scaleIn 0.2s ease-out; }
-                            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-                            .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
-                        `}} />
-                        <div className="gallery-cards-wrapper relative z-10">
-                            <div className="flex items-end justify-center gap-4 md:gap-6 lg:gap-8 origin-top" style={{ transform: 'scale(var(--gallery-scale, 1))' }}>
-                                {[
-                                    { name: 'O Mundo', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg', vibracao: 'Completude e plenitude', significado: 'O Mundo representa a conclusão de um ciclo, a integração e a realização plena.', energia: 'Harmonia universal e gratidão profunda.', mantra: 'Eu celebro minha jornada.', featured: false },
-                                    { name: 'A Lua', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg', vibracao: 'Intuição e mistério', significado: 'A Lua ilumina o caminho oculto, revelando verdades que residem no inconsciente.', energia: 'Sensibilidade e conexão interior.', mantra: 'Confio na minha intuição.', featured: true },
-                                    { name: 'A Imperatriz', img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg', vibracao: 'Abundância e criação', significado: 'A Imperatriz simboliza fertilidade, nutrição e a força criativa da natureza.', energia: 'Amor incondicional e prosperidade.', mantra: 'Eu floresço em abundância.', featured: false },
-                                ].map((card) => (
-                                    <div
-                                        key={card.name}
-                                        className={`relative group transition-all duration-500 cursor-pointer ${card.featured ? 'w-[240px] -mb-2' : 'w-[195px] opacity-85'}`}
-                                        onClick={() => setZoomedGalleryCard(card)}
-                                    >
-                                        {/* Tap hint on mobile */}
-                                        <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1 text-gray-400/60 text-[8px] md:hidden z-20 whitespace-nowrap">
-                                            <span className="material-symbols-outlined text-[10px]">touch_app</span>
-                                            <span>{isPortuguese ? 'Toque para ampliar' : 'Tap to zoom'}</span>
-                                        </div>
-                                        <div className={`relative rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`} style={{
-                                            background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
-                                            border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
-                                        }}>
-                                            {/* Red Badge Header */}
-                                            <div className="bg-red-600 text-white text-[7px] font-bold uppercase tracking-wider text-center py-1.5 px-2">
-                                                {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
-                                            </div>
-                                            {/* Divider */}
-                                            <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
-                                            {/* Card Image */}
-                                            <div className="flex justify-center py-3 px-4">
-                                                <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${card.featured ? 'w-[120px] h-[190px]' : 'w-[95px] h-[152px]'}`} loading="lazy" />
-                                            </div>
-                                            {/* Card Name */}
-                                            <p className={`font-bold text-white text-center ${card.featured ? 'text-xs' : 'text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
-                                            {/* Vibração */}
-                                            <p className={`italic text-center px-2 mb-2 ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
-                                            {/* Significado */}
-                                            <div className="bg-white/5 rounded mx-2.5 px-2 py-1.5 mb-1.5">
-                                                <p className={`text-gray-300 leading-snug text-center ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.significado}</p>
-                                            </div>
-                                            {/* Energia */}
-                                            <div className="flex items-start gap-1.5 px-2.5 mb-2">
-                                                <span className="text-[6px] mt-0.5" style={{ color: '#d4af37' }}>●</span>
-                                                <div>
-                                                    <span className={`font-semibold uppercase tracking-wide ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>Energia</span>
-                                                    <p className={`text-gray-300 leading-snug ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.energia}</p>
-                                                </div>
-                                            </div>
-                                            {/* Divider */}
-                                            <div className="mx-2.5 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1.5"></div>
-                                            {/* Mantra */}
-                                            <div className="px-2.5 pb-2.5 text-center">
-                                                <p className={`font-semibold uppercase tracking-wide mb-1 ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>Mantra do Dia</p>
-                                                <div className="bg-white/5 rounded px-2 py-1.5 border border-yellow-500/15">
-                                                    <p className={`italic ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
-                                                </div>
-                                            </div>
-                                            {/* Footer */}
-                                            <p className="text-gray-500 text-[6px] tracking-wider text-center pb-2">zayatarot.com</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Zoom Modal */}
-                        {zoomedGalleryCard && (
-                            <div
-                                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn"
-                                onClick={() => setZoomedGalleryCard(null)}
-                            >
-                                <div className="relative w-full max-w-[320px] animate-scaleIn" onClick={(e) => e.stopPropagation()}>
-                                    <button
-                                        onClick={() => setZoomedGalleryCard(null)}
-                                        className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors flex items-center gap-1 text-xs"
-                                    >
-                                        <span className="material-symbols-outlined text-sm">close</span>
-                                        {isPortuguese ? 'Fechar' : 'Close'}
-                                    </button>
-                                    <div className="rounded-2xl overflow-hidden shadow-2xl" style={{
-                                        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
-                                        border: '1.5px solid rgba(212, 175, 55, 0.35)',
-                                    }}>
-                                        {/* Red Badge Header */}
-                                        <div className="bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider text-center py-2 px-4 rounded-t-2xl">
-                                            {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
-                                        </div>
-                                        <div className="mx-4 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
-                                        {/* Card Image */}
-                                        <div className="flex justify-center py-4 px-6">
-                                            <img src={zoomedGalleryCard.img} alt={zoomedGalleryCard.name} className="object-cover rounded-lg shadow-lg border border-yellow-500/20 w-[160px] h-[254px]" />
-                                        </div>
-                                        {/* Card Name */}
-                                        <p className="font-bold text-white text-center text-base" style={{ fontFamily: "'Crimson Text', serif" }}>{zoomedGalleryCard.name}</p>
-                                        {/* Vibração */}
-                                        <p className="italic text-center px-4 mb-3 text-sm" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{zoomedGalleryCard.vibracao}"</p>
-                                        {/* Significado */}
-                                        <div className="bg-white/5 rounded mx-4 px-3 py-2 mb-2">
-                                            <p className="text-gray-300 leading-relaxed text-center text-xs">{zoomedGalleryCard.significado}</p>
-                                        </div>
-                                        {/* Energia */}
-                                        <div className="flex items-start gap-2 px-4 mb-3">
-                                            <span className="text-xs mt-0.5" style={{ color: '#d4af37' }}>●</span>
-                                            <div>
-                                                <span className="font-semibold uppercase tracking-wide text-xs" style={{ color: '#d4af37' }}>Energia</span>
-                                                <p className="text-gray-300 leading-relaxed text-xs">{zoomedGalleryCard.energia}</p>
-                                            </div>
-                                        </div>
-                                        <div className="mx-4 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-2"></div>
-                                        {/* Mantra */}
-                                        <div className="px-4 pb-4 text-center">
-                                            <p className="font-semibold uppercase tracking-wide mb-1.5 text-xs" style={{ color: '#d4af37' }}>Mantra do Dia</p>
-                                            <div className="bg-white/5 rounded px-3 py-2 border border-yellow-500/15">
-                                                <p className="italic text-sm" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{zoomedGalleryCard.mantra}"</p>
-                                            </div>
-                                        </div>
-                                        <p className="text-gray-500 text-[8px] tracking-wider text-center pb-3">zayatarot.com</p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Form Card with Key Features */}
+                    <style>{`
+                        .community-scroll::-webkit-scrollbar { height: 6px; }
+                        .community-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 999px; }
+                        .community-scroll::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.45); border-radius: 999px; }
+                    `}</style>
                     <div className="relative">
-                        {/* Cosmic Flame Background */}
-                        <div className="absolute -left-40 -top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none"></div>
-                        <div className="absolute -right-32 -top-10 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/11 to-transparent blur-3xl pointer-events-none"></div>
-
-                        <div className="home-glass-card w-full max-w-4xl mx-auto rounded-xl sm:rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.5)] relative">
-                            {/* Subscriber Badge */}
-                            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 bg-red-600 text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-lg flex items-center gap-1.5">
-                                <span className="material-symbols-outlined text-[12px]">group</span>
-                                {isPortuguese ? '+ 2 mil assinantes' : '+ 2k subscribers'}
-                            </div>
-                            <div className="flex flex-col lg:flex-row items-stretch">
-                                {/* Form Content - Left */}
-                                <div className="flex-1 p-6 pt-12 sm:pt-6 lg:p-10">
-                                    <header className="mb-6 text-center lg:text-left">
-                                        <h3 className="font-display text-2xl md:text-3xl text-white mb-4 leading-tight">
-                                            {isPortuguese ? 'Cadastre-se Agora' : 'Sign Up Now'}
-                                        </h3>
-                                        <p className="text-gray-400 text-sm max-w-lg">
-                                            {isPortuguese
-                                                ? 'Preencha seus dados e comece a receber orientações místicas.'
-                                                : 'Fill in your details and start receiving mystic guidance.'}
-                                        </p>
-                                    </header>
-
-                                    <form action="#" className="space-y-5">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="space-y-1.5">
-                                                <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                                    {isPortuguese ? 'Nome Completo' : 'Full Name'}
-                                                </label>
-                                                <div className="relative group">
-                                                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">person</span>
-                                                    <input
-                                                        className="w-full pl-10 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
-                                                        placeholder={isPortuguese ? 'Seu nome' : 'Your name'}
-                                                        type="text"
-                                                    />
+                        <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-[#110e1a] to-transparent z-10"></div>
+                        <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-[#110e1a] to-transparent z-10"></div>
+                        <div className="community-scroll overflow-x-auto scroll-smooth pb-3">
+                            <div className="flex gap-4 md:gap-5 min-w-max px-1">
+                                {[
+                                    { name: 'Marina, SP', handle: '@marina.tarot', text: isPortuguese ? 'A Carta do Dia no WhatsApp me ajuda a comecar o dia com foco real.' : 'Daily Card on WhatsApp helps me start the day with real focus.' },
+                                    { name: 'Lucas, RJ', handle: '@lucas.arcano', text: isPortuguese ? 'O eBook do Arquivo Arcano e objetivo e muito util na pratica.' : 'The Arcane Archive ebook is objective and very practical.' },
+                                    { name: 'Ana, BH', handle: '@ana.intuicao', text: isPortuguese ? 'Assinei pela combinacao de carta diaria com eBook.' : 'I subscribed for the daily-card + ebook combo.' },
+                                    { name: 'Pedro, POA', handle: '@pedro.signos', text: isPortuguese ? 'Tarot por Signo e Carta do Dia viraram minha rotina da manha.' : 'Tarot by Sign and Daily Card became my morning routine.' },
+                                    { name: 'Julia, SSA', handle: '@julia.tarologa', text: isPortuguese ? 'Receber no WhatsApp e rapido e me poupa tempo.' : 'Receiving it on WhatsApp is quick and saves me time.' },
+                                    { name: 'Renata, REC', handle: '@renata.arcana', text: isPortuguese ? 'A combinacao da carta diaria com o eBook trouxe mais clareza.' : 'The daily card plus ebook combo brought more clarity.' },
+                                ].map((review, idx) => (
+                                    <article key={`social-${idx}`} className="w-[285px] md:w-[320px] rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-yellow-500/20 to-purple-500/25 border border-yellow-500/30 flex items-center justify-center text-yellow-300 font-bold text-sm">
+                                                    {review.name.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <p className="text-white text-sm font-semibold">{review.name}</p>
+                                                    <p className="text-gray-400 text-xs">{review.handle}</p>
                                                 </div>
                                             </div>
-                                            <div className="space-y-1.5">
-                                                <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">WhatsApp</label>
-                                                <div className="relative group">
-                                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 border-r border-white/10 pr-2">
-                                                        <img alt="Brasil Flag" className="w-4 h-auto rounded-sm opacity-80" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/32px-Flag_of_Brazil.svg.png" />
-                                                    </div>
-                                                    <input
-                                                        className="w-full pl-14 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white placeholder:text-gray-600 text-sm"
-                                                        placeholder="+55 (00) 00000-0000"
-                                                        type="tel"
-                                                    />
-                                                </div>
+                                            <div className="text-right">
+                                                <p className="text-yellow-400 text-sm font-semibold">5.0/5</p>
+                                                <p className="text-yellow-300/90 text-xs">★★★★★</p>
                                             </div>
                                         </div>
-
-                                        <div className="space-y-1.5">
-                                            <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                                {isPortuguese ? 'Estado' : 'State'}
-                                            </label>
-                                            <div className="relative group">
-                                                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors text-lg">location_on</span>
-                                                <select
-                                                    className="w-full pl-10 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:ring-0 focus:outline-none home-glow-border transition-all text-white appearance-none cursor-pointer text-sm"
-                                                    style={{ backgroundImage: 'none' }}
-                                                    defaultValue=""
-                                                >
-                                                    <option value="" disabled className="bg-[#1a1628] text-gray-400">
-                                                        {isPortuguese ? 'Selecione seu estado' : 'Select your state'}
-                                                    </option>
-                                                    <option value="AC" className="bg-[#1a1628]">Acre (AC)</option>
-                                                    <option value="AL" className="bg-[#1a1628]">Alagoas (AL)</option>
-                                                    <option value="AP" className="bg-[#1a1628]">Amapá (AP)</option>
-                                                    <option value="AM" className="bg-[#1a1628]">Amazonas (AM)</option>
-                                                    <option value="BA" className="bg-[#1a1628]">Bahia (BA)</option>
-                                                    <option value="CE" className="bg-[#1a1628]">Ceará (CE)</option>
-                                                    <option value="DF" className="bg-[#1a1628]">Distrito Federal (DF)</option>
-                                                    <option value="ES" className="bg-[#1a1628]">Espírito Santo (ES)</option>
-                                                    <option value="GO" className="bg-[#1a1628]">Goiás (GO)</option>
-                                                    <option value="MA" className="bg-[#1a1628]">Maranhão (MA)</option>
-                                                    <option value="MT" className="bg-[#1a1628]">Mato Grosso (MT)</option>
-                                                    <option value="MS" className="bg-[#1a1628]">Mato Grosso do Sul (MS)</option>
-                                                    <option value="MG" className="bg-[#1a1628]">Minas Gerais (MG)</option>
-                                                    <option value="PA" className="bg-[#1a1628]">Pará (PA)</option>
-                                                    <option value="PB" className="bg-[#1a1628]">Paraíba (PB)</option>
-                                                    <option value="PR" className="bg-[#1a1628]">Paraná (PR)</option>
-                                                    <option value="PE" className="bg-[#1a1628]">Pernambuco (PE)</option>
-                                                    <option value="PI" className="bg-[#1a1628]">Piauí (PI)</option>
-                                                    <option value="RJ" className="bg-[#1a1628]">Rio de Janeiro (RJ)</option>
-                                                    <option value="RN" className="bg-[#1a1628]">Rio Grande do Norte (RN)</option>
-                                                    <option value="RS" className="bg-[#1a1628]">Rio Grande do Sul (RS)</option>
-                                                    <option value="RO" className="bg-[#1a1628]">Rondônia (RO)</option>
-                                                    <option value="RR" className="bg-[#1a1628]">Roraima (RR)</option>
-                                                    <option value="SC" className="bg-[#1a1628]">Santa Catarina (SC)</option>
-                                                    <option value="SP" className="bg-[#1a1628]">São Paulo (SP)</option>
-                                                    <option value="SE" className="bg-[#1a1628]">Sergipe (SE)</option>
-                                                    <option value="TO" className="bg-[#1a1628]">Tocantins (TO)</option>
-                                                </select>
-                                                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-lg">expand_more</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-1.5">
-                                            <label className="text-[10px] font-semibold text-gray-400 ml-1 uppercase tracking-widest">
-                                                {isPortuguese ? 'Melhor Período' : 'Best Period'}
-                                            </label>
-                                            <div className="grid grid-cols-3 gap-2">
-                                                <label className="home-frequency-card cursor-pointer group">
-                                                    <input defaultChecked className="hidden" name="home-freq" type="radio" value="manha" />
-                                                    <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                        <span className="material-symbols-outlined text-lg mb-1 text-yellow-500 group-hover:scale-110 transition-transform">sunny</span>
-                                                        <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                            {isPortuguese ? 'Manhã' : 'Morning'}
-                                                        </span>
-                                                    </div>
-                                                </label>
-                                                <label className="home-frequency-card cursor-pointer group">
-                                                    <input className="hidden" name="home-freq" type="radio" value="tarde" />
-                                                    <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                        <span className="material-symbols-outlined text-lg mb-1 text-primary group-hover:scale-110 transition-transform">routine</span>
-                                                        <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                            {isPortuguese ? 'Tarde' : 'Afternoon'}
-                                                        </span>
-                                                    </div>
-                                                </label>
-                                                <label className="home-frequency-card cursor-pointer group">
-                                                    <input className="hidden" name="home-freq" type="radio" value="noite" />
-                                                    <div className="home-glass-card flex flex-col items-center justify-center py-2.5 px-2 rounded-xl transition-all border border-transparent group-hover:border-primary/50 text-center">
-                                                        <span className="material-symbols-outlined text-lg mb-1 text-blue-400 group-hover:scale-110 transition-transform">nightlight</span>
-                                                        <span className="text-[9px] font-bold text-gray-200 uppercase tracking-wider">
-                                                            {isPortuguese ? 'Noite' : 'Night'}
-                                                        </span>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label className="flex items-start gap-2.5 cursor-pointer group">
-                                                <div className="relative flex-shrink-0 mt-0.5">
-                                                    <input type="checkbox" className="peer sr-only" required />
-                                                    <div className="w-4 h-4 rounded border-2 border-white/20 bg-white/5 peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center group-hover:border-primary/50">
-                                                        <span className="material-symbols-outlined text-white opacity-0 peer-checked:opacity-100 transition-opacity" style={{ fontSize: '12px' }}>check</span>
-                                                    </div>
-                                                </div>
-                                                <span className="text-[11px] text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
-                                                    {isPortuguese
-                                                        ? 'Concordo em receber mensagens via WhatsApp.'
-                                                        : 'I agree to receive messages via WhatsApp.'}
-                                                </span>
-                                            </label>
-                                        </div>
-
-                                        <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
-                                            <button
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-
-                                                    // Guests/não logados: mostrar modal de autenticação
-                                                    if (!user || isGuest) {
-                                                        setAuthModalMode('register');
-                                                        setShowAuthModal(true);
-                                                        return;
-                                                    }
-
-                                                    // Usuários FREE: mostrar modal de upgrade para premium
-                                                    if (tier === 'free') {
-                                                        setShowPaywallForm(true);
-                                                        return;
-                                                    }
-
-                                                    // Usuários PREMIUM: abrir modal de configuração do WhatsApp
-                                                    if (tier === 'premium') {
-                                                        setShowWhatsAppModal(true);
-                                                        return;
-                                                    }
-                                                }}
-                                                className="w-full sm:w-auto flex-1 relative group overflow-hidden bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
-                                                type="button"
-                                            >
-                                                <span className="relative z-10 flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
-                                                    {tier === 'premium'
-                                                        ? (whatsappSubscribed
-                                                            ? (isPortuguese ? 'Inscrito' : 'Subscribed')
-                                                            : (isPortuguese ? 'Não Cadastrado' : 'Not Registered'))
-                                                        : (isPortuguese ? 'Começar a Receber' : 'Start Receiving')}
-                                                    <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
-                                                        {tier === 'premium' ? 'settings' : 'arrow_forward'}
-                                                    </span>
-                                                </span>
-                                                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                            </button>
-                                            <div className="flex items-center gap-1.5 text-[9px] text-gray-500 uppercase tracking-[0.15em]">
-                                                <span className="material-symbols-outlined text-[12px]">lock</span>
-                                                <p>{isPortuguese ? 'Dados protegidos' : 'Protected data'}</p>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                {/* Key Features - Right Side */}
-                                <div className="lg:w-[340px] bg-white/[0.02] border-l border-white/5 p-6 lg:p-8 flex flex-col justify-center gap-6">
-                                    {/* Feature 1 */}
-                                    <div className="flex items-start gap-4 group">
-                                        <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
-                                            <span className="material-symbols-outlined text-yellow-500 text-xl">auto_awesome</span>
-                                        </div>
-                                        <div>
-                                            <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {isPortuguese ? 'Personalizada' : 'Personalized'}
-                                            </h4>
-                                            <p className="text-gray-400 text-xs leading-relaxed">
-                                                {isPortuguese ? 'Cada carta é interpretada com inteligência artificial para trazer insights únicos.' : 'Each card is interpreted with AI to bring unique insights.'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    {/* Feature 2 */}
-                                    <div className="flex items-start gap-4 group">
-                                        <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
-                                            <span className="material-symbols-outlined text-yellow-500 text-xl">schedule</span>
-                                        </div>
-                                        <div>
-                                            <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {isPortuguese ? 'Horário Ideal' : 'Ideal Time'}
-                                            </h4>
-                                            <p className="text-gray-400 text-xs leading-relaxed">
-                                                {isPortuguese ? 'Escolha o melhor horário: manhã, tarde ou noite para receber sua mensagem.' : 'Choose the best time: morning, afternoon or evening to receive your message.'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    {/* Feature 3 */}
-                                    <div className="flex items-start gap-4 group">
-                                        <div className="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br from-yellow-500/15 to-yellow-600/5 border border-yellow-500/20 flex items-center justify-center group-hover:border-yellow-500/40 transition-all">
-                                            <span className="material-symbols-outlined text-yellow-500 text-xl">chat</span>
-                                        </div>
-                                        <div>
-                                            <h4 className="text-white text-sm font-semibold mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                {isPortuguese ? 'Via WhatsApp' : 'Via WhatsApp'}
-                                            </h4>
-                                            <p className="text-gray-400 text-xs leading-relaxed">
-                                                {isPortuguese ? 'Receba diretamente no seu WhatsApp com imagem e interpretação completa.' : 'Receive directly on your WhatsApp with image and full interpretation.'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                                        <p className="text-gray-300 text-sm leading-relaxed">{review.text}</p>
+                                    </article>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -1761,7 +1416,7 @@ const Home = () => {
                         </h2>
                         <p className="text-gray-400 text-lg md:text-xl max-w-2xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
                             {isPortuguese
-                                ? 'Uma experiência completa de autoconhecimento com tecnologia e sabedoria ancestral'
+                                ? 'Uma experiencia completa de autoconhecimento com tecnologia e sabedoria ancestral'
                                 : 'A complete self-discovery experience with technology and ancestral wisdom'}
                         </p>
                     </header>
@@ -1800,7 +1455,7 @@ const Home = () => {
                                     </div>
                                     <p className="text-gray-100 text-sm leading-relaxed font-light">
                                         {isPortuguese
-                                            ? 'Realize quantas tiragens desejar, sem restrições'
+                                            ? 'Realize quantas tiragens desejar, sem restricoes'
                                             : 'Perform as many readings as you wish'}
                                     </p>
                                 </div>
@@ -1809,12 +1464,12 @@ const Home = () => {
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">psychology</span>
                                         <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}
+                                            {isPortuguese ? 'Sintese com IA' : 'AI Synthesis'}
                                         </h3>
                                     </div>
                                     <p className="text-gray-100 text-sm leading-relaxed font-light">
                                         {isPortuguese
-                                            ? 'Interpretações profundas com IA avançada'
+                                            ? 'Interpretacoes profundas com IA avancada'
                                             : 'Deep interpretations with advanced AI'}
                                     </p>
                                 </div>
@@ -1828,7 +1483,7 @@ const Home = () => {
                                     </div>
                                     <p className="text-gray-100 text-sm leading-relaxed font-light">
                                         {isPortuguese
-                                            ? '78 cartas com ilustrações originais'
+                                            ? '78 cartas com ilustracoes originais'
                                             : '78 cards with original illustrations'}
                                     </p>
                                 </div>
@@ -1851,7 +1506,7 @@ const Home = () => {
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">history</span>
                                         <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Histórico' : 'History'}
+                                            {isPortuguese ? 'Historico' : 'History'}
                                         </h3>
                                     </div>
                                     <p className="text-gray-100 text-sm leading-relaxed font-light">
@@ -1976,8 +1631,7 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-
-            {/* Journey Section - A Jornada do Herói */}
+            {/* Journey Section - A Jornada do Heroi */}
             <div className="relative" data-section="journey">
                 <JourneySection
                     onStartReading={() => handleSelectSpread(SPREADS[0])}
@@ -1986,7 +1640,7 @@ const Home = () => {
                     onToggleJourney={() => setShowJourneyStories(true)}
                 />
 
-                {/* Sessão interativa de histórias da jornada */}
+                {/* Sessao interativa de historias da jornada */}
                 {showJourneyStories && <HeroJourneyStories />}
             </div>
 
@@ -1995,7 +1649,7 @@ const Home = () => {
                 <section className="relative z-10 py-12 md:py-20 px-4 md:px-6 bg-gradient-to-b from-background-dark via-purple-950/20 to-background-dark">
                     <div className="max-w-[1200px] mx-auto">
                         <div className="text-center md:text-left mb-10 md:mb-14 px-2">
-                            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{isPortuguese ? 'Calendário Lunar' : 'Lunar Calendar'}</h2>
+                            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight" style={{ fontFamily: "'Crimson Text', serif" }}>{isPortuguese ? 'Calendario Lunar' : 'Lunar Calendar'}</h2>
                             <p className="text-gray-400 text-lg max-w-xl">{isPortuguese ? 'Acompanhe as fases da lua e planeje seus rituais' : 'Track moon phases and plan your rituals'}</p>
                         </div>
                         {(() => {
@@ -2016,11 +1670,11 @@ const Home = () => {
                             const startingDayOfWeek = firstDay.getDay();
 
                             const calendarMonthNames = isPortuguese
-                                ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+                                ? ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
                                 : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
                             const dayNames = isPortuguese
-                                ? ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
+                                ? ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB']
                                 : ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
                             const getMoonPhaseForDay = (day: number) => {
@@ -2030,14 +1684,14 @@ const Home = () => {
                                 const daysSinceNewMoon = (dateToCheck.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
                                 const lunarDay = (daysSinceNewMoon % lunarCycle) / lunarCycle;
 
-                                if (lunarDay < 0.125 || lunarDay > 0.875) return { phase: 'new', icon: '🌑', pt: 'Nova' };
-                                if (lunarDay < 0.375) return { phase: 'waxing', icon: '🌒', pt: 'Crescente' };
-                                if (lunarDay < 0.625) return { phase: 'full', icon: '🌕', pt: 'Cheia' };
-                                return { phase: 'waning', icon: '🌘', pt: 'Minguante' };
+                                if (lunarDay < 0.125 || lunarDay > 0.875) return { phase: 'new', icon: 'ðŸŒ‘', pt: 'Nova' };
+                                if (lunarDay < 0.375) return { phase: 'waxing', icon: 'ðŸŒ’', pt: 'Crescente' };
+                                if (lunarDay < 0.625) return { phase: 'full', icon: 'ðŸŒ•', pt: 'Cheia' };
+                                return { phase: 'waning', icon: 'ðŸŒ˜', pt: 'Minguante' };
                             };
 
                             // Calculate lunar cycle progress (0-1 = full cycle from new moon)
-                            // Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova
+                            // Cycle: Nova(bottom) -> Crescente(right) -> Cheia(top) -> Minguante(left) -> Nova
                             const getLunarCycleProgress = () => {
                                 const lunarCycle = 29.53;
                                 const newMoonDate = new Date(2024, 0, 11);
@@ -2100,10 +1754,10 @@ const Home = () => {
                                                                 } group border border-white/10 hover:border-primary/30`}
                                                         >
                                                             <span className="text-base group-hover:scale-110 transition-transform">
-                                                                {moonPhaseData.phase === 'full' && '🌕'}
-                                                                {moonPhaseData.phase === 'new' && '🌑'}
-                                                                {moonPhaseData.phase === 'waxing' && '🌒'}
-                                                                {moonPhaseData.phase === 'waning' && '🌘'}
+                                                                {moonPhaseData.phase === 'full' && 'ðŸŒ•'}
+                                                                {moonPhaseData.phase === 'new' && 'ðŸŒ‘'}
+                                                                {moonPhaseData.phase === 'waxing' && 'ðŸŒ’'}
+                                                                {moonPhaseData.phase === 'waning' && 'ðŸŒ˜'}
                                                             </span>
                                                             <span className={`text-[8px] font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
                                                                 {day}
@@ -2117,19 +1771,19 @@ const Home = () => {
                                             <div className="pt-2 border-t border-white/10">
                                                 <div className="grid grid-cols-2 gap-1.5 text-[10px]">
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-sm">🌕</span>
+                                                        <span className="text-sm">ðŸŒ•</span>
                                                         <span className="text-white/70">{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-sm">🌑</span>
+                                                        <span className="text-sm">ðŸŒ‘</span>
                                                         <span className="text-white/70">{isPortuguese ? 'Nova' : 'New'}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-sm">🌒</span>
+                                                        <span className="text-sm">ðŸŒ’</span>
                                                         <span className="text-white/70">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-sm">🌘</span>
+                                                        <span className="text-sm">ðŸŒ˜</span>
                                                         <span className="text-white/70">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                     </div>
                                                 </div>
@@ -2173,7 +1827,7 @@ const Home = () => {
                                             {/* The Mandala Body - Responsive */}
                                             <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto rounded-full bg-background-dark/60 backdrop-blur-xl border border-white/20 flex items-center justify-center mandala-glow">
                                                 {/* Progress Arc - Shows lunar cycle progress from New Moon */}
-                                                {/* Cycle: Nova(bottom) → Crescente(right) → Cheia(top) → Minguante(left) → Nova */}
+                                                {/* Cycle: Nova(bottom) -> Crescente(right) -> Cheia(top) -> Minguante(left) -> Nova */}
                                                 {/* Path starts at bottom, sweep-flag=1 for clockwise in SVG = counter-clockwise on screen */}
                                                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
                                                     {/* Background track */}
@@ -2185,7 +1839,7 @@ const Home = () => {
                                                         stroke="rgba(173, 146, 201, 0.08)"
                                                         strokeWidth="1.5"
                                                     />
-                                                    {/* Progress arc: bottom → right → top → left (counter-clockwise on screen) */}
+                                                    {/* Progress arc: bottom -> right -> top -> left (counter-clockwise on screen) */}
                                                     <path
                                                         d="M 50 99 A 49 49 0 1 1 50.01 99"
                                                         fill="none"
@@ -2209,28 +1863,28 @@ const Home = () => {
                                                     {/* Full Moon - Top */}
                                                     <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
                                                         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
-                                                            🌕
+                                                            ðŸŒ•
                                                         </div>
                                                         <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                     </div>
                                                     {/* New Moon - Bottom */}
                                                     <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
                                                         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
-                                                            🌑
+                                                            ðŸŒ‘
                                                         </div>
                                                         <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
                                                     </div>
                                                     {/* Waxing - Right */}
                                                     <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
                                                         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                            🌒
+                                                            ðŸŒ’
                                                         </div>
                                                         <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
                                                     </div>
                                                     {/* Waning - Left */}
                                                     <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
                                                         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                            🌘
+                                                            ðŸŒ˜
                                                         </div>
                                                         <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                     </div>
@@ -2297,7 +1951,7 @@ const Home = () => {
                 isOpen={showWhatsAppModal}
                 onClose={() => {
                     setShowWhatsAppModal(false);
-                    // Recarregar status após fechar
+                    // Recarregar status apos fechar
                     const loadStatus = async () => {
                         if (!user) return;
                         try {
@@ -2371,17 +2025,17 @@ const ProductCard = ({ product }: { product: Product }) => {
                         <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                             {product.tags.includes('bestseller') && (
                                 <div className="px-3 py-1.5 bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white text-[11px] font-bold rounded-full uppercase tracking-wider shadow-lg backdrop-blur-sm border border-white/20">
-                                    ⭐ {t.shop.bestseller}
+                                    * {t.shop.bestseller}
                                 </div>
                             )}
                             {product.tags.includes('new') && (
                                 <div className="px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[11px] font-bold rounded-full uppercase tracking-wider shadow-lg backdrop-blur-sm border border-white/20">
-                                    ✨ {t.shop.new}
+                                    * {t.shop.new}
                                 </div>
                             )}
                             {product.tags.includes('sale') && (
                                 <div className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-rose-500 text-white text-[11px] font-bold rounded-full uppercase tracking-wider shadow-lg backdrop-blur-sm border border-white/20">
-                                    🔥 {t.shop.sale}
+                                    ðŸ”¥ {t.shop.sale}
                                 </div>
                             )}
                         </div>
@@ -2522,7 +2176,7 @@ const Shop = () => {
                         <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#a77fd4]/5 rounded-full translate-y-1/2 -translate-x-1/2" />
 
                         <div className="relative z-10">
-                            <p className="text-[#a77fd4] text-sm font-bold uppercase tracking-widest mb-2">✨ {isPortuguese ? 'Coleção Mística' : 'Mystic Collection'}</p>
+                            <p className="text-[#a77fd4] text-sm font-bold uppercase tracking-widest mb-2">* {isPortuguese ? 'Colecao Mistica' : 'Mystic Collection'}</p>
                             <h1 className="text-3xl md:text-4xl font-black text-white mb-3" style={{ fontFamily: "'Crimson Text', serif" }}>{t.shop.title}</h1>
                             <p className="text-gray-300 text-base max-w-2xl">{t.shop.subtitle}</p>
                         </div>
@@ -2581,12 +2235,12 @@ const Shop = () => {
                             <div className="bg-gradient-to-br from-white/5 to-white/2 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
                                 <h3 className="text-white font-bold text-sm mb-4 uppercase tracking-wider flex items-center gap-2">
                                     <span className="material-symbols-outlined text-base text-[#a77fd4]">attach_money</span>
-                                    {isPortuguese ? 'Faixa de Preço' : 'Price Range'}
+                                    {isPortuguese ? 'Faixa de Preco' : 'Price Range'}
                                 </h3>
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between text-sm text-gray-300 bg-white/5 p-2 rounded">
                                         <span>{formatPrice(priceRange[0], t.common.currency)}</span>
-                                        <span className="text-gray-500">—</span>
+                                        <span className="text-gray-500">-</span>
                                         <span className="font-semibold">{formatPrice(priceRange[1], t.common.currency)}</span>
                                     </div>
                                     <input
@@ -2656,7 +2310,7 @@ const Shop = () => {
                                     {isPortuguese ? 'Produtos em Destaque' : 'Featured Products'}
                                 </p>
                                 <p className="text-gray-400 text-sm">
-                                    {filteredProducts.length} {isPortuguese ? 'itens disponíveis' : 'items available'}
+                                    {filteredProducts.length} {isPortuguese ? 'itens disponiveis' : 'items available'}
                                 </p>
                             </div>
                             <select
@@ -2718,7 +2372,7 @@ const ProductDetail = () => {
             <div className="flex flex-col min-h-screen bg-background-dark">
                 <Header />
                 <div className="flex-1 flex items-center justify-center">
-                    <p className="text-gray-400">{isPortuguese ? 'Produto não encontrado' : 'Product not found'}</p>
+                    <p className="text-gray-400">{isPortuguese ? 'Produto nao encontrado' : 'Product not found'}</p>
                 </div>
                 <Footer />
             </div>
@@ -2931,10 +2585,10 @@ const CardDetails = () => {
     // SEO: dynamic meta tags via react-helmet-async
     const cardSeoName = card ? getCardName(card.id, isPortuguese) : '';
     const cardSeoTitle = card ? (isPortuguese
-        ? `${cardSeoName} - Significado e Interpretação`
+        ? `${cardSeoName} - Significado e Interpretacao`
         : `${cardSeoName} - Meaning & Interpretation`) : '';
     const cardSeoDescription = card ? (isPortuguese
-        ? `Descubra o significado completo da carta ${cardSeoName} no tarot. Interpretação, simbolismo e orientações práticas.`
+        ? `Descubra o significado completo da carta ${cardSeoName} no tarot. Interpretacao, simbolismo e orientacoes praticas.`
         : `Discover the complete meaning of the ${cardSeoName} tarot card. Interpretation, symbolism and practical guidance.`) : '';
     const cardSeoPath = isPortuguese ? `/arquivo-arcano/${params.cardSlug || params.cardId}` : `/arcane-archive/${params.cardSlug || params.cardId}`;
 
@@ -3061,7 +2715,7 @@ const CardDetails = () => {
                                     WebkitTextFillColor: 'transparent',
                                     backgroundClip: 'text',
                                     textTransform: 'none',
-                                }}>{isPortuguese ? 'Descrição visual' : 'Visual description'}</h4>
+                                }}>{isPortuguese ? 'Descricao visual' : 'Visual description'}</h4>
                                 <p className="text-gray-400 text-sm leading-relaxed italic">{lore.description}</p>
                             </div>
                         )}
@@ -3071,7 +2725,7 @@ const CardDetails = () => {
                         <div>
                             <div className="flex items-center gap-2 mb-3">
                                 <span className="px-3 py-1.5 rounded-md bg-gradient-to-r from-[#875faf]/20 to-[#a77fd4]/20 text-[#a77fd4] text-[11px] font-bold uppercase tracking-wider border border-[#875faf]/30">
-                                    {card.arcana === ArcanaType.MAJOR ? (isPortuguese ? 'Arcano Maior' : 'Major Arcana') : (isPortuguese ? 'Arcano Menor' : 'Minor Arcana')} {card.suit !== Suit.NONE && `• ${isPortuguese ? (card.suit === 'Wands' ? 'Paus' : card.suit === 'Cups' ? 'Copas' : card.suit === 'Swords' ? 'Espadas' : 'Ouros') : card.suit}`}
+                                    {card.arcana === ArcanaType.MAJOR ? (isPortuguese ? 'Arcano Maior' : 'Major Arcana') : (isPortuguese ? 'Arcano Menor' : 'Minor Arcana')} {card.suit !== Suit.NONE && `- ${isPortuguese ? (card.suit === 'Wands' ? 'Paus' : card.suit === 'Cups' ? 'Copas' : card.suit === 'Swords' ? 'Espadas' : 'Ouros') : card.suit}`}
                                 </span>
                             </div>
                             <h1 className="text-4xl md:text-5xl font-normal leading-tight mb-2 text-gradient-gold-home" style={{
@@ -3138,7 +2792,7 @@ const CardDetails = () => {
                                         </div>
                                     </div>
 
-                                    {/* Boxes de Significado Invertido e Simbolismo Histórico removidos */}
+                                    {/* Boxes de Significado Invertido e Simbolismo Historico removidos */}
                                 </div>
                             </>
                         )}
@@ -3237,7 +2891,7 @@ const ReadingModal = ({
                                                 />
                                             </div>
                                             <p className="text-center text-[10px] text-primary font-bold uppercase mt-2 truncate max-w-[100px]">
-                                                {reading.positions?.[idx] || `${isPortuguese ? 'Posição' : 'Position'} ${idx + 1}`}
+                                                {reading.positions?.[idx] || `${isPortuguese ? 'Posicao' : 'Position'} ${idx + 1}`}
                                             </p>
                                             <p className="text-center text-xs text-white font-medium truncate max-w-[100px]">
                                                 {card ? getCardName(card.id, isPortuguese) : (reading.cardNames?.[idx] || `${isPortuguese ? 'Carta' : 'Card'} ${idx + 1}`)}
@@ -3260,12 +2914,12 @@ const ReadingModal = ({
                                 backgroundClip: 'text',
                             }}>
                                 <span className="material-symbols-outlined text-lg" style={{ color: '#e0c080' }}>auto_awesome</span>
-                                {isPortuguese ? 'Síntese da Leitura' : 'Reading Synthesis'}
+                                {isPortuguese ? 'Sintese da Leitura' : 'Reading Synthesis'}
                             </h3>
 
                             {(() => {
                                 try {
-                                    // Parsear se for string, ou usar diretamente se já for objeto
+                                    // Parsear se for string, ou usar diretamente se ja for objeto
                                     const synthesis: CanonicalSynthesis = typeof reading.notes === 'string'
                                         ? JSON.parse(reading.notes)
                                         : reading.notes;
@@ -3277,7 +2931,7 @@ const ReadingModal = ({
                                                 <div className="w-24 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
                                             </div>
 
-                                            {/* Tema Central - Destaque místico */}
+                                            {/* Tema Central - Destaque mistico */}
                                             {synthesis.tema_central && (
                                                 <div className="text-center space-y-3 mb-6">
                                                     <h3 className="text-2xl md:text-3xl font-bold font-serif italic leading-relaxed px-4" style={{
@@ -3292,7 +2946,7 @@ const ReadingModal = ({
                                                 </div>
                                             )}
 
-                                            {/* Síntese Geral */}
+                                            {/* Sintese Geral */}
                                             {synthesis.sintese_geral && (
                                                 <p className="text-white text-base md:text-lg leading-loose font-normal text-center" style={{ fontFamily: "'Crimson Text', serif" }}>
                                                     {synthesis.sintese_geral}
@@ -3315,7 +2969,7 @@ const ReadingModal = ({
                                                 </div>
                                             )}
 
-                                            {/* Dinâmica das Cartas */}
+                                            {/* Dinamica das Cartas */}
                                             {synthesis.dinamica_das_cartas && (
                                                 <div className="relative pl-5 border-l-2 border-cyan-500/20">
                                                     <div className="absolute -left-[7px] top-0 w-3 h-3 rounded-full bg-cyan-500/30 border-2 border-cyan-400/50"></div>
@@ -3356,7 +3010,7 @@ const ReadingModal = ({
                                                 )}
                                             </div>
 
-                                            {/* Reflexão Final */}
+                                            {/* Reflexao Final */}
                                             {synthesis.reflexao_final && (
                                                 <div className="text-center space-y-3 mt-6">
                                                     <div className="flex items-center justify-center gap-2">
@@ -3430,7 +3084,7 @@ const ReadingModal = ({
                     {/* Rating */}
                     <div>
                         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
-                            {isPortuguese ? 'Sua Avaliação' : 'Your Rating'}
+                            {isPortuguese ? 'Sua Avaliacao' : 'Your Rating'}
                         </h3>
                         <div className="flex gap-2">
                             {[1, 2, 3, 4, 5].map((star) => (
@@ -3455,12 +3109,12 @@ const ReadingModal = ({
                     {/* Comment */}
                     <div>
                         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
-                            {isPortuguese ? 'Suas Anotações' : 'Your Notes'}
+                            {isPortuguese ? 'Suas Anotacoes' : 'Your Notes'}
                         </h3>
                         <textarea
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
-                            placeholder={isPortuguese ? 'Adicione suas reflexões sobre esta leitura...' : 'Add your reflections about this reading...'}
+                            placeholder={isPortuguese ? 'Adicione suas reflexoes sobre esta leitura...' : 'Add your reflections about this reading...'}
                             className="w-full h-32 px-4 py-3 rounded-xl bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none resize-none"
                         />
                     </div>
@@ -3520,7 +3174,7 @@ const History = () => {
     const handleOpenReading = async (reading: any) => {
         setSelectedReading(reading);
 
-        // Se a leitura ainda não foi visualizada, marcar como visualizada no Supabase
+        // Se a leitura ainda nao foi visualizada, marcar como visualizada no Supabase
         if (!reading.viewed_at && user) {
             try {
                 const { supabase } = await import('./lib/supabase');
@@ -3546,7 +3200,7 @@ const History = () => {
 
     const [savedReadings, setSavedReadings] = useState<any[]>(() => {
         try {
-            // Se não estiver logado, pode carregar do localStorage
+            // Se nao estiver logado, pode carregar do localStorage
             // Se estiver logado, vai carregar do Supabase
             const saved = localStorage.getItem('tarot-history');
             return saved ? JSON.parse(saved) : [];
@@ -3555,20 +3209,20 @@ const History = () => {
         }
     });
 
-    // Recarregar histórico quando usuário faz login/logout
+    // Recarregar historico quando usuario faz login/logout
     useEffect(() => {
         const loadHistory = async () => {
             try {
                 setLoading(true);
 
                 if (user && user.id) {
-                    // Usuário autenticado: carrega do Supabase com filtro por user_id
+                    // Usuario autenticado: carrega do Supabase com filtro por user_id
                     const readings = await fetchReadingsFromSupabase(user.id, 1000, isPortuguese);
                     setSavedReadings(readings);
                     setFilteredReadings(readings);
                 } else {
-                    // Usuário não autenticado: carrega do localStorage
-                    // IMPORTANTE: Limpa dados do localStorage se mudou de usuário
+                    // Usuario nao autenticado: carrega do localStorage
+                    // IMPORTANTE: Limpa dados do localStorage se mudou de usuario
                     const saved = localStorage.getItem('tarot-history');
                     const readings = saved ? JSON.parse(saved) : [];
                     setSavedReadings(readings);
@@ -3586,7 +3240,7 @@ const History = () => {
         loadHistory();
     }, [user, isPortuguese]); // Recarrega quando user muda (login/logout) ou idioma muda
 
-    // Limitar leituras visíveis baseado no tier
+    // Limitar leituras visiveis baseado no tier
     const historyLimit = getHistoryLimit();
     const availableReadings = isPremium ? filteredReadings : filteredReadings.slice(0, historyLimit);
     const visibleReadings = availableReadings.slice(0, displayCount);
@@ -3692,16 +3346,16 @@ const History = () => {
                         <div className="flex flex-col items-center justify-center py-20 text-center">
                             <span className="material-symbols-outlined text-6xl text-[#875faf] mb-4">lock</span>
                             <h3 className="text-xl font-bold text-white mb-2">
-                                {isPortuguese ? 'Histórico Requer Conta' : 'History Requires Account'}
+                                {isPortuguese ? 'Historico Requer Conta' : 'History Requires Account'}
                             </h3>
                             <p className="text-gray-400 mb-6">
-                                {isPortuguese ? 'Crie uma conta gratuita para salvar e visualizar seu histórico de tiragens.' : 'Create a free account to save and view your reading history.'}
+                                {isPortuguese ? 'Crie uma conta gratuita para salvar e visualizar seu historico de tiragens.' : 'Create a free account to save and view your reading history.'}
                             </p>
                             <button
                                 onClick={() => setShowAuthModal(true)}
                                 className="px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
                             >
-                                {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
+                                {isPortuguese ? 'Criar Conta Gratis' : 'Create Free Account'}
                             </button>
                         </div>
                     ) : savedReadings.length === 0 ? (
@@ -3801,7 +3455,7 @@ const History = () => {
                                                     <p className="text-gray-400 text-xs line-clamp-2 italic">"{item.comment}"</p>
                                                 ) : (
                                                     <p className="text-gray-600 text-xs italic">
-                                                        {isPortuguese ? 'Sem anotações' : 'No notes'}
+                                                        {isPortuguese ? 'Sem anotacoes' : 'No notes'}
                                                     </p>
                                                 )}
                                             </div>
@@ -3842,7 +3496,7 @@ const History = () => {
                                             {isPortuguese ? `+${filteredReadings.length - historyLimit} tiragens bloqueadas` : `+${filteredReadings.length - historyLimit} readings locked`}
                                         </h3>
                                         <p className="text-gray-400 text-sm mb-4">
-                                            {isPortuguese ? 'Faça upgrade para Premium para acessar todo o seu histórico.' : 'Upgrade to Premium to access your full history.'}
+                                            {isPortuguese ? 'Faca upgrade para Premium para acessar todo o seu historico.' : 'Upgrade to Premium to access your full history.'}
                                         </p>
                                         <button
                                             onClick={() => setShowPaywall(true)}
@@ -3882,7 +3536,7 @@ const History = () => {
                                     onClick={async () => {
                                         const confirmed = window.confirm(
                                             isPortuguese
-                                                ? 'Tem certeza que deseja cancelar sua assinatura Premium? Você perderá o acesso aos recursos premium ao final do período.'
+                                                ? 'Tem certeza que deseja cancelar sua assinatura Premium? Voce perdera o acesso aos recursos premium ao final do periodo.'
                                                 : 'Are you sure you want to cancel your Premium subscription? You will lose access to premium features at the end of the period.'
                                         );
                                         if (!confirmed) return;
@@ -3909,13 +3563,13 @@ const History = () => {
                                 onClick={async () => {
                                     const confirmed = window.confirm(
                                         isPortuguese
-                                            ? 'ATENÇÃO: Esta ação é irreversível! Todos os seus dados, histórico e configurações serão permanentemente excluídos. Deseja continuar?'
+                                            ? 'ATENCAO: Esta acao e irreversivel! Todos os seus dados, historico e configuracoes serao permanentemente excluidos. Deseja continuar?'
                                             : 'WARNING: This action is irreversible! All your data, history and settings will be permanently deleted. Do you want to continue?'
                                     );
                                     if (!confirmed) return;
                                     const doubleConfirm = window.confirm(
                                         isPortuguese
-                                            ? 'Última confirmação: Deseja realmente excluir sua conta?'
+                                            ? 'Ultima confirmacao: Deseja realmente excluir sua conta?'
                                             : 'Final confirmation: Do you really want to delete your account?'
                                     );
                                     if (!doubleConfirm) return;
@@ -3940,7 +3594,7 @@ const History = () => {
                                 <span className="material-symbols-outlined text-red-400/70 text-lg">person_remove</span>
                                 <div>
                                     <p className="text-white text-sm font-medium">{isPortuguese ? 'Excluir Conta' : 'Delete Account'}</p>
-                                    <p className="text-gray-500 text-[10px]">{isPortuguese ? 'Ação irreversível' : 'Irreversible action'}</p>
+                                    <p className="text-gray-500 text-[10px]">{isPortuguese ? 'Acao irreversivel' : 'Irreversible action'}</p>
                                 </div>
                             </button>
                         </div>
@@ -4235,7 +3889,7 @@ const Numerology = () => {
                                                 {isPortuguese ? 'Os Pilares Centrais' : 'The Core Pillars'}
                                             </h2>
                                             <p className="text-gray-500 text-sm">
-                                                {isPortuguese ? 'Os três números que definem sua essência' : 'The three numbers that define your essence'}
+                                                {isPortuguese ? 'Os tres numeros que definem sua essencia' : 'The three numbers that define your essence'}
                                             </p>
                                         </div>
                                     </div>
@@ -4265,7 +3919,7 @@ const Numerology = () => {
                                     </div>
                                 </div>
 
-                                {/* Números Complementares (Additional Numbers) */}
+                                {/* Numeros Complementares (Additional Numbers) */}
                                 <div className="mb-14">
                                     <div className="flex items-center gap-3 mb-8">
                                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/30 to-orange-500/30 flex items-center justify-center">
@@ -4273,7 +3927,7 @@ const Numerology = () => {
                                         </div>
                                         <div>
                                             <h2 className="text-xl font-bold text-white">
-                                                {isPortuguese ? 'Números Complementares' : 'Additional Numbers'}
+                                                {isPortuguese ? 'Numeros Complementares' : 'Additional Numbers'}
                                             </h2>
                                             <p className="text-gray-500 text-sm">
                                                 {isPortuguese ? 'Aspectos adicionais da sua personalidade' : 'Additional aspects of your personality'}
@@ -4308,7 +3962,7 @@ const Numerology = () => {
                                                 {isPortuguese ? 'Ciclos Temporais' : 'Time Cycles'}
                                             </h2>
                                             <p className="text-gray-500 text-sm">
-                                                {isPortuguese ? 'As energias que influenciam você agora' : 'The energies influencing you now'}
+                                                {isPortuguese ? 'As energias que influenciam voce agora' : 'The energies influencing you now'}
                                             </p>
                                         </div>
                                     </div>
@@ -4367,10 +4021,10 @@ const CosmicCalendar = () => {
     const firstDayOfWeek = new Date(selectedYear, selectedMonth, 1).getDay();
 
     const monthNames = isPortuguese
-        ? ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+        ? ['Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
         : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    const weekDays = isPortuguese ? ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const weekDays = isPortuguese ? ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return (
         <div className="flex flex-col min-h-screen bg-background-dark text-white overflow-x-hidden">
@@ -4502,7 +4156,7 @@ const CosmicCalendar = () => {
                                     </ul>
                                 ) : (
                                     <p className="text-gray-500 text-sm italic">
-                                        {isPortuguese ? 'Dia favorável para a maioria das atividades' : 'Favorable day for most activities'}
+                                        {isPortuguese ? 'Dia favoravel para a maioria das atividades' : 'Favorable day for most activities'}
                                     </p>
                                 )}
                             </div>
@@ -4626,13 +4280,13 @@ const Explore = () => {
         return card.suit === filter;
     });
 
-    // Limitar cartas visíveis baseado no tier
+    // Limitar cartas visiveis baseado no tier
     const archiveLimit = getArchiveLimit();
     const visibleCards = isPremium ? filteredDeck : filteredDeck.slice(0, archiveLimit);
     const lockedCards = isPremium ? [] : filteredDeck.slice(archiveLimit);
 
     const handleCardClick = (card: TarotCard, index: number) => {
-        // Visitantes não podem ver nenhuma carta
+        // Visitantes nao podem ver nenhuma carta
         if (isGuest) {
             setShowPaywall(true);
             return;
@@ -4710,7 +4364,7 @@ const Explore = () => {
                             onClick={() => navigate('/checkout')}
                             className="px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all"
                         >
-                            {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
+                            {isPortuguese ? 'Criar Conta Gratis' : 'Create Free Account'}
                         </button>
                     </div>
                 )}
@@ -4764,7 +4418,7 @@ const Explore = () => {
                             {isPortuguese ? `Desbloqueie +${lockedCards.length} cartas` : `Unlock +${lockedCards.length} cards`}
                         </h3>
                         <p className="text-gray-400 text-sm mb-4">
-                            {isPortuguese ? 'Faça upgrade para Premium para acessar todas as 78 cartas do Tarot.' : 'Upgrade to Premium to access all 78 Tarot cards.'}
+                            {isPortuguese ? 'Faca upgrade para Premium para acessar todas as 78 cartas do Tarot.' : 'Upgrade to Premium to access all 78 Tarot cards.'}
                         </p>
                         <button
                             onClick={() => setShowPaywall(true)}
@@ -4829,7 +4483,7 @@ const Session = () => {
         }
     };
 
-    // Função para embaralhar
+    // Funcao para embaralhar
     const shuffleDeck = () => {
         setIsShuffling(true);
         setSelectedCards([]);
@@ -4842,12 +4496,12 @@ const Session = () => {
             shuffleSound.play().catch(() => { });
         } catch (e) { }
 
-        // Animação de embaralhamento (múltiplas trocas rápidas)
+        // Animacao de embaralhamento (multiplas trocas rapidas)
         let shuffleCount = 0;
         const shuffleInterval = setInterval(() => {
             setDeck(prevDeck => {
                 const newDeck = [...prevDeck];
-                // Fazer várias trocas aleatórias
+                // Fazer varias trocas aleatorias
                 for (let x = 0; x < 5; x++) {
                     const i = Math.floor(Math.random() * newDeck.length);
                     const j = Math.floor(Math.random() * newDeck.length);
@@ -5016,7 +4670,7 @@ const Session = () => {
                                 <div className="w-8 h-px bg-gradient-to-r from-yellow-500/40 to-transparent mb-3" />
                                 <p className="text-gray-400 text-xs mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
                                     {isPortuguese
-                                        ? 'Concentre-se em uma questão específica para receber uma orientação mais direcionada.'
+                                        ? 'Concentre-se em uma questao especifica para receber uma orientacao mais direcionada.'
                                         : 'Focus on a specific question to receive more targeted guidance.'}
                                 </p>
                                 <div className="relative">
@@ -5040,7 +4694,7 @@ const Session = () => {
                                 {question && (
                                     <p className="text-emerald-400 text-xs mt-2 flex items-center gap-1">
                                         <span className="material-symbols-outlined text-sm">check_circle</span>
-                                        {isPortuguese ? 'Sua pergunta será considerada na análise das cartas' : 'Your question will be considered in the card analysis'}
+                                        {isPortuguese ? 'Sua pergunta sera considerada na analise das cartas' : 'Your question will be considered in the card analysis'}
                                     </p>
                                 )}
                             </div>
@@ -5337,7 +4991,7 @@ const Result = () => {
 
         // Prevent duplicate calls in React Strict Mode
         if (fetchedRef.current) {
-            console.log("⏭️ Skipping duplicate API call");
+            console.log("Skipping duplicate API call");
             if (isLoading && structuredSynthesis) {
                 setIsLoading(false);
             }
@@ -5361,7 +5015,7 @@ const Result = () => {
             // Declarar rawSynthesis no escopo correto
             let rawSynthesis: any = null;
 
-            // Se é guest, NÃO gerar síntese - salvar cartas para recuperação pós-cadastro
+            // Se e guest, NAO gerar sintese - salvar cartas para recuperacao pos-cadastro
             if (!user) {
                 // Save guest reading to localStorage for recovery after signup
                 saveGuestReading({
@@ -5375,14 +5029,14 @@ const Result = () => {
                 return;
             }
 
-            // Fetch structured synthesis from Gemini (NOVA ESTRUTURA 7 MÓDULOS - APENAS PARA LOGADOS)
+            // Fetch structured synthesis from Gemini (NOVA ESTRUTURA 7 MODULOS - APENAS PARA LOGADOS)
             rawSynthesis = isGeminiConfigured()
                 ? await getStructuredSynthesis(session, isPortuguese)
                 : null;
 
-            console.log("🎯 Raw Synthesis recebida:", rawSynthesis);
+            console.log("ðŸŽ¯ Raw Synthesis recebida:", rawSynthesis);
 
-            // USAR DIRETAMENTE A NOVA ESTRUTURA (CanonicalSynthesis com 7 módulos)
+            // USAR DIRETAMENTE A NOVA ESTRUTURA (CanonicalSynthesis com 7 modulos)
             setAnalysis(null);
             setStructuredSynthesis(rawSynthesis as any);
             setIsLoading(false);
@@ -5396,17 +5050,17 @@ const Result = () => {
                 const spreadNameMap: Record<string, { name: string; tag: string; color: string }> = {
                     'card_of_day': {
                         name: isPortuguese ? 'Carta do Dia' : 'Card of the Day',
-                        tag: isPortuguese ? 'DIÁRIA' : 'DAILY',
+                        tag: isPortuguese ? 'DIARIA' : 'DAILY',
                         color: 'text-yellow-400 bg-yellow-500/10'
                     },
                     'yes_no': {
-                        name: isPortuguese ? 'Sim ou Não' : 'Yes or No',
-                        tag: isPortuguese ? 'RÁPIDA' : 'QUICK',
+                        name: isPortuguese ? 'Sim ou Nao' : 'Yes or No',
+                        tag: isPortuguese ? 'RAPIDA' : 'QUICK',
                         color: 'text-blue-400 bg-blue-500/10'
                     },
                     'three_card': {
-                        name: isPortuguese ? 'Três Cartas' : 'Three Cards',
-                        tag: isPortuguese ? 'PADRÃO' : 'STANDARD',
+                        name: isPortuguese ? 'Tres Cartas' : 'Three Cards',
+                        tag: isPortuguese ? 'PADRAO' : 'STANDARD',
                         color: 'text-primary bg-primary/10'
                     },
                     'love_check': {
@@ -5472,12 +5126,12 @@ const Result = () => {
 
                         // Save to Supabase (only for logged users - guests are handled earlier)
                         if (user) {
-                            // Usar nova função que formata resumo completo automaticamente
+                            // Usar nova funcao que formata resumo completo automaticamente
                             await saveReadingWithSummary(
                                 user.id,
                                 state.spread.id,
                                 state.cards,
-                                rawSynthesis, // Passa a síntese bruta para formatação
+                                rawSynthesis, // Passa a sintese bruta para formatacao
                                 state.question || '',
                                 isPortuguese
                             );
@@ -5485,7 +5139,7 @@ const Result = () => {
                     }
                 }
             } catch (e) {
-                console.error('❌ Failed to save to history:', e);
+                console.error('Failed to save to history:', e);
             } finally {
                 setIsLoading(false);
             }
@@ -5526,7 +5180,7 @@ const Result = () => {
                             backgroundClip: 'text',
                         }}>{t.result.title}</h1>
                         <p className="text-gray-400 text-lg font-normal leading-relaxed mt-1">
-                            {getSpreadTranslation(spread.id).name} {state.question && `— ${isPortuguese ? 'Foco' : 'Focus'}: ${state.question}`}
+                            {getSpreadTranslation(spread.id).name} {state.question && `- ${isPortuguese ? 'Foco' : 'Focus'}: ${state.question}`}
                         </p>
                     </div>
                     <div className="flex gap-3 w-full md:w-auto">
@@ -5535,7 +5189,7 @@ const Result = () => {
                             className="flex-1 md:flex-none h-11 px-6 rounded-lg border border-white/10 bg-surface-dark hover:bg-white/5 text-white text-sm font-bold transition-colors flex items-center justify-center gap-2"
                         >
                             <span className="material-symbols-outlined text-[18px]">history</span>
-                            <span>{isPortuguese ? 'Histórico' : 'History'}</span>
+                            <span>{isPortuguese ? 'Historico' : 'History'}</span>
                         </button>
                         <button
                             onClick={() => navigate('/')}
@@ -5639,11 +5293,11 @@ const Result = () => {
                                                 </span>
                                                 <div>
                                                     <h3 className="text-amber-300 font-bold text-lg">
-                                                        {isPortuguese ? 'Desbloqueie sua Síntese!' : 'Unlock your Synthesis!'}
+                                                        {isPortuguese ? 'Desbloqueie sua Sintese!' : 'Unlock your Synthesis!'}
                                                     </h3>
                                                     <p className="text-gray-300 text-sm mt-1">
                                                         {isPortuguese
-                                                            ? 'Crie uma conta gratuita para receber a interpretação completa desta tiragem com Inteligência Artificial.'
+                                                            ? 'Crie uma conta gratuita para receber a interpretacao completa desta tiragem com Inteligencia Artificial.'
                                                             : 'Create a free account to receive the complete AI interpretation of this reading.'}
                                                     </p>
                                                 </div>
@@ -5652,15 +5306,15 @@ const Result = () => {
                                             <div className="space-y-2 mt-4 mb-4">
                                                 <div className="flex items-center gap-2 text-sm text-gray-300">
                                                     <span className="material-symbols-outlined text-green-400 text-base">check_circle</span>
-                                                    {isPortuguese ? 'Síntese detalhada com IA' : 'Detailed AI synthesis'}
+                                                    {isPortuguese ? 'Sintese detalhada com IA' : 'Detailed AI synthesis'}
                                                 </div>
                                                 <div className="flex items-center gap-2 text-sm text-gray-300">
                                                     <span className="material-symbols-outlined text-green-400 text-base">check_circle</span>
-                                                    {isPortuguese ? '1 tiragem grátis por dia' : '1 free reading per day'}
+                                                    {isPortuguese ? '2 tiragens gratis por dia' : '2 free readings per day'}
                                                 </div>
                                                 <div className="flex items-center gap-2 text-sm text-gray-300">
                                                     <span className="material-symbols-outlined text-green-400 text-base">check_circle</span>
-                                                    {isPortuguese ? 'Histórico das suas jogadas' : 'History of your readings'}
+                                                    {isPortuguese ? 'Historico das suas jogadas' : 'History of your readings'}
                                                 </div>
                                             </div>
 
@@ -5672,7 +5326,7 @@ const Result = () => {
                                                 className="w-full py-3 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-white font-bold transition-all shadow-lg shadow-amber-900/30 flex items-center justify-center gap-2"
                                             >
                                                 <span className="material-symbols-outlined">person_add</span>
-                                                {isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account'}
+                                                {isPortuguese ? 'Criar Conta Gratis' : 'Create Free Account'}
                                             </button>
 
                                             <button
@@ -5682,19 +5336,19 @@ const Result = () => {
                                                 }}
                                                 className="w-full mt-2 py-2 text-amber-300 hover:text-white text-sm font-medium transition-colors"
                                             >
-                                                {isPortuguese ? 'Já tenho uma conta' : 'I already have an account'}
+                                                {isPortuguese ? 'Ja tenho uma conta' : 'I already have an account'}
                                             </button>
                                         </div>
 
                                         <p className="text-gray-500 text-xs text-center">
                                             {isPortuguese
-                                                ? 'Suas cartas estão salvas. Crie sua conta e a síntese será gerada automaticamente!'
+                                                ? 'Suas cartas estao salvas. Crie sua conta e a sintese sera gerada automaticamente!'
                                                 : 'Your cards are saved. Create your account and the synthesis will be generated automatically!'}
                                         </p>
                                     </div>
                                 ) : structuredSynthesis ? (
                                     <>
-                                        {/* LAYOUT MÍSTICO INTEGRADO */}
+                                        {/* LAYOUT MISTICO INTEGRADO */}
                                         {(structuredSynthesis as any).sintese_geral ? (
                                             <div
                                                 className="relative rounded-3xl overflow-hidden"
@@ -5736,7 +5390,7 @@ const Result = () => {
                                                         <div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
                                                     </div>
 
-                                                    {/* Tema Central - Sem pill, apenas título */}
+                                                    {/* Tema Central - Sem pill, apenas titulo */}
                                                     {(structuredSynthesis as any).tema_central && (
                                                         <div className="text-center space-y-3 mb-8">
                                                             <h3 className="text-3xl md:text-4xl font-bold font-serif italic leading-relaxed px-4" style={{
@@ -5751,7 +5405,7 @@ const Result = () => {
                                                         </div>
                                                     )}
 
-                                                    {/* Síntese Geral - Narrativa principal */}
+                                                    {/* Sintese Geral - Narrativa principal */}
                                                     <div className="prose prose-invert max-w-none">
                                                         <p className="text-white text-lg md:text-xl leading-loose font-normal text-center" style={{
                                                             fontFamily: "'Crimson Text', serif"
@@ -5760,7 +5414,7 @@ const Result = () => {
                                                         </p>
                                                     </div>
 
-                                                    {/* Separador místico */}
+                                                    {/* Separador mistico */}
                                                     <div className="flex items-center justify-center gap-3 py-4">
                                                         <div className="w-16 h-px bg-gradient-to-r from-transparent to-primary/30"></div>
                                                         <span className="material-symbols-outlined text-primary/40 text-sm">auto_awesome</span>
@@ -5782,14 +5436,14 @@ const Result = () => {
                                                         </div>
                                                     )}
 
-                                                    {/* Separador místico */}
+                                                    {/* Separador mistico */}
                                                     <div className="flex items-center justify-center gap-3 py-4">
                                                         <div className="w-16 h-px bg-gradient-to-r from-transparent to-primary/30"></div>
                                                         <span className="material-symbols-outlined text-primary/40 text-sm">auto_awesome</span>
                                                         <div className="w-16 h-px bg-gradient-to-l from-transparent to-primary/30"></div>
                                                     </div>
 
-                                                    {/* Dinâmica das Cartas - Integrada ao texto */}
+                                                    {/* Dinamica das Cartas - Integrada ao texto */}
                                                     {(structuredSynthesis as any).dinamica_das_cartas && (
                                                         <div className="relative pl-6 border-l-2 border-cyan-500/20">
                                                             <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-cyan-500/30 border-2 border-cyan-400/50"></div>
@@ -5801,7 +5455,7 @@ const Result = () => {
 
                                                     {/* Cards lado a lado: Observe e Aja */}
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-                                                        {/* Ponto de Atenção */}
+                                                        {/* Ponto de Atencao */}
                                                         {(structuredSynthesis as any).ponto_de_atencao && (
                                                             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-900/20 via-transparent to-transparent border border-orange-500/10 p-6">
                                                                 <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full blur-3xl"></div>
@@ -5819,7 +5473,7 @@ const Result = () => {
                                                             </div>
                                                         )}
 
-                                                        {/* Conselho Prático */}
+                                                        {/* Conselho Pratico */}
                                                         {(structuredSynthesis as any).conselho_pratico && (
                                                             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-900/20 via-transparent to-transparent border border-amber-500/10 p-6">
                                                                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl"></div>
@@ -5838,7 +5492,7 @@ const Result = () => {
                                                         )}
                                                     </div>
 
-                                                    {/* Reflexão Final - Pergunta contemplativa */}
+                                                    {/* Reflexao Final - Pergunta contemplativa */}
                                                     {(structuredSynthesis as any).reflexao_final && (
                                                         <div className="mt-10 text-center space-y-4">
                                                             <div className="flex items-center justify-center gap-3">
@@ -5886,19 +5540,19 @@ const Result = () => {
                                                     </div>
                                                 )}
 
-                                                {/* Síntese Principal */}
+                                                {/* Sintese Principal */}
                                                 <p className="text-gray-200 leading-relaxed text-base mb-4">
                                                     {structuredSynthesis.sintese}
                                                 </p>
 
-                                                {/* Conexões */}
+                                                {/* Conexoes */}
                                                 {structuredSynthesis.conexoes && structuredSynthesis.conexoes.length > 0 && (
                                                     <div className="mb-4">
-                                                        <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Conexões entre as Cartas' : 'Card Connections'}</span>
+                                                        <span className="text-[#a77fd4] text-xs font-bold uppercase tracking-wider">{isPortuguese ? 'Conexoes entre as Cartas' : 'Card Connections'}</span>
                                                         <ul className="mt-2 space-y-1">
                                                             {structuredSynthesis.conexoes.map((conexao, i) => (
                                                                 <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
-                                                                    <span className="text-[#875faf] mt-0.5">•</span>
+                                                                    <span className="text-[#875faf] mt-0.5">-</span>
                                                                     {conexao}
                                                                 </li>
                                                             ))}
@@ -5922,7 +5576,7 @@ const Result = () => {
                                 ) : (
                                     <>
                                         <p className="text-gray-200 leading-relaxed text-base mb-4">
-                                            {isPortuguese ? 'Configure a chave da API Gemini para obter sínteses personalizadas.' : 'Configure the Gemini API key to get personalized syntheses.'}
+                                            {isPortuguese ? 'Configure a chave da API Gemini para obter sinteses personalizadas.' : 'Configure the Gemini API key to get personalized syntheses.'}
                                         </p>
                                     </>
                                 )}
@@ -5956,7 +5610,7 @@ const Result = () => {
                                         <div className="flex justify-between items-start flex-wrap gap-2">
                                             <div>
                                                 <span className="text-primary text-xs font-bold uppercase tracking-wider mb-1 block">
-                                                    {isPortuguese ? 'Posição' : 'Position'}: {position?.name}
+                                                    {isPortuguese ? 'Posicao' : 'Position'}: {position?.name}
                                                 </span>
                                                 <h3 className="text-white text-xl font-bold">{getCardName(card.id, isPortuguese)}</h3>
                                             </div>
@@ -6057,8 +5711,8 @@ const Interpretacao = () => {
         yes_no: { cardCount: 1, positions: [isPortuguese ? 'Resposta' : 'Answer'] },
         three_card: { cardCount: 3, positions: isPortuguese ? ['Passado', 'Presente', 'Futuro'] : ['Past', 'Present', 'Future'] },
         five_card: { cardCount: 5, positions: isPortuguese ? ['Centro', 'Cruzamento', 'Passado', 'Futuro', 'Resultado'] : ['Center', 'Crossing', 'Past', 'Future', 'Outcome'] },
-        seven_card: { cardCount: 7, positions: isPortuguese ? ['Passado', 'Presente', 'Futuro', 'Conselho', 'Ambiente', 'Esperanças', 'Resultado'] : ['Past', 'Present', 'Future', 'Advice', 'Environment', 'Hopes', 'Outcome'] },
-        celtic_cross: { cardCount: 10, positions: isPortuguese ? ['Significador', 'Cruzamento', 'Base', 'Passado', 'Coroa', 'Futuro', 'Eu', 'Ambiente', 'Esperanças/Medos', 'Resultado'] : ['Significator', 'Crossing', 'Foundation', 'Past', 'Crown', 'Future', 'Self', 'Environment', 'Hopes/Fears', 'Outcome'] },
+        seven_card: { cardCount: 7, positions: isPortuguese ? ['Passado', 'Presente', 'Futuro', 'Conselho', 'Ambiente', 'Esperancas', 'Resultado'] : ['Past', 'Present', 'Future', 'Advice', 'Environment', 'Hopes', 'Outcome'] },
+        celtic_cross: { cardCount: 10, positions: isPortuguese ? ['Significador', 'Cruzamento', 'Base', 'Passado', 'Coroa', 'Futuro', 'Eu', 'Ambiente', 'Esperancas/Medos', 'Resultado'] : ['Significator', 'Crossing', 'Foundation', 'Past', 'Crown', 'Future', 'Self', 'Environment', 'Hopes/Fears', 'Outcome'] },
         custom: { cardCount: 15, positions: [] }
     };
 
@@ -6197,7 +5851,7 @@ const Interpretacao = () => {
             setError(ti?.selectSpreadType || 'Select the spread type');
             return;
         }
-        { ti.title || (isPortuguese ? 'Interpretação de Tiragem' : 'Physical Reading Interpretation') }
+        { ti.title || (isPortuguese ? 'Interpretacao de Tiragem' : 'Physical Reading Interpretation') }
         const filledCards = selectedCards.filter(c => c.trim() !== '');
         if (filledCards.length === 0) {
             setError(ti?.addMinCards || 'Add at least one card');
@@ -6324,7 +5978,7 @@ const Interpretacao = () => {
                                         backgroundClip: 'text',
                                     }}
                                 >
-                                    {isPortuguese ? 'Interpretação de Tiragem' : 'Reading Interpretation'}
+                                    {isPortuguese ? 'Interpretacao de Tiragem' : 'Reading Interpretation'}
                                 </h1>
 
                                 {/* Subtitle */}
@@ -6335,7 +5989,7 @@ const Interpretacao = () => {
                                 {/* Description */}
                                 <p className="text-gray-500 text-sm max-w-lg mb-4 break-words">
                                     {(ti.heroDescription || (isPortuguese
-                                        ? 'Fez uma tiragem física com seu baralho? Insira as cartas que saíram e receba uma interpretação profissional.'
+                                        ? 'Fez uma tiragem fisica com seu baralho? Insira as cartas que sairam e receba uma interpretacao profissional.'
                                         : 'Did a physical spread with your deck? Enter the cards that came up and receive a professional interpretation.'))}
                                 </p>
                             </div>
@@ -6347,7 +6001,7 @@ const Interpretacao = () => {
                                     className="flex-1 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:shadow-lg hover:shadow-purple-900/40 rounded-xl text-white font-bold transition-all justify-center text-xs md:text-sm"
                                 >
                                     <span className="material-symbols-outlined text-base">edit_note</span>
-                                    {isPortuguese ? 'Começar Interpretação' : 'Start Interpretation'}
+                                    {isPortuguese ? 'Comecar Interpretacao' : 'Start Interpretation'}
                                 </button>
                                 <button
                                     onClick={() => navigate(isPremium ? '/' : '/checkout')}
@@ -6407,7 +6061,7 @@ const Interpretacao = () => {
                                     </h2>
                                     <p className="text-gray-300 text-sm leading-relaxed">
                                         {isPortuguese
-                                            ? 'Selecione o tipo de tiragem, adicione as cartas que saíram e receba uma interpretação profunda e personalizada pela IA.'
+                                            ? 'Selecione o tipo de tiragem, adicione as cartas que sairam e receba uma interpretacao profunda e personalizada pela IA.'
                                             : 'Select the spread type, add the cards that came up and receive a deep and personalized interpretation by AI.'}
                                     </p>
                                 </div>
@@ -6790,16 +6444,16 @@ const App = () => {
                             <Routes>
                                 <Route path="/" element={<Home />} />
 
-                                {/* Spreads — acessível a todos, paywall inline no click */}
+                                {/* Spreads - acessivel a todos, paywall inline no click */}
                                 <Route path="/spreads" element={<AuthGuard><SEO title="Tarot Spreads" description="Explore different tarot spreads: Three Card, Celtic Cross, Love Check, Yes/No and more. Choose your spread and get your reading." path="/spreads" /><Spreads /></AuthGuard>} />
-                                <Route path="/jogos-de-tarot" element={<AuthGuard><SEO title="Jogos de Tarot" description="Explore diferentes jogos de tarot: Três Cartas, Cruz Celta, Tarot do Amor, Sim/Não e mais. Escolha seu jogo e receba sua leitura." path="/jogos-de-tarot" /><Spreads /></AuthGuard>} />
+                                <Route path="/jogos-de-tarot" element={<AuthGuard><SEO title="Jogos de Tarot" description="Explore diferentes jogos de tarot: Tres Cartas, Cruz Celta, Tarot do Amor, Sim/Nao e mais. Escolha seu jogo e receba sua leitura." path="/jogos-de-tarot" /><Spreads /></AuthGuard>} />
 
-                                {/* Interpretação física — acessível a todos, botão "gerar" é premium */}
-                                <Route path="/interpretacao" element={<AuthGuard><SEO title="Interpretação de Tarot" description="Guia completo de interpretação de tarot. Aprenda a ler e interpretar as cartas de tarot com orientações detalhadas." path="/interpretacao" /><Interpretacao /></AuthGuard>} />
+                                {/* Interpretacao fisica - acessivel a todos, botao "gerar" e premium */}
+                                <Route path="/interpretacao" element={<AuthGuard><SEO title="Interpretacao de Tarot" description="Guia completo de interpretacao de tarot. Aprenda a ler e interpretar as cartas de tarot com orientacoes detalhadas." path="/interpretacao" /><Interpretacao /></AuthGuard>} />
                                 <Route path="/interpretation" element={<AuthGuard><SEO title="Tarot Interpretation" description="Complete tarot interpretation guide. Learn how to read and interpret tarot cards with detailed guidance." path="/interpretation" /><Interpretacao /></AuthGuard>} />
 
-                                {/* Arquivo Arcano — acessível a todos, cards limitados por tier */}
-                                <Route path="/arquivo-arcano" element={<AuthGuard><SEO title="Arquivo Arcano - Todas as Cartas de Tarot" description="Explore todas as 78 cartas do tarot. Significado, simbolismo e interpretação de cada arcano maior e menor." path="/arquivo-arcano" /><Explore /></AuthGuard>} />
+                                {/* Arquivo Arcano - acessivel a todos, cards limitados por tier */}
+                                <Route path="/arquivo-arcano" element={<AuthGuard><SEO title="Arquivo Arcano - Todas as Cartas de Tarot" description="Explore todas as 78 cartas do tarot. Significado, simbolismo e interpretacao de cada arcano maior e menor." path="/arquivo-arcano" /><Explore /></AuthGuard>} />
                                 <Route path="/arquivo-arcano/:cardSlug" element={<AuthGuard><CardDetails /></AuthGuard>} />
                                 <Route path="/arcane-archive" element={<AuthGuard><SEO title="Arcane Archive - All Tarot Cards" description="Explore all 78 tarot cards. Meaning, symbolism and interpretation of each major and minor arcana." path="/arcane-archive" /><Explore /></AuthGuard>} />
                                 <Route path="/arcane-archive/:cardSlug" element={<AuthGuard><CardDetails /></AuthGuard>} />
@@ -6808,19 +6462,19 @@ const App = () => {
                                 <Route path="/explore" element={<AuthGuard><Explore /></AuthGuard>} />
                                 <Route path="/explore/:cardId" element={<AuthGuard><CardDetails /></AuthGuard>} />
 
-                                {/* Session/Result — paywall inline (readings limit, síntese) */}
+                                {/* Session/Result - paywall inline (readings limit, sintese) */}
                                 <Route path="/session" element={<AuthGuard><Session /></AuthGuard>} />
                                 <Route path="/result" element={<AuthGuard><Result /></AuthGuard>} />
 
-                                {/* History — acessível a todos, paywall inline para guest */}
+                                {/* History - acessivel a todos, paywall inline para guest */}
                                 <Route path="/history" element={<AuthGuard><History /></AuthGuard>} />
 
-                                {/* Conteúdo público com paywall inline diferenciado */}
-                                <Route path="/numerology" element={<AuthGuard><SEO title="Numerologia" description="Descubra seu perfil numerológico completo. Calcule seu número do destino, alma e personalidade." path="/numerology" /><Numerology /></AuthGuard>} />
-                                <Route path="/cosmic" element={<AuthGuard><SEO title="Calendário Cósmico" description="Acompanhe as fases da lua, energia cósmica do dia e alinhamento planetário." path="/cosmic" /><CosmicCalendar /></AuthGuard>} />
-                                <Route path="/carta-do-dia" element={<AuthGuard><SEO title="Carta do Dia - Tarot Diário" description="Descubra a carta de tarot do dia. Receba orientação diária com interpretação completa e conselho espiritual." path="/carta-do-dia" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
+                                {/* Conteudo publico com paywall inline diferenciado */}
+                                <Route path="/numerology" element={<AuthGuard><SEO title="Numerologia" description="Descubra seu perfil numerologico completo. Calcule seu numero do destino, alma e personalidade." path="/numerology" /><Numerology /></AuthGuard>} />
+                                <Route path="/cosmic" element={<AuthGuard><SEO title="Calendario Cosmico" description="Acompanhe as fases da lua, energia cosmica do dia e alinhamento planetario." path="/cosmic" /><CosmicCalendar /></AuthGuard>} />
+                                <Route path="/carta-do-dia" element={<AuthGuard><SEO title="Carta do Dia - Tarot Diario" description="Descubra a carta de tarot do dia. Receba orientacao diaria com interpretacao completa e conselho espiritual." path="/carta-do-dia" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
                                 <Route path="/daily-card" element={<AuthGuard><SEO title="Daily Tarot Card" description="Discover your daily tarot card. Receive daily guidance with complete interpretation and spiritual advice." path="/daily-card" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
-                                <Route path="/tarot-por-signo" element={<AuthGuard><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodíaco. Descubra o que as cartas revelam para o seu signo hoje." path="/tarot-por-signo" /><TarotPorSignoIndex /></AuthGuard>} />
+                                <Route path="/tarot-por-signo" element={<AuthGuard><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodiaco. Descubra o que as cartas revelam para o seu signo hoje." path="/tarot-por-signo" /><TarotPorSignoIndex /></AuthGuard>} />
                                 <Route path="/tarot-by-sign" element={<AuthGuard><SEO title="Tarot by Zodiac Sign" description="Personalized tarot reading for each zodiac sign. Discover what the cards reveal for your sign today." path="/tarot-by-sign" /><TarotPorSignoIndex /></AuthGuard>} />
                                 <Route path="/tarot-por-signo/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
                                 <Route path="/tarot-by-sign/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
@@ -6829,17 +6483,17 @@ const App = () => {
                                 <Route path="/checkout" element={<Checkout />} />
                                 <Route path="/checkout/success" element={<CheckoutSuccess />} />
 
-                                {/* Settings — requer login */}
+                                {/* Settings - requer login */}
                                 <Route path="/settings" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />
                                 <Route path="/configuracoes" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />
 
-                                {/* Admin — somente admin autenticado no Supabase */}
+                                {/* Admin - somente admin autenticado no Supabase */}
                                 <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminPanel /></ProtectedRoute>} />
 
-                                {/* Páginas públicas sem paywall */}
-                                <Route path="/privacidade" element={<><SEO title="Política de Privacidade" description="Política de privacidade do Zaya Tarot. Saiba como protegemos seus dados e respeitamos sua privacidade." path="/privacidade" /><PrivacyPolicy /></>} />
+                                {/* Paginas publicas sem paywall */}
+                                <Route path="/privacidade" element={<><SEO title="Politica de Privacidade" description="Politica de privacidade do Zaya Tarot. Saiba como protegemos seus dados e respeitamos sua privacidade." path="/privacidade" /><PrivacyPolicy /></>} />
                                 <Route path="/privacy" element={<><SEO title="Privacy Policy" description="Zaya Tarot privacy policy. Learn how we protect your data and respect your privacy." path="/privacy" /><PrivacyPolicy /></>} />
-                                <Route path="/termos" element={<><SEO title="Termos de Uso" description="Termos de uso do Zaya Tarot. Condições para utilização da plataforma de tarot online." path="/termos" /><TermsOfUse /></>} />
+                                <Route path="/termos" element={<><SEO title="Termos de Uso" description="Termos de uso do Zaya Tarot. Condicoes para utilizacao da plataforma de tarot online." path="/termos" /><TermsOfUse /></>} />
                                 <Route path="/terms" element={<><SEO title="Terms of Use" description="Zaya Tarot terms of use. Conditions for using the online tarot platform." path="/terms" /><TermsOfUse /></>} />
                             </Routes>
                             <CookieConsent />
@@ -6852,3 +6506,14 @@ const App = () => {
 };
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth, FREE_TIER_LIMITS, PREMIUM_TIER_LIMITS } from '../contexts/AuthContext';
 
@@ -27,11 +27,11 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   const t = {
     guestReadingsTitle: isPortuguese ? 'Crie sua Conta Gratuita' : 'Create Your Free Account',
     guestReadingsDesc: isPortuguese
-      ? 'Você usou sua tirada gratuita de demonstração. Crie uma conta grátis para ter 1 tirada por dia!'
-      : 'You used your free demo reading. Create a free account to get 1 reading per day!',
-    guestHistoryTitle: isPortuguese ? 'Histórico Requer Conta' : 'History Requires Account',
+      ? 'Voce usou sua tirada gratuita de demonstracao. Crie uma conta gratis para ter 2 tiradas por dia!'
+      : 'You used your free demo reading. Create a free account to get 2 readings per day!',
+    guestHistoryTitle: isPortuguese ? 'Historico Requer Conta' : 'History Requires Account',
     guestHistoryDesc: isPortuguese
-      ? 'Crie uma conta gratuita para salvar e acessar seu histórico de tiragens.'
+      ? 'Crie uma conta gratuita para salvar e acessar seu historico de tiragens.'
       : 'Create a free account to save and access your reading history.',
     guestArchiveTitle: isPortuguese ? 'Arquivo Arcano Requer Conta' : 'Arcane Archive Requires Account',
     guestArchiveDesc: isPortuguese
@@ -45,77 +45,77 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     guestWhatsappDesc: isPortuguese
       ? 'Crie uma conta gratuita para receber a carta do dia pelo WhatsApp.'
       : 'Create a free account to receive your daily card on WhatsApp.',
-    guestPhysicalTitle: isPortuguese ? 'Interpretação Física Premium' : 'Physical Reading Premium',
+    guestPhysicalTitle: isPortuguese ? 'Interpretacao Fisica Premium' : 'Physical Reading Premium',
     guestPhysicalDesc: isPortuguese
-      ? 'A interpretação de tiragens físicas com IA é exclusiva para assinantes Premium.'
+      ? 'A interpretacao de tiragens fisicas com IA e exclusiva para assinantes Premium.'
       : 'Physical reading interpretation with AI is exclusive to Premium subscribers.',
-    guestSynthesisTitle: isPortuguese ? 'Síntese com IA Requer Conta' : 'AI Synthesis Requires Account',
+    guestSynthesisTitle: isPortuguese ? 'Sintese com IA Requer Conta' : 'AI Synthesis Requires Account',
     guestSynthesisDesc: isPortuguese
-      ? 'Crie uma conta gratuita para ter acesso à síntese personalizada com IA em suas tiragens.'
+      ? 'Crie uma conta gratuita para ter acesso a sintese personalizada com IA em suas tiragens.'
       : 'Create a free account to access personalized AI synthesis in your readings.',
 
     title: isPortuguese ? 'Limite Atingido' : 'Limit Reached',
-    readingsTitle: isPortuguese ? 'Tiragens Diárias Esgotadas' : 'Daily Readings Exhausted',
-    synthesisTitle: isPortuguese ? 'Síntese com IA é Premium' : 'AI Synthesis is Premium',
-    historyTitle: isPortuguese ? 'Histórico Completo é Premium' : 'Full History is Premium',
-    exportTitle: isPortuguese ? 'Exportar PDF é Premium' : 'PDF Export is Premium',
-    patternsTitle: isPortuguese ? 'Análise de Padrões é Premium' : 'Pattern Analysis is Premium',
-    whatsappTitle: isPortuguese ? 'Carta do Dia é Premium' : 'Daily Card is Premium',
-    archiveTitle: isPortuguese ? 'Arquivo Completo é Premium' : 'Full Archive is Premium',
-    rankingTitle: isPortuguese ? 'Top 3 Energias é Premium' : 'Top 3 Energies is Premium',
-    physicalTitle: isPortuguese ? 'Interpretação Física é Premium' : 'Physical Reading is Premium',
+    readingsTitle: isPortuguese ? 'Tiragens Diarias Esgotadas' : 'Daily Readings Exhausted',
+    synthesisTitle: isPortuguese ? 'Sintese com IA e Premium' : 'AI Synthesis is Premium',
+    historyTitle: isPortuguese ? 'Historico Completo e Premium' : 'Full History is Premium',
+    exportTitle: isPortuguese ? 'Recursos avancados sao Premium' : 'Advanced Features are Premium',
+    patternsTitle: isPortuguese ? 'Analise de Padroes e Premium' : 'Pattern Analysis is Premium',
+    whatsappTitle: isPortuguese ? 'Carta do Dia e Premium' : 'Daily Card is Premium',
+    archiveTitle: isPortuguese ? 'Arquivo Completo e Premium' : 'Full Archive is Premium',
+    rankingTitle: isPortuguese ? 'Top 3 Energias e Premium' : 'Top 3 Energies is Premium',
+    physicalTitle: isPortuguese ? 'Interpretacao Fisica e Premium' : 'Physical Reading is Premium',
 
     readingsDesc: isPortuguese
-      ? `Você já fez ${readingsToday} de ${FREE_TIER_LIMITS.readingsPerDay} tiragens gratuitas hoje. Volte amanhã ou faça upgrade para tiragens ilimitadas.`
+      ? `Voce ja fez ${readingsToday} de ${FREE_TIER_LIMITS.readingsPerDay} tiragens gratuitas hoje. Volte amanha ou faca upgrade para tiragens ilimitadas.`
       : `You've done ${readingsToday} of ${FREE_TIER_LIMITS.readingsPerDay} free readings today. Come back tomorrow or upgrade for unlimited readings.`,
     synthesisDesc: isPortuguese
-      ? 'A síntese personalizada com inteligência artificial está disponível apenas para assinantes Premium.'
+      ? 'A sintese personalizada com inteligencia artificial esta disponivel apenas para assinantes Premium.'
       : 'Personalized AI synthesis is only available for Premium subscribers.',
     historyDesc: isPortuguese
-      ? `No plano gratuito, você tem acesso às últimas ${FREE_TIER_LIMITS.maxHistoryItems} tiragens. Faça upgrade para histórico completo.`
+      ? `No plano gratuito, voce tem acesso as ultimas ${FREE_TIER_LIMITS.maxHistoryItems} tiragens. Faca upgrade para historico completo.`
       : `On the free plan, you have access to the last ${FREE_TIER_LIMITS.maxHistoryItems} readings. Upgrade for full history.`,
     exportDesc: isPortuguese
-      ? 'Exporte suas tiragens em PDF para guardar ou compartilhar. Disponível apenas para Premium.'
-      : 'Export your readings as PDF to save or share. Available only for Premium.',
+      ? 'Recursos avancados de leitura estao disponiveis apenas para assinantes Premium.'
+      : 'Advanced reading features are available only for Premium subscribers.',
     patternsDesc: isPortuguese
-      ? 'Descubra padrões nas cartas que aparecem com frequência em suas tiragens. Recurso exclusivo Premium.'
+      ? 'Descubra padroes nas cartas que aparecem com frequencia em suas tiragens. Recurso exclusivo Premium.'
       : 'Discover patterns in cards that frequently appear in your readings. Exclusive Premium feature.',
     archiveDesc: isPortuguese
-      ? `No plano gratuito, você tem acesso a ${FREE_TIER_LIMITS.maxArchiveCards} cartas. Faça upgrade para acesso completo às 78 cartas.`
+      ? `No plano gratuito, voce tem acesso a ${FREE_TIER_LIMITS.maxArchiveCards} cartas. Faca upgrade para acesso completo as 78 cartas.`
       : `On the free plan, you have access to ${FREE_TIER_LIMITS.maxArchiveCards} cards. Upgrade for full access to all 78 cards.`,
     rankingDesc: isPortuguese
       ? 'Veja seu Top 3 de energias que guiam sua jornada espiritual. Recurso exclusivo Premium.'
       : 'See your Top 3 energies that guide your spiritual journey. Exclusive Premium feature.',
     whatsappDesc: isPortuguese
-      ? 'Para receber a carta do dia pelo WhatsApp é necessário assinar o Premium.'
+      ? 'Para receber a carta do dia pelo WhatsApp e necessario assinar o Premium.'
       : 'To receive the daily card on WhatsApp you need to subscribe to Premium.',
     physicalDesc: isPortuguese
-      ? 'A interpretação de tiragens físicas com IA é exclusiva para assinantes Premium.'
+      ? 'A interpretacao de tiragens fisicas com IA e exclusiva para assinantes Premium.'
       : 'Physical reading interpretation with AI is exclusive to Premium subscribers.',
 
     upgrade: isPortuguese ? 'Assinar Premium' : 'Go Premium',
-    createAccount: isPortuguese ? 'Criar Conta Grátis' : 'Create Free Account',
-    login: isPortuguese ? 'Já tenho conta' : 'I have an account',
+    createAccount: isPortuguese ? 'Criar Conta Gratis' : 'Create Free Account',
+    login: isPortuguese ? 'Ja tenho conta' : 'I have an account',
     maybeLater: isPortuguese ? 'Talvez Depois' : 'Maybe Later',
 
-    freeBenefits: isPortuguese ? 'Com conta gratuita você tem' : 'With a free account you get',
-    threeReadings: isPortuguese ? '1 tirada por dia com síntese IA' : '1 reading per day with AI synthesis',
-    historyAccess: isPortuguese ? 'Histórico das últimas 3 tiragens' : 'History of last 3 readings',
+    freeBenefits: isPortuguese ? 'Com conta gratuita voce tem' : 'With a free account you get',
+    threeReadings: isPortuguese ? '2 tiradas por dia com sintese IA' : '2 readings per day with AI synthesis',
+    historyAccess: isPortuguese ? 'Historico das ultimas 3 tiragens' : 'History of last 3 readings',
     sevenCards: isPortuguese ? 'Acesso a 7 cartas do arquivo' : 'Access to 7 archive cards',
 
     premiumBenefits: isPortuguese ? 'Tudo incluso no Premium' : 'Everything in Premium',
     unlimitedReadings: isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings',
-    aiSynthesis: isPortuguese ? 'Síntese com IA personalizada' : 'Personalized AI synthesis',
-    fullHistory: isPortuguese ? 'Histórico completo' : 'Full history',
+    aiSynthesis: isPortuguese ? 'Sintese com IA personalizada' : 'Personalized AI synthesis',
+    fullHistory: isPortuguese ? 'Historico completo' : 'Full history',
     fullArchive: isPortuguese ? 'Todas as 78 cartas' : 'All 78 cards',
-    pdfExport: isPortuguese ? 'Exportar em PDF' : 'PDF export',
-    patternAnalysis: isPortuguese ? 'Análise de padrões' : 'Pattern analysis',
-    noAds: isPortuguese ? 'Sem anúncios' : 'No ads',
-    tarotBySign: isPortuguese ? 'Tarot por Signo diário' : 'Daily Tarot by Sign',
+    pdfExport: isPortuguese ? 'E-book Arquivo Arcano' : 'Arcane Archive e-book',
+    patternAnalysis: isPortuguese ? 'Analise de padroes' : 'Pattern analysis',
+    noAds: isPortuguese ? 'Sem anuncios' : 'No ads',
+    tarotBySign: isPortuguese ? 'Tarot por Signo diario' : 'Daily Tarot by Sign',
     whatsappCard: isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp',
 
     price: isPortuguese ? 'R$ 19,90' : '$3.99',
-    pricePerMonth: isPortuguese ? '/mês' : '/month',
+    pricePerMonth: isPortuguese ? '/mes' : '/month',
     priceNote: isPortuguese ? 'Cancele quando quiser' : 'Cancel anytime',
   };
 
@@ -393,3 +393,7 @@ export const usePaywall = () => {
 };
 
 export default PaywallModal;
+
+
+
+

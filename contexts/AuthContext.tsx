@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+﻿import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Profile, SubscriptionTier } from '../types/database';
 import { getGuestReading, clearGuestReading, transferGuestReadingToUser } from '../services/readingsService';
 
-// Limites para visitantes (não logados)
+// Limites para visitantes (nao logados)
 export const GUEST_LIMITS = {
   readingsPerDay: 1,
   historyDays: 0,
@@ -20,7 +20,7 @@ export const GUEST_LIMITS = {
 
 // Limites do plano gratuito (logado)
 export const FREE_TIER_LIMITS = {
-  readingsPerDay: 1,
+  readingsPerDay: 2,
   historyDays: 7,
   maxHistoryItems: 3,
   maxArchiveCards: 7,
@@ -67,7 +67,7 @@ interface AuthContextType {
   refreshProfile: () => Promise<void>;
 }
 
-// Criar um valor padrão seguro para quando o contexto não está disponível
+// Criar um valor padrao seguro para quando o contexto nao esta disponivel
 const defaultAuthValue: AuthContextType = {
   user: null,
   session: null,
@@ -93,7 +93,7 @@ const AuthContext = createContext<AuthContextType>(defaultAuthValue);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  // Não lançar erro - retornar valor padrão seguro se contexto não disponível
+  // Nao lancar erro - retornar valor padrao seguro se contexto nao disponivel
   return context;
 };
 
@@ -187,13 +187,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [guestReadings, setGuestReadingsState] = useState<number>(() => getGuestReadings().count);
   const isConfigured = isSupabaseConfigured();
 
-  // Determinar se é visitante (não logado)
+  // Determinar se e visitante (nao logado)
   const isGuest = !user;
 
-  // Estado para indicar que o profile está sendo carregado
+  // Estado para indicar que o profile esta sendo carregado
   const [profileLoading, setProfileLoading] = useState(false);
 
-  // Função para verificar se assinatura expirou
+  // Funcao para verificar se assinatura expirou
   const isSubscriptionExpired = (expiresAt: string | null): boolean => {
     if (!expiresAt) return false;
     try {
@@ -203,11 +203,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Derivar tier e limites com validação de expiração
+  // Derivar tier e limites com validacao de expiracao
   const computeTier = useCallback((): SubscriptionTier | 'guest' => {
-    // Se usuário não está logado, é guest
+    // Se usuario nao esta logado, e guest
     if (isGuest) return 'guest';
-    // Se profile ainda não carregou, tentar carregar do cache local
+    // Se profile ainda nao carregou, tentar carregar do cache local
     if (!profile) {
       try {
         const cached = localStorage.getItem('tarot-user-tier');
@@ -250,7 +250,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const tier = computeTier();
   const limits = tier === 'premium' ? PREMIUM_TIER_LIMITS : (tier === 'guest' ? GUEST_LIMITS : FREE_TIER_LIMITS);
 
-  // Verificar se é um novo dia para resetar contador
+  // Verificar se e um novo dia para resetar contador
   const isNewDay = (lastDate: string | null): boolean => {
     if (!lastDate) return true;
     const today = new Date().toISOString().split('T')[0];
@@ -261,7 +261,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const readingsToday = isGuest ? guestReadings : (profile?.readings_today || 0);
   const canDoReading = tier === 'premium' || readingsToday < limits.readingsPerDay;
 
-  // Buscar perfil do usuário - retorna o perfil ou null
+  // Buscar perfil do usuario - retorna o perfil ou null
   const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
     if (!supabase) {
       setProfileLoading(false);
@@ -271,7 +271,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setProfileLoading(true);
 
     try {
-      // Primeiro, verificar se há profile no cache
+      // Primeiro, verificar se ha profile no cache
       const cacheKey = `tarot-profile-${userId}`;
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
@@ -299,7 +299,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  // Função auxiliar para buscar do DB
+  // Funcao auxiliar para buscar do DB
   const fetchProfileFromDB = async (userId: string, cacheKey: string): Promise<Profile | null> => {
     if (!supabase) return null;
 
@@ -319,7 +319,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { data, error } = result;
 
       if (error) {
-        // Se o perfil não existe, criar um
+        // Se o perfil nao existe, criar um
         if (error.code === 'PGRST116') {
           const newProfile: Profile = {
             id: userId,
@@ -366,7 +366,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Ignore storage errors
       }
 
-      // Resetar contador se for um novo dia (fazer em background, não bloquear)
+      // Resetar contador se for um novo dia (fazer em background, nao bloquear)
       if (data && isNewDay(data.last_reading_date)) {
         // Atualizar imediatamente no estado com contador zerado
         const resetProfile = {
@@ -377,7 +377,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setProfile(resetProfile);
         setProfileLoading(false);
 
-        // Atualizar no banco em background (não await)
+        // Atualizar no banco em background (nao await)
         supabase
           .from('profiles')
           .update({
@@ -386,7 +386,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           })
           .eq('id', userId)
           .then(() => {
-            // Atualizar cache após update
+            // Atualizar cache apos update
             try {
               const profileWithCache = { ...resetProfile, _cacheTime: Date.now() };
               localStorage.setItem(cacheKey, JSON.stringify(profileWithCache));
@@ -407,14 +407,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Inicializar autenticação
+  // Inicializar autenticacao
   useEffect(() => {
     if (!isConfigured || !supabase) {
       setLoading(false);
       return;
     }
 
-    // Verificar sessão existente
+    // Verificar sessao existente
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -424,7 +424,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(false);
     });
 
-    // Escutar mudanças de autenticação
+    // Escutar mudancas de autenticacao
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_OUT') {
@@ -485,7 +485,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       },
     });
 
-    // Se a conta foi criada com sucesso e é premium, atualizar o perfil
+    // Se a conta foi criada com sucesso e e premium, atualizar o perfil
     if (!error && data?.user && subscriptionTier === 'premium') {
       // Aguardar um momento para o trigger criar o profile
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -609,7 +609,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return;
     }
 
-    // Para usuários logados: salvar no Supabase
+    // Para usuarios logados: salvar no Supabase
     if (!user || !profile || !supabase) return;
 
     const today = new Date().toISOString().split('T')[0];
@@ -660,3 +660,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+

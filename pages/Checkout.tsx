@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -20,7 +20,7 @@ export const Checkout: React.FC = () => {
     const { user, isGuest, signUp, updateProfile, profile } = useAuth();
     const navigate = useNavigate();
 
-    // Verificar se o usuário está logado (não é visitante)
+    // Verificar se o usuario esta logado (nao e visitante)
     const isLoggedIn = !isGuest && !!user;
 
     const [phase, setPhase] = useState<Phase>('plans');
@@ -35,7 +35,7 @@ export const Checkout: React.FC = () => {
         phone: '',
     });
 
-    // Pré-preencher dados do usuário logado
+    // Pre-preencher dados do usuario logado
     useEffect(() => {
         if (isLoggedIn && profile) {
             setFormData(prev => ({
@@ -66,12 +66,12 @@ export const Checkout: React.FC = () => {
         }
 
         if (formData.password.length < 6) {
-            setError(isPortuguese ? 'Senha mínimo 6 caracteres' : 'Password minimum 6 characters');
+            setError(isPortuguese ? 'Senha minimo 6 caracteres' : 'Password minimum 6 characters');
             return;
         }
 
         if (formData.password !== formData.confirmPassword) {
-            setError(isPortuguese ? 'Senhas não conferem' : 'Passwords do not match');
+            setError(isPortuguese ? 'Senhas nao conferem' : 'Passwords do not match');
             return;
         }
 
@@ -91,7 +91,7 @@ export const Checkout: React.FC = () => {
                     navigate('/');
                 }
             } else {
-                // Para PREMIUM: apenas valida e vai pra payment (conta será criada DEPOIS do pagamento)
+                // Para PREMIUM: apenas valida e vai pra payment (conta sera criada DEPOIS do pagamento)
                 setPhase('payment');
             }
         } finally {
@@ -105,7 +105,7 @@ export const Checkout: React.FC = () => {
         setError(null);
 
         try {
-            // Se novo usuário, criar conta primeiro
+            // Se novo usuario, criar conta primeiro
             if (!isLoggedIn) {
                 const { error: signUpError } = await signUp(
                     formData.email,
@@ -150,9 +150,10 @@ export const Checkout: React.FC = () => {
                     </button>
                     <button
                         onClick={() => navigate('/')}
-                        className="text-sm text-gray-400 hover:text-white transition-colors"
+                        className="text-sm text-gray-400 hover:text-white transition-colors inline-flex items-center gap-1"
                     >
-                        ← Voltar
+                        <span className="material-symbols-outlined text-sm">arrow_back</span>
+                        {isPortuguese ? 'Voltar' : 'Back'}
                     </button>
                 </div>
             </header>
@@ -179,17 +180,17 @@ export const Checkout: React.FC = () => {
 
                 {/* PLANS PHASE */}
                 {phase === 'plans' && (
-                    <div className="w-full max-w-6xl space-y-16 relative">
+                    <div className="w-full max-w-6xl space-y-12 md:space-y-16 relative">
                         {/* Premium Header */}
                         <div className="text-center">
                             <h1
-                                className="text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.0] tracking-tight text-gradient-gold mb-4"
+                                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.0] tracking-tight text-gradient-gold mb-4"
                                 style={{ fontFamily: "'Crimson Text', serif" }}
                             >
                                 {isPortuguese ? 'Escolha o plano ideal' : 'Choose the ideal plan'}
                             </h1>
                             <p className="text-gray-400 text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto mb-8" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                {isPortuguese ? 'Para sua jornada de descobertas e evolução espiritual' : 'For your discovery journey and spiritual evolution'}
+                                {isPortuguese ? 'Para sua jornada de descobertas e evolucao espiritual' : 'For your discovery journey and spiritual evolution'}
                             </p>
                             <div className="mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#875faf]/10 border border-[#a77fd4]/30">
                                 <span className="text-[#a77fd4] text-xs uppercase tracking-widest font-semibold">
@@ -199,15 +200,15 @@ export const Checkout: React.FC = () => {
                         </div>
 
                         {/* Plans Grid - Large Cards with Premium Design */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 max-w-4xl mx-auto">
                             {/* Free Plan Card */}
                             <button
                                 onClick={() => setSelectedPlan('free')}
                                 className={`group relative overflow-hidden transition-all duration-500 transform text-left rounded-3xl ${selectedPlan === 'free'
                                     ? 'scale-100 ring-2 ring-[#a77fd4]'
-                                    : 'hover:scale-102 ring-2 ring-white/10 hover:ring-[#875faf]'
+                                    : 'hover:scale-[1.02] ring-2 ring-white/10 hover:ring-[#875faf]'
                                     }`}
-                                style={{ minHeight: '420px' }}
+                                style={{}}
                             >
                                 {/* Background Gradient */}
                                 <div className="absolute inset-0 bg-gradient-to-br from-[#1a1628]/80 via-[#2a1f3d]/60 to-[#0d0512] rounded-3xl" />
@@ -221,55 +222,55 @@ export const Checkout: React.FC = () => {
                                 <div className="absolute inset-0 bg-gradient-to-b from-[#a77fd4]/10 via-transparent to-transparent pointer-events-none rounded-3xl" />
 
                                 {/* Content */}
-                                <div className="relative z-10 p-6 md:p-8 h-full flex flex-col rounded-3xl border border-[#a77fd4]/30 bg-gradient-to-br from-[#a77fd4]/5 via-transparent to-transparent">
+                                <div className="relative z-10 p-5 sm:p-6 md:p-8 h-full min-h-[380px] md:min-h-[420px] flex flex-col rounded-3xl border border-[#a77fd4]/30 bg-gradient-to-br from-[#a77fd4]/5 via-transparent to-transparent">
                                     {/* Price Section */}
                                     <div className="mb-6">
                                         <p className="text-[#a77fd4] text-sm uppercase tracking-widest font-semibold mb-3">
-                                            {isPortuguese ? 'Exploração Livre' : 'Free Exploration'}
+                                            {isPortuguese ? 'Exploracao Livre' : 'Free Exploration'}
                                         </p>
-                                        <h3 className="text-5xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        <h3 className="text-4xl sm:text-5xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
                                             {isPortuguese ? 'Gratuito' : 'Free'}
                                         </h3>
-                                        <div className="text-4xl font-light text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        <div className="text-3xl sm:text-4xl font-light text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
                                             R$ 0<span className="text-lg text-gray-400 font-normal">/sempre</span>
                                         </div>
-                                        <p className="text-gray-400 text-sm">{isPortuguese ? 'Para começar sua prática' : 'To start your practice'}</p>
+                                        <p className="text-gray-400 text-sm">{isPortuguese ? 'Para comecar sua pratica' : 'To start your practice'}</p>
                                     </div>
 
                                     {/* Features */}
                                     <div className="flex-1 space-y-4 mb-10">
                                         <div className="text-gray-300 text-sm flex items-start gap-3">
-                                            <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
+                                            <span className="material-symbols-outlined text-[#a77fd4] text-lg mt-0.5">check_circle</span>
                                             <div>
-                                                <p className="font-medium">1 {isPortuguese ? 'tirada por dia' : 'reading per day'}</p>
-                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Acesso básico às cartas' : 'Basic card access'}</p>
+                                                <p className="font-medium">2 {isPortuguese ? 'tiradas por dia' : 'readings per day'}</p>
+                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Acesso basico as cartas' : 'Basic card access'}</p>
                                             </div>
                                         </div>
                                         <div className="text-gray-300 text-sm flex items-start gap-3">
-                                            <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
+                                            <span className="material-symbols-outlined text-[#a77fd4] text-lg mt-0.5">check_circle</span>
                                             <div>
                                                 <p className="font-medium">7 {isPortuguese ? 'cartas do arquivo' : 'archive cards'}</p>
                                                 <p className="text-xs text-gray-500">{isPortuguese ? 'Tarot tradicional' : 'Traditional tarot'}</p>
                                             </div>
                                         </div>
                                         <div className="text-gray-300 text-sm flex items-start gap-3">
-                                            <span className="text-[#a77fd4] font-bold mt-0.5 text-lg">✓</span>
+                                            <span className="material-symbols-outlined text-[#a77fd4] text-lg mt-0.5">check_circle</span>
                                             <div>
-                                                <p className="font-medium">{isPortuguese ? 'Histórico de 3 leituras' : 'History of 3 readings'}</p>
-                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Acompanhamento básico' : 'Basic tracking'}</p>
+                                                <p className="font-medium">{isPortuguese ? 'Historico de 3 leituras' : 'History of 3 readings'}</p>
+                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Acompanhamento basico' : 'Basic tracking'}</p>
                                             </div>
                                         </div>
                                         <div className="text-gray-400 text-sm flex items-start gap-3 opacity-60">
-                                            <span className="text-gray-600 font-bold mt-0.5 text-lg">✕</span>
+                                            <span className="material-symbols-outlined text-gray-600 text-lg mt-0.5">close</span>
                                             <div>
-                                                <p className="font-medium">{isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}</p>
-                                                <p className="text-xs text-gray-600">{isPortuguese ? 'Interpretação avançada' : 'Advanced interpretation'}</p>
+                                                <p className="font-medium">{isPortuguese ? 'Sintese com IA' : 'AI Synthesis'}</p>
+                                                <p className="text-xs text-gray-600">{isPortuguese ? 'Interpretacao avancada' : 'Advanced interpretation'}</p>
                                             </div>
                                         </div>
                                         <div className="text-gray-400 text-sm flex items-start gap-3 opacity-60">
-                                            <span className="text-gray-600 font-bold mt-0.5 text-lg">✕</span>
+                                            <span className="material-symbols-outlined text-gray-600 text-lg mt-0.5">close</span>
                                             <div>
-                                                <p className="font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern Analysis'}</p>
+                                                <p className="font-medium">{isPortuguese ? 'Analise de padroes' : 'Pattern Analysis'}</p>
                                                 <p className="text-xs text-gray-600">{isPortuguese ? 'Insights personalizados' : 'Custom insights'}</p>
                                             </div>
                                         </div>
@@ -278,7 +279,7 @@ export const Checkout: React.FC = () => {
                                     {/* Selection indicator */}
                                     {selectedPlan === 'free' && (
                                         <div className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-[#a77fd4]/20 border border-[#a77fd4]/40 text-[#a77fd4] text-xs font-semibold">
-                                            ✓ {isPortuguese ? 'Selecionado' : 'Selected'}
+                                            <span className="material-symbols-outlined text-sm mr-1">check_circle</span>{isPortuguese ? 'Selecionado' : 'Selected'}
                                         </div>
                                     )}
                                 </div>
@@ -289,14 +290,13 @@ export const Checkout: React.FC = () => {
                                 onClick={() => setSelectedPlan('premium')}
                                 className={`group relative overflow-hidden transition-all duration-500 transform text-left rounded-3xl ${selectedPlan === 'premium'
                                     ? 'scale-100 ring-2 ring-[#ffe066]'
-                                    : 'hover:scale-102 ring-2 ring-white/10 hover:ring-[#ffe066]'
+                                    : 'hover:scale-[1.02] ring-2 ring-white/10 hover:ring-[#ffe066]'
                                     }`}
-                                style={{ minHeight: '420px' }}
+                                style={{}}
                             >
                                 {/* Premium Badge */}
                                 <div className="absolute top-0 right-0 z-20">
-                                    <div className="bg-gradient-to-r from-[#ffe066] to-[#ffd700] text-black px-6 py-2 rounded-bl-3xl font-semibold text-xs uppercase tracking-widest">
-                                        ⭐ {isPortuguese ? 'Recomendado' : 'Recommended'}
+                                    <div className="bg-gradient-to-r from-[#ffe066] to-[#ffd700] text-black px-6 py-2 rounded-bl-3xl font-semibold text-xs uppercase tracking-widest">                                        {isPortuguese ? 'Recomendado' : 'Recommended'}
                                     </div>
                                 </div>
 
@@ -312,21 +312,21 @@ export const Checkout: React.FC = () => {
                                 <div className="absolute inset-0 bg-gradient-to-b from-[#ffe066]/10 via-transparent to-transparent pointer-events-none rounded-3xl" />
 
                                 {/* Content */}
-                                <div className="relative z-10 p-6 md:p-8 h-full flex flex-col rounded-3xl border border-[#ffe066]/30 bg-gradient-to-br from-[#ffe066]/5 via-transparent to-transparent">
+                                <div className="relative z-10 p-5 sm:p-6 md:p-8 h-full min-h-[380px] md:min-h-[420px] flex flex-col rounded-3xl border border-[#ffe066]/30 bg-gradient-to-br from-[#ffe066]/5 via-transparent to-transparent">
                                     {/* Price Section */}
                                     <div className="mb-6">
                                         <p className="text-[#ffe066] text-sm uppercase tracking-widest font-semibold mb-3">
                                             {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
                                         </p>
-                                        <h3 className="text-5xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                        <h3 className="text-4xl sm:text-5xl font-normal text-white mb-2" style={{ fontFamily: "'Crimson Text', serif" }}>
                                             {isPortuguese ? 'Premium' : 'Premium'}
                                         </h3>
-                                        <div className="text-4xl font-light text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                            R$ 19<span className="text-lg text-gray-400 font-normal">,90/mês</span>
+                                        <div className="text-3xl sm:text-4xl font-light text-white mb-4" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                            R$ 19<span className="text-lg text-gray-400 font-normal">,90/mes</span>
                                         </div>
                                         <p className="text-gray-400 text-sm">{isPortuguese ? 'Para praticantes dedicados' : 'For dedicated practitioners'}</p>
                                         <div className="mt-4 pt-4 border-t border-[#ffe066]/20 flex items-center gap-2">
-                                            <span className="text-green-400 font-bold">✓</span>
+                                            <span className="material-symbols-outlined text-green-400 text-sm">check_circle</span>
                                             <p className="text-green-400 text-xs font-medium">{isPortuguese ? '7 dias de garantia. Cancele quando quiser.' : '7-day guarantee. Cancel anytime.'}</p>
                                         </div>
                                     </div>
@@ -334,38 +334,38 @@ export const Checkout: React.FC = () => {
                                     {/* Features */}
                                     <div className="flex-1 space-y-4 mb-10">
                                         <div className="text-gray-300 text-sm flex items-start gap-3">
-                                            <span className="text-[#ffe066] font-bold mt-0.5 text-lg">✓</span>
+                                            <span className="material-symbols-outlined text-[#ffe066] text-lg mt-0.5">check_circle</span>
                                             <div>
                                                 <p className="font-medium">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</p>
                                                 <p className="text-xs text-gray-500">{isPortuguese ? 'Quantas vezes quiser' : 'As many times as you want'}</p>
                                             </div>
                                         </div>
                                         <div className="text-gray-300 text-sm flex items-start gap-3">
-                                            <span className="text-[#ffe066] font-bold mt-0.5 text-lg">✓</span>
+                                            <span className="material-symbols-outlined text-[#ffe066] text-lg mt-0.5">check_circle</span>
                                             <div>
-                                                <p className="font-medium">78 {isPortuguese ? 'cartas completas' : 'complete cards'}</p>
-                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Tarot Rider-Waite completo' : 'Full Rider-Waite tarot'}</p>
+                                                <p className="font-medium">{isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}</p>
+                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Mensagem diaria automatica no seu celular' : 'Automated daily message on your phone'}</p>
                                             </div>
                                         </div>
                                         <div className="text-gray-300 text-sm flex items-start gap-3">
-                                            <span className="text-[#ffe066] font-bold mt-0.5 text-lg">✓</span>
+                                            <span className="material-symbols-outlined text-[#ffe066] text-lg mt-0.5">check_circle</span>
                                             <div>
-                                                <p className="font-medium">{isPortuguese ? 'Síntese com IA' : 'AI Synthesis'}</p>
-                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Interpretação avançada e personalizada' : 'Advanced custom interpretation'}</p>
+                                                <p className="font-medium">{isPortuguese ? 'E-book Arquivo Arcano' : 'Arcane Archive E-book'}</p>
+                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Download completo do seu infoproduto premium' : 'Full premium infoproduct download'}</p>
                                             </div>
                                         </div>
                                         <div className="text-gray-300 text-sm flex items-start gap-3">
-                                            <span className="text-[#ffe066] font-bold mt-0.5 text-lg">✓</span>
+                                            <span className="material-symbols-outlined text-[#ffe066] text-lg mt-0.5">check_circle</span>
                                             <div>
-                                                <p className="font-medium">{isPortuguese ? 'Histórico completo' : 'Full history'}</p>
-                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Todas as suas leituras salvas' : 'All your readings saved'}</p>
+                                                <p className="font-medium">{isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}</p>
+                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Leitura dedicada para cada signo' : 'Dedicated reading for each zodiac sign'}</p>
                                             </div>
                                         </div>
                                         <div className="text-gray-300 text-sm flex items-start gap-3">
-                                            <span className="text-[#ffe066] font-bold mt-0.5 text-lg">✓</span>
+                                            <span className="material-symbols-outlined text-[#ffe066] text-lg mt-0.5">check_circle</span>
                                             <div>
-                                                <p className="font-medium">{isPortuguese ? 'Análise de padrões' : 'Pattern Analysis'}</p>
-                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Descubra tendências na sua jornada' : 'Discover trends in your journey'}</p>
+                                                <p className="font-medium">{isPortuguese ? 'Sintese com IA + historico completo' : 'AI synthesis + full history'}</p>
+                                                <p className="text-xs text-gray-500">{isPortuguese ? 'Interpretacao avancada com acompanhamento' : 'Advanced interpretation with tracking'}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -373,7 +373,7 @@ export const Checkout: React.FC = () => {
                                     {/* Selection indicator */}
                                     {selectedPlan === 'premium' && (
                                         <div className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-[#ffe066]/20 border border-[#ffe066]/40 text-[#ffe066] text-xs font-semibold">
-                                            ✓ {isPortuguese ? 'Selecionado' : 'Selected'}
+                                            <span className="material-symbols-outlined text-sm mr-1">check_circle</span>{isPortuguese ? 'Selecionado' : 'Selected'}
                                         </div>
                                     )}
                                 </div>
@@ -384,18 +384,18 @@ export const Checkout: React.FC = () => {
                         <div className="flex justify-center pt-8">
                             <button
                                 onClick={() => {
-                                    // Se usuário já está logado e selecionou premium, pula para pagamento
+                                    // Se usuario ja esta logado e selecionou premium, pula para pagamento
                                     if (isLoggedIn && selectedPlan === 'premium') {
                                         setPhase('payment');
                                     } else if (isLoggedIn && selectedPlan === 'free') {
-                                        // Usuário logado selecionou free - já tem conta, volta para home
+                                        // Usuario logado selecionou free - ja tem conta, volta para home
                                         navigate('/');
                                     } else {
                                         // Visitante precisa criar conta
                                         setPhase('account');
                                     }
                                 }}
-                                className={`px-12 py-4 rounded-lg font-semibold transition-all text-base uppercase tracking-widest ${selectedPlan === 'premium'
+                                className={`w-full sm:w-auto px-8 sm:px-12 py-4 rounded-lg font-semibold transition-all text-base uppercase tracking-widest ${selectedPlan === 'premium'
                                     ? 'bg-gradient-to-r from-[#ffe066] to-[#ffd700] text-black hover:shadow-lg hover:shadow-[#ffe066]/40'
                                     : 'bg-gradient-to-r from-[#875faf] to-[#a77fd4] text-white hover:shadow-lg hover:shadow-[#875faf]/40'
                                     }`}
@@ -412,25 +412,25 @@ export const Checkout: React.FC = () => {
                                 <div className="flex items-center justify-center gap-6 md:gap-8 flex-wrap">
                                     <div className="flex flex-col items-center gap-1.5 group">
                                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-500/10 border border-green-500/30 group-hover:bg-green-500/20 transition-colors">
-                                            <span className="text-2xl">🔒</span>
+                                            <span className="material-symbols-outlined text-green-400 text-2xl">lock</span>
                                         </div>
                                         <span className="text-gray-400 text-xs text-center">{isPortuguese ? 'Pagamento 100% Seguro' : '100% Secure Payment'}</span>
                                     </div>
                                     <div className="flex flex-col items-center gap-1.5 group">
                                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/30 group-hover:bg-blue-500/20 transition-colors">
-                                            <span className="text-2xl">🛡️</span>
+                                            <span className="material-symbols-outlined text-blue-400 text-2xl">shield</span>
                                         </div>
                                         <span className="text-gray-400 text-xs text-center">SSL 256-bit</span>
                                     </div>
                                     <div className="flex flex-col items-center gap-1.5 group">
                                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/10 border border-purple-500/30 group-hover:bg-purple-500/20 transition-colors">
-                                            <span className="text-2xl">✓</span>
+                                            <span className="material-symbols-outlined text-purple-400 text-2xl">verified_user</span>
                                         </div>
                                         <span className="text-gray-400 text-xs text-center">PCI DSS</span>
                                     </div>
                                     <div className="flex flex-col items-center gap-1.5 group">
                                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-500/10 border border-yellow-500/30 group-hover:bg-yellow-500/20 transition-colors">
-                                            <span className="text-2xl">⭐</span>
+                                            <span className="material-symbols-outlined text-yellow-400 text-2xl">workspace_premium</span>
                                         </div>
                                         <span className="text-gray-400 text-xs text-center">{isPortuguese ? 'Garantia 7 dias' : '7-day Guarantee'}</span>
                                     </div>
@@ -458,7 +458,7 @@ export const Checkout: React.FC = () => {
                                 {/* Trust Message */}
                                 <div className="flex items-center gap-2 text-gray-500 text-xs">
                                     <span className="material-symbols-outlined text-green-500 text-sm">verified</span>
-                                    <span>{isPortuguese ? 'Seus dados estão protegidos com criptografia de ponta a ponta' : 'Your data is protected with end-to-end encryption'}</span>
+                                    <span>{isPortuguese ? 'Seus dados estao protegidos com criptografia de ponta a ponta' : 'Your data is protected with end-to-end encryption'}</span>
                                 </div>
                             </div>
                         </div>
@@ -478,7 +478,7 @@ export const Checkout: React.FC = () => {
                 {/* OTHER PHASES - centered container */}
                 {phase !== 'plans' && (
                     <div className="w-full max-w-2xl relative">
-                        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-12">
+                        <div className="bg-white/5 border border-white/10 rounded-2xl p-5 sm:p-8 md:p-12">
                             {error && (
                                 <div className="mb-6 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
                                     {error}
@@ -511,8 +511,8 @@ export const Checkout: React.FC = () => {
                                     </div>
 
                                     <div className="flex items-center gap-3 p-4 bg-[#875faf]/10 border border-[#875faf]/30 rounded-lg">
-                                        <span className="text-lg">🔒</span>
-                                        <p className="text-xs text-gray-300">{isPortuguese ? 'Seus dados estão seguros e criptografados' : 'Your data is safe and encrypted'}</p>
+                                        <span className="material-symbols-outlined text-green-400 text-xl">lock</span>
+                                        <p className="text-xs text-gray-300">{isPortuguese ? 'Seus dados estao seguros e criptografados' : 'Your data is safe and encrypted'}</p>
                                     </div>
 
                                     <div>
@@ -553,7 +553,7 @@ export const Checkout: React.FC = () => {
                                             className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#875faf] outline-none transition-colors"
                                             required
                                         />
-                                        <p className="text-xs text-gray-500 mt-1">{isPortuguese ? 'Mínimo 6 caracteres' : 'Minimum 6 characters'}</p>
+                                        <p className="text-xs text-gray-500 mt-1">{isPortuguese ? 'Minimo 6 caracteres' : 'Minimum 6 characters'}</p>
                                     </div>
 
                                     <div>
@@ -597,7 +597,7 @@ export const Checkout: React.FC = () => {
                                                 : 'bg-[#875faf] text-white hover:bg-[#9670bf]'
                                                 }`}
                                         >
-                                            {loading ? '...' : (selectedPlan === 'premium' ? (isPortuguese ? 'Próximo' : 'Next') : (isPortuguese ? 'Criar conta' : 'Create account'))}
+                                            {loading ? '...' : (selectedPlan === 'premium' ? (isPortuguese ? 'Proximo' : 'Next') : (isPortuguese ? 'Criar conta' : 'Create account'))}
                                         </button>
                                     </div>
                                 </form>
@@ -606,17 +606,21 @@ export const Checkout: React.FC = () => {
                             {/* PAYMENT PHASE */}
                             {phase === 'payment' && (
                                 <form onSubmit={handlePayment} className="space-y-6">
-                                    {/* Progress bar - adaptado para usuários logados */}
+                                    {/* Progress bar - adaptado para usuarios logados */}
                                     <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/10">
                                         <div className="flex items-center gap-3 opacity-60">
-                                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/30 border border-green-500/60 text-green-400 text-sm font-bold">✓</div>
+                                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/30 border border-green-500/60 text-green-400">
+                                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                            </div>
                                             <span className="text-xs text-gray-400 uppercase">{isPortuguese ? 'Plano' : 'Plan'}</span>
                                         </div>
                                         <div className="flex-1 mx-4 h-px bg-gradient-to-r from-green-500/60 to-green-500/30"></div>
                                         {!isLoggedIn && (
                                             <>
                                                 <div className="flex items-center gap-3 opacity-60">
-                                                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/30 border border-green-500/60 text-green-400 text-sm font-bold">✓</div>
+                                                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/30 border border-green-500/60 text-green-400">
+                                                        <span className="material-symbols-outlined text-sm">check_circle</span>
+                                                    </div>
                                                     <span className="text-xs text-gray-400 uppercase">{isPortuguese ? 'Conta' : 'Account'}</span>
                                                 </div>
                                                 <div className="flex-1 mx-4 h-px bg-gradient-to-r from-green-500/30 to-[#ffe066]/60"></div>
@@ -628,7 +632,7 @@ export const Checkout: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    {/* Mensagem de boas-vindas para usuário logado */}
+                                    {/* Mensagem de boas-vindas para usuario logado */}
                                     {isLoggedIn && profile && (
                                         <div className="flex items-center gap-4 p-4 bg-[#875faf]/10 border border-[#875faf]/30 rounded-xl mb-4">
                                             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#875faf]/20">
@@ -636,7 +640,7 @@ export const Checkout: React.FC = () => {
                                             </div>
                                             <div>
                                                 <p className="text-white text-sm font-medium">
-                                                    {isPortuguese ? `Olá, ${profile.full_name || user?.email?.split('@')[0]}!` : `Hi, ${profile.full_name || user?.email?.split('@')[0]}!`}
+                                                    {isPortuguese ? `Ola, ${profile.full_name || user?.email?.split('@')[0]}!` : `Hi, ${profile.full_name || user?.email?.split('@')[0]}!`}
                                                 </p>
                                                 <p className="text-gray-400 text-xs">
                                                     {isPortuguese ? 'Atualizando sua conta para Premium' : 'Upgrading your account to Premium'}
@@ -651,11 +655,11 @@ export const Checkout: React.FC = () => {
                                         <div className="relative flex items-center justify-between">
                                             <div className="flex items-center gap-4">
                                                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-500/20 border border-green-500/40">
-                                                    <span className="text-2xl">🔐</span>
+                                                    <span className="material-symbols-outlined text-green-400 text-2xl">lock</span>
                                                 </div>
                                                 <div>
                                                     <h3 className="text-green-400 font-semibold text-sm">{isPortuguese ? 'Ambiente Seguro' : 'Secure Environment'}</h3>
-                                                    <p className="text-gray-400 text-xs">{isPortuguese ? 'Transação protegida por criptografia SSL 256-bit' : 'Transaction protected by 256-bit SSL encryption'}</p>
+                                                    <p className="text-gray-400 text-xs">{isPortuguese ? 'Transacao protegida por criptografia SSL 256-bit' : 'Transaction protected by 256-bit SSL encryption'}</p>
                                                 </div>
                                             </div>
                                             <div className="hidden md:flex items-center gap-3">
@@ -675,7 +679,7 @@ export const Checkout: React.FC = () => {
                                     <div className="bg-gradient-to-br from-[#ffe066]/10 to-[#ffd700]/5 border border-[#ffe066]/30 rounded-xl p-6">
                                         <div className="flex items-center gap-3 mb-5 pb-4 border-b border-[#ffe066]/20">
                                             <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[#ffe066]/20">
-                                                <span className="text-xl">✨</span>
+                                                <span className="material-symbols-outlined text-amber-400 text-2xl">auto_awesome</span>
                                             </div>
                                             <div>
                                                 <h3 className="text-white font-semibold">{isPortuguese ? 'Zaya Tarot Premium' : 'Zaya Tarot Premium'}</h3>
@@ -686,16 +690,16 @@ export const Checkout: React.FC = () => {
                                             <div className="flex justify-between text-sm">
                                                 <span className="text-gray-400 flex items-center gap-2">
                                                     <span className="material-symbols-outlined text-xs">calendar_month</span>
-                                                    {isPortuguese ? 'Cobrança' : 'Billing'}
+                                                    {isPortuguese ? 'Cobranca' : 'Billing'}
                                                 </span>
                                                 <span className="text-white font-medium">{isPortuguese ? 'Mensal' : 'Monthly'}</span>
                                             </div>
                                             <div className="flex justify-between text-sm">
                                                 <span className="text-gray-400 flex items-center gap-2">
                                                     <span className="material-symbols-outlined text-xs">autorenew</span>
-                                                    {isPortuguese ? 'Renovação' : 'Renewal'}
+                                                    {isPortuguese ? 'Renovacao' : 'Renewal'}
                                                 </span>
-                                                <span className="text-white font-medium">{isPortuguese ? 'Automática' : 'Automatic'}</span>
+                                                <span className="text-white font-medium">{isPortuguese ? 'Automatica' : 'Automatic'}</span>
                                             </div>
                                             <div className="flex justify-between text-sm">
                                                 <span className="text-gray-400 flex items-center gap-2">
@@ -725,7 +729,7 @@ export const Checkout: React.FC = () => {
                                     <div className="space-y-4">
                                         <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                                             <span className="material-symbols-outlined text-primary">payment</span>
-                                            {isPortuguese ? 'Método de Pagamento' : 'Payment Method'}
+                                            {isPortuguese ? 'Metodo de Pagamento' : 'Payment Method'}
                                         </h2>
 
                                         {/* Stripe Checkout Button - Primary */}
@@ -743,14 +747,14 @@ export const Checkout: React.FC = () => {
                                                 ) : (
                                                     <>
                                                         <span className="material-symbols-outlined">lock</span>
-                                                        {isPortuguese ? 'Pagar com Segurança' : 'Pay Securely'}
+                                                        {isPortuguese ? 'Pagar com Seguranca' : 'Pay Securely'}
                                                         <span className="text-black/60">R$ 19,90</span>
                                                     </>
                                                 )}
                                             </button>
                                             <p className="text-center text-gray-500 text-xs mt-2 flex items-center justify-center gap-1">
                                                 <span className="material-symbols-outlined text-xs">info</span>
-                                                {isPortuguese ? 'Você será redirecionado para o checkout seguro do Stripe' : 'You will be redirected to Stripe secure checkout'}
+                                                {isPortuguese ? 'Voce sera redirecionado para o checkout seguro do Stripe' : 'You will be redirected to Stripe secure checkout'}
                                             </p>
                                         </div>
 
@@ -760,7 +764,7 @@ export const Checkout: React.FC = () => {
                                     <div className="bg-white/5 border border-white/10 rounded-xl p-5">
                                         <h3 className="text-xs font-semibold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
                                             <span className="material-symbols-outlined text-green-400 text-sm">shield</span>
-                                            {isPortuguese ? 'Sua Proteção' : 'Your Protection'}
+                                            {isPortuguese ? 'Sua Protecao' : 'Your Protection'}
                                         </h3>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="flex items-start gap-3">
@@ -769,7 +773,7 @@ export const Checkout: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <p className="text-white text-xs font-medium">3D Secure</p>
-                                                    <p className="text-gray-500 text-xs">{isPortuguese ? 'Autenticação bancária' : 'Bank authentication'}</p>
+                                                    <p className="text-gray-500 text-xs">{isPortuguese ? 'Autenticacao bancaria' : 'Bank authentication'}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-start gap-3">
@@ -787,7 +791,7 @@ export const Checkout: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <p className="text-white text-xs font-medium">PCI DSS</p>
-                                                    <p className="text-gray-500 text-xs">{isPortuguese ? 'Nível 1' : 'Level 1'}</p>
+                                                    <p className="text-gray-500 text-xs">{isPortuguese ? 'Nivel 1' : 'Level 1'}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-start gap-3">
@@ -819,7 +823,7 @@ export const Checkout: React.FC = () => {
                                         <p className="text-gray-500 text-xs flex items-center justify-center gap-2">
                                             <span className="material-symbols-outlined text-xs">lock</span>
                                             {isPortuguese
-                                                ? 'Pagamento processado de forma segura pelo Stripe. Seus dados de cartão nunca são armazenados em nossos servidores.'
+                                                ? 'Pagamento processado de forma segura pelo Stripe. Seus dados de cartao nunca sao armazenados em nossos servidores.'
                                                 : 'Payment processed securely by Stripe. Your card details are never stored on our servers.'}
                                         </p>
                                     </div>
@@ -851,7 +855,7 @@ export const Checkout: React.FC = () => {
                         <div>
                             <h4 className="text-white font-semibold text-xs mb-3 uppercase tracking-wider">{isPortuguese ? 'Legal' : 'Legal'}</h4>
                             <ul className="space-y-2">
-                                <li><button className="text-xs hover:text-white transition-colors">{isPortuguese ? 'Termos de Serviço' : 'Terms of Service'}</button></li>
+                                <li><button className="text-xs hover:text-white transition-colors">{isPortuguese ? 'Termos de Servico' : 'Terms of Service'}</button></li>
                                 <li><button className="text-xs hover:text-white transition-colors">{isPortuguese ? 'Privacidade' : 'Privacy Policy'}</button></li>
                             </ul>
                         </div>
@@ -870,3 +874,4 @@ export const Checkout: React.FC = () => {
 };
 
 export default Checkout;
+
