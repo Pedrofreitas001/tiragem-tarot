@@ -1,6 +1,6 @@
 /**
  * Serviço de geração do Ebook Premium - Jornada do Herói
- * Estilo: Zaya Tarot (fundo roxo liso, fonte gold gradient, layout Arquivo Arcano)
+ * Estilo: Zaya Tarot (fundo degradê roxo, fonte gold gradient, layout Arquivo Arcano)
  */
 import jsPDF from 'jspdf';
 
@@ -15,7 +15,8 @@ const CW = PW - 2 * M; // Content width
 // Cores fiéis ao site Zaya Tarot
 // Gold gradient do hero: #fffebb → #e0c080 → #b88a44
 const C = {
-  BG:            [26, 10, 46]    as const,  // #1a0a2e  - fundo roxo liso
+  BG_TOP:        [18, 6, 36]     as const,  // topo do degradê (mais escuro)
+  BG_BOT:        [36, 16, 62]    as const,  // base do degradê (mais claro/roxo)
   SURFACE:       [26, 19, 32]    as const,  // #1a1320  - cards/boxes
   CARD_BG:       [30, 22, 40]    as const,  // #1e1628  - box sutil
   BORDER:        [135, 95, 175]  as const,  // #875faf  - bordas do site
@@ -92,10 +93,18 @@ const sc = (doc: jsPDF, c: RGB, t: 'f' | 't' | 'd') => {
   else doc.setDrawColor(c[0], c[1], c[2]);
 };
 
-// Fundo roxo liso (flat, sem gradiente)
+// Fundo degradê roxo (escuro no topo → mais roxo embaixo)
 function bg(doc: jsPDF) {
-  sc(doc, C.BG, 'f');
-  doc.rect(0, 0, PW, PH, 'F');
+  const steps = 40;
+  const stripH = PH / steps;
+  for (let i = 0; i < steps; i++) {
+    const t = i / (steps - 1);
+    const r = Math.round(C.BG_TOP[0] + (C.BG_BOT[0] - C.BG_TOP[0]) * t);
+    const g = Math.round(C.BG_TOP[1] + (C.BG_BOT[1] - C.BG_TOP[1]) * t);
+    const b = Math.round(C.BG_TOP[2] + (C.BG_BOT[2] - C.BG_TOP[2]) * t);
+    doc.setFillColor(r, g, b);
+    doc.rect(0, i * stripH, PW, stripH + 0.5, 'F');
+  }
 }
 
 // Header padrão de todas as páginas internas
@@ -194,76 +203,34 @@ async function loadImg(url: string): Promise<string> {
 }
 
 // ============================================================
-// MOCKUP: Deck em arco (C virado para baixo)
+// ÓRBITA DOURADA (ornamento decorativo da capa)
 // ============================================================
-async function createDeckMockup(imgs: Map<string, string>): Promise<string> {
-  const cv = document.createElement('canvas');
-  cv.width = 900; cv.height = 420;
-  const ctx = cv.getContext('2d')!;
-  ctx.clearRect(0, 0, 900, 420);
-
-  // Glow roxo ao fundo
-  const g1 = ctx.createRadialGradient(450, 350, 40, 450, 350, 380);
-  g1.addColorStop(0, 'rgba(147, 17, 212, 0.45)');
-  g1.addColorStop(0.4, 'rgba(91, 58, 143, 0.2)');
-  g1.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = g1;
-  ctx.fillRect(0, 0, 900, 420);
-
-  // 7 cartas distribuidas num arco (C invertido = abertura para baixo)
-  // Ponto de pivô: centro superior, cartas se abrem para baixo formando um leque
-  const names = ['O Hierofante', 'O Mago', 'A Sacerdotisa', 'O Louco', 'A Imperatriz', 'O Imperador', 'Os Amantes'];
-  const cardW = 88, cardH = 140;
-  const cx = 450, pivotY = -80; // pivô acima do canvas
-  const radius = 330;
-  const totalArc = 70; // graus totais do arco
-  const startAngle = 90 - totalArc / 2; // centrado em 90° (para baixo)
-
-  for (let i = 0; i < names.length; i++) {
-    const imgData = imgs.get(names[i]);
-    if (!imgData) continue;
-
-    const img = new (window.Image || Image)();
-    await new Promise<void>(r => { img.onload = () => r(); img.onerror = () => r(); img.src = imgData; });
-    if (!img.width) continue;
-
-    const angle = startAngle + (totalArc / (names.length - 1)) * i;
-    const rad = (angle * Math.PI) / 180;
-    const posX = cx + Math.cos(rad) * radius;
-    const posY = pivotY + Math.sin(rad) * radius;
-    const rotation = angle - 90; // rotação tangencial
-
-    ctx.save();
-    ctx.translate(posX, posY);
-    ctx.rotate((rotation * Math.PI) / 180);
-
-    // Sombra roxa
-    ctx.shadowColor = 'rgba(147, 17, 212, 0.6)';
-    ctx.shadowBlur = 18;
-    ctx.shadowOffsetY = 6;
-
-    // Borda dourada
-    ctx.fillStyle = '#b88a44';
-    ctx.beginPath();
-    ctx.roundRect(-cardW / 2 - 2.5, -cardH / 2 - 2.5, cardW + 5, cardH + 5, 5);
-    ctx.fill();
-
-    // Imagem
-    ctx.shadowColor = 'transparent';
-    ctx.beginPath();
-    ctx.roundRect(-cardW / 2, -cardH / 2, cardW, cardH, 3);
-    ctx.clip();
-    ctx.drawImage(img, -cardW / 2, -cardH / 2, cardW, cardH);
-    ctx.restore();
-  }
-
-  return cv.toDataURL('image/png', 0.95);
+function drawGoldOrbit(doc: jsPDF, cx: number, cy: number, rx: number, ry: number) {
+  // Elipse dourada fina (órbita)
+  sc(doc, C.GOLD_DEEP, 'd');
+  doc.setLineWidth(0.5);
+  doc.ellipse(cx, cy, rx, ry, 'S');
+  // Segunda órbita mais sutil
+  doc.setGState(doc.GState({ opacity: 0.4 }));
+  sc(doc, C.GOLD, 'd');
+  doc.setLineWidth(0.3);
+  doc.ellipse(cx, cy, rx + 6, ry + 3, 'S');
+  doc.setGState(doc.GState({ opacity: 1 }));
+  // Pequeno ponto dourado no centro
+  sc(doc, C.GOLD, 'f');
+  doc.circle(cx, cy, 2, 'F');
+  // 4 pontos orbitais
+  sc(doc, C.GOLD_DEEP, 'f');
+  doc.circle(cx - rx, cy, 1, 'F');
+  doc.circle(cx + rx, cy, 1, 'F');
+  doc.circle(cx, cy - ry, 1, 'F');
+  doc.circle(cx, cy + ry, 1, 'F');
 }
 
 // ============================================================
 // CAPA
 // ============================================================
-function drawCover(doc: jsPDF, mockup: string | null) {
+function drawCover(doc: jsPDF) {
   bg(doc);
 
   // Borda decorativa fina
@@ -283,59 +250,63 @@ function drawCover(doc: jsPDF, mockup: string | null) {
   doc.setFontSize(9);
   sc(doc, C.TEXTO_MUTED, 't');
   doc.setFont('times', 'italic');
-  doc.text('Um ebook exclusivo por', PW / 2, 36, { align: 'center' });
+  doc.text('Um ebook exclusivo por', PW / 2, 55, { align: 'center' });
 
-  doc.setFontSize(18);
+  // ZAYA TAROT grande e centralizado
+  doc.setFontSize(36);
   sc(doc, C.WHITE, 't');
   doc.setFont('times', 'bold');
-  doc.text('ZAYA TAROT', PW / 2, 47, { align: 'center' });
+  doc.text('ZAYA TAROT', PW / 2, 72, { align: 'center' });
+
+  doc.setFontSize(11);
+  sc(doc, C.ROXO_CLARO, 't');
+  doc.setFont('times', 'italic');
+  doc.text('Sabedoria ancestral para o caminho moderno', PW / 2, 82, { align: 'center' });
 
   // Linhas douradas
   sc(doc, C.GOLD_DEEP, 'd');
   doc.setLineWidth(0.6);
-  doc.line(65, 52, PW - 65, 52);
+  doc.line(55, 88, PW - 55, 88);
   doc.setLineWidth(0.2);
-  doc.line(75, 54, PW - 75, 54);
+  doc.line(65, 90, PW - 65, 90);
 
-  // Titulo principal - estilo gold do hero (Crimson Text = times serif)
+  // Órbita dourada centralizada
+  drawGoldOrbit(doc, PW / 2, 130, 45, 25);
+
+  // Titulo principal
   doc.setFontSize(42);
   sc(doc, C.GOLD, 't');
   doc.setFont('times', 'normal');
-  doc.text('Jornada do Heroi', PW / 2, 74, { align: 'center' });
+  doc.text('Jornada do Heroi', PW / 2, 178, { align: 'center' });
 
   // Subtitulo
   doc.setFontSize(15);
   sc(doc, C.GOLD_LIGHT, 't');
   doc.setFont('times', 'normal');
-  doc.text('Os 22 Arcanos Maiores do Tarot', PW / 2, 86, { align: 'center' });
-
-  // Mockup de cartas
-  if (mockup) {
-    try { doc.addImage(mockup, 'PNG', 10, 95, 190, 89); } catch (_) { /* fallback */ }
-  }
+  doc.text('Os 22 Arcanos Maiores do Tarot', PW / 2, 190, { align: 'center' });
 
   // Descricao
   doc.setFontSize(12);
   sc(doc, C.TEXTO, 't');
   doc.setFont('times', 'italic');
-  doc.text('Uma jornada de autoconhecimento atraves', PW / 2, 198, { align: 'center' });
-  doc.text('dos arquetipos ancestrais do Tarot', PW / 2, 207, { align: 'center' });
+  doc.text('Uma jornada de autoconhecimento atraves', PW / 2, 210, { align: 'center' });
+  doc.text('dos arquetipos ancestrais do Tarot', PW / 2, 219, { align: 'center' });
 
   // Separador
   sc(doc, C.GOLD_DEEP, 'd');
   doc.setLineWidth(0.3);
-  doc.line(55, 216, PW - 55, 216);
+  doc.line(55, 228, PW - 55, 228);
 
   // Arquivo Arcano
   doc.setFontSize(11);
   sc(doc, C.GOLD, 't');
   doc.setFont('times', 'bold');
-  doc.text('ARQUIVO ARCANO', PW / 2, 226, { align: 'center' });
+  doc.text('ARQUIVO ARCANO', PW / 2, 238, { align: 'center' });
 
   doc.setFontSize(9);
   sc(doc, C.TEXTO_MUTED, 't');
   doc.setFont('times', 'normal');
-  doc.text('Material exclusivo para desenvolvimento pessoal e espiritual', PW / 2, 234, { align: 'center' });
+  doc.text('Material exclusivo para desenvolvimento pessoal e espiritual', PW / 2, 246, { align: 'center' });
 
   // Footer
   doc.setFontSize(7);
@@ -420,148 +391,110 @@ function drawIntro(doc: jsPDF): number {
 }
 
 // ============================================================
-// PÁGINA DO ARCANO (estilo Arquivo Arcano)
+// PÁGINA DO ARCANO (tudo em uma única página)
 // ============================================================
 function drawArcano(
   doc: jsPDF, arc: typeof ARCANOS[0], img: string | null, pg: number
 ): number {
   newPage(doc, pg);
 
-  const maxY = PH - 22;
-  let y = 28;
+  let y = 26;
+  const textX = M + 2;
+  const textW = CW - 4;
 
   // ---- TOPO: Imagem centralizada ----
-  const imgW = 44, imgH = 70;
+  const imgW = 34, imgH = 54;
 
   if (img) {
     try {
       const imgX = (PW - imgW) / 2;
-      // Borda dourada + sombra
       sc(doc, C.BORDER_GOLD, 'd');
-      doc.setLineWidth(0.6);
-      doc.roundedRect(imgX - 1, y - 1, imgW + 2, imgH + 2, 1.5, 1.5, 'S');
-
-      // Sombra roxa simulada
-      doc.setGState(doc.GState({ opacity: 0.25 }));
-      doc.setFillColor(C.ROXO_MEDIO[0], C.ROXO_MEDIO[1], C.ROXO_MEDIO[2]);
-      doc.roundedRect(imgX + 1.5, y + 2, imgW, imgH, 1.5, 1.5, 'F');
-      doc.setGState(doc.GState({ opacity: 1 }));
-
+      doc.setLineWidth(0.5);
+      doc.roundedRect(imgX - 0.8, y - 0.8, imgW + 1.6, imgH + 1.6, 1.2, 1.2, 'S');
       doc.addImage(img, 'JPEG', imgX, y, imgW, imgH);
-      y += imgH + 4;
+      y += imgH + 3;
     } catch (_) {
-      y += 4;
+      y += 3;
     }
   }
 
-  // ---- NOME DA CARTA (estilo gold do hero) ----
-  doc.setFontSize(30);
+  // ---- NOME DA CARTA (abaixo da imagem, sem sobrepor) ----
+  doc.setFontSize(24);
   sc(doc, C.GOLD, 't');
   doc.setFont('times', 'normal');
   doc.text(arc.nome, PW / 2, y, { align: 'center' });
   y += 5;
 
-  // Numero romano pequeno
-  doc.setFontSize(12);
+  // Numero romano + Arquetipo na mesma linha
+  doc.setFontSize(10);
   sc(doc, C.GOLD_DEEP, 't');
   doc.setFont('times', 'bold');
   doc.text(`Arcano ${arc.numero}`, PW / 2, y, { align: 'center' });
-  y += 5;
+  y += 4;
 
-  // Arquetipo
-  doc.setFontSize(13);
+  doc.setFontSize(11);
   sc(doc, C.ROXO_CLARO, 't');
   doc.setFont('times', 'italic');
   doc.text(arc.arquetipo, PW / 2, y, { align: 'center' });
-  y += 4;
+  y += 3;
 
-  // Linha dourada separadora
+  // Linha dourada separadora fina
   sc(doc, C.BORDER_GOLD, 'd');
-  doc.setLineWidth(0.4);
-  doc.line(M + 15, y, PW - M - 15, y);
-  y += 7;
+  doc.setLineWidth(0.3);
+  doc.line(M + 20, y, PW - M - 20, y);
+  y += 5;
 
-  // ---- SEÇÕES em boxes estilizados ----
-  const sections = [
-    { title: 'Significado Essencial', text: arc.significado },
+  // ---- BOX PRINCIPAL: Significado Essencial ----
+  const boxPadX = 5;
+  const boxPadY = 3;
+  const boxTextW = CW - boxPadX * 2 - 3;
+  const bodyLH = 4.3;
+
+  doc.setFontSize(10);
+  const sigH = textHeight(doc, arc.significado, boxTextW, bodyLH);
+  const boxH = boxPadY + 5 + 1 + sigH + boxPadY;
+
+  drawSectionBox(doc, M, y, CW, boxH);
+
+  const boxTxtX = M + boxPadX + 2;
+  let ty = y + boxPadY + 3.5;
+  doc.setFontSize(11);
+  sc(doc, C.GOLD, 't');
+  doc.setFont('times', 'bold');
+  doc.text('Significado Essencial', boxTxtX, ty);
+  ty += 5;
+
+  doc.setFontSize(10);
+  sc(doc, C.TEXTO, 't');
+  doc.setFont('times', 'normal');
+  wrapText(doc, arc.significado, boxTxtX, ty, boxTextW, bodyLH);
+
+  y += boxH + 4;
+
+  // ---- SEÇÕES RESTANTES: texto corrido com títulos dourados ----
+  const flowSections = [
     { title: 'Simbologia da Carta', text: arc.simbolos },
     { title: 'Contexto Psicologico e Espiritual', text: arc.psicologia },
     { title: 'Como Aparece na Vida Real', text: arc.vida_real },
     { title: 'Mensagem de Evolucao', text: arc.mensagem },
   ];
 
-  const boxPadX = 5;
-  const boxPadY = 4;
-  const boxTextW = CW - boxPadX * 2 - 3; // -3 para a barra lateral
-  const bodyLH = 5;
-  const titleLH = 6;
+  const flowLH = 4.2;
 
-  for (let si = 0; si < sections.length; si++) {
-    const sec = sections[si];
-
-    // Calcular altura necessaria
-    const titleH = titleLH;
-    const bodyH = textHeight(doc, sec.text, boxTextW, bodyLH);
-    const boxH = boxPadY + titleH + 2 + bodyH + boxPadY;
-
-    // Se não cabe, nova página
-    if (y + boxH + 4 > maxY) {
-      pg++;
-      newPage(doc, pg);
-      y = 28;
-
-      // Continuação header
-      doc.setFontSize(12);
-      sc(doc, C.ROXO_CLARO, 't');
-      doc.setFont('times', 'italic');
-      doc.text(`${arc.nome} (continuacao)`, PW / 2, y, { align: 'center' });
-      y += 8;
-    }
-
-    // Desenha box
-    drawSectionBox(doc, M, y, CW, boxH);
-
+  for (const sec of flowSections) {
     // Titulo da seção
-    const txtX = M + boxPadX + 2;
-    let ty = y + boxPadY + 4;
-
-    doc.setFontSize(12);
+    doc.setFontSize(10);
     sc(doc, C.GOLD, 't');
     doc.setFont('times', 'bold');
-    doc.text(sec.title, txtX, ty);
-    ty += titleLH;
+    doc.text(sec.title, textX, y);
+    y += 4.5;
 
-    // Corpo do texto
-    doc.setFontSize(11);
+    // Texto corrido
+    doc.setFontSize(9.5);
     sc(doc, C.TEXTO, 't');
     doc.setFont('times', 'normal');
-    ty = wrapText(doc, sec.text, txtX, ty, boxTextW, bodyLH);
-
-    y += boxH + 4;
-  }
-
-  // ---- CITAÇÃO ZAYA no final (se couber) ----
-  const quoteBoxH = 20;
-  if (y + quoteBoxH + 4 < maxY) {
-    y += 2;
-    // Box dourado especial
-    doc.setFillColor(C.CARD_BG[0], C.CARD_BG[1], C.CARD_BG[2]);
-    doc.roundedRect(M, y, CW, quoteBoxH, 2, 2, 'F');
-    sc(doc, C.GOLD_DEEP, 'd');
-    doc.setLineWidth(0.4);
-    doc.roundedRect(M, y, CW, quoteBoxH, 2, 2, 'S');
-
-    doc.setFontSize(8);
-    sc(doc, C.GOLD_DEEP, 't');
-    doc.setFont('times', 'bold');
-    doc.text('ZAYA TAROT', M + 5, y + 5);
-
-    doc.setFontSize(10);
-    sc(doc, C.GOLD_LIGHT, 't');
-    doc.setFont('times', 'italic');
-    const q = arc.mensagem.length > 130 ? arc.mensagem.substring(0, 130) + '...' : arc.mensagem;
-    const ql = doc.splitTextToSize(`"${q}"`, CW - 10);
-    doc.text(ql, M + 5, y + 11);
+    y = wrapText(doc, sec.text, textX, y, textW, flowLH);
+    y += 3;
   }
 
   return pg;
@@ -649,7 +582,7 @@ function drawConclusion(doc: jsPDF, pg: number): number {
 export type EbookProgressCallback = (current: number, total: number, message: string) => void;
 
 export async function generateEbookPdf(onProgress: EbookProgressCallback): Promise<Blob> {
-  const total = 22 + 5;
+  const total = 22 + 4;
   let step = 0;
 
   // 1. Carregar imagens
@@ -661,13 +594,7 @@ export async function generateEbookPdf(onProgress: EbookProgressCallback): Promi
     await new Promise(r => setTimeout(r, 80));
   }
 
-  // 2. Mockup
-  step++;
-  onProgress(step, total, 'Criando mockup do deck...');
-  let mockup: string | null = null;
-  try { mockup = await createDeckMockup(imgs); } catch (_) { /* skip */ }
-
-  // 3. PDF
+  // 2. PDF
   step++;
   onProgress(step, total, 'Gerando PDF...');
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
@@ -677,8 +604,8 @@ export async function generateEbookPdf(onProgress: EbookProgressCallback): Promi
     creator: 'Zaya Tarot',
   });
 
-  // 4. Capa
-  drawCover(doc, mockup);
+  // 3. Capa
+  drawCover(doc);
 
   // 5. Introducao
   step++;
@@ -706,14 +633,14 @@ export function getEbookInfo() {
     description: 'Um ebook premium com os 22 Arcanos Maiores do Tarot, incluindo significados, simbologia, psicologia junguiana e mensagens de evolucao.',
     pages: '~30 paginas',
     features: [
-      'Capa com mockup de deck em arco e brilho roxo',
+      'Capa elegante com orbita dourada e branding Zaya Tarot',
+      'Fundo degrade roxo premium',
       'Introducao a Jornada do Heroi',
       '22 paginas dedicadas aos Arcanos Maiores',
       'Imagens Rider-Waite-Smith em cada pagina',
       'Simbologia, psicologia e aplicacao pratica',
       'Conclusao e reflexao final',
       'Design premium com identidade Zaya Tarot',
-      'Headers e citacoes ao Zaya Tarot',
     ],
     fileName: `zaya-tarot-jornada-do-heroi-${new Date().toISOString().split('T')[0]}.pdf`,
   };
