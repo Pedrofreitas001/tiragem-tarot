@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { TAROT_CARDS, TarotCardData } from '../tarotData';
 import { getDailyCardSynthesis, DailyCardSynthesis } from '../services/geminiService';
 import { supabase } from '../lib/supabase';
+import { generateEbookPdf, getEbookInfo, type EbookProgressCallback } from '../services/ebookPdfService';
 
 // Tipos para estatísticas
 interface AdminStats {
@@ -22,7 +23,7 @@ interface AdminStats {
     generatedAt: string;
 }
 
-type AdminTab = 'images' | 'stats';
+type AdminTab = 'images' | 'stats' | 'ebook';
 
 // Lista de signos
 const ZODIAC_SIGNS = [
@@ -72,6 +73,12 @@ export const AdminPanel = () => {
     const [stats, setStats] = useState<AdminStats | null>(null);
     const [statsLoading, setStatsLoading] = useState(false);
     const [statsError, setStatsError] = useState<string | null>(null);
+
+    // Estados - Ebook
+    const [ebookGenerating, setEbookGenerating] = useState(false);
+    const [ebookProgress, setEbookProgress] = useState({ current: 0, total: 0, message: '' });
+    const [ebookBlob, setEbookBlob] = useState<Blob | null>(null);
+    const [ebookError, setEbookError] = useState<string | null>(null);
 
     // Ref para o canvas de renderização
     const canvasRef = useRef<HTMLDivElement>(null);
@@ -302,6 +309,37 @@ export const AdminPanel = () => {
         }
     };
 
+    // Gerar Ebook PDF
+    const handleGenerateEbook = async () => {
+        setEbookGenerating(true);
+        setEbookError(null);
+        setEbookBlob(null);
+
+        try {
+            const blob = await generateEbookPdf((current, total, message) => {
+                setEbookProgress({ current, total, message });
+            });
+            setEbookBlob(blob);
+        } catch (error: any) {
+            console.error('Erro ao gerar ebook:', error);
+            setEbookError(error.message || 'Erro ao gerar o ebook');
+        } finally {
+            setEbookGenerating(false);
+        }
+    };
+
+    // Download do Ebook
+    const handleDownloadEbook = () => {
+        if (!ebookBlob) return;
+        const info = getEbookInfo();
+        const url = URL.createObjectURL(ebookBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = info.fileName;
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+
     // Limpar imagens geradas
     const clearGenerated = () => {
         setGeneratedImages([]);
@@ -395,6 +433,16 @@ export const AdminPanel = () => {
                         >
                             <span className="material-symbols-outlined text-lg">image</span>
                             Gerador de Imagens
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('ebook')}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all ${activeTab === 'ebook'
+                                    ? 'bg-gradient-to-r from-purple-600 to-yellow-600 text-white'
+                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                                }`}
+                        >
+                            <span className="material-symbols-outlined text-lg">menu_book</span>
+                            Ebook Premium
                         </button>
                     </div>
 
@@ -791,6 +839,202 @@ export const AdminPanel = () => {
                                             </div>
                                         ))
                                     )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {/* Tab Content: Ebook Premium */}
+                    {activeTab === 'ebook' && (
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            {/* Coluna 1: Info e Geração */}
+                            <div className="lg:col-span-2 space-y-6">
+                                {/* Card Principal */}
+                                <div className="bg-gradient-to-br from-purple-900/30 to-yellow-900/10 rounded-xl p-6 border border-yellow-500/20">
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-600 to-yellow-500 flex items-center justify-center flex-shrink-0">
+                                            <span className="material-symbols-outlined text-3xl text-white">menu_book</span>
+                                        </div>
+                                        <div className="flex-1">
+                                            <h2 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                {getEbookInfo().title}
+                                            </h2>
+                                            <p className="text-gray-400 text-sm mb-4">
+                                                {getEbookInfo().description}
+                                            </p>
+
+                                            {/* Features */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
+                                                {getEbookInfo().features.map((feature, idx) => (
+                                                    <div key={idx} className="flex items-center gap-2">
+                                                        <span className="text-yellow-400 text-xs">&#10022;</span>
+                                                        <span className="text-gray-300 text-xs">{feature}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            {/* Botões de ação */}
+                                            <div className="flex flex-wrap gap-3">
+                                                <button
+                                                    onClick={handleGenerateEbook}
+                                                    disabled={ebookGenerating}
+                                                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-yellow-600 hover:from-purple-500 hover:to-yellow-500 text-white font-bold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/20"
+                                                >
+                                                    {ebookGenerating ? (
+                                                        <>
+                                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                            Gerando...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <span className="material-symbols-outlined">auto_awesome</span>
+                                                            Gerar Ebook PDF
+                                                        </>
+                                                    )}
+                                                </button>
+
+                                                {ebookBlob && (
+                                                    <button
+                                                        onClick={handleDownloadEbook}
+                                                        className="flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg transition-all shadow-lg shadow-green-500/20"
+                                                    >
+                                                        <span className="material-symbols-outlined">download</span>
+                                                        Baixar Ebook ({(ebookBlob.size / 1024 / 1024).toFixed(1)} MB)
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Progresso */}
+                                {ebookProgress.total > 0 && (
+                                    <div className="bg-white/5 rounded-xl p-5 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="text-white text-sm font-medium">
+                                                {ebookGenerating ? 'Gerando ebook...' : 'Geração concluída!'}
+                                            </span>
+                                            <span className="text-gray-400 text-sm">
+                                                {ebookProgress.current}/{ebookProgress.total}
+                                            </span>
+                                        </div>
+                                        <div className="w-full bg-white/10 rounded-full h-3 mb-2">
+                                            <div
+                                                className="h-3 rounded-full transition-all duration-300 bg-gradient-to-r from-purple-500 to-yellow-500"
+                                                style={{ width: `${(ebookProgress.current / ebookProgress.total) * 100}%` }}
+                                            />
+                                        </div>
+                                        <p className="text-gray-400 text-xs">{ebookProgress.message}</p>
+                                    </div>
+                                )}
+
+                                {/* Erro */}
+                                {ebookError && (
+                                    <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 flex items-center gap-3">
+                                        <span className="material-symbols-outlined">error</span>
+                                        {ebookError}
+                                    </div>
+                                )}
+
+                                {/* Sucesso */}
+                                {ebookBlob && !ebookGenerating && (
+                                    <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg flex items-center gap-3">
+                                        <span className="material-symbols-outlined text-green-400">check_circle</span>
+                                        <div>
+                                            <p className="text-green-400 font-medium">Ebook gerado com sucesso!</p>
+                                            <p className="text-green-400/70 text-sm">
+                                                Tamanho: {(ebookBlob.size / 1024 / 1024).toFixed(2)} MB — Clique em "Baixar Ebook" para fazer o download.
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Coluna 2: Preview */}
+                            <div className="space-y-6">
+                                {/* Preview visual do ebook */}
+                                <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                                    <h3 className="text-lg font-semibold text-white mb-4">Preview</h3>
+
+                                    {/* Mockup da capa */}
+                                    <div
+                                        className="rounded-lg overflow-hidden mx-auto shadow-2xl shadow-purple-500/20"
+                                        style={{
+                                            width: '200px',
+                                            height: '280px',
+                                            background: 'linear-gradient(180deg, #2D1B4E 0%, #161118 100%)',
+                                            border: '1px solid rgba(212, 175, 55, 0.3)',
+                                        }}
+                                    >
+                                        <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                                            <p className="text-[8px] text-purple-300/70 uppercase tracking-widest mb-1">Zaya Tarot</p>
+                                            <h4
+                                                className="text-base font-bold mb-0.5"
+                                                style={{ color: '#D4AF37', fontFamily: "'Crimson Text', serif" }}
+                                            >
+                                                JORNADA
+                                            </h4>
+                                            <h4
+                                                className="text-base font-bold mb-2"
+                                                style={{ color: '#D4AF37', fontFamily: "'Crimson Text', serif" }}
+                                            >
+                                                DO HERÓI
+                                            </h4>
+                                            <div className="w-16 h-px bg-gradient-to-r from-transparent via-yellow-500/60 to-transparent mb-2"></div>
+                                            <p className="text-[8px] text-yellow-100/60" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                                Os 22 Arcanos Maiores
+                                            </p>
+                                            {/* Mini cards */}
+                                            <div className="flex gap-0.5 mt-3 mb-2">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <div
+                                                        key={i}
+                                                        className="w-5 h-8 rounded-sm"
+                                                        style={{
+                                                            background: 'linear-gradient(135deg, #5B3A8F 0%, #2D1B4E 100%)',
+                                                            border: '0.5px solid rgba(212, 175, 55, 0.4)',
+                                                            transform: `rotate(${(i - 2) * 8}deg)`,
+                                                            boxShadow: '0 2px 8px rgba(147, 17, 212, 0.3)',
+                                                        }}
+                                                    />
+                                                ))}
+                                            </div>
+                                            <div className="w-8 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent mt-2 mb-1"></div>
+                                            <p className="text-[6px] text-purple-300/50 uppercase tracking-wider">Arquivo Arcano</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Info do arquivo */}
+                                    <div className="mt-4 space-y-2">
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-gray-400">Formato</span>
+                                            <span className="text-white">PDF (A4)</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-gray-400">Páginas</span>
+                                            <span className="text-white">~30 páginas</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-gray-400">Conteúdo</span>
+                                            <span className="text-white">22 Arcanos Maiores</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-gray-400">Imagens</span>
+                                            <span className="text-white">Rider-Waite-Smith</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Info infoproduto */}
+                                <div className="bg-gradient-to-br from-yellow-500/5 to-purple-500/5 rounded-xl p-5 border border-yellow-500/10">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <span className="material-symbols-outlined text-yellow-400">workspace_premium</span>
+                                        <h3 className="text-sm font-semibold text-yellow-400">Infoproduto Premium</h3>
+                                    </div>
+                                    <p className="text-gray-400 text-xs leading-relaxed">
+                                        Este ebook é projetado para ser um infoproduto premium do Arquivo Arcano.
+                                        Inclui design profissional, conteúdo aprofundado sobre cada arcano e a
+                                        identidade visual do Zaya Tarot.
+                                    </p>
                                 </div>
                             </div>
                         </div>
