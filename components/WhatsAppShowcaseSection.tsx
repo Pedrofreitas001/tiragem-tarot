@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useMemo, useState } from 'react';
 
 type GalleryCard = {
   name: string;
@@ -32,9 +32,7 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
       name: isPortuguese ? 'O Mundo' : 'The World',
       img: 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg',
       vibracao: isPortuguese ? 'Completude e plenitude' : 'Wholeness and fullness',
-      significado: isPortuguese
-        ? 'Representa o fim de um ciclo e realizacao pessoal.'
-        : 'Represents the end of a cycle and personal fulfillment.',
+      significado: isPortuguese ? 'Representa o fim de um ciclo e realizacao pessoal.' : 'Represents the end of a cycle and personal fulfillment.',
       energia: isPortuguese ? 'Harmonia e gratidao.' : 'Harmony and gratitude.',
       mantra: isPortuguese ? 'Eu celebro minha jornada.' : 'I celebrate my journey.',
       featured: false,
@@ -43,9 +41,7 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
       name: isPortuguese ? 'A Lua' : 'The Moon',
       img: 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg',
       vibracao: isPortuguese ? 'Intuicao e misterio' : 'Intuition and mystery',
-      significado: isPortuguese
-        ? 'Mostra caminhos ocultos e verdades internas.'
-        : 'Shows hidden paths and inner truths.',
+      significado: isPortuguese ? 'Mostra caminhos ocultos e verdades internas.' : 'Shows hidden paths and inner truths.',
       energia: isPortuguese ? 'Sensibilidade e conexao interior.' : 'Sensitivity and inner connection.',
       mantra: isPortuguese ? 'Confio na minha intuicao.' : 'I trust my intuition.',
       featured: true,
@@ -54,14 +50,104 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
       name: isPortuguese ? 'A Imperatriz' : 'The Empress',
       img: 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg',
       vibracao: isPortuguese ? 'Abundancia e criacao' : 'Abundance and creation',
-      significado: isPortuguese
-        ? 'Simboliza nutricao, criatividade e prosperidade.'
-        : 'Symbolizes nurturing, creativity and prosperity.',
+      significado: isPortuguese ? 'Simboliza nutricao, criatividade e prosperidade.' : 'Symbolizes nurturing, creativity and prosperity.',
       energia: isPortuguese ? 'Amor e expansao.' : 'Love and expansion.',
       mantra: isPortuguese ? 'Eu floresco em abundancia.' : 'I flourish in abundance.',
       featured: false,
     },
   ];
+
+  const initialIndex = useMemo(() => {
+    const idx = cards.findIndex((c) => c.featured);
+    return idx >= 0 ? idx : 0;
+  }, [cards]);
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const denseStars = [
+    { top: '6%', left: '5%', size: 3, opacity: 0.9 }, { top: '8%', left: '14%', size: 2, opacity: 0.82 },
+    { top: '11%', left: '24%', size: 3, opacity: 0.88 }, { top: '14%', left: '36%', size: 2, opacity: 0.8 },
+    { top: '9%', left: '52%', size: 3, opacity: 0.86 }, { top: '7%', left: '68%', size: 2, opacity: 0.78 },
+    { top: '10%', left: '81%', size: 3, opacity: 0.9 }, { top: '15%', left: '92%', size: 2, opacity: 0.82 },
+    { top: '21%', left: '8%', size: 3, opacity: 0.88 }, { top: '24%', left: '18%', size: 2, opacity: 0.8 },
+    { top: '27%', left: '29%', size: 3, opacity: 0.9 }, { top: '22%', left: '44%', size: 2, opacity: 0.78 },
+    { top: '25%', left: '58%', size: 3, opacity: 0.86 }, { top: '29%', left: '73%', size: 2, opacity: 0.8 },
+    { top: '23%', left: '87%', size: 3, opacity: 0.88 }, { top: '33%', left: '12%', size: 2, opacity: 0.8 },
+    { top: '36%', left: '22%', size: 3, opacity: 0.9 }, { top: '39%', left: '34%', size: 2, opacity: 0.82 },
+    { top: '34%', left: '49%', size: 3, opacity: 0.86 }, { top: '38%', left: '63%', size: 2, opacity: 0.8 },
+    { top: '41%', left: '77%', size: 3, opacity: 0.88 }, { top: '35%', left: '90%', size: 2, opacity: 0.78 },
+    { top: '48%', left: '6%', size: 3, opacity: 0.9 }, { top: '52%', left: '16%', size: 2, opacity: 0.82 },
+    { top: '56%', left: '27%', size: 3, opacity: 0.88 }, { top: '50%', left: '42%', size: 2, opacity: 0.8 },
+    { top: '54%', left: '55%', size: 3, opacity: 0.86 }, { top: '58%', left: '70%', size: 2, opacity: 0.8 },
+    { top: '53%', left: '84%', size: 3, opacity: 0.88 }, { top: '62%', left: '10%', size: 2, opacity: 0.78 },
+    { top: '66%', left: '21%', size: 3, opacity: 0.9 }, { top: '70%', left: '33%', size: 2, opacity: 0.82 },
+    { top: '65%', left: '47%', size: 3, opacity: 0.86 }, { top: '69%', left: '61%', size: 2, opacity: 0.8 },
+    { top: '73%', left: '75%', size: 3, opacity: 0.88 }, { top: '68%', left: '89%', size: 2, opacity: 0.78 },
+    { top: '79%', left: '8%', size: 3, opacity: 0.9 }, { top: '83%', left: '19%', size: 2, opacity: 0.82 },
+    { top: '87%', left: '31%', size: 3, opacity: 0.88 }, { top: '81%', left: '45%', size: 2, opacity: 0.8 },
+    { top: '85%', left: '59%', size: 3, opacity: 0.86 }, { top: '89%', left: '73%', size: 2, opacity: 0.8 },
+    { top: '84%', left: '86%', size: 3, opacity: 0.88 }, { top: '91%', left: '95%', size: 2, opacity: 0.78 },
+  ];
+
+  const goPrev = () => setActiveIndex((prev) => (prev - 1 + cards.length) % cards.length);
+  const goNext = () => setActiveIndex((prev) => (prev + 1) % cards.length);
+
+  const getRelativePosition = (index: number) => {
+    const total = cards.length;
+    let diff = index - activeIndex;
+    if (diff > total / 2) diff -= total;
+    if (diff < -total / 2) diff += total;
+    return diff;
+  };
+
+  const renderCardInner = (card: GalleryCard, compact = false) => (
+    <div
+      className="relative rounded-xl overflow-hidden shadow-xl"
+      style={{
+        background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
+        border: '1.5px solid rgba(212, 175, 55, 0.28)',
+      }}
+    >
+      <div className="bg-red-600 text-white text-[7px] font-bold uppercase tracking-wider text-center py-1.5 px-2">
+        {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
+      </div>
+      <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
+      <div className={`flex justify-center py-3 ${compact ? 'px-2' : 'px-4'}`}>
+        <img
+          src={card.img}
+          alt={card.name}
+          className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${compact ? 'w-[96px] h-[150px]' : 'w-[122px] h-[194px]'}`}
+          loading="lazy"
+        />
+      </div>
+      <p className="font-bold text-white text-center text-xs" style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
+      <p className="italic text-center px-2 mb-2 text-[8px]" style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>
+        "{card.vibracao}"
+      </p>
+      <div className="bg-white/5 rounded mx-2.5 px-2 py-1.5 mb-1.5">
+        <p className={`text-gray-300 leading-snug text-center ${compact ? 'text-[6.5px]' : 'text-[7px]'}`}>{card.significado}</p>
+      </div>
+      <div className="flex items-start gap-1.5 px-2.5 mb-2">
+        <span className="text-[6px] mt-0.5" style={{ color: '#d4af37' }}>*</span>
+        <div>
+          <span className={`font-semibold uppercase tracking-wide ${compact ? 'text-[6px]' : 'text-[7px]'}`} style={{ color: '#d4af37' }}>
+            {isPortuguese ? 'Energia' : 'Energy'}
+          </span>
+          <p className={`text-gray-300 leading-snug ${compact ? 'text-[6px]' : 'text-[7px]'}`}>{card.energia}</p>
+        </div>
+      </div>
+      <div className="mx-2.5 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1.5"></div>
+      <div className="px-2.5 pb-2.5 text-center">
+        <p className={`font-semibold uppercase tracking-wide mb-1 ${compact ? 'text-[6px]' : 'text-[7px]'}`} style={{ color: '#d4af37' }}>
+          {isPortuguese ? 'Mantra do Dia' : 'Daily Mantra'}
+        </p>
+        <div className="bg-white/5 rounded px-2 py-1.5 border border-yellow-500/15">
+          <p className={`italic ${compact ? 'text-[7px]' : 'text-[8px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>
+            "{card.mantra}"
+          </p>
+        </div>
+      </div>
+      <p className="text-gray-500 text-[6px] tracking-wider text-center pb-2">zayatarot.com</p>
+    </div>
+  );
 
   return (
     <section className={`relative z-10 py-20 md:py-28 px-4 md:px-6 ${className}`}>
@@ -70,10 +156,6 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
           background: rgba(255, 255, 255, 0.04);
           backdrop-filter: blur(24px);
           border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .home-glow-border:focus-within {
-          border-color: #A855F7;
-          box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
         }
         .home-frequency-card input:checked + div {
           border-color: #A855F7;
@@ -93,46 +175,21 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
       `}</style>
 
       <div className="absolute inset-0 opacity-50 z-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.35) 0.8px, transparent 0.8px)', backgroundSize: '90px 90px' }}></div>
-
-      <div className="absolute top-[6%] left-[5%] w-[2px] h-[2px] rounded-full bg-white/80 z-0"></div>
-      <div className="absolute top-[9%] left-[12%] w-[1.5px] h-[1.5px] rounded-full bg-white/75 z-0"></div>
-      <div className="absolute top-[12%] left-[20%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[16%] left-[28%] w-[1.5px] h-[1.5px] rounded-full bg-white/70 z-0"></div>
-      <div className="absolute top-[11%] left-[36%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[8%] right-[9%] w-[2px] h-[2px] rounded-full bg-white/80 z-0"></div>
-      <div className="absolute top-[14%] right-[18%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-      <div className="absolute top-[19%] right-[26%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[24%] right-[34%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-
-      <div className="absolute top-[28%] left-[8%] w-[2px] h-[2px] rounded-full bg-white/80 z-0"></div>
-      <div className="absolute top-[31%] left-[17%] w-[1.5px] h-[1.5px] rounded-full bg-white/74 z-0"></div>
-      <div className="absolute top-[34%] left-[25%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[37%] left-[34%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-      <div className="absolute top-[41%] left-[44%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[33%] right-[12%] w-[2px] h-[2px] rounded-full bg-white/80 z-0"></div>
-      <div className="absolute top-[38%] right-[20%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-      <div className="absolute top-[42%] right-[28%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[46%] right-[36%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-
-      <div className="absolute top-[52%] left-[6%] w-[2px] h-[2px] rounded-full bg-white/80 z-0"></div>
-      <div className="absolute top-[56%] left-[14%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-      <div className="absolute top-[60%] left-[22%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[64%] left-[32%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-      <div className="absolute top-[68%] left-[42%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[54%] right-[10%] w-[2px] h-[2px] rounded-full bg-white/80 z-0"></div>
-      <div className="absolute top-[58%] right-[18%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-      <div className="absolute top-[62%] right-[26%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[66%] right-[34%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-
-      <div className="absolute top-[74%] left-[10%] w-[2px] h-[2px] rounded-full bg-white/80 z-0"></div>
-      <div className="absolute top-[78%] left-[20%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-      <div className="absolute top-[82%] left-[30%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[86%] left-[40%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-      <div className="absolute top-[90%] left-[50%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[76%] right-[12%] w-[2px] h-[2px] rounded-full bg-white/80 z-0"></div>
-      <div className="absolute top-[81%] right-[20%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
-      <div className="absolute top-[85%] right-[28%] w-[2px] h-[2px] rounded-full bg-white/78 z-0"></div>
-      <div className="absolute top-[89%] right-[36%] w-[1.5px] h-[1.5px] rounded-full bg-white/72 z-0"></div>
+      <div className="absolute inset-0 pointer-events-none z-[1]">
+        {denseStars.map((star, idx) => (
+          <div
+            key={`dense-star-${idx}`}
+            className="absolute rounded-full bg-white"
+            style={{
+              top: star.top,
+              left: star.left,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              opacity: star.opacity,
+            }}
+          ></div>
+        ))}
+      </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-left mb-14 md:mb-20 px-2">
@@ -140,9 +197,7 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
             {isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp'}
           </h2>
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
-            {isPortuguese
-              ? 'Receba uma mensagem diaria com orientacao do Tarot no seu celular.'
-              : 'Receive a daily Tarot guidance message on your phone.'}
+            {isPortuguese ? 'Receba uma mensagem diaria com orientacao do Tarot no seu celular.' : 'Receive a daily Tarot guidance message on your phone.'}
           </p>
         </div>
 
@@ -150,55 +205,65 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
           <div className="absolute -left-32 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-purple-500/18 to-transparent blur-3xl pointer-events-none"></div>
           <div className="absolute -right-24 top-16 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-pink-500/12 to-transparent blur-3xl pointer-events-none"></div>
 
-          <div className="relative z-10">
-            <div className="flex items-end justify-center gap-4 md:gap-6 lg:gap-8">
-              {cards.map((card) => (
-                <div
-                  key={card.name}
-                  className={`relative group transition-all duration-500 cursor-pointer ${card.featured ? 'w-[240px] -mb-2' : 'w-[195px] opacity-85 hidden sm:block'}`}
-                  onClick={() => setZoomedGalleryCard(card)}
-                >
+          <div className="relative z-10 max-w-[920px] mx-auto">
+            <div className="flex items-center justify-between mb-4 px-1">
+              <button
+                type="button"
+                onClick={goPrev}
+                className="w-10 h-10 rounded-full border border-yellow-500/40 bg-[#120a20]/80 text-yellow-300 inline-flex items-center justify-center hover:bg-[#1a102e] transition-colors"
+                aria-label={isPortuguese ? 'Carta anterior' : 'Previous card'}
+              >
+                <span className="material-symbols-outlined">chevron_left</span>
+              </button>
+              <p className="text-xs text-gray-300/90">
+                {isPortuguese ? 'Navegue pelos modelos' : 'Browse template previews'}
+              </p>
+              <button
+                type="button"
+                onClick={goNext}
+                className="w-10 h-10 rounded-full border border-yellow-500/40 bg-[#120a20]/80 text-yellow-300 inline-flex items-center justify-center hover:bg-[#1a102e] transition-colors"
+                aria-label={isPortuguese ? 'Proxima carta' : 'Next card'}
+              >
+                <span className="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+
+            <div className="relative h-[420px] sm:h-[470px] md:h-[520px] overflow-hidden">
+              {cards.map((card, idx) => {
+                const pos = getRelativePosition(idx);
+                const isCenter = pos === 0;
+                const isSide = Math.abs(pos) === 1;
+                const translatePct = pos * 42;
+                const scale = isCenter ? 1 : isSide ? 0.82 : 0.66;
+                const opacity = isCenter ? 1 : isSide ? 0.45 : 0;
+                const z = isCenter ? 30 : isSide ? 20 : 10;
+
+                return (
                   <div
-                    className={`relative rounded-xl overflow-hidden shadow-xl transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-purple-500/25 ${card.featured ? 'shadow-purple-500/20' : 'shadow-black/40'}`}
+                    key={`carousel-${card.name}`}
+                    className="absolute left-1/2 top-1/2 w-[220px] sm:w-[250px] md:w-[270px] transition-all duration-500 ease-out"
                     style={{
-                      background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
-                      border: card.featured ? '1.5px solid rgba(212, 175, 55, 0.35)' : '1px solid rgba(212, 175, 55, 0.15)',
+                      transform: `translate(-50%, -50%) translateX(${translatePct}%) scale(${scale})`,
+                      opacity,
+                      zIndex: z,
+                      filter: isCenter ? 'none' : 'saturate(0.8)',
                     }}
                   >
-                    <div className="bg-red-600 text-white text-[7px] font-bold uppercase tracking-wider text-center py-1.5 px-2">
-                      {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        if (isCenter) {
+                          setZoomedGalleryCard(card);
+                        } else {
+                          setActiveIndex(idx);
+                        }
+                      }}
+                    >
+                      {renderCardInner(card, !isCenter)}
                     </div>
-                    <div className="mx-2.5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
-                    <div className="flex justify-center py-3 px-4">
-                      <img src={card.img} alt={card.name} className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${card.featured ? 'w-[120px] h-[190px]' : 'w-[95px] h-[152px]'}`} loading="lazy" />
-                    </div>
-                    <p className={`font-bold text-white text-center ${card.featured ? 'text-xs' : 'text-[11px]'}`} style={{ fontFamily: "'Crimson Text', serif" }}>{card.name}</p>
-                    <p className={`italic text-center px-2 mb-2 ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.vibracao}"</p>
-                    <div className="bg-white/5 rounded mx-2.5 px-2 py-1.5 mb-1.5">
-                      <p className={`text-gray-300 leading-snug text-center ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.significado}</p>
-                    </div>
-                    <div className="flex items-start gap-1.5 px-2.5 mb-2">
-                      <span className="text-[6px] mt-0.5" style={{ color: '#d4af37' }}>•</span>
-                      <div>
-                        <span className={`font-semibold uppercase tracking-wide ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>
-                          {isPortuguese ? 'Energia' : 'Energy'}
-                        </span>
-                        <p className={`text-gray-300 leading-snug ${card.featured ? 'text-[7px]' : 'text-[6px]'}`}>{card.energia}</p>
-                      </div>
-                    </div>
-                    <div className="mx-2.5 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-1.5"></div>
-                    <div className="px-2.5 pb-2.5 text-center">
-                      <p className={`font-semibold uppercase tracking-wide mb-1 ${card.featured ? 'text-[7px]' : 'text-[6px]'}`} style={{ color: '#d4af37' }}>
-                        {isPortuguese ? 'Mantra do Dia' : 'Daily Mantra'}
-                      </p>
-                      <div className="bg-white/5 rounded px-2 py-1.5 border border-yellow-500/15">
-                        <p className={`italic ${card.featured ? 'text-[8px]' : 'text-[7px]'}`} style={{ color: '#d4af37', fontFamily: "'Crimson Text', serif" }}>"{card.mantra}"</p>
-                      </div>
-                    </div>
-                    <p className="text-gray-500 text-[6px] tracking-wider text-center pb-2">zayatarot.com</p>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -209,14 +274,8 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
                   <span className="material-symbols-outlined text-sm">close</span>
                   {isPortuguese ? 'Fechar' : 'Close'}
                 </button>
-                <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)', border: '1.5px solid rgba(212, 175, 55, 0.35)' }}>
-                  <div className="bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider text-center py-2 px-4 rounded-t-2xl">
-                    {isPortuguese ? 'Exemplo Resumido' : 'Summary Example'}
-                  </div>
-                  <div className="mx-4 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.25), transparent)' }}></div>
-                  <div className="flex justify-center py-4 px-6">
-                    <img src={zoomedGalleryCard.img} alt={zoomedGalleryCard.name} className="object-cover rounded-lg shadow-lg border border-yellow-500/20 w-[160px] h-[254px]" />
-                  </div>
+                <div className="w-full max-w-[290px]">
+                  {renderCardInner(zoomedGalleryCard, false)}
                 </div>
               </div>
             </div>
@@ -261,13 +320,14 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
                       <input className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm" placeholder={isPortuguese ? 'Seu nome' : 'Your name'} />
                       <input className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm" placeholder="+55 (00) 00000-0000" />
                     </div>
-                    <select className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm appearance-none">
-                      <option value="">{isPortuguese ? 'Selecione seu estado' : 'Select your state'}</option>
-                      <option value="SP">Sao Paulo (SP)</option>
-                      <option value="RJ">Rio de Janeiro (RJ)</option>
-                      <option value="MG">Minas Gerais (MG)</option>
-                      <option value="RS">Rio Grande do Sul (RS)</option>
+                    <select className="w-full px-3 py-2.5 bg-[#1a1326]/90 border border-white/15 rounded-xl text-white text-sm appearance-none focus:outline-none focus:border-primary/60">
+                      <option className="bg-[#1a1326] text-white" value="">{isPortuguese ? 'Selecione seu estado' : 'Select your state'}</option>
+                      <option className="bg-[#1a1326] text-white" value="SP">Sao Paulo (SP)</option>
+                      <option className="bg-[#1a1326] text-white" value="RJ">Rio de Janeiro (RJ)</option>
+                      <option className="bg-[#1a1326] text-white" value="MG">Minas Gerais (MG)</option>
+                      <option className="bg-[#1a1326] text-white" value="RS">Rio Grande do Sul (RS)</option>
                     </select>
+
                     <div className="grid grid-cols-3 gap-2">
                       {[
                         { id: 'manha', icon: 'sunny', labelPt: 'Manha', labelEn: 'Morning' },
@@ -285,6 +345,15 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
                         </label>
                       ))}
                     </div>
+
+                    <label className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl px-3 py-3">
+                      <input type="checkbox" className="mt-0.5 accent-yellow-500 w-4 h-4" />
+                      <span className="text-xs text-gray-300 leading-relaxed">
+                        {isPortuguese
+                          ? 'Concordo em receber a Carta do Dia via WhatsApp e aceito os termos de comunicacao.'
+                          : 'I agree to receive the Daily Card via WhatsApp and accept the communication terms.'}
+                      </span>
+                    </label>
 
                     <button
                       onClick={onPrimaryAction}

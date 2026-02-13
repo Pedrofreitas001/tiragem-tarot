@@ -644,17 +644,17 @@ const Home = () => {
                 <div className="absolute top-[90%] right-[10%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
                 <div className="absolute top-[40%] left-[55%] w-[1.5px] h-[1.5px] rounded-full bg-white/20 z-0"></div>
 
-                <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-12 w-full">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-10 w-full">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
 
                         {/* Left Column - Content (Mobile: appears after orbit) */}
-                        <div className="space-y-8 lg:pr-8 order-2 lg:order-1 text-center lg:text-left">
+                        <div className="space-y-8 lg:pr-4 order-2 lg:order-1 text-center lg:text-left lg:pt-0 lg:-ml-8">
                             {/* Purple blur background for hero text (extreme left and higher) */}
                             {/* ...existing code... */}
                             {/* Raise only the hero text for visual balance */}
-                            <div className="relative z-10 -mt-8 lg:-mt-12">
+                            <div className="relative z-10 -mt-8 lg:-mt-10 lg:max-w-[560px]">
                                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                    <span className="block -mt-6 lg:-mt-14">
+                                    <span className="block -mt-6 lg:-mt-8">
                                         {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
                                     </span>
                                 </h1>
@@ -666,7 +666,7 @@ const Home = () => {
                                     </span>
                                 </p>
                             </div>
-                            <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start items-stretch sm:items-center lg:items-start">
+                            <div className="flex flex-col sm:flex-row gap-4 pt-4 lg:pt-2 justify-center lg:justify-start items-stretch sm:items-center lg:items-start">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
                                     className="group relative w-full sm:w-auto px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
@@ -689,24 +689,24 @@ const Home = () => {
                             </div>
 
                             {/* Subtle feature badges */}
-                            <div className="flex flex-wrap gap-x-4 gap-y-3 pt-4 justify-center lg:justify-start">
-                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base w-full sm:w-auto sm:min-w-[220px] justify-center lg:justify-start">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 pt-4 justify-center lg:hidden">
+                                <div className="flex items-center gap-2.5 text-gray-200 text-sm md:text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-full bg-black/25 border border-white/10">
                                     <span className="material-symbols-outlined text-green-500/80 text-lg">chat</span>
                                     <span>{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
                                 </div>
-                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base w-full sm:w-auto sm:min-w-[220px] justify-center lg:justify-start">
+                                <div className="flex items-center gap-2.5 text-gray-200 text-sm md:text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-full bg-black/25 border border-white/10">
                                     <span className="material-symbols-outlined text-purple-400/80 text-lg">all_inclusive</span>
                                     <span>{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
                                 </div>
-                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base w-full sm:w-auto sm:min-w-[220px] justify-center lg:justify-start">
+                                <div className="flex items-center gap-2.5 text-gray-200 text-sm md:text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-full bg-black/25 border border-white/10">
                                     <span className="material-symbols-outlined text-yellow-500/80 text-lg">history</span>
                                     <span>{isPortuguese ? 'Historico da sua jornada' : 'Your journey history'}</span>
                                 </div>
-                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base w-full sm:w-auto sm:min-w-[220px] justify-center lg:justify-start">
+                                <div className="flex items-center gap-2.5 text-gray-200 text-sm md:text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-full bg-black/25 border border-white/10">
                                     <span className="material-symbols-outlined text-blue-400/80 text-lg">auto_awesome</span>
                                     <span>{isPortuguese ? 'Interpretacao completa' : 'Complete interpretation'}</span>
                                 </div>
-                                <div className="flex items-center gap-2.5 text-gray-300/80 text-sm md:text-base w-full sm:w-auto sm:min-w-[220px] justify-center lg:justify-start">
+                                <div className="sm:col-span-2 justify-self-center flex items-center gap-2.5 text-gray-200 text-sm md:text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-full bg-black/25 border border-white/10">
                                     <span className="material-symbols-outlined text-amber-400/80 text-lg">menu_book</span>
                                     <span>{isPortuguese ? 'E-book Arquivo Arcano' : 'Arcane Archive e-book'}</span>
                                 </div>
@@ -714,7 +714,9 @@ const Home = () => {
                         </div>
 
                         {/* Right Column - Floating Carta do Dia Mockup */}
-                        <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-4 gap-5">
+                        <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-2 gap-2 lg:pt-6">
+                            <div className="w-full flex items-start justify-center lg:justify-end gap-4 lg:gap-5 lg:translate-x-14">
+                                <div className="flex flex-col items-center gap-4 lg:gap-1">
                             <div className="hero-daily-card relative w-[260px] sm:w-[270px] md:w-[340px] lg:w-[380px] aspect-[3/4]">
 
                                 {/* Removed stars behind the card mockup */}
@@ -843,6 +845,31 @@ const Home = () => {
                                 <span>{isPortuguese ? 'Receba sua Carta do Dia' : 'Get your Daily Card'}</span>
                                 <span className="material-symbols-outlined text-sm opacity-50 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                             </button>
+                                </div>
+
+                                <div className="hidden lg:flex flex-col gap-2.5 pt-14 ml-4 w-[300px]">
+                                    <div className="flex items-center gap-2 text-gray-200 text-xs justify-start px-4 py-1.5 rounded-full bg-black/25 border border-white/10">
+                                        <span className="material-symbols-outlined text-green-500/80 text-base flex-shrink-0">chat</span>
+                                        <span className="whitespace-nowrap">{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-gray-200 text-xs justify-start px-4 py-1.5 rounded-full bg-black/25 border border-white/10">
+                                        <span className="material-symbols-outlined text-purple-400/80 text-base flex-shrink-0">all_inclusive</span>
+                                        <span className="whitespace-nowrap">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-gray-200 text-xs justify-start px-4 py-1.5 rounded-full bg-black/25 border border-white/10">
+                                        <span className="material-symbols-outlined text-yellow-500/80 text-base flex-shrink-0">history</span>
+                                        <span className="whitespace-nowrap">{isPortuguese ? 'Historico da sua jornada' : 'Your journey history'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-gray-200 text-xs justify-start px-4 py-1.5 rounded-full bg-black/25 border border-white/10">
+                                        <span className="material-symbols-outlined text-blue-400/80 text-base flex-shrink-0">auto_awesome</span>
+                                        <span className="whitespace-nowrap">{isPortuguese ? 'Interpretacao completa' : 'Complete interpretation'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-gray-200 text-xs justify-start px-4 py-1.5 rounded-full bg-black/25 border border-white/10">
+                                        <span className="material-symbols-outlined text-amber-400/80 text-base flex-shrink-0">menu_book</span>
+                                        <span className="whitespace-nowrap">{isPortuguese ? 'E-book Arquivo Arcano' : 'Arcane Archive e-book'}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -1117,16 +1144,16 @@ const Home = () => {
                 <div className="absolute top-[85%] right-[18%] w-[2px] h-[2px] rounded-full bg-white/20"></div>
 
                 <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 lg:gap-12 items-center">
                         <div className="space-y-8 text-center lg:text-left">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/40 bg-primary/10 backdrop-blur-md">
-                                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                                <span className="text-xs uppercase tracking-[0.2em] text-primary font-bold">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-yellow-500/50 bg-yellow-500/10 backdrop-blur-md">
+                                <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+                                <span className="text-xs uppercase tracking-[0.2em] text-yellow-300 font-bold">
                                     {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
                                 </span>
                             </div>
 
-                            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            <h2 className="text-5xl sm:text-6xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 {isPortuguese ? 'Decifre os 22 Arquetipos da Sua Alma' : 'Decode the 22 Archetypes of Your Soul'}
                             </h2>
 
@@ -1166,7 +1193,7 @@ const Home = () => {
                             </div>
                         </div>
 
-                        <div className="relative flex justify-center lg:justify-end lg:-translate-x-14">
+                        <div className="relative flex justify-center mt-3 sm:mt-0 lg:justify-end lg:-translate-x-14">
                             <div className="absolute w-[145%] h-[145%] bg-gradient-to-r from-purple-600/30 via-pink-500/15 to-transparent blur-[100px] -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
                             <div className="home-ebook-container w-[210px] sm:w-64 md:w-80 lg:w-96 relative home-ebook-float overflow-hidden sm:overflow-visible pb-2 sm:pb-0">
                                 <div className="absolute top-3 right-3 z-30 bg-red-600 text-white text-[10px] tracking-wide px-2.5 py-1 rounded-md shadow-lg">
@@ -1351,7 +1378,7 @@ const Home = () => {
                     <div className="relative">
                         <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-[#110e1a] to-transparent z-10"></div>
                         <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-[#110e1a] to-transparent z-10"></div>
-                        <div className="community-scroll overflow-x-auto scroll-smooth pb-3">
+                        <div className="community-scroll overflow-x-auto scroll-smooth pb-8 mt-2">
                             <div className="flex gap-4 md:gap-5 min-w-max px-1">
                                 {[
                                     { name: 'Marina, SP', handle: '@marina.tarot', text: isPortuguese ? 'A Carta do Dia no WhatsApp me ajuda a comecar o dia com foco real.' : 'Daily Card on WhatsApp helps me start the day with real focus.' },
