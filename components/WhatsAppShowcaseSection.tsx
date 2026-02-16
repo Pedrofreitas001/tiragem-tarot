@@ -16,6 +16,7 @@ interface WhatsAppShowcaseSectionProps {
   onPrimaryAction: () => void;
   primaryLabel?: string;
   className?: string;
+  showBottomCta?: boolean;
 }
 
 export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = ({
@@ -24,6 +25,7 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
   onPrimaryAction,
   primaryLabel,
   className = '',
+  showBottomCta = true,
 }) => {
   const [zoomedGalleryCard, setZoomedGalleryCard] = useState<GalleryCard | null>(null);
 
@@ -114,7 +116,9 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
         <img
           src={card.img}
           alt={card.name}
-          className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${compact ? 'w-[96px] h-[150px]' : 'w-[122px] h-[194px]'}`}
+          width={compact ? 106 : 134}
+          height={compact ? 165 : 214}
+          className={`object-cover rounded-md shadow-lg border border-yellow-500/20 ${compact ? 'w-[106px] h-[165px]' : 'w-[134px] h-[214px]'}`}
           loading="lazy"
         />
       </div>
@@ -228,7 +232,7 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
               </button>
             </div>
 
-            <div className="relative h-[420px] sm:h-[470px] md:h-[520px] overflow-hidden">
+            <div className="relative h-[460px] sm:h-[515px] md:h-[570px] overflow-hidden">
               {cards.map((card, idx) => {
                 const pos = getRelativePosition(idx);
                 const isCenter = pos === 0;
@@ -241,7 +245,7 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
                 return (
                   <div
                     key={`carousel-${card.name}`}
-                    className="absolute left-1/2 top-1/2 w-[220px] sm:w-[250px] md:w-[270px] transition-all duration-500 ease-out"
+                    className="absolute left-1/2 top-1/2 w-[242px] sm:w-[275px] md:w-[300px] transition-all duration-500 ease-out"
                     style={{
                       transform: `translate(-50%, -50%) translateX(${translatePct}%) scale(${scale})`,
                       opacity,
@@ -269,12 +273,12 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
 
           {zoomedGalleryCard && (
             <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn" onClick={() => setZoomedGalleryCard(null)}>
-              <div className="relative w-full max-w-[320px] animate-scaleIn" onClick={(e) => e.stopPropagation()}>
+              <div className="relative w-full max-w-[350px] animate-scaleIn" onClick={(e) => e.stopPropagation()}>
                 <button onClick={() => setZoomedGalleryCard(null)} className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors flex items-center gap-1 text-xs">
                   <span className="material-symbols-outlined text-sm">close</span>
                   {isPortuguese ? 'Fechar' : 'Close'}
                 </button>
-                <div className="w-full max-w-[290px]">
+                <div className="w-full max-w-[320px]">
                   {renderCardInner(zoomedGalleryCard, false)}
                 </div>
               </div>
@@ -282,7 +286,7 @@ export const WhatsAppShowcaseSection: React.FC<WhatsAppShowcaseSectionProps> = (
           )}
         </div>
 
-        {!showForm && (
+        {!showForm && showBottomCta && (
           <div className="flex justify-center">
             <button
               onClick={onPrimaryAction}

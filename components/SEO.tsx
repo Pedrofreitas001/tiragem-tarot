@@ -7,6 +7,7 @@ interface SEOProps {
     path?: string;
     image?: string;
     type?: string;
+    structuredData?: Record<string, any> | Array<Record<string, any>>;
 }
 
 const BASE_URL = 'https://zayatarot.com';
@@ -20,6 +21,7 @@ export const SEO: React.FC<SEOProps> = ({
     path = '/',
     image = DEFAULT_IMAGE,
     type = 'website',
+    structuredData,
 }) => {
     const fullTitle = title ? `${title} | Zaya Tarot` : DEFAULT_TITLE;
     const url = `${BASE_URL}${path}`;
@@ -40,6 +42,11 @@ export const SEO: React.FC<SEOProps> = ({
             <meta name="twitter:title" content={fullTitle} />
             <meta name="twitter:description" content={description} />
             <meta name="twitter:image" content={image} />
+            {structuredData && (
+                <script type="application/ld+json">
+                    {JSON.stringify(structuredData)}
+                </script>
+            )}
         </Helmet>
     );
 };

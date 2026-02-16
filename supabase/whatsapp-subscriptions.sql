@@ -10,11 +10,23 @@ CREATE TABLE IF NOT EXISTS public.whatsapp_subscriptions (
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL UNIQUE,
   phone_number TEXT NOT NULL,
   country_code TEXT NOT NULL DEFAULT '+55', -- Suporte internacional
+  delivery_period TEXT NOT NULL DEFAULT 'morning' CHECK (delivery_period IN ('morning', 'afternoon', 'evening')),
   is_active BOOLEAN DEFAULT true,
   last_sent_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Migração segura para bases já existentes
+ALTER TABLE public.whatsapp_subscriptions
+  ADD COLUMN IF NOT EXISTS delivery_period TEXT NOT NULL DEFAULT 'morning';
+
+ALTER TABLE public.whatsapp_subscriptions
+  DROP CONSTRAINT IF EXISTS whatsapp_subscriptions_delivery_period_check;
+
+ALTER TABLE public.whatsapp_subscriptions
+  ADD CONSTRAINT whatsapp_subscriptions_delivery_period_check
+  CHECK (delivery_period IN ('morning', 'afternoon', 'evening'));
 
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_whatsapp_subscriptions_user_id ON public.whatsapp_subscriptions(user_id);

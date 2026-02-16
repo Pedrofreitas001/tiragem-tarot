@@ -27,6 +27,7 @@ export default defineConfig(({ mode }) => {
       }
     },
     build: {
+      target: 'es2018',
       // Optimize build output
       minify: 'terser',
       terserOptions: {

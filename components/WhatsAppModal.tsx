@@ -20,6 +20,7 @@ export const WhatsAppModal: React.FC<WhatsAppModalProps> = ({ isOpen, onClose })
     const [formData, setFormData] = useState({
         countryCode: '+55',
         phoneNumber: '',
+        deliveryPeriod: 'morning',
     });
 
     // Carregar assinatura existente
@@ -49,6 +50,7 @@ export const WhatsAppModal: React.FC<WhatsAppModalProps> = ({ isOpen, onClose })
                 setFormData({
                     countryCode: data.country_code,
                     phoneNumber: data.phone_number,
+                    deliveryPeriod: data.delivery_period || 'morning',
                 });
             }
         } catch (err) {
@@ -91,6 +93,7 @@ export const WhatsAppModal: React.FC<WhatsAppModalProps> = ({ isOpen, onClose })
                     .update({
                         phone_number: formData.phoneNumber,
                         country_code: formData.countryCode,
+                        delivery_period: formData.deliveryPeriod,
                         is_active: true,
                         updated_at: new Date().toISOString(),
                     })
@@ -105,6 +108,7 @@ export const WhatsAppModal: React.FC<WhatsAppModalProps> = ({ isOpen, onClose })
                         user_id: user.id,
                         phone_number: formData.phoneNumber,
                         country_code: formData.countryCode,
+                        delivery_period: formData.deliveryPeriod,
                         is_active: true,
                     });
 
@@ -145,7 +149,7 @@ export const WhatsAppModal: React.FC<WhatsAppModalProps> = ({ isOpen, onClose })
             if (error) throw error;
 
             setSubscription(null);
-            setFormData({ countryCode: '+55', phoneNumber: '' });
+            setFormData({ countryCode: '+55', phoneNumber: '', deliveryPeriod: 'morning' });
             setSuccess(true);
             setTimeout(() => {
                 onClose();
@@ -167,6 +171,7 @@ export const WhatsAppModal: React.FC<WhatsAppModalProps> = ({ isOpen, onClose })
             : 'Receive the daily card directly on WhatsApp',
         countryCode: isPortuguese ? 'Código do país' : 'Country code',
         phoneNumber: isPortuguese ? 'Número de telefone' : 'Phone number',
+        deliveryPeriod: isPortuguese ? 'Periodo de envio' : 'Delivery period',
         phonePlaceholder: isPortuguese ? '(11) 99999-9999' : '(11) 99999-9999',
         save: isPortuguese ? 'Salvar' : 'Save',
         cancel: isPortuguese ? 'Cancelar Assinatura' : 'Cancel Subscription',
@@ -185,6 +190,11 @@ export const WhatsAppModal: React.FC<WhatsAppModalProps> = ({ isOpen, onClose })
         { code: '+39', name: isPortuguese ? 'Itália' : 'Italy', flag: '🇮🇹' },
         { code: '+33', name: isPortuguese ? 'França' : 'France', flag: '🇫🇷' },
         { code: '+49', name: isPortuguese ? 'Alemanha' : 'Germany', flag: '🇩🇪' },
+    ];
+    const periodOptions = [
+        { value: 'morning', label: isPortuguese ? 'Manha' : 'Morning' },
+        { value: 'afternoon', label: isPortuguese ? 'Tarde' : 'Afternoon' },
+        { value: 'evening', label: isPortuguese ? 'Noite' : 'Evening' },
     ];
 
     return (
@@ -252,6 +262,23 @@ export const WhatsAppModal: React.FC<WhatsAppModalProps> = ({ isOpen, onClose })
                                 required
                             />
                         </div>
+                    </div>
+
+                    <div>
+                        <label className="text-sm text-gray-300 block mb-2">{t.deliveryPeriod}</label>
+                        <select
+                            name="deliveryPeriod"
+                            value={formData.deliveryPeriod}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#875faf] outline-none transition-colors"
+                            disabled={loading || !!subscription}
+                        >
+                            {periodOptions.map(option => (
+                                <option key={option.value} value={option.value} className="bg-[#1a1628]">
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="flex gap-3 pt-4">

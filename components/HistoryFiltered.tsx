@@ -92,16 +92,38 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
     const [selectedYear, setSelectedYear] = useState<number | null>(null);
     const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
     const [expandFilters, setExpandFilters] = useState<boolean>(false);
+    const [expandAnalysis, setExpandAnalysis] = useState<boolean>(false);
     const chartRef = useRef<HTMLDivElement>(null);
 
-    // Spread type options - usando tags para identificação consistente
-    const spreadTypeOptions = [
-        { key: 'DIÁRIA', label: isPortuguese ? 'Diária (Carta do Dia)' : 'Daily (Card of the Day)', color: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400' },
-        { key: 'RÁPIDA', label: isPortuguese ? 'Rápida (Sim/Não)' : 'Quick (Yes/No)', color: 'bg-blue-500/10 border-blue-500/20 text-blue-400' },
-        { key: 'PADRÃO', label: isPortuguese ? 'Padrão (Três Cartas)' : 'Standard (Three Cards)', color: 'bg-purple-500/10 border-purple-500/20 text-purple-400' },
-        { key: 'AMOR', label: isPortuguese ? 'Amor (Relacionamento)' : 'Love (Relationship)', color: 'bg-pink-500/10 border-pink-500/20 text-pink-400' },
-        { key: 'COMPLETA', label: isPortuguese ? 'Completa (Cruz Celta)' : 'Full (Celtic Cross)', color: 'bg-green-500/10 border-green-500/20 text-green-400' },
+    // Spread options based on actual spread names in history
+    const medievalToneClasses = [
+        'bg-[#d4af37]/15 border-[#d4af37]/35 text-[#f3e6c3]',
+        'bg-[#875faf]/20 border-[#b792dd]/35 text-[#efe4ff]',
+        'bg-[#5c3f84]/20 border-[#a77fd4]/35 text-[#e8d7ff]',
+        'bg-[#6a4b2a]/20 border-[#d4af37]/30 text-[#f2e5c3]',
+        'bg-[#3b2b59]/25 border-[#875faf]/35 text-[#d9c2f3]',
     ];
+
+    const spreadTypeOptions = useMemo(() => {
+        const baseSpreadNames = isPortuguese
+            ? ['Três Cartas', 'Cruz Celta', 'Relacionamento', 'Sim ou Não', 'Carta do Dia']
+            : ['Three Cards', 'Celtic Cross', 'Love Relationship', 'Yes/No', 'Card of the Day'];
+
+        const uniqueSpreadNames = Array.from(
+            new Set(
+                [...baseSpreadNames, ...readings
+                    .map((reading) => reading.spreadName?.trim() || reading.typeBadge?.trim() || '')
+                    .filter(Boolean)]
+            )
+        );
+
+        return uniqueSpreadNames.map((name, idx) => ({
+            key: name,
+            label: name,
+            color: medievalToneClasses[idx % medievalToneClasses.length],
+            chartColor: ['#d4af37', '#b794f4', '#a77fd4', '#f0b84f', '#8f67bd'][idx % 5],
+        }));
+    }, [readings, isPortuguese]);
 
     // Toggle filter
     const toggleSpreadType = (key: string) => {
@@ -117,8 +139,8 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
     // Filter readings - APPLIED TO ALL READINGS
     const filteredReadings = useMemo(() => {
         return readings.filter((reading) => {
-            // Spread type filter - usar typeBadge para comparação consistente
-            if (selectedSpreadTypes.size > 0 && !selectedSpreadTypes.has(reading.typeBadge)) {
+            const readingSpreadName = reading.spreadName?.trim() || reading.typeBadge?.trim() || '';
+            if (selectedSpreadTypes.size > 0 && !selectedSpreadTypes.has(readingSpreadName)) {
                 return false;
             }
 
@@ -167,43 +189,7 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
         onFilterChange?.(filteredReadings);
     }, [filteredReadings, onFilterChange]);
 
-    // Calculate frequency data for chart (grouped by day only)
-    // Map all spread tags to a canonical form for grouping
-    const spreadCanonicalMap: Record<string, string> = {
-        // DIÁRIA variations
-        'DIÁRIA': 'DIÁRIA',
-        'DAILY': 'DIÁRIA',
-        // RÁPIDA variations
-        'RÁPIDA': 'RÁPIDA',
-        'QUICK': 'RÁPIDA',
-        // PADRÃO variations
-        'PADRÃO': 'PADRÃO',
-        'STANDARD': 'PADRÃO',
-        // AMOR variations
-        'AMOR': 'AMOR',
-        'LOVE': 'AMOR',
-        // COMPLETA variations
-        'COMPLETA': 'COMPLETA',
-        'FULL': 'COMPLETA',
-    };
-
-    // Get display tag based on language
-    const getDisplayTag = (canonicalTag: string): string => {
-        if (isPortuguese) {
-            return canonicalTag; // Already in PT
-        } else {
-            // Translate PT to EN
-            const ptToEnMap: Record<string, string> = {
-                'DIÁRIA': 'DAILY',
-                'RÁPIDA': 'QUICK',
-                'PADRÃO': 'STANDARD',
-                'AMOR': 'LOVE',
-                'COMPLETA': 'FULL',
-            };
-            return ptToEnMap[canonicalTag] || canonicalTag;
-        }
-    };
-
+    // Calculate frequency data for chart (grouped by day only, by spread name)
     const frequencyData = useMemo(() => {
         if (filteredReadings.length === 0) return [];
 
@@ -235,7 +221,7 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                 }
 
                 // Get canonical spread tag to group variations together
-                const spreadType = spreadCanonicalMap[reading.typeBadge || 'Unknown'] || (reading.typeBadge || 'Unknown');
+                const spreadType = reading.spreadName?.trim() || reading.typeBadge || 'Unknown';
                 if (!dayMap[dateStr][spreadType]) {
                     dayMap[dateStr][spreadType] = 0;
                 }
@@ -264,22 +250,6 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                 breakdown: types,
             }));
     }, [filteredReadings]);
-
-    // Colors for spread types in chart (using tags)
-    const chartColors: Record<string, string> = {
-        'DIÁRIA': '#fbbf24',
-        'DAILY': '#fbbf24',
-        'RÁPIDA': '#60a5fa',
-        'QUICK': '#60a5fa',
-        'PADRÃO': '#c084fc',
-        'STANDARD': '#c084fc',
-        'AMOR': '#f472b6',
-        'LOVE': '#f472b6',
-        'COMPLETA': '#4ade80',
-        'FULL': '#4ade80',
-    };
-
-    const maxFrequency = Math.max(...frequencyData.map(d => d.total), 1);
 
     // Chart navigation and aggregation
     const [chartMonthOffset, setChartMonthOffset] = useState(0);
@@ -322,7 +292,7 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                 const key = `${shortMonthNames[d.getMonth()]}/${String(d.getFullYear()).slice(2)}`;
                 const sort = d.getFullYear() * 12 + d.getMonth();
                 if (!monthMap[key]) monthMap[key] = { types: {}, sort };
-                const spreadType = spreadCanonicalMap[reading.typeBadge || 'Unknown'] || (reading.typeBadge || 'Unknown');
+                const spreadType = reading.spreadName?.trim() || reading.typeBadge || 'Unknown';
                 monthMap[key].types[spreadType] = (monthMap[key].types[spreadType] || 0) + 1;
             } catch { }
         });
@@ -367,11 +337,11 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
 
     // Chart skeleton
     const ChartSkeleton = () => (
-        <div className="h-[350px] bg-white/5 rounded-2xl border border-white/10 p-6">
-            <div className="h-4 w-28 bg-white/10 rounded mb-6 mx-auto animate-pulse" />
+        <div className="h-[350px] bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 rounded-2xl border border-[#d4af37]/25 p-6 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+            <div className="h-4 w-28 bg-[#d4af37]/20 rounded mb-6 mx-auto animate-pulse" />
             <div className="flex items-end justify-center gap-4 h-[250px] pt-4">
                 {[40, 65, 50, 80, 35, 55, 70].map((h, i) => (
-                    <div key={i} className="w-5 rounded-t bg-white/10 animate-pulse" style={{ height: `${h}%`, animationDelay: `${i * 120}ms` }} />
+                    <div key={i} className="w-5 rounded-t bg-[#d4af37]/15 animate-pulse" style={{ height: `${h}%`, animationDelay: `${i * 120}ms` }} />
                 ))}
             </div>
         </div>
@@ -379,22 +349,28 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
 
     return (
         <div className="space-y-8">
-            {/* Filters Toggle Button */}
-            <div>
+            {/* Top Toggles */}
+            <div className="flex flex-row flex-wrap items-center gap-3">
                 <button
                     onClick={() => setExpandFilters(!expandFilters)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 bg-white/5 text-gray-300 hover:border-white/20 hover:bg-white/10 transition-all duration-200 font-medium text-sm"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#d4af37]/35 bg-gradient-to-r from-[#2b1c3f]/95 via-[#1e1330]/95 to-[#2b1c3f]/95 text-[#f3e6c3] hover:border-[#d4af37]/60 transition-all duration-200 font-medium text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]"
                 >
-                    <span>⚙️</span>
                     {isPortuguese ? 'Filtros' : 'Filters'}
                     <span className={`transition-transform duration-200 ${expandFilters ? 'rotate-180' : ''}`}>▼</span>
                 </button>
-            </div>
 
+                <button
+                    onClick={() => setExpandAnalysis(!expandAnalysis)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#d4af37]/35 bg-gradient-to-r from-[#2b1c3f]/95 via-[#1e1330]/95 to-[#2b1c3f]/95 text-[#f3e6c3] hover:border-[#d4af37]/60 transition-all duration-200 font-medium text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]"
+                >
+                    {isPortuguese ? 'Analise de Leituras' : 'Reading Analysis'}
+                    <span className={`transition-transform duration-200 ${expandAnalysis ? 'rotate-180' : ''}`}>▼</span>
+                </button>
+            </div>
             {/* Filters Section - Expandable */}
             {expandFilters && (
-                <div className="space-y-4 p-4 bg-white/5 rounded-lg border border-white/10 animate-in fade-in duration-200">
-                    <h3 className="text-white font-semibold text-sm uppercase tracking-widest opacity-70">
+                <div className="space-y-4 p-4 bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 rounded-lg border border-[#d4af37]/30 animate-in fade-in duration-200 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+                    <h3 className="text-[#f3e6c3] font-semibold text-sm uppercase tracking-widest opacity-90">
                         {isPortuguese ? 'Filtros' : 'Filters'}
                     </h3>
 
@@ -406,7 +382,7 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                                 onClick={() => toggleSpreadType(option.key)}
                                 className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-200 ${selectedSpreadTypes.has(option.key)
                                     ? option.color + ' scale-105 shadow-lg'
-                                    : 'bg-transparent border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300'
+                                    : 'bg-[#140d22]/45 border-[#d4af37]/15 text-[#c8b894] hover:border-[#d4af37]/35 hover:text-[#f3e6c3]'
                                     }`}
                             >
                                 {option.label}
@@ -418,15 +394,15 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                     <div className="space-y-4 pt-2">
                         {/* Year Selector */}
                         <div>
-                            <label className="block text-xs text-gray-500 mb-3 uppercase tracking-wider font-semibold">
+                            <label className="block text-xs text-[#d8c8a0]/75 mb-3 uppercase tracking-wider font-semibold">
                                 {isPortuguese ? 'Ano' : 'Year'}
                             </label>
                             <div className="flex flex-wrap gap-2">
                                 <button
                                     onClick={() => setSelectedYear(null)}
                                     className={`px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 ${selectedYear === null
-                                        ? 'bg-[#875faf] border-[#875faf] text-white shadow-lg scale-105'
-                                        : 'bg-white/5 border-white/10 text-gray-300 hover:border-white/20 hover:bg-white/10'
+                                        ? 'bg-[#875faf]/70 border-[#d4af37]/35 text-[#f3e6c3] shadow-lg scale-105'
+                                        : 'bg-[#140d22]/45 border-[#d4af37]/15 text-[#d8c8a0] hover:border-[#d4af37]/35 hover:bg-[#1b122b]/60'
                                         }`}
                                 >
                                     {isPortuguese ? 'Todos' : 'All'}
@@ -436,8 +412,8 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                                         key={year}
                                         onClick={() => setSelectedYear(year)}
                                         className={`px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 ${selectedYear === year
-                                            ? 'bg-[#875faf] border-[#875faf] text-white shadow-lg scale-105'
-                                            : 'bg-white/5 border-white/10 text-gray-300 hover:border-white/20 hover:bg-white/10'
+                                            ? 'bg-[#875faf]/70 border-[#d4af37]/35 text-[#f3e6c3] shadow-lg scale-105'
+                                            : 'bg-[#140d22]/45 border-[#d4af37]/15 text-[#d8c8a0] hover:border-[#d4af37]/35 hover:bg-[#1b122b]/60'
                                             }`}
                                     >
                                         {year}
@@ -448,15 +424,15 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
 
                         {/* Month Selector */}
                         <div>
-                            <label className="block text-xs text-gray-500 mb-3 uppercase tracking-wider font-semibold">
+                            <label className="block text-xs text-[#d8c8a0]/75 mb-3 uppercase tracking-wider font-semibold">
                                 {isPortuguese ? 'Mês' : 'Month'}
                             </label>
                             <div className="flex flex-wrap gap-2">
                                 <button
                                     onClick={() => setSelectedMonth(null)}
                                     className={`px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 ${selectedMonth === null
-                                        ? 'bg-[#875faf] border-[#875faf] text-white shadow-lg scale-105'
-                                        : 'bg-white/5 border-white/10 text-gray-300 hover:border-white/20 hover:bg-white/10'
+                                        ? 'bg-[#875faf]/70 border-[#d4af37]/35 text-[#f3e6c3] shadow-lg scale-105'
+                                        : 'bg-[#140d22]/45 border-[#d4af37]/15 text-[#d8c8a0] hover:border-[#d4af37]/35 hover:bg-[#1b122b]/60'
                                         }`}
                                 >
                                     {isPortuguese ? 'Todos' : 'All'}
@@ -475,8 +451,8 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                                             onClick={() => setSelectedMonth(month)}
                                             title={monthNames[month - 1]}
                                             className={`px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 ${selectedMonth === month
-                                                ? 'bg-[#875faf] border-[#875faf] text-white shadow-lg scale-105'
-                                                : 'bg-white/5 border-white/10 text-gray-300 hover:border-white/20 hover:bg-white/10'
+                                                ? 'bg-[#875faf]/70 border-[#d4af37]/35 text-[#f3e6c3] shadow-lg scale-105'
+                                                : 'bg-[#140d22]/45 border-[#d4af37]/15 text-[#d8c8a0] hover:border-[#d4af37]/35 hover:bg-[#1b122b]/60'
                                                 }`}
                                         >
                                             {shortMonth[month - 1]}
@@ -494,7 +470,7 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                                 setSelectedSpreadTypes(new Set());
                                 setDateRange({ from: '', to: '' });
                             }}
-                            className="text-xs text-gray-400 hover:text-[#a77fd4] transition-colors"
+                            className="text-xs text-[#d8c8a0]/75 hover:text-[#f3e6c3] transition-colors"
                         >
                             {isPortuguese ? '← Limpar filtros' : '← Clear filters'}
                         </button>
@@ -502,25 +478,26 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                 </div>
             )}
 
-            {/* Charts - Dashboard Style */}
-            <div className="space-y-4">
+            {/* Charts - Expandable */}
+            {expandAnalysis && (
+            <div className="space-y-4 p-4 bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 rounded-lg border border-[#d4af37]/30 animate-in fade-in duration-200 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
                 <div className="flex items-center justify-between flex-wrap gap-3">
-                    <h3 className="text-white font-semibold text-sm uppercase tracking-widest opacity-70">
+                    <h3 className="text-[#f3e6c3] font-semibold text-sm uppercase tracking-widest opacity-90">
                         {isPortuguese ? 'Análise de Leituras' : 'Reading Analysis'}
                     </h3>
 
                     {/* Aggregation toggle - show only when multiple months */}
                     {hasMultipleMonths && (
-                        <div className="flex items-center gap-1 bg-white/5 rounded-lg border border-white/10 p-0.5">
+                        <div className="flex items-center gap-1 bg-gradient-to-r from-[#2b1c3f]/95 via-[#1e1330]/95 to-[#2b1c3f]/95 rounded-lg border border-[#d4af37]/25 p-0.5">
                             <button
                                 onClick={() => { setChartAggregation('daily'); setChartMonthOffset(0); }}
-                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${chartAggregation === 'daily' ? 'bg-[#875faf] text-white' : 'text-gray-400 hover:text-white'}`}
+                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${chartAggregation === 'daily' ? 'bg-[#875faf]/80 text-[#f3e6c3] border border-[#d4af37]/30' : 'text-[#d8c8a0]/70 hover:text-[#f3e6c3]'}`}
                             >
                                 {isPortuguese ? 'Diário' : 'Daily'}
                             </button>
                             <button
                                 onClick={() => setChartAggregation('monthly')}
-                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${chartAggregation === 'monthly' ? 'bg-[#875faf] text-white' : 'text-gray-400 hover:text-white'}`}
+                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${chartAggregation === 'monthly' ? 'bg-[#875faf]/80 text-[#f3e6c3] border border-[#d4af37]/30' : 'text-[#d8c8a0]/70 hover:text-[#f3e6c3]'}`}
                             >
                                 {isPortuguese ? 'Mensal' : 'Monthly'}
                             </button>
@@ -534,7 +511,7 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                         <ChartSkeleton />
                     </div>
                 ) : frequencyData.length === 0 ? (
-                    <div className="text-center text-gray-400 py-8">
+                    <div className="text-center text-[#d8c8a0]/75 py-8">
                         {isPortuguese ? 'Nenhuma leitura encontrada' : 'No readings found'}
                     </div>
                 ) : (
@@ -543,27 +520,15 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                         {(() => {
                             const dreItems = spreadTypeOptions.map((option) => {
                                 const total = activeChartData.reduce((sum, day) => sum + (day.breakdown[option.key] || 0), 0);
-                                const colorMap: Record<string, string> = {
-                                    'DIÁRIA': '#fbbf24',
-                                    'DAILY': '#fbbf24',
-                                    'RÁPIDA': '#60a5fa',
-                                    'QUICK': '#60a5fa',
-                                    'PADRÃO': '#c084fc',
-                                    'STANDARD': '#c084fc',
-                                    'AMOR': '#f472b6',
-                                    'LOVE': '#f472b6',
-                                    'COMPLETA': '#4ade80',
-                                    'FULL': '#4ade80',
-                                };
                                 return {
                                     label: option.label,
                                     value: total,
-                                    color: colorMap[option.key] || '#a77fd4',
+                                    color: option.chartColor,
                                 };
                             });
 
                             return (
-                                <div className="h-[350px] overflow-hidden">
+                                <div className="h-[350px] overflow-hidden rounded-2xl border border-[#d4af37]/25 bg-gradient-to-r from-[#2b1c3f]/88 via-[#1e1330]/90 to-[#2b1c3f]/88 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
                                     <ExecutiveDREGeneric
                                         items={dreItems}
                                         title={<span className="text-gradient-gold bg-clip-text text-transparent flex justify-center text-center w-full">{isPortuguese ? 'Visão Geral' : 'General View'}</span>}
@@ -574,24 +539,24 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                         })()}
 
                         {/* Cards Quantity Chart - Daily/Monthly Count */}
-                        <div className="h-[350px] overflow-hidden relative">
+                        <div className="h-[350px] overflow-hidden relative rounded-2xl border border-[#d4af37]/25 bg-gradient-to-r from-[#2b1c3f]/88 via-[#1e1330]/90 to-[#2b1c3f]/88 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
                             {/* Month navigation arrows for daily view */}
                             {chartAggregation === 'daily' && navigableDailyData.totalPages > 1 && (
                                 <div className="absolute top-2 right-4 z-10 flex items-center gap-2">
                                     <button
                                         onClick={() => setChartMonthOffset(prev => Math.max(prev - 1, -(navigableDailyData.totalPages - 1)))}
                                         disabled={navigableDailyData.currentPage <= 0}
-                                        className="p-1 rounded-md bg-white/5 border border-white/10 text-gray-400 hover:text-white disabled:opacity-30 transition-all"
+                                        className="p-1 rounded-md bg-[#140d22]/50 border border-[#d4af37]/25 text-[#d8c8a0]/70 hover:text-[#f3e6c3] disabled:opacity-30 transition-all"
                                     >
                                         <span className="material-symbols-outlined text-sm">chevron_left</span>
                                     </button>
-                                    <span className="text-gray-500 text-[10px]">
+                                    <span className="text-[#d8c8a0]/70 text-[10px]">
                                         {navigableDailyData.currentPage + 1}/{navigableDailyData.totalPages}
                                     </span>
                                     <button
                                         onClick={() => setChartMonthOffset(prev => Math.min(prev + 1, 0))}
                                         disabled={chartMonthOffset >= 0}
-                                        className="p-1 rounded-md bg-white/5 border border-white/10 text-gray-400 hover:text-white disabled:opacity-30 transition-all"
+                                        className="p-1 rounded-md bg-[#140d22]/50 border border-[#d4af37]/25 text-[#d8c8a0]/70 hover:text-[#f3e6c3] disabled:opacity-30 transition-all"
                                     >
                                         <span className="material-symbols-outlined text-sm">chevron_right</span>
                                     </button>
@@ -617,6 +582,7 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
                     </div>
                 )}
             </div>
+            )}
 
             {/* Results summary */}
             <div className="flex items-center justify-between pt-4 border-t border-white/5">
@@ -633,3 +599,5 @@ export const HistoryFiltered: React.FC<HistoryFilteredProps> = React.memo(({
     return prevProps.readings === nextProps.readings &&
         prevProps.isPortuguese === nextProps.isPortuguese;
 });
+
+

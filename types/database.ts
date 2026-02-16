@@ -72,6 +72,7 @@ export interface Database {
           synthesis: string | null
           rating: number | null
           notes: string | null
+          viewed_at: string | null
           created_at: string
         }
         Insert: {
@@ -83,6 +84,7 @@ export interface Database {
           synthesis?: string | null
           rating?: number | null
           notes?: string | null
+          viewed_at?: string | null
           created_at?: string
         }
         Update: {
@@ -94,6 +96,7 @@ export interface Database {
           synthesis?: string | null
           rating?: number | null
           notes?: string | null
+          viewed_at?: string | null
           created_at?: string
         }
       }
@@ -147,6 +150,7 @@ export interface Database {
           user_id: string
           phone_number: string
           country_code: string
+          delivery_period: 'morning' | 'afternoon' | 'evening'
           is_active: boolean
           last_sent_at: string | null
           created_at: string
@@ -157,6 +161,7 @@ export interface Database {
           user_id: string
           phone_number: string
           country_code?: string
+          delivery_period?: 'morning' | 'afternoon' | 'evening'
           is_active?: boolean
           last_sent_at?: string | null
           created_at?: string
@@ -167,10 +172,37 @@ export interface Database {
           user_id?: string
           phone_number?: string
           country_code?: string
+          delivery_period?: 'morning' | 'afternoon' | 'evening'
           is_active?: boolean
           last_sent_at?: string | null
           created_at?: string
           updated_at?: string
+        }
+      }
+      ebook_download_events: {
+        Row: {
+          id: string
+          user_id: string
+          source: string | null
+          metadata: Json | null
+          downloaded_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          source?: string | null
+          metadata?: Json | null
+          downloaded_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          source?: string | null
+          metadata?: Json | null
+          downloaded_at?: string
+          created_at?: string
         }
       }
     }
@@ -204,6 +236,9 @@ export type SubscriptionUpdate = Database['public']['Tables']['subscriptions']['
 export type WhatsappSubscription = Database['public']['Tables']['whatsapp_subscriptions']['Row']
 export type WhatsappSubscriptionInsert = Database['public']['Tables']['whatsapp_subscriptions']['Insert']
 export type WhatsappSubscriptionUpdate = Database['public']['Tables']['whatsapp_subscriptions']['Update']
+export type EbookDownloadEvent = Database['public']['Tables']['ebook_download_events']['Row']
+export type EbookDownloadEventInsert = Database['public']['Tables']['ebook_download_events']['Insert']
+export type EbookDownloadEventUpdate = Database['public']['Tables']['ebook_download_events']['Update']
 
 export type SubscriptionTier = 'free' | 'premium'
 export type SubscriptionStatus = 'active' | 'cancelled' | 'expired' | 'pending'

@@ -6,7 +6,7 @@ import { getGeminiInterpretation, getStructuredSynthesis, StructuredSynthesis, i
 import StarsBackground from './components/StarsBackground';
 import { MinimalStarsBackground } from './components/MinimalStarsBackground';
 import { fetchCardByName, ApiTarotCard, preloadCards } from './services/tarotApiService';
-import { saveReadingToSupabase, deleteReadingFromSupabase, saveReadingWithSummary, fetchReadingsFromSupabase, saveGuestReading, getGuestReading, clearGuestReading, transferGuestReadingToUser, formatReadingSummary, extractSummaryFromSynthesis } from './services/readingsService';
+import { saveReadingToSupabase, deleteReadingFromSupabase, saveReadingWithSummary, fetchReadingsFromSupabase, saveGuestReading, getGuestReading, clearGuestReading, transferGuestReadingToUser, formatReadingSummary, extractSummaryFromSynthesis, updateReadingInSupabase } from './services/readingsService';
 import { LanguageProvider, useLanguage, LanguageToggle } from './contexts/LanguageContext';
 import { CartProvider, useCart } from './contexts/CartContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -14,8 +14,6 @@ import { AuthModal } from './components/AuthModal';
 import { UserMenu } from './components/UserMenu';
 import { PaywallModal, usePaywall } from './components/PaywallModal';
 import WhatsAppModal from './components/WhatsAppModal';
-import { JourneySection } from './components/journey';
-import HeroJourneyStories from './components/journey/HeroJourneyStories';
 import { TarotPorSignoIndex } from './pages/TarotPorSignoIndex';
 import { PRODUCTS, getProductBySlug } from './data/products';
 import { Product, ProductVariant, ProductCategory } from './types/product';
@@ -35,7 +33,7 @@ import { getCardName, getCardBySlug } from './tarotData';
 import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 import { TAROT_CARDS } from './tarotData';
-import { ZODIAC_SIGNS, ZODIAC_ORDER, ELEMENT_COLORS } from './data/zodiacData';
+import { ELEMENT_COLORS } from './data/zodiacData';
 import { generateEbookPdf, getEbookInfo } from './services/ebookPdfService';
 import { WhatsAppShowcaseSection } from './components/WhatsAppShowcaseSection';
 
@@ -257,7 +255,7 @@ const Header = () => {
                     <div className="flex animate-marquee whitespace-nowrap py-1.5">
                         {Array.from({ length: 16 }).map((_, i) => (
                             <span key={i} className="text-white text-[11px] font-medium mx-8 tracking-wide flex-shrink-0">
-                                Assine o Premium com 15% de desconto
+                                Assine o premium por R$ 19,90
                                 <span className="mx-4 text-white/40">*</span>
                             </span>
                         ))}
@@ -375,7 +373,6 @@ const Home = () => {
     const [showPaywallForm, setShowPaywallForm] = useState(false);
     const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
-    const [showJourneyStories, setShowJourneyStories] = useState(false);
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const { user, incrementReadingCount, tier, isGuest } = useAuth();
     const { isPortuguese: langIsPortuguese } = useLanguage();
@@ -385,6 +382,34 @@ const Home = () => {
     const [regeneratingReading, setRegeneratingReading] = useState(false);
     const [downloadingEbook, setDownloadingEbook] = useState(false);
     const [heroCardIndices, setHeroCardIndices] = useState([0, 7, 14]);
+    const [showAllSocialReviews, setShowAllSocialReviews] = useState(false);
+    const homeStructuredData = useMemo(() => ([
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Zaya Tarot",
+            "url": "https://zayatarot.com",
+            "logo": "https://zayatarot.com/og-image.jpg"
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Zaya Tarot",
+            "url": "https://zayatarot.com/",
+            "inLanguage": isPortuguese ? "pt-BR" : "en"
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": isPortuguese ? "Tiragem de Tarot Online" : "Online Tarot Reading",
+            "provider": {
+                "@type": "Organization",
+                "name": "Zaya Tarot"
+            },
+            "areaServed": "BR",
+            "serviceType": isPortuguese ? "Leitura de cartas de tarot" : "Tarot card reading"
+        }
+    ]), [isPortuguese]);
 
     // Cycle hero mockup cards every 4 seconds
     useEffect(() => {
@@ -449,6 +474,22 @@ const Home = () => {
             link.download = info.fileName;
             link.click();
             URL.revokeObjectURL(url);
+
+            if (user) {
+                const { supabase } = await import('./lib/supabase');
+                if (supabase) {
+                    await (supabase as any)
+                        .from('ebook_download_events')
+                        .insert({
+                            user_id: user.id,
+                            source: 'home_ebook_section',
+                            metadata: {
+                                file_name: info.fileName,
+                                tier
+                            }
+                        });
+                }
+            }
         } catch (err) {
             console.error('Error downloading ebook:', err);
         } finally {
@@ -501,6 +542,7 @@ const Home = () => {
 
     const dailyCard = getDailyCard();
     const cardName = getCardName(dailyCard.id, isPortuguese);
+    const majorArcanaCards = TAROT_CARDS.filter(card => card.arcana === 'major').sort((a, b) => a.number - b.number);
 
     const handleSelectSpread = async (spread: Spread) => {
         // Navigate directly to session, paywall check moved to first card click
@@ -525,7 +567,6 @@ const Home = () => {
             default: return { name: '', description: '', difficulty: '' };
         }
     };
-
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden" style={{
             backgroundColor: '#1a1628',
@@ -537,6 +578,7 @@ const Home = () => {
                     ? 'Descubra seu destino com tiragem de tarot online gratis. Leitura de cartas profissional com interpretacoes detalhadas. Tarot do amor, carreira e orientacao espiritual.'
                     : 'Discover your destiny with free online tarot reading. Professional card reading with detailed interpretations.'}
                 path="/"
+                structuredData={homeStructuredData}
             />
             <Header />
             <CartDrawer />
@@ -651,21 +693,21 @@ const Home = () => {
                 <div className="absolute top-[90%] right-[10%] w-[1px] h-[1px] rounded-full bg-white/25 z-0"></div>
                 <div className="absolute top-[40%] left-[55%] w-[1.5px] h-[1.5px] rounded-full bg-white/20 z-0"></div>
 
-                <div className="relative z-10 max-w-[1200px] mx-auto px-8 lg:px-10 w-full">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+                <div className="relative z-10 max-w-[1200px] mx-auto px-6 md:px-8 lg:px-8 xl:px-10 w-full">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-12 xl:gap-20 2xl:gap-24 items-center">
 
                         {/* Left Column - Content (Mobile: appears after orbit) */}
-                        <div className="space-y-8 lg:pr-4 order-2 lg:order-1 text-center lg:text-left lg:pt-0 lg:-ml-8">
+                        <div className="space-y-6 lg:space-y-7 xl:space-y-8 lg:pr-8 xl:pr-6 2xl:pr-4 order-2 lg:order-1 text-center lg:text-left lg:pt-0 xl:-ml-2 2xl:-ml-8 lg:max-w-[420px] xl:max-w-[500px] 2xl:max-w-[560px]">
                             {/* Purple blur background for hero text (extreme left and higher) */}
                             {/* ...existing code... */}
                             {/* Raise only the hero text for visual balance */}
-                            <div className="relative z-10 -mt-8 lg:-mt-10 lg:max-w-[560px]">
-                                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            <div className="relative z-10 -mt-8 lg:-mt-10 xl:-mt-10">
+                                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
                                     <span className="block -mt-6 lg:-mt-8">
                                         {isPortuguese ? 'Observe o que se revela no Tarot' : 'Discover what the Tarot reveals'}
                                     </span>
                                 </h1>
-                                <p className="text-sm sm:text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
+                                <p className="text-sm sm:text-base md:text-lg lg:text-sm xl:text-lg text-gray-400 font-light leading-relaxed max-w-xl lg:max-w-[380px] xl:max-w-[460px] 2xl:max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em' }}>
                                     <span className="block mt-8 lg:mt-12">
                                         {isPortuguese
                                             ? 'Um Tarot digital para registrar padroes, refletir escolhas e acompanhar sua jornada simbolica.'
@@ -673,10 +715,10 @@ const Home = () => {
                                     </span>
                                 </p>
                             </div>
-                            <div className="flex flex-col sm:flex-row gap-4 pt-4 lg:pt-2 justify-center lg:justify-start items-stretch sm:items-center lg:items-start">
+                            <div className="flex flex-col lg:flex-row gap-3 lg:gap-3.5 pt-3 lg:pt-2 justify-center lg:justify-start items-stretch lg:items-start w-full max-w-none">
                                 <button
                                     onClick={() => handleSelectSpread(SPREADS[0])}
-                                    className="group relative w-full sm:w-auto px-12 py-3 min-w-[200px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-xs"
+                                    className="group relative w-full lg:w-auto px-10 lg:px-8 xl:px-10 py-3 lg:min-w-[170px] bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1 text-[11px] xl:text-xs"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
                                     <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2">
@@ -686,7 +728,7 @@ const Home = () => {
                                 </button>
                                 <button
                                     onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')}
-                                    className="group w-full sm:w-auto px-4 py-3 md:px-6 md:py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-[10px] md:text-xs"
+                                    className="group w-full lg:w-auto px-4 lg:px-4 xl:px-5 py-3 md:py-3 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1 text-[10px] lg:text-[11px] xl:text-xs"
                                 >
                                     <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400">
                                         {isPortuguese ? 'Receba sua carta do dia' : 'Get your daily card'}
@@ -731,10 +773,10 @@ const Home = () => {
                         </div>
 
                         {/* Right Column - Floating Carta do Dia Mockup */}
-                        <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-2 gap-2 lg:pt-6">
-                            <div className="w-full flex items-start justify-center lg:justify-end gap-4 lg:gap-5 lg:translate-x-24">
+                        <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-2 gap-2 lg:pt-4 xl:pt-6">
+                            <div className="w-full flex items-start justify-center lg:justify-end gap-3 lg:gap-4 xl:gap-6 lg:translate-x-0 xl:translate-x-16 2xl:translate-x-28">
                                 <div className="flex flex-col items-center gap-4 lg:gap-1">
-                            <div className="hero-daily-card relative w-[260px] sm:w-[270px] md:w-[340px] lg:w-[380px] aspect-[3/4]">
+                            <div className="hero-daily-card relative w-[250px] sm:w-[265px] md:w-[320px] lg:w-[300px] xl:w-[360px] 2xl:w-[380px] aspect-[3/4]">
 
                                 {/* Removed stars behind the card mockup */}
 
@@ -828,6 +870,8 @@ const Home = () => {
                                                             <img
                                                                 src={card.imageUrl}
                                                                 alt={card.name_pt}
+                                                                width={300}
+                                                                height={520}
                                                                 className="w-full h-full object-cover"
                                                                 loading="lazy"
                                                             />
@@ -855,7 +899,7 @@ const Home = () => {
                             </div>
                                 </div>
 
-                                <div className="hidden lg:flex flex-col gap-3 pt-[4.35rem] ml-6 w-[320px]">
+                                <div className="hidden lg:flex flex-col gap-2.5 xl:gap-3 pt-[3.5rem] xl:pt-[4.35rem] ml-2 xl:ml-5 w-[240px] xl:w-[300px] 2xl:w-[320px]">
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
                                         <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
                                         <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
@@ -934,8 +978,10 @@ const Home = () => {
             </section>
 
             {/* Spread Selection - Premium Cards Style */}
-            <section id="spreads" className="pt-24 md:pt-32 pb-20 md:pb-28 px-4 md:px-6 relative" style={{ backgroundColor: '#110e1a' }}>
+            <section id="spreads" className="pt-24 md:pt-32 pb-28 md:pb-36 px-4 md:px-6 relative" style={{ backgroundColor: '#110e1a' }}>
                 {/* Cosmic Flame Background - Outside container to flow freely across sections */}
+                <div className="absolute -left-36 top-44 w-[760px] h-[760px] rounded-full bg-gradient-to-tl from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
+                <div className="absolute -left-24 top-64 w-[620px] h-[620px] rounded-full bg-gradient-to-tl from-pink-500/12 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="absolute -right-40 top-20 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/20 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="absolute -right-32 top-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-pink-500/15 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="max-w-[1200px] mx-auto relative">
@@ -1059,6 +1105,54 @@ const Home = () => {
                                     </div>
                                 );
                             })}
+                        </div>
+
+                        <div className="relative mt-16 md:mt-24 pt-6 md:pt-8">
+                            <div className="absolute top-4 left-[8%] w-[2px] h-[2px] rounded-full bg-white/30 pointer-events-none"></div>
+                            <div className="absolute top-10 right-[12%] w-[1.5px] h-[1.5px] rounded-full bg-white/26 pointer-events-none"></div>
+                            <div className="absolute top-24 left-[18%] w-[1px] h-[1px] rounded-full bg-white/24 pointer-events-none"></div>
+                            <div className="absolute top-20 right-[24%] w-[2px] h-[2px] rounded-full bg-white/20 pointer-events-none"></div>
+                            <div className="absolute top-36 left-[30%] w-[1.5px] h-[1.5px] rounded-full bg-white/28 pointer-events-none"></div>
+                            <div className="absolute top-32 right-[36%] w-[1px] h-[1px] rounded-full bg-white/24 pointer-events-none"></div>
+                            <div className="absolute bottom-10 left-[14%] w-[2px] h-[2px] rounded-full bg-white/22 pointer-events-none"></div>
+                            <div className="absolute bottom-14 right-[10%] w-[1.5px] h-[1.5px] rounded-full bg-white/26 pointer-events-none"></div>
+                            <div className="text-center mb-10 md:mb-14">
+                                <h3 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    {isPortuguese ? 'A Jornada do Heroi' : "The Hero's Journey"}
+                                </h3>
+                                <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-medium">
+                                    {isPortuguese
+                                        ? 'O Tarot e um mapa simbolico da experiencia humana. Cada Arcano Maior representa uma etapa da jornada que todos atravessamos - do inicio ao despertar, da crise a realizacao.'
+                                        : 'Tarot is a symbolic map of the human experience. Each Major Arcana represents a stage of the journey we all cross - from beginning to awakening, from crisis to fulfillment.'}
+                                </p>
+                            </div>
+
+                            <div className="relative w-full max-w-4xl lg:max-w-5xl h-[220px] sm:h-[280px] md:h-[340px] lg:h-[420px] mx-auto flex items-end justify-center select-none overflow-visible">
+                                {majorArcanaCards.map((card, idx) => {
+                                    const total = majorArcanaCards.length;
+                                    const fanSpread = 80;
+                                    const left = 10 + (fanSpread * idx) / (total - 1);
+                                    const arcHeight = 64;
+                                    const t = idx / (total - 1);
+                                    const bottom = 44 + arcHeight * Math.sin(Math.PI * t);
+                                    const angle = -28 + (56 * idx) / (total - 1);
+
+                                    return (
+                                        <img
+                                            key={`home-major-arcana-${card.id}`}
+                                            src={card.imageUrl}
+                                            alt={isPortuguese ? card.name_pt : card.name}
+                                            className="absolute w-[42px] sm:w-[52px] md:w-[68px] lg:w-[84px] xl:w-[92px] h-[84px] sm:h-[104px] md:h-[136px] lg:h-[168px] xl:h-[184px] rounded-lg shadow-2xl border border-white/15 object-cover transition-transform duration-300 hover:scale-[1.04]"
+                                            style={{
+                                                left: `${left}%`,
+                                                bottom: `${bottom}px`,
+                                                transform: `translateX(-50%) rotate(${angle}deg)`,
+                                            }}
+                                            draggable={false}
+                                        />
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1215,9 +1309,9 @@ const Home = () => {
                                 </div>
                         </div>
 
-                        <div className="relative flex justify-center mt-3 sm:mt-0 lg:justify-end lg:-translate-x-14">
+                        <div className="relative flex justify-center mt-3 sm:mt-0 lg:justify-end lg:-translate-x-14 translate-y-16 sm:translate-y-12 md:translate-y-8 lg:translate-y-16">
                             <div className="absolute w-[145%] h-[145%] bg-gradient-to-r from-purple-600/30 via-pink-500/15 to-transparent blur-[100px] -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-                            <div className="home-ebook-container w-[210px] sm:w-64 md:w-80 lg:w-96 relative home-ebook-float overflow-hidden sm:overflow-visible pb-2 sm:pb-0">
+                            <div className="home-ebook-container w-[228px] sm:w-64 md:w-80 lg:w-96 relative home-ebook-float overflow-hidden sm:overflow-visible pb-2 sm:pb-0">
                                 <div className="absolute top-3 right-3 z-30 bg-red-600 text-white text-[10px] tracking-wide px-2.5 py-1 rounded-md shadow-lg">
                                     Ebook Exclusivo
                                 </div>
@@ -1287,7 +1381,7 @@ const Home = () => {
                         </div>
                     </div>
 
-                    <div className="mt-3 sm:mt-5 md:mt-8 lg:mt-20">
+                    <div className="-mt-12 sm:-mt-4 md:mt-8 lg:mt-20">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
                             <div className="lg:col-span-7 order-2 lg:order-1">
                                 <div className="relative rounded-2xl overflow-hidden border border-[#d4af37]/35 bg-gradient-to-br from-[#2b1c3f]/90 via-[#1f1331]/90 to-[#2b1c3f]/90 shadow-[0_20px_42px_rgba(8,4,18,0.42)]">
@@ -1382,60 +1476,94 @@ const Home = () => {
                 showForm={false}
                 onPrimaryAction={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')}
                 primaryLabel={isPortuguese ? 'Receba sua mensagem do Tarot todos os dias' : 'Receive your Tarot message every day'}
-                className="bg-[#110e1a] pb-20"
+                className="bg-[#110e1a]"
             />
-            {/* Social Proof - Community Carousel */}
-            <section className="relative z-10 mt-8 md:mt-12 px-4 md:px-6 py-14 md:py-16 bg-[#110e1a] overflow-hidden">
+            {/* Social Proof - Medieval Mystical Style */}
+            <section className="relative z-10 mt-0 px-4 md:px-6 py-24 md:py-32 bg-[#110e1a] overflow-hidden">
+                <div className="absolute top-[10%] left-[7%] w-[2px] h-[2px] rounded-full bg-white/28 pointer-events-none"></div>
+                <div className="absolute top-[18%] right-[10%] w-[1.5px] h-[1.5px] rounded-full bg-white/22 pointer-events-none"></div>
+                <div className="absolute bottom-[18%] left-[14%] w-[2px] h-[2px] rounded-full bg-white/20 pointer-events-none"></div>
+                <div className="absolute bottom-[24%] right-[16%] w-[1px] h-[1px] rounded-full bg-white/26 pointer-events-none"></div>
+                <div className="absolute -left-32 top-10 w-[520px] h-[520px] rounded-full bg-gradient-to-br from-purple-600/16 via-purple-500/10 to-transparent blur-3xl pointer-events-none"></div>
+                <div className="absolute -right-24 bottom-8 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-purple-500/14 via-pink-500/8 to-transparent blur-3xl pointer-events-none"></div>
                 <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="text-center mb-8 md:mb-10">
+                    <div className="text-center mb-8 md:mb-12">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5 bg-gradient-to-r from-[#2b1c3f]/95 via-[#1e1330]/95 to-[#2b1c3f]/95 border border-[#d4af37]/35 shadow-[0_10px_28px_rgba(8,4,18,0.4)]">
+                            <span className="text-[#d4af37]/80 text-xs">✦</span>
+                            <span className="text-[#f3e6c3] text-[11px] uppercase tracking-[0.18em] font-semibold">
+                                {isPortuguese ? 'Vozes da Comunidade' : 'Community Voices'}
+                            </span>
+                            <span className="text-[#d4af37]/80 text-xs">✦</span>
+                        </div>
                         <h3 className="text-3xl md:text-4xl lg:text-5xl text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Avaliacao da nossa comunidade' : 'Community rating'}
                         </h3>
                     </div>
-                    <style>{`
-                        .community-scroll::-webkit-scrollbar { height: 6px; }
-                        .community-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 999px; }
-                        .community-scroll::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.45); border-radius: 999px; }
-                    `}</style>
-                    <div className="relative">
-                        <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-[#110e1a] to-transparent z-10"></div>
-                        <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-[#110e1a] to-transparent z-10"></div>
-                        <div className="community-scroll overflow-x-auto scroll-smooth pb-8 mt-2">
-                            <div className="flex gap-4 md:gap-5 min-w-max px-1">
-                                {[
-                                    { name: 'Marina, SP', handle: '@marina.tarot', text: isPortuguese ? 'A Carta do Dia no WhatsApp me ajuda a comecar o dia com foco real.' : 'Daily Card on WhatsApp helps me start the day with real focus.' },
-                                    { name: 'Lucas, RJ', handle: '@lucas.arcano', text: isPortuguese ? 'O eBook do Arquivo Arcano e objetivo e muito util na pratica.' : 'The Arcane Archive ebook is objective and very practical.' },
-                                    { name: 'Ana, BH', handle: '@ana.intuicao', text: isPortuguese ? 'Assinei pela combinacao de carta diaria com eBook.' : 'I subscribed for the daily-card + ebook combo.' },
-                                    { name: 'Pedro, POA', handle: '@pedro.signos', text: isPortuguese ? 'Tarot por Signo e Carta do Dia viraram minha rotina da manha.' : 'Tarot by Sign and Daily Card became my morning routine.' },
-                                    { name: 'Julia, SSA', handle: '@julia.tarologa', text: isPortuguese ? 'Receber no WhatsApp e rapido e me poupa tempo.' : 'Receiving it on WhatsApp is quick and saves me time.' },
-                                    { name: 'Renata, REC', handle: '@renata.arcana', text: isPortuguese ? 'A combinacao da carta diaria com o eBook trouxe mais clareza.' : 'The daily card plus ebook combo brought more clarity.' },
-                                ].map((review, idx) => (
-                                    <article key={`social-${idx}`} className="w-[285px] md:w-[320px] rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-yellow-500/20 to-purple-500/25 border border-yellow-500/30 flex items-center justify-center text-yellow-300 font-bold text-sm">
-                                                    {review.name.charAt(0)}
-                                                </div>
-                                                <div>
-                                                    <p className="text-white text-sm font-semibold">{review.name}</p>
-                                                    <p className="text-gray-400 text-xs">{review.handle}</p>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="text-yellow-400 text-sm font-semibold">5.0/5</p>
-                                                <p className="text-yellow-300/90 text-xs">★★★★★</p>
-                                            </div>
-                                        </div>
-                                        <p className="text-gray-300 text-sm leading-relaxed">{review.text}</p>
-                                    </article>
-                                ))}
-                            </div>
+                    <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-8 md:mb-10">
+                        <div className="relative px-4 py-2 rounded-full bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 text-[#f3e6c3] text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">✦</span>
+                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">✦</span>
+                            {isPortuguese ? '4.9 media real dos usuarios' : '4.9 real average from users'}
+                        </div>
+                        <div className="relative px-4 py-2 rounded-full bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 text-[#f3e6c3] text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">✦</span>
+                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">✦</span>
+                            {isPortuguese ? '+12 mil leituras ja realizadas' : '+12k readings completed'}
+                        </div>
+                        <div className="relative px-4 py-2 rounded-full bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 text-[#f3e6c3] text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">✦</span>
+                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">✦</span>
+                            {isPortuguese ? 'Feedback diario da comunidade' : 'Daily community feedback'}
                         </div>
                     </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
+                        {[
+                            { name: 'Marina, SP', handle: '@marina.tarot', rating: '4.9', stars: '★★★★★', text: isPortuguese ? 'A Carta do Dia no WhatsApp me ajuda a comecar o dia com foco real.' : 'Daily Card on WhatsApp helps me start the day with real focus.' },
+                            { name: 'Lucas, RJ', handle: '@lucas.arcano', rating: '4.8', stars: '★★★★☆', text: isPortuguese ? 'O eBook do Arquivo Arcano e objetivo e muito util na pratica.' : 'The Arcane Archive ebook is objective and very practical.' },
+                            { name: 'Ana, BH', handle: '@ana.intuicao', rating: '5.0', stars: '★★★★★', text: isPortuguese ? 'Assinei pela combinacao de carta diaria com eBook.' : 'I subscribed for the daily-card + ebook combo.' },
+                            { name: 'Pedro, POA', handle: '@pedro.signos', rating: '4.7', stars: '★★★★☆', text: isPortuguese ? 'Tarot por Signo e Carta do Dia viraram minha rotina da manha.' : 'Tarot by Sign and Daily Card became my morning routine.' },
+                            { name: 'Julia, SSA', handle: '@julia.tarologa', rating: '4.9', stars: '★★★★★', text: isPortuguese ? 'Receber no WhatsApp e rapido e me poupa tempo.' : 'Receiving it on WhatsApp is quick and saves me time.' },
+                            { name: 'Renata, REC', handle: '@renata.arcana', rating: '4.8', stars: '★★★★☆', text: isPortuguese ? 'A combinacao da carta diaria com o eBook trouxe mais clareza.' : 'The daily card plus ebook combo brought more clarity.' },
+                        ].map((review, idx) => (
+                            <article
+                                key={`social-${idx}`}
+                                className={`${idx >= 3 && !showAllSocialReviews ? 'hidden xl:block' : 'block'} relative rounded-2xl border border-[#d4af37]/25 bg-gradient-to-b from-[#2a1a3d]/82 via-[#1f1430]/88 to-[#170f26]/92 p-5 md:p-5 xl:p-4 shadow-[0_18px_38px_rgba(6,3,14,0.45)]`}
+                            >
+                                <span className="absolute left-3 top-2 text-[10px] text-[#d4af37]/70">✦</span>
+                                <span className="absolute right-3 bottom-2 text-[10px] text-[#d4af37]/50">✦</span>
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 xl:w-9 xl:h-9 rounded-full bg-gradient-to-br from-[#d4af37]/20 to-[#875faf]/25 border border-[#d4af37]/35 flex items-center justify-center text-[#f3e6c3] font-bold text-sm xl:text-xs">
+                                            {review.name.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <p className="text-white text-sm xl:text-[13px] font-semibold">{review.name}</p>
+                                            <p className="text-[#d8c8a0]/75 text-xs">{review.handle}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-[#e8cf83] text-xs tracking-wide">{review.stars}</p>
+                                        <p className="text-[#d4af37] text-xs font-semibold">{review.rating}</p>
+                                    </div>
+                                </div>
+                                <p className="text-[#e4d7be]/88 text-sm xl:text-[13px] leading-relaxed">{review.text}</p>
+                            </article>
+                        ))}
+                    </div>
+                    {!showAllSocialReviews && (
+                        <div className="xl:hidden mt-5">
+                            <button
+                                onClick={() => setShowAllSocialReviews(true)}
+                                className="w-full rounded-xl border border-[#d4af37]/35 bg-gradient-to-r from-[#2b1c3f]/95 via-[#1e1330]/95 to-[#2b1c3f]/95 text-[#f3e6c3] px-4 py-3 text-sm tracking-wide hover:border-[#d4af37]/60 hover:text-white transition-colors shadow-[0_10px_28px_rgba(8,4,18,0.35)]"
+                            >
+                                {isPortuguese ? 'Ver mais comentarios e expandir' : 'See more comments and expand'}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </section>
             {/* Features Presentation Section */}
-            <section className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-[#1a1628] overflow-hidden">
+            <section className="relative z-10 pt-20 md:pt-32 pb-28 md:pb-40 px-4 md:px-6 bg-[#1a1628] overflow-hidden">
                 {/* Decorative Stars */}
                 <div className="absolute inset-0 pointer-events-none">
                     {/* Around Image - Top */}
@@ -1485,7 +1613,10 @@ const Home = () => {
                                     <img
                                         src="/banner_1.png"
                                         alt="Tarot Banner"
+                                        width={1600}
+                                        height={900}
                                         className="w-full h-auto object-contain"
+                                        loading="lazy"
                                     />
                                 </div>
                             </div>
@@ -1495,84 +1626,96 @@ const Home = () => {
                         <div className="flex flex-col space-y-8 order-2 lg:order-2 mt-16 md:mt-8 lg:mt-16 -translate-y-24 md:-translate-y-4 lg:translate-y-0">
                             {/* Features Grid - 2 columns */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">all_inclusive</span>
-                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">all_inclusive</span>
+                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
                                             {isPortuguese ? 'Tiragens Ilimitadas' : 'Unlimited Readings'}
                                         </h3>
                                     </div>
-                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
                                         {isPortuguese
                                             ? 'Realize quantas tiragens desejar, sem restricoes'
                                             : 'Perform as many readings as you wish'}
                                     </p>
                                 </div>
 
-                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">psychology</span>
-                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">psychology</span>
+                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
                                             {isPortuguese ? 'Sintese com IA' : 'AI Synthesis'}
                                         </h3>
                                     </div>
-                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
                                         {isPortuguese
                                             ? 'Interpretacoes profundas com IA avancada'
                                             : 'Deep interpretations with advanced AI'}
                                     </p>
                                 </div>
 
-                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">collections_bookmark</span>
-                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">collections_bookmark</span>
+                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
                                             {isPortuguese ? 'Biblioteca Completa' : 'Complete Library'}
                                         </h3>
                                     </div>
-                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
                                         {isPortuguese
                                             ? '78 cartas com ilustracoes originais'
                                             : '78 cards with original illustrations'}
                                     </p>
                                 </div>
 
-                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">chat</span>
-                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">chat</span>
+                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
                                             {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
                                         </h3>
                                     </div>
-                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
                                         {isPortuguese
                                             ? 'Mensagens no WhatsApp diariamente'
                                             : 'Daily WhatsApp messages'}
                                     </p>
                                 </div>
 
-                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">history</span>
-                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">history</span>
+                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
                                             {isPortuguese ? 'Historico' : 'History'}
                                         </h3>
                                     </div>
-                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
                                         {isPortuguese
                                             ? 'Acompanhe sua jornada espiritual'
                                             : 'Track your spiritual journey'}
                                     </p>
                                 </div>
 
-                                <div className="bg-gradient-to-br from-[#1a1230]/75 to-[#12091a]/75 backdrop-blur-sm border border-yellow-500/40 rounded-xl p-5 flex flex-col">
+                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-yellow-500 text-lg flex-shrink-0">diamond</span>
-                                        <h3 className="text-white text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
+                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">diamond</span>
+                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
                                             {isPortuguese ? 'Premium' : 'Premium'}
                                         </h3>
                                     </div>
-                                    <p className="text-gray-100 text-sm leading-relaxed font-light">
+                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
                                         {isPortuguese
                                             ? 'Recursos exclusivos e premium'
                                             : 'Exclusive premium features'}
@@ -1631,67 +1774,100 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Tarot por Signo - Quick Access Section */}
-            <section className="relative z-10 pt-12 md:pt-16 pb-28 md:pb-36 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
-                <div className="max-w-[1000px] mx-auto relative">
-                    <div className="text-center mb-12 md:mb-16">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
-                        </h2>
-                        <p className="text-gray-400 text-lg md:text-xl max-w-xl mx-auto font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
+            {/* Plan Comparison Section - Checkout Style */}
+            <section className="relative z-10 py-20 md:py-24 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
+                <div className="absolute -left-28 top-10 w-[440px] h-[440px] rounded-full bg-gradient-to-br from-purple-500/14 to-transparent blur-3xl pointer-events-none"></div>
+                <div className="absolute -right-20 bottom-8 w-[420px] h-[420px] rounded-full bg-gradient-to-bl from-yellow-500/10 to-transparent blur-3xl pointer-events-none"></div>
+
+                <div className="max-w-6xl mx-auto relative z-10">
+                    <div className="text-center mb-10 md:mb-12">
+                        <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
+                            {isPortuguese ? 'Escolha seu plano' : 'Choose your plan'}
+                        </h3>
+                        <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto mt-4">
                             {isPortuguese
-                                ? 'Descubra as energias do tarot personalizadas para o seu signo hoje.'
-                                : 'Discover personalized tarot energies for your sign today.'}
+                                ? 'Compare os recursos e avance para o checkout quando quiser liberar toda a experiencia.'
+                                : 'Compare features and proceed to checkout when you want to unlock the full experience.'}
                         </p>
                     </div>
 
-                    {/* Grid wrapper with golden blur behind cards only */}
-                    <div className="relative">
-                        {/* Golden rectangular blur - behind cards grid only */}
-                        <div className="absolute -inset-x-8 -inset-y-6 rounded-2xl bg-gradient-to-br from-yellow-500/5 via-amber-500/4 to-yellow-600/3 blur-3xl pointer-events-none"></div>
-                        <div className="absolute -inset-x-4 -inset-y-3 rounded-2xl bg-gradient-to-t from-yellow-400/3 to-amber-500/2 blur-2xl pointer-events-none"></div>
-
-                        <div className="relative grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-5">
-                            {ZODIAC_ORDER.map((slug) => {
-                                const sign = ZODIAC_SIGNS[slug];
-                                return (
-                                    <button
-                                        key={slug}
-                                        onClick={() => navigate(isPortuguese ? `/tarot-por-signo/${slug}` : `/tarot-by-sign/${slug}`)}
-                                        className="group flex items-center justify-center py-5 px-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-yellow-500/30 transition-all duration-200 hover:scale-[1.04]"
-                                    >
-                                        <span className="text-base md:text-lg font-semibold text-gradient-gold tracking-wide group-hover:opacity-90 transition-opacity" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                            {isPortuguese ? sign.name.pt : sign.name.en}
-                                        </span>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>{/* end grid wrapper with blur */}
-
-                    <div className="text-center mt-10">
-                        <button
-                            onClick={() => navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign')}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-white/10 text-sm text-gray-400 hover:text-white hover:border-white/20 transition-all"
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+                        <article
+                            onClick={() => setSelectedPlan('free')}
+                            className={`rounded-2xl border p-6 md:p-7 transition-all cursor-pointer ${selectedPlan === 'free'
+                                ? 'border-[#875faf] bg-gradient-to-b from-[#221637] to-[#170f26] shadow-[0_0_30px_rgba(135,95,175,0.22)]'
+                                : 'border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.02] hover:border-white/20'
+                                }`}
                         >
-                            {isPortuguese ? 'Ver todos os signos' : 'View all signs'}
-                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                            <div className="flex items-center justify-between mb-5">
+                                <h4 className="text-white text-2xl font-bold" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    {isPortuguese ? 'Plano Free' : 'Free Plan'}
+                                </h4>
+                                <span className="px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-gray-200 text-xs uppercase tracking-wide">
+                                    {isPortuguese ? 'Gratuito' : 'Free'}
+                                </span>
+                            </div>
+                            <ul className="space-y-3 text-sm">
+                                {[
+                                    isPortuguese ? 'Tiragens basicas ilimitadas' : 'Unlimited basic spreads',
+                                    isPortuguese ? 'Historico de leituras' : 'Reading history',
+                                    isPortuguese ? 'Acesso a biblioteca de cartas' : 'Card library access',
+                                    isPortuguese ? 'Sem Carta do Dia no WhatsApp' : 'No Daily Card on WhatsApp',
+                                ].map((item, idx) => (
+                                    <li key={`free-feature-${idx}`} className="flex items-start gap-2.5 text-gray-300">
+                                        <span className={`material-symbols-outlined text-base mt-0.5 ${idx < 3 ? 'text-yellow-400' : 'text-gray-500'}`}>
+                                            {idx < 3 ? 'check_circle' : 'remove_circle'}
+                                        </span>
+                                        <span>{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </article>
+
+                        <article
+                            onClick={() => setSelectedPlan('premium')}
+                            className={`rounded-2xl border p-6 md:p-7 transition-all cursor-pointer ${selectedPlan === 'premium'
+                                ? 'border-yellow-500/60 bg-gradient-to-b from-[#2c1f0f] via-[#1f1630] to-[#140f1f] shadow-[0_0_34px_rgba(212,175,55,0.24)]'
+                                : 'border-yellow-500/25 bg-gradient-to-b from-[#221637] to-[#170f26] hover:border-yellow-500/45'
+                                }`}
+                        >
+                            <div className="flex items-center justify-between mb-5">
+                                <h4 className="text-white text-2xl font-bold" style={{ fontFamily: "'Crimson Text', serif" }}>
+                                    {isPortuguese ? 'Plano Premium' : 'Premium Plan'}
+                                </h4>
+                                <span className="px-2.5 py-1 rounded-full bg-yellow-500/15 border border-yellow-500/35 text-yellow-300 text-xs uppercase tracking-wide">
+                                    Premium
+                                </span>
+                            </div>
+                            <ul className="space-y-3 text-sm">
+                                {[
+                                    isPortuguese ? 'Tudo do plano Free' : 'Everything in Free plan',
+                                    isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp',
+                                    isPortuguese ? 'Interpretacao premium completa' : 'Full premium interpretation',
+                                    isPortuguese ? 'Acesso ao eBook exclusivo' : 'Exclusive ebook access',
+                                ].map((item, idx) => (
+                                    <li key={`premium-feature-${idx}`} className="flex items-start gap-2.5 text-gray-200">
+                                        <span className="material-symbols-outlined text-yellow-400 text-base mt-0.5">check_circle</span>
+                                        <span>{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </article>
+                    </div>
+
+                    <div className="mt-8 md:mt-10 flex justify-center">
+                        <button
+                            onClick={() => navigate('/checkout')}
+                            className="group relative w-full md:w-auto md:min-w-[320px] px-8 py-3.5 bg-[#D4AF37] hover:bg-[#B3922D] text-[#12091a] rounded-lg shadow-[0_0_25px_rgba(212,175,55,0.35)] hover:shadow-[0_0_35px_rgba(212,175,55,0.55)] transition-all hover:-translate-y-1"
+                        >
+                            <span className="font-bold tracking-wide flex items-center justify-center gap-2 text-sm uppercase">
+                                {isPortuguese ? 'Ir para Checkout' : 'Go to Checkout'}
+                                <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                            </span>
                         </button>
                     </div>
                 </div>
             </section>
-            {/* Journey Section - A Jornada do Heroi */}
-            <div className="relative" data-section="journey">
-                <JourneySection
-                    onStartReading={() => handleSelectSpread(SPREADS[0])}
-                    onOpenAuthModal={() => setShowAuthModal(true)}
-                    showJourneyButton={!showJourneyStories}
-                    onToggleJourney={() => setShowJourneyStories(true)}
-                />
-
-                {/* Sessao interativa de historias da jornada */}
-                {showJourneyStories && <HeroJourneyStories />}
-            </div>
 
             {/* Cosmic Mandala Animation Section - HIDDEN (kept for future use) */}
             <div style={{ display: 'none' }}>
@@ -2862,21 +3038,19 @@ const ReadingModal = ({
 }: {
     reading: any;
     onClose: () => void;
-    onUpdate: (updated: any) => void;
+    onUpdate: (updated: any) => Promise<void> | void;
     isPortuguese: boolean;
 }) => {
     const [comment, setComment] = useState(reading.comment || '');
     const [rating, setRating] = useState(reading.rating || 0);
     const [isSaving, setIsSaving] = useState(false);
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setIsSaving(true);
         const updated = { ...reading, comment, rating };
-        onUpdate(updated);
-        setTimeout(() => {
-            setIsSaving(false);
-            onClose();
-        }, 500);
+        await onUpdate(updated);
+        setIsSaving(false);
+        onClose();
     };
 
     return (
@@ -3130,6 +3304,19 @@ const ReadingModal = ({
                         </div>
                     )}
 
+                    {/* Comment */}
+                    <div>
+                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
+                            {isPortuguese ? 'Suas Anotacoes' : 'Your Notes'}
+                        </h3>
+                        <textarea
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            placeholder={isPortuguese ? 'Adicione suas reflexoes sobre esta leitura...' : 'Add your reflections about this reading...'}
+                            className="w-full h-32 px-4 py-3 rounded-xl bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none resize-none"
+                        />
+                    </div>
+
                     {/* Rating */}
                     <div>
                         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
@@ -3153,19 +3340,6 @@ const ReadingModal = ({
                                 </span>
                             )}
                         </div>
-                    </div>
-
-                    {/* Comment */}
-                    <div>
-                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
-                            {isPortuguese ? 'Suas Anotacoes' : 'Your Notes'}
-                        </h3>
-                        <textarea
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
-                            placeholder={isPortuguese ? 'Adicione suas reflexoes sobre esta leitura...' : 'Add your reflections about this reading...'}
-                            className="w-full h-32 px-4 py-3 rounded-xl bg-surface-dark border border-border-dark text-white placeholder-gray-500 focus:border-primary focus:outline-none resize-none"
-                        />
                     </div>
                 </div>
 
@@ -3314,10 +3488,18 @@ const History = () => {
         }
     };
 
-    const updateReading = (updated: any) => {
+    const updateReading = async (updated: any) => {
         const newReadings = savedReadings.map(r => r.id === updated.id ? updated : r);
         setSavedReadings(newReadings);
+        setFilteredReadings(prev => prev.map(r => r.id === updated.id ? updated : r));
         localStorage.setItem('tarot-history', JSON.stringify(newReadings));
+
+        if (user && updated.id) {
+            await updateReadingInSupabase(String(updated.id), {
+                notes: updated.comment || null,
+                rating: updated.rating || null
+            });
+        }
     };
 
     const renderStars = (rating: number) => {
@@ -3442,84 +3624,90 @@ const History = () => {
                                         <div
                                             key={item.id}
                                             onClick={() => handleOpenReading(item)}
-                                            className={`group relative bg-card-dark rounded-xl border transition-all overflow-hidden cursor-pointer hover:scale-[1.02] ${isUnviewed(item) ? 'border-amber-500/40 ring-1 ring-amber-500/20' : 'border-border-dark hover:border-primary/30'}`}
+                                            className={`group relative h-full rounded-2xl border transition-all overflow-hidden cursor-pointer bg-gradient-to-b from-[#4c376f]/88 via-[#3b2a59]/92 to-[#2a1c42]/95 backdrop-blur-sm shadow-[0_10px_28px_rgba(8,4,18,0.35)] hover:-translate-y-1 ${isUnviewed(item) ? 'border-emerald-500/55 ring-1 ring-emerald-500/30' : 'border-[#a77fd4]/35 hover:border-[#d4af37]/45'}`}
                                         >
                                             {/* Unviewed Badge */}
                                             {isUnviewed(item) && (
-                                                <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 backdrop-blur-sm">
-                                                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                                                    <span className="text-amber-400 text-[10px] font-bold uppercase">
+                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 backdrop-blur-sm shadow-[0_8px_20px_rgba(16,185,129,0.2)]">
+                                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                                    <span className="text-emerald-400 text-[10px] font-bold uppercase">
                                                         {isPortuguese ? 'Nova' : 'New'}
                                                     </span>
                                                 </div>
                                             )}
 
-                                            {/* Cards Preview - Horizontal Scroll */}
-                                            <div className="relative flex gap-1.5 p-3 bg-surface-dark/50 overflow-x-auto scrollbar-hide">
-                                                {item.previewCards?.slice(0, 5).map((cardUrl: string, idx: number) => (
-                                                    <div key={idx} className="flex-shrink-0 w-12">
-                                                        <div className="aspect-[2/3] rounded-md overflow-hidden border border-white/10 shadow-md">
-                                                            <img
-                                                                src={cardUrl}
-                                                                alt={`Card ${idx + 1}`}
-                                                                className="w-full h-full object-cover"
-                                                                onError={(e) => {
-                                                                    e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=?";
-                                                                }}
-                                                            />
+                                            {/* Header */}
+                                            <div className="flex items-start justify-between gap-3 p-4 pb-3 border-b border-[#d4af37]/15 bg-[#5a4482]/35">
+                                                <div className="space-y-2">
+                                                    <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#140d22]/55 border border-[#d4af37]/25">
+                                                        <span className="material-symbols-outlined text-[13px] text-[#d4af37]">calendar_month</span>
+                                                        <span className="text-[#f7e8c3] text-xs font-bold tracking-wide">{item.date}</span>
+                                                    </div>
+                                                </div>
+                                                <span className="text-[11px] text-[#c8b894]/70">
+                                                    {isPortuguese ? 'Toque para abrir' : 'Tap to open'}
+                                                </span>
+                                            </div>
+
+                                            {/* Cards Preview */}
+                                            <div className="px-4 pt-3">
+                                                <div className="flex items-center gap-0.5">
+                                                    {item.previewCards?.slice(0, 4).map((cardUrl: string, idx: number) => (
+                                                        <div key={idx} className={`w-11 ${idx > 0 ? '-ml-3' : ''}`}>
+                                                            <div className="aspect-[2/3] rounded-md overflow-hidden border border-[#d4af37]/30 shadow-md">
+                                                                <img
+                                                                    src={cardUrl}
+                                                                    alt={`Card ${idx + 1}`}
+                                                                    className="w-full h-full object-cover"
+                                                                    onError={(e) => {
+                                                                        e.currentTarget.src = "https://placehold.co/300x520/1c1022/9311d4?text=?";
+                                                                    }}
+                                                                />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ))}
-                                                {(item.previewCards?.length || 0) > 5 && (
-                                                    <div className="flex-shrink-0 w-12 flex items-center justify-center">
-                                                        <span className="text-gray-500 text-xs">+{item.previewCards.length - 5}</span>
-                                                    </div>
-                                                )}
+                                                    ))}
+                                                    {(item.previewCards?.length || 0) > 4 && (
+                                                        <div className="ml-1 px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[#c8b894]/75 text-[11px]">
+                                                            +{item.previewCards.length - 4}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
 
                                             {/* Card Info */}
-                                            <div className="p-4 space-y-2">
-                                                {/* Type and Date */}
-                                                <div className="flex items-center justify-between gap-2">
-                                                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${item.typeColor}`}>
-                                                        {item.typeBadge}
-                                                    </span>
-                                                    <span className="text-gray-500 text-[10px]">{item.date}</span>
-                                                </div>
-
-                                                {/* Spread Name */}
-                                                <h3 className="text-white font-bold text-sm line-clamp-1">{item.spreadName}</h3>
-
-                                                {/* Rating */}
-                                                <div className="flex gap-0.5">
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <span key={star} className={`material-symbols-outlined text-xs ${star <= (item.rating || 0) ? 'text-yellow-400' : 'text-gray-600'}`}>
-                                                            {star <= (item.rating || 0) ? 'star' : 'star_outline'}
-                                                        </span>
-                                                    ))}
-                                                </div>
-
+                                            <div className="p-4 pt-3 space-y-3 bg-[#6f56a1]/42">
                                                 {/* Comment Preview */}
                                                 {item.comment ? (
-                                                    <p className="text-gray-400 text-xs line-clamp-2 italic">"{item.comment}"</p>
+                                                    <p className="text-[#e7dcc7]/88 text-xs leading-relaxed line-clamp-2 px-2.5 py-2 rounded-lg bg-[#140d22]/55 border border-[#d4af37]/15">
+                                                        "{item.comment}"
+                                                    </p>
                                                 ) : (
-                                                    <p className="text-gray-600 text-xs italic">
-                                                        {isPortuguese ? 'Sem anotacoes' : 'No notes'}
+                                                    <p className="text-[#b39ec7]/70 text-xs italic px-2.5 py-2 rounded-lg bg-[#140d22]/45 border border-[#d4af37]/10">
+                                                        {isPortuguese ? 'Sem anotacoes nesta leitura' : 'No notes for this reading'}
                                                     </p>
                                                 )}
+
+                                                {/* Rating + Actions */}
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="flex gap-0.5">
+                                                        {[1, 2, 3, 4, 5].map((star) => (
+                                                            <span key={star} className={`material-symbols-outlined text-sm ${star <= (item.rating || 0) ? 'text-yellow-400' : 'text-[#7a678f]'}`}>
+                                                                {star <= (item.rating || 0) ? 'star' : 'star_outline'}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                    <button
+                                                        onClick={(e) => deleteReading(item.id, e)}
+                                                        className="z-10 p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-300 transition-all"
+                                                        title={isPortuguese ? 'Excluir leitura' : 'Delete reading'}
+                                                    >
+                                                        <span className="material-symbols-outlined text-base">delete</span>
+                                                    </button>
+                                                </div>
                                             </div>
 
                                             {/* Hover Overlay */}
-                                            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-
-                                            {/* Delete Button */}
-                                            <button
-                                                onClick={(e) => deleteReading(item.id, e)}
-                                                className="absolute bottom-3 right-3 z-10 p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-300 opacity-100 transition-all"
-                                                title={isPortuguese ? 'Excluir leitura' : 'Delete reading'}
-                                            >
-                                                <span className="material-symbols-outlined text-base">delete</span>
-                                            </button>
+                                            <div className="absolute inset-0 bg-white/[0.03] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                         </div>
                                     ))}
                                 </div>
@@ -3560,95 +3748,6 @@ const History = () => {
                     )}
                 </div>
 
-                {/* Account Management Section - Only for logged-in users */}
-                {user && !isGuest && (
-                    <div className="mt-16 pt-8 border-t border-white/5">
-                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-6">
-                            {isPortuguese ? 'Gerenciar Conta' : 'Manage Account'}
-                        </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            {/* Change Plan */}
-                            <button
-                                onClick={() => navigate('/checkout')}
-                                className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-purple-500/30 rounded-lg transition-all text-left group"
-                            >
-                                <span className="material-symbols-outlined text-purple-400 text-lg">swap_horiz</span>
-                                <div>
-                                    <p className="text-white text-sm font-medium">{isPortuguese ? 'Mudar Plano' : 'Change Plan'}</p>
-                                    <p className="text-gray-500 text-[10px]">{isPremium ? 'Premium' : 'Free'}</p>
-                                </div>
-                            </button>
-
-                            {/* Cancel Subscription */}
-                            {isPremium && (
-                                <button
-                                    onClick={async () => {
-                                        const confirmed = window.confirm(
-                                            isPortuguese
-                                                ? 'Tem certeza que deseja cancelar sua assinatura Premium? Voce perdera o acesso aos recursos premium ao final do periodo.'
-                                                : 'Are you sure you want to cancel your Premium subscription? You will lose access to premium features at the end of the period.'
-                                        );
-                                        if (!confirmed) return;
-                                        try {
-                                            const { openCustomerPortal } = await import('./services/stripeService');
-                                            await openCustomerPortal(user.id);
-                                        } catch (err) {
-                                            console.error('Error opening portal:', err);
-                                            alert(isPortuguese ? 'Erro ao abrir portal. Entre em contato com o suporte.' : 'Error opening portal. Please contact support.');
-                                        }
-                                    }}
-                                    className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] hover:bg-red-500/5 border border-white/10 hover:border-red-500/20 rounded-lg transition-all text-left group"
-                                >
-                                    <span className="material-symbols-outlined text-red-400/70 text-lg">cancel</span>
-                                    <div>
-                                        <p className="text-white text-sm font-medium">{isPortuguese ? 'Cancelar Assinatura' : 'Cancel Subscription'}</p>
-                                        <p className="text-gray-500 text-[10px]">{isPortuguese ? 'Via portal Stripe' : 'Via Stripe portal'}</p>
-                                    </div>
-                                </button>
-                            )}
-
-                            {/* Delete Account */}
-                            <button
-                                onClick={async () => {
-                                    const confirmed = window.confirm(
-                                        isPortuguese
-                                            ? 'ATENCAO: Esta acao e irreversivel! Todos os seus dados, historico e configuracoes serao permanentemente excluidos. Deseja continuar?'
-                                            : 'WARNING: This action is irreversible! All your data, history and settings will be permanently deleted. Do you want to continue?'
-                                    );
-                                    if (!confirmed) return;
-                                    const doubleConfirm = window.confirm(
-                                        isPortuguese
-                                            ? 'Ultima confirmacao: Deseja realmente excluir sua conta?'
-                                            : 'Final confirmation: Do you really want to delete your account?'
-                                    );
-                                    if (!doubleConfirm) return;
-                                    try {
-                                        const { supabase } = await import('./lib/supabase');
-                                        if (!supabase) return;
-                                        // Delete user data
-                                        await (supabase as any).from('readings').delete().eq('user_id', user.id);
-                                        await (supabase as any).from('whatsapp_subscriptions').delete().eq('user_id', user.id);
-                                        await (supabase as any).from('profiles').delete().eq('id', user.id);
-                                        // Sign out
-                                        await (supabase as any).auth.signOut();
-                                        localStorage.clear();
-                                        navigate('/');
-                                    } catch (err) {
-                                        console.error('Error deleting account:', err);
-                                        alert(isPortuguese ? 'Erro ao excluir conta. Entre em contato com o suporte.' : 'Error deleting account. Please contact support.');
-                                    }
-                                }}
-                                className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] hover:bg-red-500/5 border border-white/10 hover:border-red-500/20 rounded-lg transition-all text-left group"
-                            >
-                                <span className="material-symbols-outlined text-red-400/70 text-lg">person_remove</span>
-                                <div>
-                                    <p className="text-white text-sm font-medium">{isPortuguese ? 'Excluir Conta' : 'Delete Account'}</p>
-                                    <p className="text-gray-500 text-[10px]">{isPortuguese ? 'Acao irreversivel' : 'Irreversible action'}</p>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                )}
             </main>
             <Footer />
 
@@ -4531,6 +4630,62 @@ const Session = () => {
             default: return { name: '', description: '', difficulty: '' };
         }
     };
+    const questionSuggestions: Record<string, string[]> = isPortuguese
+        ? {
+            three_card: [
+                'O que esta pedindo atencao na minha vida agora?',
+                'Qual padrao vale encerrar neste ciclo?',
+                'Qual atitude pode me trazer mais clareza esta semana?'
+            ],
+            celtic_cross: [
+                'Qual e o aprendizado central deste momento?',
+                'O que esta me bloqueando e como atravessar isso?',
+                'Qual direcao tende a trazer mais equilibrio?'
+            ],
+            love_check: [
+                'Como posso fortalecer esta relacao com mais verdade?',
+                'Que energia estou levando para o amor hoje?',
+                'O que preciso compreender antes de agir no relacionamento?'
+            ],
+            yes_no: [
+                'Esta decisao me aproxima do que eu realmente quero?',
+                'Este e o momento certo para agir?',
+                'Seguir por este caminho tende a ser favoravel agora?'
+            ],
+            card_of_day: [
+                'Qual energia guia meu dia de hoje?',
+                'Onde devo colocar foco para ter um dia melhor?',
+                'Qual postura me ajuda a usar bem este dia?'
+            ]
+        }
+        : {
+            three_card: [
+                'What needs my attention most right now?',
+                'Which pattern is ready to end in this cycle?',
+                'What action can bring me more clarity this week?'
+            ],
+            celtic_cross: [
+                'What is the central lesson of this moment?',
+                'What is blocking me and how can I move through it?',
+                'Which direction is more aligned right now?'
+            ],
+            love_check: [
+                'How can I nurture this relationship more honestly?',
+                'What energy am I bringing into love today?',
+                'What do I need to understand before taking action here?'
+            ],
+            yes_no: [
+                'Does this decision align with what I truly want?',
+                'Is this the right timing to act?',
+                'Is this path favorable for me right now?'
+            ],
+            card_of_day: [
+                'What energy is guiding my day today?',
+                'Where should I place my focus today?',
+                'What mindset helps me make the most of this day?'
+            ]
+        };
+    const suggestedQuestions = questionSuggestions[spread.id] || [];
 
     // Funcao para embaralhar
     const shuffleDeck = () => {
@@ -4745,6 +4900,25 @@ const Session = () => {
                                         <span className="material-symbols-outlined text-sm">check_circle</span>
                                         {isPortuguese ? 'Sua pergunta sera considerada na analise das cartas' : 'Your question will be considered in the card analysis'}
                                     </p>
+                                )}
+                                {suggestedQuestions.length > 0 && (
+                                    <div className="mt-4">
+                                        <p className="text-[10px] uppercase tracking-[0.18em] text-gray-500 mb-2">
+                                            {isPortuguese ? 'Sugestoes' : 'Suggestions'}
+                                        </p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {suggestedQuestions.map((suggestion) => (
+                                                <button
+                                                    key={suggestion}
+                                                    type="button"
+                                                    onClick={() => setQuestion(suggestion)}
+                                                    className="px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] text-gray-400 hover:text-white hover:border-[#875faf]/40 hover:bg-[#875faf]/10 transition-all"
+                                                >
+                                                    {suggestion}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         </div>

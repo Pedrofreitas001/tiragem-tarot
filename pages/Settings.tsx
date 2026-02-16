@@ -21,6 +21,13 @@ export const Settings: React.FC = () => {
     const [whatsappSub, setWhatsappSub] = useState<WhatsappSubscription | null>(null);
     const [subscription, setSubscription] = useState<Subscription | null>(null);
     const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        newPassword: '',
+        confirmPassword: '',
+    });
+    const [passwordLoading, setPasswordLoading] = useState(false);
+    const [passwordError, setPasswordError] = useState<string | null>(null);
+    const [passwordSuccess, setPasswordSuccess] = useState(false);
 
     const [formData, setFormData] = useState({
         fullName: profile?.full_name || '',
@@ -111,6 +118,44 @@ export const Settings: React.FC = () => {
         navigate('/');
     };
 
+    const handlePasswordInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setPasswordData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleChangePassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setPasswordError(null);
+        setPasswordSuccess(false);
+
+        if (!supabase) return;
+        if (passwordData.newPassword.length < 6) {
+            setPasswordError(isPortuguese ? 'A nova senha deve ter pelo menos 6 caracteres.' : 'The new password must have at least 6 characters.');
+            return;
+        }
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            setPasswordError(isPortuguese ? 'As senhas não coincidem.' : 'Passwords do not match.');
+            return;
+        }
+
+        setPasswordLoading(true);
+        try {
+            const { error: passwordUpdateError } = await (supabase as any).auth.updateUser({
+                password: passwordData.newPassword,
+            });
+            if (passwordUpdateError) throw passwordUpdateError;
+
+            setPasswordSuccess(true);
+            setPasswordData({ newPassword: '', confirmPassword: '' });
+            setTimeout(() => setPasswordSuccess(false), 3500);
+        } catch (err: any) {
+            console.error('Error updating password:', err);
+            setPasswordError(err.message || (isPortuguese ? 'Erro ao atualizar senha.' : 'Error updating password.'));
+        } finally {
+            setPasswordLoading(false);
+        }
+    };
+
     const t = {
         title: isPortuguese ? 'Configurações' : 'Settings',
         subtitle: isPortuguese ? 'Gerencie sua conta e preferências' : 'Manage your account and preferences',
@@ -126,6 +171,12 @@ export const Settings: React.FC = () => {
         email: isPortuguese ? 'Email' : 'Email',
         save: isPortuguese ? 'Salvar Alterações' : 'Save Changes',
         saving: isPortuguese ? 'Salvando...' : 'Saving...',
+        passwordSection: isPortuguese ? 'Alterar Senha' : 'Change Password',
+        newPassword: isPortuguese ? 'Nova senha' : 'New password',
+        confirmNewPassword: isPortuguese ? 'Confirmar nova senha' : 'Confirm new password',
+        updatePassword: isPortuguese ? 'Atualizar Senha' : 'Update Password',
+        updatingPassword: isPortuguese ? 'Atualizando...' : 'Updating...',
+        passwordSuccess: isPortuguese ? 'Senha atualizada com sucesso!' : 'Password updated successfully!',
 
         // Subscription
         freePlan: isPortuguese ? 'Gratuito' : 'Free',
@@ -141,6 +192,7 @@ export const Settings: React.FC = () => {
         whatsappActive: isPortuguese ? 'Ativa' : 'Active',
         whatsappInactive: isPortuguese ? 'Inativa' : 'Inactive',
         whatsappNumber: isPortuguese ? 'Número cadastrado' : 'Registered number',
+        whatsappPeriod: isPortuguese ? 'Período' : 'Period',
         configureWhatsapp: isPortuguese ? 'Configurar' : 'Configure',
         manage: isPortuguese ? 'Gerenciar' : 'Manage',
         activateNow: isPortuguese ? 'Ativar Agora' : 'Activate Now',
@@ -161,6 +213,12 @@ export const Settings: React.FC = () => {
             month: 'long',
             day: 'numeric',
         });
+    };
+
+    const getPeriodLabel = (period?: string) => {
+        if (period === 'afternoon') return isPortuguese ? 'Tarde' : 'Afternoon';
+        if (period === 'evening') return isPortuguese ? 'Noite' : 'Evening';
+        return isPortuguese ? 'Manhã' : 'Morning';
     };
 
     return (
@@ -320,6 +378,57 @@ export const Settings: React.FC = () => {
                                                 </button>
                                             </div>
                                         </form>
+
+                                        <div className="mt-10 pt-8 border-t border-white/10">
+                                            <h3 className="text-xl font-semibold text-white mb-4">{t.passwordSection}</h3>
+                                            <form onSubmit={handleChangePassword} className="space-y-4 max-w-xl">
+                                                {passwordError && (
+                                                    <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                                                        {passwordError}
+                                                    </div>
+                                                )}
+
+                                                {passwordSuccess && (
+                                                    <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 text-sm">
+                                                        {t.passwordSuccess}
+                                                    </div>
+                                                )}
+
+                                                <div>
+                                                    <label className="text-sm text-gray-300 block mb-2">{t.newPassword}</label>
+                                                    <input
+                                                        type="password"
+                                                        name="newPassword"
+                                                        value={passwordData.newPassword}
+                                                        onChange={handlePasswordInputChange}
+                                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#875faf] outline-none transition-colors"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className="text-sm text-gray-300 block mb-2">{t.confirmNewPassword}</label>
+                                                    <input
+                                                        type="password"
+                                                        name="confirmPassword"
+                                                        value={passwordData.confirmPassword}
+                                                        onChange={handlePasswordInputChange}
+                                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#875faf] outline-none transition-colors"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <div className="pt-2">
+                                                    <button
+                                                        type="submit"
+                                                        disabled={passwordLoading}
+                                                        className="px-6 py-3 bg-gradient-to-r from-[#875faf] to-[#a77fd4] hover:from-[#9670bf] hover:to-[#b790e4] rounded-xl text-white font-bold transition-all shadow-lg shadow-[#875faf]/30 disabled:opacity-50"
+                                                    >
+                                                        {passwordLoading ? t.updatingPassword : t.updatePassword}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 )}
 
@@ -447,6 +556,9 @@ export const Settings: React.FC = () => {
                                                             <div className="p-3 bg-white/5 border border-white/10 rounded-lg">
                                                                 <p className="text-sm text-gray-400">
                                                                     {t.whatsappNumber}: <span className="text-white font-medium">{whatsappSub.country_code} {whatsappSub.phone_number}</span>
+                                                                </p>
+                                                                <p className="text-sm text-gray-400 mt-1">
+                                                                    {t.whatsappPeriod}: <span className="text-white font-medium">{getPeriodLabel(whatsappSub.delivery_period)}</span>
                                                                 </p>
                                                             </div>
                                                         </div>
