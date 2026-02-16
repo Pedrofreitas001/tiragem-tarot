@@ -9,6 +9,7 @@ import { PaywallModal } from './PaywallModal';
 import { MinimalStarsBackground } from './MinimalStarsBackground';
 import { getDailyCardSynthesis, DailyCardSynthesis } from '../services/geminiService';
 import { WhatsAppShowcaseSection } from './WhatsAppShowcaseSection';
+import { SEO } from './SEO';
 
 // Header Component
 import { useAuth } from '../contexts/AuthContext';
@@ -432,6 +433,21 @@ export const DailyCard = () => {
     const keywords = isPortuguese ? dailyCard.keywords_pt : dailyCard.keywords;
     const advice = isPortuguese ? dailyCard.advice_pt : dailyCard.advice;
     const description = isPortuguese ? dailyCard.description_pt : dailyCard.description;
+    const seoTitle = isPortuguese
+        ? `Carta do Dia Tarot no WhatsApp: ${cardName}`
+        : `Daily Tarot Card on WhatsApp: ${cardName}`;
+    const seoDescription = isPortuguese
+        ? `Receba sua carta do dia do Tarot no WhatsApp. Hoje: ${cardName}. Veja a interpretacao completa, mensagem coletiva, mantra diario e conselho espiritual.`
+        : `Get your daily tarot card on WhatsApp. Today: ${cardName}. See the full interpretation, collective message, daily mantra and spiritual guidance.`;
+    const seoPath = isPortuguese ? '/carta-do-dia' : '/daily-card';
+    const seoStructuredData = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: seoTitle,
+        description: seoDescription,
+        url: `https://zayatarot.com${seoPath}`,
+        inLanguage: isPortuguese ? 'pt-BR' : 'en'
+    };
     const normalizedSynthesis = aiSynthesis ? {
         mensagem_coletiva: (aiSynthesis as any).mensagem_coletiva,
         vibracao_universal: (aiSynthesis as any).vibracao_universal ?? (aiSynthesis as any)['vibração_universal'],
@@ -510,6 +526,13 @@ export const DailyCard = () => {
             backgroundColor: '#1a1628',
             backgroundAttachment: 'fixed'
         }}>
+            <SEO
+                title={seoTitle}
+                description={seoDescription}
+                path={seoPath}
+                image={dailyCard.imageUrl}
+                structuredData={seoStructuredData}
+            />
             <style>{orbitStyles}</style>
             <MinimalStarsBackground />
             <Header />

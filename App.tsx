@@ -2810,11 +2810,11 @@ const CardDetails = () => {
     // SEO: dynamic meta tags via react-helmet-async
     const cardSeoName = card ? getCardName(card.id, isPortuguese) : '';
     const cardSeoTitle = card ? (isPortuguese
-        ? `${cardSeoName} - Significado e Interpretacao`
-        : `${cardSeoName} - Meaning & Interpretation`) : '';
+        ? `${cardSeoName}: significado no Tarot, amor e trabalho`
+        : `${cardSeoName}: tarot meaning for love and career`) : '';
     const cardSeoDescription = card ? (isPortuguese
-        ? `Descubra o significado completo da carta ${cardSeoName} no tarot. Interpretacao, simbolismo e orientacoes praticas.`
-        : `Discover the complete meaning of the ${cardSeoName} tarot card. Interpretation, symbolism and practical guidance.`) : '';
+        ? `Veja o significado da carta ${cardSeoName} no Tarot: amor, trabalho, espiritualidade, simbolismo e conselho pratico para o dia.`
+        : `Learn the ${cardSeoName} tarot meaning for love, career, spirituality, symbolism and practical daily guidance.`) : '';
     const cardSeoPath = isPortuguese ? `/arquivo-arcano/${params.cardSlug || params.cardId}` : `/arcane-archive/${params.cardSlug || params.cardId}`;
 
     // Render SEO helmet for card pages
@@ -6695,11 +6695,12 @@ const App = () => {
                                 {/* Conteudo publico com paywall inline diferenciado */}
                                 <Route path="/numerology" element={<AuthGuard><SEO title="Numerologia" description="Descubra seu perfil numerologico completo. Calcule seu numero do destino, alma e personalidade." path="/numerology" /><Numerology /></AuthGuard>} />
                                 <Route path="/cosmic" element={<AuthGuard><SEO title="Calendario Cosmico" description="Acompanhe as fases da lua, energia cosmica do dia e alinhamento planetario." path="/cosmic" /><CosmicCalendar /></AuthGuard>} />
-                                <Route path="/carta-do-dia" element={<AuthGuard><SEO title="Carta do Dia - Tarot Diario" description="Descubra a carta de tarot do dia. Receba orientacao diaria com interpretacao completa e conselho espiritual." path="/carta-do-dia" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
-                                <Route path="/daily-card" element={<AuthGuard><SEO title="Daily Tarot Card" description="Discover your daily tarot card. Receive daily guidance with complete interpretation and spiritual advice." path="/daily-card" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
+                                <Route path="/carta-do-dia" element={<AuthGuard><SEO title="Carta do Dia Tarot no WhatsApp" description="Receba sua carta do dia do Tarot no WhatsApp com interpretacao completa, mensagem coletiva, mantra diario e conselho espiritual." path="/carta-do-dia" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
+                                <Route path="/daily-card" element={<AuthGuard><SEO title="Daily Tarot Card on WhatsApp" description="Get your daily tarot card on WhatsApp with a complete interpretation, collective message, daily mantra and spiritual guidance." path="/daily-card" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
                                 <Route path="/tarot-por-signo" element={<AuthGuard><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodiaco. Descubra o que as cartas revelam para o seu signo hoje." path="/tarot-por-signo" /><TarotPorSignoIndex /></AuthGuard>} />
                                 <Route path="/tarot-by-sign" element={<AuthGuard><SEO title="Tarot by Zodiac Sign" description="Personalized tarot reading for each zodiac sign. Discover what the cards reveal for your sign today." path="/tarot-by-sign" /><TarotPorSignoIndex /></AuthGuard>} />
                                 <Route path="/tarot-por-signo/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
+                                <Route path="/tarot-by-sign/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
                                 <Route path="/tarot-by-sign/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
 
                                 <Route path="/charts-demo" element={<Suspense fallback={<RouteFallback />}><SideBySideExample /></Suspense>} />

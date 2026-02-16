@@ -303,13 +303,25 @@ export const TarotPorSigno = () => {
     const signName = getSignName(currentSign, isPortuguese);
     const formattedDate = getFormattedDate(isPortuguese);
 
-    const signDisplayName = isPortuguese ? signData.name : (signData as any).nameEn || signData.name;
+    const signDisplayName = isPortuguese ? signData.name.pt : signData.name.en;
     const seoSignTitle = isPortuguese
-        ? `Tarot para ${signDisplayName} - Leitura de Hoje`
-        : `Tarot for ${signDisplayName} - Today's Reading`;
+        ? `${signData.seo.title.pt} - Carta do dia e orientacao`
+        : `${signData.seo.title.en} - Daily guidance`;
     const seoSignDescription = isPortuguese
-        ? `Leitura de tarot personalizada para ${signDisplayName}. Descubra o que as cartas revelam para o seu signo hoje.`
-        : `Personalized tarot reading for ${signDisplayName}. Discover what the cards reveal for your sign today.`;
+        ? `${signData.seo.description.pt} Receba tambem sua carta do dia no WhatsApp.`
+        : `${signData.seo.description.en} Also get your daily card on WhatsApp.`;
+    const seoStructuredData = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: seoSignTitle,
+        description: seoSignDescription,
+        url: `https://zayatarot.com/${isPortuguese ? `tarot-por-signo/${currentSign}` : `tarot-by-sign/${currentSign}`}`,
+        inLanguage: isPortuguese ? 'pt-BR' : 'en',
+        about: {
+            '@type': 'Thing',
+            name: signDisplayName
+        }
+    };
 
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden" style={{
@@ -320,6 +332,7 @@ export const TarotPorSigno = () => {
                 title={seoSignTitle}
                 description={seoSignDescription}
                 path={isPortuguese ? `/tarot-por-signo/${currentSign}` : `/tarot-by-sign/${currentSign}`}
+                structuredData={seoStructuredData}
             />
             <style>{orbitStyles}</style>
             <MinimalStarsBackground />

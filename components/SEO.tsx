@@ -23,24 +23,26 @@ export const SEO: React.FC<SEOProps> = ({
     type = 'website',
     structuredData,
 }) => {
-    const fullTitle = title ? `${title} | Zaya Tarot` : DEFAULT_TITLE;
+    const normalizedTitle = typeof title === 'string' ? title : '';
+    const normalizedDescription = typeof description === 'string' ? description : DEFAULT_DESCRIPTION;
+    const fullTitle = normalizedTitle ? `${normalizedTitle} | Zaya Tarot` : DEFAULT_TITLE;
     const url = `${BASE_URL}${path}`;
 
     return (
         <Helmet>
             <title>{fullTitle}</title>
-            <meta name="description" content={description} />
+            <meta name="description" content={normalizedDescription} />
             <link rel="canonical" href={url} />
             <meta property="og:type" content={type} />
             <meta property="og:url" content={url} />
             <meta property="og:title" content={fullTitle} />
-            <meta property="og:description" content={description} />
+            <meta property="og:description" content={normalizedDescription} />
             <meta property="og:image" content={image} />
             <meta property="og:locale" content="pt_BR" />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:url" content={url} />
             <meta name="twitter:title" content={fullTitle} />
-            <meta name="twitter:description" content={description} />
+            <meta name="twitter:description" content={normalizedDescription} />
             <meta name="twitter:image" content={image} />
             {structuredData && (
                 <script type="application/ld+json">
