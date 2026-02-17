@@ -173,7 +173,7 @@ const Footer = () => {
                 </div>
 
                 <div className="border-t border-border-dark pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-600 text-xs">© 2025 Zaya Tarot. {t.footer.copyright}</p>
+                    <p className="text-gray-600 text-xs">Â© 2025 Zaya Tarot. {t.footer.copyright}</p>
                     <div className="flex items-center gap-4">
                         <span className="text-gray-600 text-xs">Secure payments via</span>
                         <span className="text-green-500 font-bold text-sm">Mercado Pago</span>
@@ -450,13 +450,13 @@ export const DailyCard = () => {
     };
     const normalizedSynthesis = aiSynthesis ? {
         mensagem_coletiva: (aiSynthesis as any).mensagem_coletiva,
-        vibracao_universal: (aiSynthesis as any).vibracao_universal ?? (aiSynthesis as any)['vibração_universal'],
-        consciencia_coletiva: (aiSynthesis as any).consciencia_coletiva ?? (aiSynthesis as any)['consciência_coletiva'],
-        movimento_planetario: (aiSynthesis as any).movimento_planetario ?? (aiSynthesis as any)['movimento_planetário'],
+        vibracao_universal: (aiSynthesis as any).vibracao_universal ?? (aiSynthesis as any)['vibraÃ§Ã£o_universal'],
+        consciencia_coletiva: (aiSynthesis as any).consciencia_coletiva ?? (aiSynthesis as any)['consciÃªncia_coletiva'],
+        movimento_planetario: (aiSynthesis as any).movimento_planetario ?? (aiSynthesis as any)['movimento_planetÃ¡rio'],
         energia_emocional: (aiSynthesis as any).energia_emocional,
         significado_carta: (aiSynthesis as any).significado_carta,
-        mantra_diario: (aiSynthesis as any).mantra_diario ?? (aiSynthesis as any)['mantra_diário'],
-        reflexao_coletiva: (aiSynthesis as any).reflexao_coletiva ?? (aiSynthesis as any)['reflexão_coletiva'],
+        mantra_diario: (aiSynthesis as any).mantra_diario ?? (aiSynthesis as any)['mantra_diÃ¡rio'],
+        reflexao_coletiva: (aiSynthesis as any).reflexao_coletiva ?? (aiSynthesis as any)['reflexÃ£o_coletiva'],
     } : null;
 
     // Buscar sintese da IA automaticamente

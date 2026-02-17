@@ -350,7 +350,7 @@ const Footer = () => {
                 </div>
 
                 <div className="border-t border-border-dark pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-600 text-xs">� 2025 Zaya Tarot. {t.footer.copyright}</p>
+                    <p className="text-gray-600 text-xs">© 2025 Zaya Tarot. {t.footer.copyright}</p>
                     <div className="flex items-center gap-4">
                         <span className="text-gray-600 text-xs">Secure payments via</span>
                         <span className="text-green-500 font-bold text-sm">Mercado Pago</span>
