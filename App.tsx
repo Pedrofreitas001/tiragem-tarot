@@ -32,8 +32,8 @@ function VideoCardOptimized({ video, poster }: { video: string, poster: string }
             ref={ref}
             src={"/videos/" + video}
             poster={poster}
-            className="rounded-2xl shadow-2xl border-2 border-[#d4af37]/40 bg-black/60 w-[90px] h-[135px] sm:w-[110px] sm:h-[165px] md:w-[130px] md:h-[195px] lg:w-[140px] lg:h-[210px]"
-            style={{ objectFit: 'cover', marginBottom: 0 }}
+            className="rounded-2xl shadow-2xl border-2 border-[#d4af37]/40 bg-black/60 w-full h-full object-cover"
+            style={{ objectFit: 'cover', marginBottom: 0, width: '100%', height: '100%' }}
             preload="none"
             muted
             playsInline
@@ -1002,15 +1002,15 @@ const Home = () => {
             {/* Linha de 6 vídeos de cartas animadas - abaixo do hero, agora maiores e com blur cobrindo */}
 
             {/* Header acima dos vídeos */}
-            <div className="w-full flex flex-col items-center justify-center mt-20 mb-6 px-2">
+            <div className="w-full flex flex-col items-center justify-center mt-10 md:mt-20 mb-6 px-2">
                 <div
                     className="text-gradient-gold text-center font-semibold"
                     style={{
                         fontFamily: "'Crimson Text', serif",
                         letterSpacing: '0.01em',
-                        fontSize: 'clamp(1.5rem, 5vw, 2.2rem)',
+                        fontSize: 'clamp(1.1rem, 4vw, 2.2rem)', // menor no mobile
                         lineHeight: 1.22,
-                        maxWidth: '700px', // aumentada para evitar quebra extra
+                        maxWidth: '700px',
                         marginLeft: 'auto',
                         marginRight: 'auto',
                     }}
@@ -1033,78 +1033,57 @@ const Home = () => {
                 ];
                 // Começa com a carta do Mago (índice 0)
                 const [activeIndex, setActiveIndex] = React.useState(0);
-                const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
-                // Responsive: mobile/tablet = carousel, desktop = grid
+                const [isMobile, setIsMobile] = React.useState(() => typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+                const [hydrated, setHydrated] = React.useState(false);
+                const [videoLoading, setVideoLoading] = React.useState(true);
                 React.useEffect(() => {
+                    setHydrated(true);
                     const handleResize = () => {
-                        // force re-render on resize
-                        setActiveIndex(i => i);
+                        setIsMobile(window.innerWidth < 1024);
                     };
                     window.addEventListener('resize', handleResize);
                     return () => window.removeEventListener('resize', handleResize);
                 }, []);
 
                 // Carousel for mobile/tablet
-                if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-                    // Carousel logic: show center, sides, animate
-                    const getRelativePosition = (idx) => {
-                        const pos = idx - activeIndex;
-                        if (pos < -2) return pos + videos.length;
-                        if (pos > 2) return pos - videos.length;
-                        return pos;
-                    };
-                    // Tamanhos maiores mantendo proporção
-                    const CARD_WIDTH = window.innerWidth < 640 ? 140 : 170; // mobile: 140px, tablet: 170px
+                if (!hydrated) return null;
+                if (isMobile) {
+                    // Exibe apenas o card central, grande, sem cartas de fundo
+                    const CARD_WIDTH = window.innerWidth < 640 ? Math.min(window.innerWidth - 32, 240) : 300; // mobile: ainda menor, tablet: menor
                     const CARD_HEIGHT = Math.round(CARD_WIDTH * 1.5); // proporção 2:3
+                    const video = videos[activeIndex];
                     return (
-                        <div className="relative w-full flex items-center justify-center mb-8 mt-0 z-20 px-0 overflow-visible" style={{ minHeight: CARD_HEIGHT, maxWidth: CARD_WIDTH * 2.8, marginLeft: 'auto', marginRight: 'auto' }}>
+                        <div className="relative w-full flex items-center justify-center mb-8 mt-0 z-20 px-0 overflow-visible" style={{ minHeight: CARD_HEIGHT, maxWidth: '100vw', marginLeft: 'auto', marginRight: 'auto' }}>
                             {/* Left arrow - sempre visível para scroll infinito */}
                             <button
-                                className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/70 text-white rounded-full p-2 shadow-lg transition-all"
-                                onClick={() => setActiveIndex(i => (i - 1 + videos.length) % videos.length)}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-black/80 hover:bg-black rounded-full p-2 shadow-lg border-2 border-[#222] transition-all"
+                                onClick={() => { setActiveIndex(i => (i - 1 + videos.length) % videos.length); setVideoLoading(true); }}
                                 aria-label="Anterior"
                             >
-                                <span className="material-symbols-outlined text-2xl">chevron_left</span>
+                                <span className="material-symbols-outlined text-2xl" style={{ color: '#d4af37', textShadow: '0 0 4px #fffebb, 0 0 1px #d4af37', opacity: 0.85 }}>chevron_left</span>
                             </button>
-                            {/* Carousel cards */}
-                            <div className="relative w-full" style={{ height: CARD_HEIGHT, maxWidth: CARD_WIDTH * 2.4, minHeight: CARD_HEIGHT }}>
-                                {videos.map((video, idx) => {
-                                    const pos = getRelativePosition(idx);
-                                    const isCenter = pos === 0;
-                                    const isSide = Math.abs(pos) === 1;
-                                    const translatePct = pos * 48; // levemente mais espaçado para cartas maiores
-                                    const scale = isCenter ? 1 : isSide ? 0.82 : 0.66;
-                                    const opacity = isCenter ? 1 : isSide ? 0.45 : 0;
-                                    const z = isCenter ? 30 : isSide ? 20 : 10;
-                                    return (
-                                        <div
-                                            key={`carousel-video-${video.file}`}
-                                            className="absolute left-1/2 top-1/2 transition-all duration-500 ease-out flex flex-col items-center"
-                                            style={{
-                                                width: CARD_WIDTH,
-                                                height: CARD_HEIGHT,
-                                                transform: `translate(-50%, -50%) translateX(${translatePct}%) scale(${scale})`,
-                                                opacity,
-                                                zIndex: z,
-                                                filter: isCenter ? 'none' : 'saturate(0.8)',
-                                                pointerEvents: isCenter ? 'auto' : 'none',
-                                            }}
-                                        >
-                                            <VideoCardOptimized video={video.file} poster={video.poster} />
-                                            {isCenter && (
-                                                <span className="text-gradient-gold text-xs font-semibold mt-2" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.01em', opacity: 0.85 }}>{isPortuguese ? video.name.pt : video.name.en}</span>
-                                            )}
-                                        </div>
-                                    );
-                                })}
+                            {/* Card central grande, centralizado */}
+                            <div className="flex flex-col items-center justify-center w-full" style={{ maxWidth: CARD_WIDTH, margin: '0 auto' }}>
+                                <div style={{ width: CARD_WIDTH, height: CARD_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                                    <VideoCardOptimized
+                                        key={video.file + '-' + activeIndex}
+                                        video={video.file}
+                                        poster={video.poster}
+                                    />
+                                    {/* Barra de loading discreta */}
+                                    {videoLoading && (
+                                        <div className="absolute left-1/2 -translate-x-1/2 bottom-2 w-2/3 h-1.5 bg-gradient-to-r from-[#d4af37]/60 via-[#fffebb]/80 to-[#b88a44]/60 rounded-full animate-pulse shadow-lg opacity-80 z-20"></div>
+                                    )}
+                                </div>
+                                <span className="text-gradient-gold text-base font-semibold mt-4 text-center w-full block" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.01em', opacity: 0.9 }}>{isPortuguese ? video.name.pt : video.name.en}</span>
                             </div>
                             {/* Right arrow - sempre visível para scroll infinito */}
                             <button
-                                className="absolute right-0 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/70 text-white rounded-full p-2 shadow-lg transition-all"
-                                onClick={() => setActiveIndex(i => (i + 1) % videos.length)}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-black/80 hover:bg-black rounded-full p-2 shadow-lg border-2 border-[#222] transition-all"
+                                onClick={() => { setActiveIndex(i => (i + 1) % videos.length); setVideoLoading(true); }}
                                 aria-label="Próximo"
                             >
-                                <span className="material-symbols-outlined text-2xl">chevron_right</span>
+                                <span className="material-symbols-outlined text-2xl" style={{ color: '#d4af37', textShadow: '0 0 4px #fffebb, 0 0 1px #d4af37', opacity: 0.85 }}>chevron_right</span>
                             </button>
                         </div>
                     );
@@ -1133,18 +1112,6 @@ const Home = () => {
                                         <VideoCardOptimized
                                             video={video.file}
                                             poster={video.poster}
-                                            style={{
-                                                objectFit: 'cover',
-                                                marginBottom: 0,
-                                                width: '100%',
-                                                height: '100%',
-                                                position: 'absolute',
-                                                top: 0,
-                                                left: 0,
-                                                ...(typeof window !== 'undefined' && window.innerWidth >= 1024
-                                                    ? { transform: 'scale(2.5)', transition: 'transform 0.3s' }
-                                                    : {}),
-                                            }}
                                         />
                                     </div>
                                 </div>

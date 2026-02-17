@@ -1,0 +1,19 @@
+{
+"short_description": "Testa o carregamento de vídeo MP4 em mobile/tablet.",
+"steps": [
+"Abra este arquivo em um navegador mobile/tablet.",
+"O vídeo abaixo deve carregar e tocar automaticamente (muted).",
+"Se não carregar, há problema de compatibilidade ou permissão."
+]
+}
+<html>
+
+<body style="background:#222;color:#fff;font-family:sans-serif;text-align:center;padding:2em;">
+    <h2>Teste de Vídeo MP4</h2>
+    <video src="/videos/o_mago_vd.mp4" controls autoplay muted playsinline
+        style="width:90vw;max-width:320px;border-radius:16px;box-shadow:0 8px 32px #0008;"></video>
+    <p>Se você vê o vídeo acima, o formato está correto e o navegador suporta MP4.<br>Se não, pode ser problema de
+        permissão, caminho ou codec.</p>
+</body>
+
+</html>
