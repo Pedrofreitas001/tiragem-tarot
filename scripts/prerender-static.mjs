@@ -6,17 +6,17 @@ const INDEX_FILE = path.join(DIST_DIR, 'index.html');
 const BASE_URL = 'https://www.zayatarot.com';
 
 const BASE_ROUTES = [
-  { path: '/', title: 'Tiragem de Tarot Online Gratis | Leitura de Cartas', description: 'Descubra seu destino com tiragem de tarot online gratis. Leitura de cartas profissional com interpretacoes detalhadas.' },
-  { path: '/jogos-de-tarot', title: 'Jogos de Tarot', description: 'Explore diferentes jogos de tarot: Tres Cartas, Cruz Celta, Tarot do Amor, Sim/Nao e mais.' },
-  { path: '/spreads', title: 'Tarot Spreads', description: 'Explore different tarot spreads: Three Card, Celtic Cross, Love Check, Yes/No and more.' },
+  { path: '/', title: 'Tiragem de Tarot Online Gratis | Leitura de Cartas', description: 'Descubra seu destino com tiragem de tarot online gratis, leitura profissional e interpretacoes detalhadas para amor, trabalho e vida espiritual.' },
+  { path: '/jogos-de-tarot', title: 'Jogos de Tarot', description: 'Explore jogos de tarot como Tres Cartas, Cruz Celta, Tarot do Amor e Sim ou Nao, com interpretacao clara e orientacao pratica para o dia.' },
+  { path: '/spreads', title: 'Tarot Spreads', description: 'Explore tarot spreads like Three Card, Celtic Cross, Love Check and Yes or No, with clear interpretation and practical daily guidance.' },
   { path: '/carta-do-dia', title: 'Carta do Dia Tarot no WhatsApp', description: 'Receba sua carta do dia do Tarot no WhatsApp com interpretacao completa, mensagem coletiva, mantra diario e conselho espiritual.' },
   { path: '/daily-card', title: 'Daily Tarot Card on WhatsApp', description: 'Get your daily tarot card on WhatsApp with complete interpretation, collective message, daily mantra and spiritual guidance.' },
-  { path: '/tarot-por-signo', title: 'Tarot por Signo', description: 'Leitura de tarot personalizada para cada signo do zodiaco.' },
-  { path: '/tarot-by-sign', title: 'Tarot by Zodiac Sign', description: 'Personalized tarot reading for each zodiac sign.' },
-  { path: '/interpretacao', title: 'Interpretacao de Tarot', description: 'Guia completo de interpretacao de tarot com orientacoes detalhadas.' },
-  { path: '/interpretation', title: 'Tarot Interpretation', description: 'Complete tarot interpretation guide with detailed insights.' },
-  { path: '/arquivo-arcano', title: 'Arquivo Arcano - Todas as Cartas de Tarot', description: 'Explore todas as 78 cartas do tarot com significado e simbolismo.' },
-  { path: '/arcane-archive', title: 'Arcane Archive - All Tarot Cards', description: 'Explore all 78 tarot cards with meaning and symbolism.' },
+  { path: '/tarot-por-signo', title: 'Tarot por Signo', description: 'Leitura de tarot personalizada para cada signo do zodiaco, com previsoes e orientacoes para amor, trabalho e energia do dia.' },
+  { path: '/tarot-by-sign', title: 'Tarot by Zodiac Sign', description: 'Personalized tarot reading for each zodiac sign, with practical guidance for love, career and your daily energy.' },
+  { path: '/interpretacao', title: 'Interpretacao de Tarot', description: 'Guia de interpretacao de tarot com significados das cartas, exemplos praticos e orientacoes para amor, carreira e espiritualidade.' },
+  { path: '/interpretation', title: 'Tarot Interpretation', description: 'Tarot interpretation guide with card meanings, practical examples and guidance for love, career and spirituality.' },
+  { path: '/arquivo-arcano', title: 'Arquivo Arcano - Todas as Cartas de Tarot', description: 'Explore as cartas do tarot com significado, simbolismo e interpretacao pratica dos arcanos maiores e menores para sua jornada.' },
+  { path: '/arcane-archive', title: 'Arcane Archive - All Tarot Cards', description: 'Explore tarot cards with meaning, symbolism and practical interpretation of major and minor arcana for daily guidance.' },
   { path: '/cosmic', title: 'Calendario Cosmico', description: 'Acompanhe fases da lua, energia cosmica do dia e alinhamento planetario para orientar suas escolhas.' },
   { path: '/privacidade', title: 'Politica de Privacidade', description: 'Entenda como seus dados sao coletados, usados e protegidos na plataforma Zaya Tarot.' },
   { path: '/termos', title: 'Termos de Uso', description: 'Leia os termos de uso da plataforma Zaya Tarot e as condicoes para utilizar os servicos.' },
@@ -108,19 +108,33 @@ function escapeHtml(value) {
 }
 
 function buildSeoFallback(route) {
-  const links = [
+  const coreLinks = [
     '<a href="/carta-do-dia">Carta do Dia</a>',
     '<a href="/tarot-por-signo">Tarot por Signo</a>',
-    '<a href="/arquivo-arcano">Arquivo Arcano</a>'
+    '<a href="/arquivo-arcano">Arquivo Arcano</a>',
+    '<a href="/jogos-de-tarot">Jogos de Tarot</a>',
+    '<a href="/interpretacao">Interpretacao</a>',
+    '<a href="/cosmic">Calendario Cosmico</a>'
   ].join(' | ');
+
+  const signLinks = SIGNS
+    .map((sign) => `<a href="/tarot-por-signo/${sign.slug}">${sign.pt}</a>`)
+    .join(' | ');
+
+  const arcanaLinks = MAJOR_ARCANA_ROUTES
+    .map((slug) => `<a href="/arquivo-arcano/${slug}">${slug.replace('carta-', '').replaceAll('-', ' ')}</a>`)
+    .join(' | ');
 
   return `
 <noscript id="seo-fallback">
   <main style="max-width:920px;margin:0 auto;padding:24px 16px;color:#f5f5f5;background:#1a1628;font-family:Arial,sans-serif;line-height:1.6">
     <h1 style="margin:0 0 12px;font-size:32px;color:#fff">${escapeHtml(route.title)}</h1>
     <p style="margin:0 0 12px;font-size:16px">${escapeHtml(route.description)}</p>
-    <p style="margin:0 0 8px;font-size:14px">Zaya Tarot oferece tiragem online, leitura por signo, carta do dia e interpretacoes completas.</p>
-    <nav style="font-size:14px">${links}</nav>
+    <p style="margin:0 0 10px;font-size:14px">Zaya Tarot oferece tiragem online, leitura por signo, carta do dia e interpretacoes completas para amor, carreira e espiritualidade. Voce pode explorar spreads, consultar o arquivo de cartas, acompanhar energia cosmica e receber orientacoes praticas para suas decisoes.</p>
+    <p style="margin:0 0 12px;font-size:14px">Este conteudo foi estruturado para facilitar navegacao e indexacao, com links internos para paginas de signos e arcanos, fortalecendo a descoberta de conteudo relacionado.</p>
+    <nav style="font-size:14px;margin:0 0 8px">${coreLinks}</nav>
+    <div style="font-size:13px;margin:0 0 8px"><strong>Signos:</strong> ${signLinks}</div>
+    <div style="font-size:13px"><strong>Arcanos:</strong> ${arcanaLinks}</div>
   </main>
 </noscript>`;
 }
