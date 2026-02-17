@@ -315,7 +315,7 @@ export const TarotPorSigno = () => {
         '@type': 'WebPage',
         name: seoSignTitle,
         description: seoSignDescription,
-        url: `https://zayatarot.com/${isPortuguese ? `tarot-por-signo/${currentSign}` : `tarot-by-sign/${currentSign}`}`,
+        url: `https://www.zayatarot.com/${isPortuguese ? `tarot-por-signo/${currentSign}` : `tarot-by-sign/${currentSign}`}`,
         inLanguage: isPortuguese ? 'pt-BR' : 'en',
         about: {
             '@type': 'Thing',
@@ -688,3 +688,4 @@ export const TarotPorSigno = () => {
 };
 
 export default TarotPorSigno;
+

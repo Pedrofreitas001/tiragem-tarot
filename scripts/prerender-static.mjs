@@ -3,7 +3,7 @@ import path from 'path';
 
 const DIST_DIR = path.resolve(process.cwd(), 'dist');
 const INDEX_FILE = path.join(DIST_DIR, 'index.html');
-const BASE_URL = 'https://zayatarot.com';
+const BASE_URL = 'https://www.zayatarot.com';
 
 const BASE_ROUTES = [
   { path: '/', title: 'Tiragem de Tarot Online Gratis | Leitura de Cartas', description: 'Descubra seu destino com tiragem de tarot online gratis. Leitura de cartas profissional com interpretacoes detalhadas.' },
@@ -16,7 +16,12 @@ const BASE_ROUTES = [
   { path: '/interpretacao', title: 'Interpretacao de Tarot', description: 'Guia completo de interpretacao de tarot com orientacoes detalhadas.' },
   { path: '/interpretation', title: 'Tarot Interpretation', description: 'Complete tarot interpretation guide with detailed insights.' },
   { path: '/arquivo-arcano', title: 'Arquivo Arcano - Todas as Cartas de Tarot', description: 'Explore todas as 78 cartas do tarot com significado e simbolismo.' },
-  { path: '/arcane-archive', title: 'Arcane Archive - All Tarot Cards', description: 'Explore all 78 tarot cards with meaning and symbolism.' }
+  { path: '/arcane-archive', title: 'Arcane Archive - All Tarot Cards', description: 'Explore all 78 tarot cards with meaning and symbolism.' },
+  { path: '/cosmic', title: 'Calendario Cosmico', description: 'Acompanhe fases da lua, energia cosmica do dia e alinhamento planetario para orientar suas escolhas.' },
+  { path: '/privacidade', title: 'Politica de Privacidade', description: 'Entenda como seus dados sao coletados, usados e protegidos na plataforma Zaya Tarot.' },
+  { path: '/termos', title: 'Termos de Uso', description: 'Leia os termos de uso da plataforma Zaya Tarot e as condicoes para utilizar os servicos.' },
+  { path: '/privacy', title: 'Privacy Policy', description: 'Understand how your data is collected, used and protected on the Zaya Tarot platform.' },
+  { path: '/terms', title: 'Terms of Use', description: 'Read the terms of use for the Zaya Tarot platform and service conditions.' }
 ];
 
 const SIGNS = [
@@ -93,10 +98,38 @@ function ensureDir(dir) {
   }
 }
 
-function replaceMeta(html, { path: routePath, title, description }) {
+function escapeHtml(value) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function buildSeoFallback(route) {
+  const links = [
+    '<a href="/carta-do-dia">Carta do Dia</a>',
+    '<a href="/tarot-por-signo">Tarot por Signo</a>',
+    '<a href="/arquivo-arcano">Arquivo Arcano</a>'
+  ].join(' | ');
+
+  return `
+<noscript id="seo-fallback">
+  <main style="max-width:920px;margin:0 auto;padding:24px 16px;color:#f5f5f5;background:#1a1628;font-family:Arial,sans-serif;line-height:1.6">
+    <h1 style="margin:0 0 12px;font-size:32px;color:#fff">${escapeHtml(route.title)}</h1>
+    <p style="margin:0 0 12px;font-size:16px">${escapeHtml(route.description)}</p>
+    <p style="margin:0 0 8px;font-size:14px">Zaya Tarot oferece tiragem online, leitura por signo, carta do dia e interpretacoes completas.</p>
+    <nav style="font-size:14px">${links}</nav>
+  </main>
+</noscript>`;
+}
+
+function replaceMeta(html, route) {
+  const { path: routePath, title, description } = route;
   const url = `${BASE_URL}${routePath}`;
   const fullTitle = `${title} | Zaya Tarot`;
-  return html
+  const replaced = html
     .replace(/<title>[\s\S]*?<\/title>/i, `<title>${fullTitle}</title>`)
     .replace(/<meta name="description"[\s\S]*?>/i, `<meta name="description" content="${description}" />`)
     .replace(/<link rel="canonical"[\s\S]*?>/i, `<link rel="canonical" href="${url}" />`)
@@ -106,6 +139,11 @@ function replaceMeta(html, { path: routePath, title, description }) {
     .replace(/<meta name="twitter:url"[\s\S]*?>/i, `<meta name="twitter:url" content="${url}" />`)
     .replace(/<meta name="twitter:title"[\s\S]*?>/i, `<meta name="twitter:title" content="${fullTitle}" />`)
     .replace(/<meta name="twitter:description"[\s\S]*?>/i, `<meta name="twitter:description" content="${description}" />`);
+
+  const fallback = buildSeoFallback(route);
+  return replaced
+    .replace(/<noscript id="seo-fallback">[\s\S]*?<\/noscript>/i, '')
+    .replace('</body>', `${fallback}\n</body>`);
 }
 
 function main() {
@@ -116,14 +154,17 @@ function main() {
   const baseHtml = fs.readFileSync(INDEX_FILE, 'utf8');
 
   for (const route of ROUTES) {
-    if (route.path === '/') continue;
-    const routeDir = path.join(DIST_DIR, route.path.replace(/^\//, ''));
-    ensureDir(routeDir);
     const routeHtml = replaceMeta(baseHtml, route);
-    fs.writeFileSync(path.join(routeDir, 'index.html'), routeHtml, 'utf8');
+    if (route.path === '/') {
+      fs.writeFileSync(INDEX_FILE, routeHtml, 'utf8');
+    } else {
+      const routeDir = path.join(DIST_DIR, route.path.replace(/^\//, ''));
+      ensureDir(routeDir);
+      fs.writeFileSync(path.join(routeDir, 'index.html'), routeHtml, 'utf8');
+    }
   }
 
-  console.log(`Prerendered ${ROUTES.length - 1} static routes in dist/`);
+  console.log(`Prerendered ${ROUTES.length} static routes in dist/`);
 }
 
 main();

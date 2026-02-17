@@ -3,4 +3,5 @@ Allow: /
 Disallow: /api/
 Disallow: /admin/
 
-Sitemap: https://zayatarot.com/sitemap.xml
+Sitemap: https://www.zayatarot.com/sitemap.xml
+

@@ -10,9 +10,9 @@ interface SEOProps {
     structuredData?: Record<string, any> | Array<Record<string, any>>;
 }
 
-const BASE_URL = 'https://zayatarot.com';
+const BASE_URL = 'https://www.zayatarot.com';
 const DEFAULT_TITLE = 'Zaya Tarot - Tiragem de Tarot Online Grátis | Leitura de Cartas';
-const DEFAULT_DESCRIPTION = 'Descubra seu destino com tiragem de tarot online grátis. Leitura de cartas profissional com interpretações detalhadas. Tarot do amor, carreira e orientação espiritual.';
+const DEFAULT_DESCRIPTION = 'Descubra seu destino com tiragem de tarot online gratis, leitura profissional e orientacoes para amor, carreira e espiritualidade.';
 const DEFAULT_IMAGE = 'https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg';
 
 export const SEO: React.FC<SEOProps> = ({
@@ -52,3 +52,4 @@ export const SEO: React.FC<SEOProps> = ({
         </Helmet>
     );
 };
+

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { SPREADS, generateDeck, getStaticLore } from './constants';
 import { Spread, TarotCard, ReadingSession, ReadingAnalysis, Suit, ArcanaType, CardLore } from './types';
@@ -30,7 +30,6 @@ import { SEO } from './components/SEO';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ProtectedRoute, AuthGuard } from './components/ProtectedRoute';
 import { getCardName, getCardBySlug } from './tarotData';
-import { calculateNumerologyProfile, calculateUniversalDay, NumerologyProfile, NumerologyNumber } from './services/numerologyService';
 import { getCosmicDay, getMoonPhase, getElementColor, CosmicDay, MoonPhase } from './services/cosmicCalendarService';
 import { TAROT_CARDS } from './tarotData';
 import { ELEMENT_COLORS } from './data/zodiacData';
@@ -351,7 +350,7 @@ const Footer = () => {
                 </div>
 
                 <div className="border-t border-border-dark pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-600 text-xs">© 2025 Zaya Tarot. {t.footer.copyright}</p>
+                    <p className="text-gray-600 text-xs">� 2025 Zaya Tarot. {t.footer.copyright}</p>
                     <div className="flex items-center gap-4">
                         <span className="text-gray-600 text-xs">Secure payments via</span>
                         <span className="text-green-500 font-bold text-sm">Mercado Pago</span>
@@ -388,14 +387,14 @@ const Home = () => {
             "@context": "https://schema.org",
             "@type": "Organization",
             "name": "Zaya Tarot",
-            "url": "https://zayatarot.com",
-            "logo": "https://zayatarot.com/og-image.jpg"
+            "url": "https://www.zayatarot.com",
+            "logo": "https://www.zayatarot.com/og-image.jpg"
         },
         {
             "@context": "https://schema.org",
             "@type": "WebSite",
             "name": "Zaya Tarot",
-            "url": "https://zayatarot.com/",
+            "url": "https://www.zayatarot.com/",
             "inLanguage": isPortuguese ? "pt-BR" : "en"
         },
         {
@@ -740,32 +739,32 @@ const Home = () => {
                             {/* Subtle feature badges */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 pt-4 justify-center lg:hidden">
                                 <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">chat</span>
                                     <span>{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
                                 </div>
                                 <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">all_inclusive</span>
                                     <span>{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
                                 </div>
                                 <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">history</span>
                                     <span>{isPortuguese ? 'Historico da sua jornada' : 'Your journey history'}</span>
                                 </div>
                                 <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">auto_awesome</span>
                                     <span>{isPortuguese ? 'Interpretacao completa' : 'Complete interpretation'}</span>
                                 </div>
                                 <div className="sm:col-span-2 justify-self-center relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">menu_book</span>
                                     <span>{isPortuguese ? 'E-book Arquivo Arcano' : 'Arcane Archive e-book'}</span>
                                 </div>
@@ -901,32 +900,32 @@ const Home = () => {
 
                                 <div className="hidden lg:flex flex-col gap-2.5 xl:gap-3 pt-[3.5rem] xl:pt-[4.35rem] ml-2 xl:ml-5 w-[240px] xl:w-[300px] 2xl:w-[320px]">
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
+                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">chat</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
                                     </div>
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
+                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">all_inclusive</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
                                     </div>
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
+                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">history</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'Historico da sua jornada' : 'Your journey history'}</span>
                                     </div>
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
+                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">auto_awesome</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'Interpretacao completa' : 'Complete interpretation'}</span>
                                     </div>
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
+                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">menu_book</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'E-book Arquivo Arcano' : 'Arcane Archive e-book'}</span>
                                     </div>
@@ -945,8 +944,8 @@ const Home = () => {
                 <div className="absolute right-[8%] top-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-purple-600/10 blur-3xl pointer-events-none"></div>
                 <div className="max-w-[1200px] mx-auto relative z-10">
                     <div className="relative rounded-2xl border border-[#d4af37]/35 bg-gradient-to-r from-[#2b1c3f]/85 via-[#1e1330]/90 to-[#2b1c3f]/85 px-3 py-3 md:px-6 md:py-4 shadow-[0_14px_34px_rgba(8,4,18,0.35)]">
-                        <div className="absolute left-2 top-1.5 text-[10px] text-[#d4af37]/70">✦</div>
-                        <div className="absolute right-2 bottom-1.5 text-[10px] text-[#d4af37]/55">✦</div>
+                        <div className="absolute left-2 top-1.5 text-[10px] text-[#d4af37]/70">?</div>
+                        <div className="absolute right-2 bottom-1.5 text-[10px] text-[#d4af37]/55">?</div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
                             <div className="text-center group rounded-lg border border-[#d4af37]/20 bg-black/15 px-2 py-2">
                                 <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -1387,10 +1386,10 @@ const Home = () => {
                                 <div className="relative rounded-2xl overflow-hidden border border-[#d4af37]/35 bg-gradient-to-br from-[#2b1c3f]/90 via-[#1f1331]/90 to-[#2b1c3f]/90 shadow-[0_20px_42px_rgba(8,4,18,0.42)]">
                                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent" />
                                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/35 to-transparent" />
-                                    <div className="absolute left-3 top-2 text-[11px] text-[#d4af37]/75">✦</div>
-                                    <div className="absolute right-3 top-2 text-[11px] text-[#d4af37]/55">✦</div>
-                                    <div className="absolute left-3 bottom-2 text-[11px] text-[#d4af37]/55">✦</div>
-                                    <div className="absolute right-3 bottom-2 text-[11px] text-[#d4af37]/75">✦</div>
+                                    <div className="absolute left-3 top-2 text-[11px] text-[#d4af37]/75">?</div>
+                                    <div className="absolute right-3 top-2 text-[11px] text-[#d4af37]/55">?</div>
+                                    <div className="absolute left-3 bottom-2 text-[11px] text-[#d4af37]/55">?</div>
+                                    <div className="absolute right-3 bottom-2 text-[11px] text-[#d4af37]/75">?</div>
 
                                     <div className="relative z-10 px-6 md:px-8 py-12 md:py-16 space-y-8 md:space-y-10">
                                         <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -1489,11 +1488,11 @@ const Home = () => {
                 <div className="max-w-7xl mx-auto relative z-10">
                     <div className="text-center mb-8 md:mb-12">
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5 bg-gradient-to-r from-[#2b1c3f]/95 via-[#1e1330]/95 to-[#2b1c3f]/95 border border-[#d4af37]/35 shadow-[0_10px_28px_rgba(8,4,18,0.4)]">
-                            <span className="text-[#d4af37]/80 text-xs">✦</span>
+                            <span className="text-[#d4af37]/80 text-xs">?</span>
                             <span className="text-[#f3e6c3] text-[11px] uppercase tracking-[0.18em] font-semibold">
                                 {isPortuguese ? 'Vozes da Comunidade' : 'Community Voices'}
                             </span>
-                            <span className="text-[#d4af37]/80 text-xs">✦</span>
+                            <span className="text-[#d4af37]/80 text-xs">?</span>
                         </div>
                         <h3 className="text-3xl md:text-4xl lg:text-5xl text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Avaliacao da nossa comunidade' : 'Community rating'}
@@ -1501,36 +1500,36 @@ const Home = () => {
                     </div>
                     <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-8 md:mb-10">
                         <div className="relative px-4 py-2 rounded-full bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 text-[#f3e6c3] text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">✦</span>
-                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">✦</span>
+                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">?</span>
+                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">?</span>
                             {isPortuguese ? '4.9 media real dos usuarios' : '4.9 real average from users'}
                         </div>
                         <div className="relative px-4 py-2 rounded-full bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 text-[#f3e6c3] text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">✦</span>
-                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">✦</span>
+                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">?</span>
+                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">?</span>
                             {isPortuguese ? '+12 mil leituras ja realizadas' : '+12k readings completed'}
                         </div>
                         <div className="relative px-4 py-2 rounded-full bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 text-[#f3e6c3] text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">✦</span>
-                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">✦</span>
+                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">?</span>
+                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">?</span>
                             {isPortuguese ? 'Feedback diario da comunidade' : 'Daily community feedback'}
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
                         {[
-                            { name: 'Marina, SP', handle: '@marina.tarot', rating: '4.9', stars: '★★★★★', text: isPortuguese ? 'A Carta do Dia no WhatsApp me ajuda a comecar o dia com foco real.' : 'Daily Card on WhatsApp helps me start the day with real focus.' },
-                            { name: 'Lucas, RJ', handle: '@lucas.arcano', rating: '4.8', stars: '★★★★☆', text: isPortuguese ? 'O eBook do Arquivo Arcano e objetivo e muito util na pratica.' : 'The Arcane Archive ebook is objective and very practical.' },
-                            { name: 'Ana, BH', handle: '@ana.intuicao', rating: '5.0', stars: '★★★★★', text: isPortuguese ? 'Assinei pela combinacao de carta diaria com eBook.' : 'I subscribed for the daily-card + ebook combo.' },
-                            { name: 'Pedro, POA', handle: '@pedro.signos', rating: '4.7', stars: '★★★★☆', text: isPortuguese ? 'Tarot por Signo e Carta do Dia viraram minha rotina da manha.' : 'Tarot by Sign and Daily Card became my morning routine.' },
-                            { name: 'Julia, SSA', handle: '@julia.tarologa', rating: '4.9', stars: '★★★★★', text: isPortuguese ? 'Receber no WhatsApp e rapido e me poupa tempo.' : 'Receiving it on WhatsApp is quick and saves me time.' },
-                            { name: 'Renata, REC', handle: '@renata.arcana', rating: '4.8', stars: '★★★★☆', text: isPortuguese ? 'A combinacao da carta diaria com o eBook trouxe mais clareza.' : 'The daily card plus ebook combo brought more clarity.' },
+                            { name: 'Marina, SP', handle: '@marina.tarot', rating: '4.9', stars: '?????', text: isPortuguese ? 'A Carta do Dia no WhatsApp me ajuda a comecar o dia com foco real.' : 'Daily Card on WhatsApp helps me start the day with real focus.' },
+                            { name: 'Lucas, RJ', handle: '@lucas.arcano', rating: '4.8', stars: '?????', text: isPortuguese ? 'O eBook do Arquivo Arcano e objetivo e muito util na pratica.' : 'The Arcane Archive ebook is objective and very practical.' },
+                            { name: 'Ana, BH', handle: '@ana.intuicao', rating: '5.0', stars: '?????', text: isPortuguese ? 'Assinei pela combinacao de carta diaria com eBook.' : 'I subscribed for the daily-card + ebook combo.' },
+                            { name: 'Pedro, POA', handle: '@pedro.signos', rating: '4.7', stars: '?????', text: isPortuguese ? 'Tarot por Signo e Carta do Dia viraram minha rotina da manha.' : 'Tarot by Sign and Daily Card became my morning routine.' },
+                            { name: 'Julia, SSA', handle: '@julia.tarologa', rating: '4.9', stars: '?????', text: isPortuguese ? 'Receber no WhatsApp e rapido e me poupa tempo.' : 'Receiving it on WhatsApp is quick and saves me time.' },
+                            { name: 'Renata, REC', handle: '@renata.arcana', rating: '4.8', stars: '?????', text: isPortuguese ? 'A combinacao da carta diaria com o eBook trouxe mais clareza.' : 'The daily card plus ebook combo brought more clarity.' },
                         ].map((review, idx) => (
                             <article
                                 key={`social-${idx}`}
                                 className={`${idx >= 3 && !showAllSocialReviews ? 'hidden xl:block' : 'block'} relative rounded-2xl border border-[#d4af37]/25 bg-gradient-to-b from-[#2a1a3d]/82 via-[#1f1430]/88 to-[#170f26]/92 p-5 md:p-5 xl:p-4 shadow-[0_18px_38px_rgba(6,3,14,0.45)]`}
                             >
-                                <span className="absolute left-3 top-2 text-[10px] text-[#d4af37]/70">✦</span>
-                                <span className="absolute right-3 bottom-2 text-[10px] text-[#d4af37]/50">✦</span>
+                                <span className="absolute left-3 top-2 text-[10px] text-[#d4af37]/70">?</span>
+                                <span className="absolute right-3 bottom-2 text-[10px] text-[#d4af37]/50">?</span>
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 xl:w-9 xl:h-9 rounded-full bg-gradient-to-br from-[#d4af37]/20 to-[#875faf]/25 border border-[#d4af37]/35 flex items-center justify-center text-[#f3e6c3] font-bold text-sm xl:text-xs">
@@ -1627,8 +1626,8 @@ const Home = () => {
                             {/* Features Grid - 2 columns */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">all_inclusive</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1643,8 +1642,8 @@ const Home = () => {
                                 </div>
 
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">psychology</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1659,8 +1658,8 @@ const Home = () => {
                                 </div>
 
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">collections_bookmark</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1675,8 +1674,8 @@ const Home = () => {
                                 </div>
 
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">chat</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1691,8 +1690,8 @@ const Home = () => {
                                 </div>
 
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">history</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1707,8 +1706,8 @@ const Home = () => {
                                 </div>
 
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">diamond</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1909,10 +1908,10 @@ const Home = () => {
                                 const daysSinceNewMoon = (dateToCheck.getTime() - newMoonDate.getTime()) / (1000 * 60 * 60 * 24);
                                 const lunarDay = (daysSinceNewMoon % lunarCycle) / lunarCycle;
 
-                                if (lunarDay < 0.125 || lunarDay > 0.875) return { phase: 'new', icon: 'ðŸŒ‘', pt: 'Nova' };
-                                if (lunarDay < 0.375) return { phase: 'waxing', icon: 'ðŸŒ’', pt: 'Crescente' };
-                                if (lunarDay < 0.625) return { phase: 'full', icon: 'ðŸŒ•', pt: 'Cheia' };
-                                return { phase: 'waning', icon: 'ðŸŒ˜', pt: 'Minguante' };
+                                if (lunarDay < 0.125 || lunarDay > 0.875) return { phase: 'new', icon: '🌑', pt: 'Nova' };
+                                if (lunarDay < 0.375) return { phase: 'waxing', icon: '🌒', pt: 'Crescente' };
+                                if (lunarDay < 0.625) return { phase: 'full', icon: '🌕', pt: 'Cheia' };
+                                return { phase: 'waning', icon: '🌘', pt: 'Minguante' };
                             };
 
                             // Calculate lunar cycle progress (0-1 = full cycle from new moon)
@@ -1979,10 +1978,10 @@ const Home = () => {
                                                                 } group border border-white/10 hover:border-primary/30`}
                                                         >
                                                             <span className="text-base group-hover:scale-110 transition-transform">
-                                                                {moonPhaseData.phase === 'full' && 'ðŸŒ•'}
-                                                                {moonPhaseData.phase === 'new' && 'ðŸŒ‘'}
-                                                                {moonPhaseData.phase === 'waxing' && 'ðŸŒ’'}
-                                                                {moonPhaseData.phase === 'waning' && 'ðŸŒ˜'}
+                                                                {moonPhaseData.phase === 'full' && '🌕'}
+                                                                {moonPhaseData.phase === 'new' && '🌑'}
+                                                                {moonPhaseData.phase === 'waxing' && '🌒'}
+                                                                {moonPhaseData.phase === 'waning' && '🌘'}
                                                             </span>
                                                             <span className={`text-[8px] font-bold ${isToday ? 'text-white' : 'text-white/70'} group-hover:text-white`}>
                                                                 {day}
@@ -1996,19 +1995,19 @@ const Home = () => {
                                             <div className="pt-2 border-t border-white/10">
                                                 <div className="grid grid-cols-2 gap-1.5 text-[10px]">
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-sm">ðŸŒ•</span>
+                                                        <span className="text-sm">🌕</span>
                                                         <span className="text-white/70">{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-sm">ðŸŒ‘</span>
+                                                        <span className="text-sm">🌑</span>
                                                         <span className="text-white/70">{isPortuguese ? 'Nova' : 'New'}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-sm">ðŸŒ’</span>
+                                                        <span className="text-sm">🌒</span>
                                                         <span className="text-white/70">{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1.5">
-                                                        <span className="text-sm">ðŸŒ˜</span>
+                                                        <span className="text-sm">🌘</span>
                                                         <span className="text-white/70">{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                     </div>
                                                 </div>
@@ -2088,28 +2087,28 @@ const Home = () => {
                                                     {/* Full Moon - Top */}
                                                     <div className={`absolute -top-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'full' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
                                                         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'full' ? 'moon-glow-full' : ''}`}>
-                                                            ðŸŒ•
+                                                            🌕
                                                         </div>
                                                         <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'full' ? 'text-white' : 'text-white/40'}`}>{isPortuguese ? 'Cheia' : 'Full'}</span>
                                                     </div>
                                                     {/* New Moon - Bottom */}
                                                     <div className={`absolute -bottom-20 flex flex-col items-center transition-all duration-300 ${moonPhase.phase === 'new' ? 'opacity-100' : 'opacity-40 scale-95'}`}>
                                                         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${moonPhase.phase === 'new' ? 'moon-glow-new' : ''}`}>
-                                                            ðŸŒ‘
+                                                            🌑
                                                         </div>
                                                         <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${moonPhase.phase === 'new' ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Nova' : 'New'}</span>
                                                     </div>
                                                     {/* Waxing - Right */}
                                                     <div className={`absolute -right-20 flex flex-col items-center transition-all duration-300 ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
                                                         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                            ðŸŒ’
+                                                            🌒
                                                         </div>
                                                         <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waxing_crescent', 'first_quarter', 'waxing_gibbous'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Cresc.' : 'Wax.'}</span>
                                                     </div>
                                                     {/* Waning - Left */}
                                                     <div className={`absolute -left-20 flex flex-col items-center transition-all duration-300 ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'opacity-100' : 'opacity-40 scale-95'}`}>
                                                         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-4xl ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'moon-glow-phase' : ''}`}>
-                                                            ðŸŒ˜
+                                                            🌘
                                                         </div>
                                                         <span className={`text-[9px] mt-2 uppercase tracking-tighter font-bold ${['waning_gibbous', 'last_quarter', 'waning_crescent'].includes(moonPhase.phase) ? 'text-[#ad92c9]' : 'text-[#ad92c9]/40'}`}>{isPortuguese ? 'Ling.' : 'Wan.'}</span>
                                                     </div>
@@ -2260,7 +2259,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                             )}
                             {product.tags.includes('sale') && (
                                 <div className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-rose-500 text-white text-[11px] font-bold rounded-full uppercase tracking-wider shadow-lg backdrop-blur-sm border border-white/20">
-                                    ðŸ”¥ {t.shop.sale}
+                                    🔥 {t.shop.sale}
                                 </div>
                             )}
                         </div>
@@ -3773,379 +3772,6 @@ const History = () => {
     );
 };
 
-// Numerology Page
-const Numerology = () => {
-    const navigate = useNavigate();
-    const { t, isPortuguese } = useLanguage();
-    const [fullName, setFullName] = useState('');
-    const [birthDate, setBirthDate] = useState('');
-    const [profile, setProfile] = useState<NumerologyProfile | null>(null);
-    const [isCalculating, setIsCalculating] = useState(false);
-    const [universalDay] = useState(calculateUniversalDay());
-
-    const handleCalculate = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!fullName.trim() || !birthDate) return;
-
-        setIsCalculating(true);
-        setTimeout(() => {
-            const date = new Date(birthDate + 'T12:00:00');
-            const result = calculateNumerologyProfile(fullName, date);
-            setProfile(result);
-            setIsCalculating(false);
-        }, 800);
-    };
-
-    const resetCalculation = () => {
-        setProfile(null);
-        setFullName('');
-        setBirthDate('');
-    };
-
-    // Premium Number Pillar Card
-    const PillarCard = ({ num, title, description, icon, gradient }: { num: NumerologyNumber; title: string; description: string; icon: string; gradient: string }) => {
-        const meaning = isPortuguese ? num.meaning.title_pt : num.meaning.title;
-        const keywords = isPortuguese ? num.meaning.keywords_pt : num.meaning.keywords;
-        const isMaster = num.masterNumber;
-
-        return (
-            <div className={`relative group rounded-2xl p-[1px] ${isMaster ? 'bg-gradient-to-br from-yellow-400 via-orange-500 to-yellow-500' : gradient} overflow-hidden`}>
-                {/* Glow effect */}
-                <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl ${isMaster ? 'bg-gradient-to-br from-yellow-400/50 to-orange-500/50' : 'bg-inherit'}`} />
-                <div className="relative bg-[#0d0d14]/95 backdrop-blur-xl rounded-2xl p-6 h-full">
-                    {/* Number display */}
-                    <div className="flex justify-center mb-5">
-                        <div className={`w-24 h-24 rounded-full ${isMaster ? 'bg-gradient-to-br from-yellow-400 via-orange-500 to-yellow-500' : gradient} p-[2px] shadow-lg ${isMaster ? 'shadow-yellow-500/30' : 'shadow-primary/20'}`}>
-                            <div className="w-full h-full rounded-full bg-[#0d0d14] flex items-center justify-center relative">
-                                <span className={`text-5xl font-black ${isMaster ? 'bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent' : 'text-white'}`}>{num.value}</span>
-                                {isMaster && (
-                                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/50">
-                                        <span className="material-symbols-outlined text-black text-sm">star</span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Title & Description */}
-                    <div className="text-center mb-4">
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className={`material-symbols-outlined ${isMaster ? 'text-yellow-400' : 'text-primary'}`}>{icon}</span>
-                            <h3 className="text-lg font-bold text-white">{title}</h3>
-                        </div>
-                        <p className="text-gray-500 text-xs">{description}</p>
-                    </div>
-
-                    {/* Meaning */}
-                    <div className="text-center mb-4">
-                        <span className={`font-semibold ${isMaster ? 'text-yellow-400' : 'text-primary'}`}>{meaning}</span>
-                        {isMaster && (
-                            <div className="mt-2">
-                                <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 text-xs font-bold rounded-full border border-yellow-500/30">
-                                    <span className="material-symbols-outlined text-xs">auto_awesome</span>
-                                    {t.numerology.masterNumber}
-                                </span>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Keywords */}
-                    <div className="flex flex-wrap gap-2 justify-center">
-                        {keywords.slice(0, 3).map((kw, i) => (
-                            <span key={i} className={`px-3 py-1.5 rounded-full text-xs ${isMaster ? 'bg-yellow-500/10 border border-yellow-500/20 text-yellow-300' : 'bg-white/5 border border-white/10 text-gray-300'}`}>
-                                {kw}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    // Cycle Card (smaller, for temporal cycles)
-    const CycleCard = ({ num, title, description, icon }: { num: NumerologyNumber; title: string; description: string; icon: string }) => {
-        const meaning = isPortuguese ? num.meaning.title_pt : num.meaning.title;
-        const keywords = isPortuguese ? num.meaning.keywords_pt : num.meaning.keywords;
-
-        return (
-            <div className="relative group rounded-xl bg-card-dark border border-border-dark p-5 hover:border-primary/30 transition-all duration-300 overflow-hidden">
-                {/* Subtle glow on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                <div className="relative flex items-start gap-4">
-                    {/* Number */}
-                    <div className={`w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 ${num.masterNumber ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30' : 'bg-gradient-to-br from-primary/20 to-purple-600/20 border border-primary/20'}`}>
-                        <span className="text-2xl font-black text-white">{num.value}</span>
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className={`material-symbols-outlined text-base ${num.masterNumber ? 'text-yellow-400' : 'text-primary'}`}>{icon}</span>
-                            <h4 className="text-white font-bold">{title}</h4>
-                            {num.masterNumber && (
-                                <span className="px-2 py-0.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 text-[10px] font-bold rounded-full border border-yellow-500/30">
-                                    {t.numerology.masterNumber}
-                                </span>
-                            )}
-                        </div>
-                        <p className="text-gray-500 text-xs mb-2">{description}</p>
-                        <p className={`text-sm font-semibold ${num.masterNumber ? 'text-yellow-400' : 'text-primary'}`}>{meaning}</p>
-                    </div>
-                </div>
-
-                {/* Keywords */}
-                <div className="relative flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/5">
-                    {keywords.slice(0, 4).map((kw, i) => (
-                        <span key={i} className="px-2.5 py-1 bg-surface-dark rounded-lg text-gray-400 text-xs border border-white/5">
-                            {kw}
-                        </span>
-                    ))}
-                </div>
-            </div>
-        );
-    };
-
-    return (
-        <div className="flex flex-col min-h-screen bg-[#0a0a0f] text-white">
-            <Header />
-            <CartDrawer />
-
-            <main className="flex-1 w-full">
-                {!profile ? (
-                    <>
-                        {/* Hero Section with cosmic background */}
-                        <div className="relative overflow-hidden">
-                            {/* Background effects */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-transparent" />
-                            <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] opacity-50" />
-                            <div className="absolute top-40 right-1/4 w-72 h-72 bg-purple-600/20 rounded-full blur-[100px] opacity-50" />
-
-                            <div className="relative max-w-[1200px] mx-auto px-4 md:px-10 py-16">
-                                <div className="text-center mb-12">
-                                    <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary/20 to-purple-600/20 border border-primary/30 rounded-full text-primary text-sm font-semibold mb-6 backdrop-blur-sm">
-                                        <span className="material-symbols-outlined text-lg">calculate</span>
-                                        {isPortuguese ? 'Descubra seu destino' : 'Discover your destiny'}
-                                    </div>
-                                    <h1 className="text-4xl md:text-6xl font-black mb-4 bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                        {t.numerology.title}
-                                    </h1>
-                                    <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                                        {t.numerology.subtitle}
-                                    </p>
-                                </div>
-
-                                {/* Universal Day - Premium Design */}
-                                <div className="max-w-sm mx-auto mb-12">
-                                    <div className="relative group">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-600 to-primary rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity" />
-                                        <div className="relative bg-gradient-to-br from-[#1a1a2e] to-[#0d0d14] rounded-2xl border border-white/10 p-8 text-center">
-                                            <p className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">{t.numerology.results.universalDay}</p>
-                                            <div className="w-28 h-28 mx-auto rounded-full bg-gradient-to-br from-primary/30 to-purple-600/30 border-2 border-primary/50 flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
-                                                <span className="text-6xl font-black text-white">{universalDay}</span>
-                                            </div>
-                                            <p className="text-gray-300 text-sm">{t.numerology.results.todayEnergy}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Form - Premium Design */}
-                                <form onSubmit={handleCalculate} className="max-w-md mx-auto">
-                                    <div className="bg-gradient-to-br from-[#1a1a2e]/80 to-[#0d0d14]/80 backdrop-blur-xl rounded-2xl border border-white/10 p-8 space-y-6">
-                                        <div>
-                                            <label className="block text-gray-300 font-medium mb-2 text-sm">{t.numerology.form.fullName}</label>
-                                            <input
-                                                type="text"
-                                                value={fullName}
-                                                onChange={(e) => setFullName(e.target.value)}
-                                                placeholder={t.numerology.form.fullNamePlaceholder}
-                                                className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:border-primary/50 focus:bg-white/10 focus:outline-none transition-all"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-gray-300 font-medium mb-2 text-sm">{t.numerology.form.birthDate}</label>
-                                            <input
-                                                type="date"
-                                                value={birthDate}
-                                                onChange={(e) => setBirthDate(e.target.value)}
-                                                className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white focus:border-primary/50 focus:bg-white/10 focus:outline-none transition-all"
-                                                required
-                                            />
-                                        </div>
-
-                                        <button
-                                            type="submit"
-                                            disabled={isCalculating || !fullName.trim() || !birthDate}
-                                            className="w-full py-4 bg-gradient-to-r from-primary to-purple-600 hover:from-primary-hover hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white font-bold text-lg shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2"
-                                        >
-                                            {isCalculating ? (
-                                                <>
-                                                    <span className="material-symbols-outlined animate-spin">progress_activity</span>
-                                                    {t.numerology.form.calculating}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <span className="material-symbols-outlined">auto_awesome</span>
-                                                    {t.numerology.form.calculate}
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </>
-                ) : (
-                    <>
-                        {/* Results Page */}
-                        <div className="relative overflow-hidden">
-                            {/* Background effects */}
-                            <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[150px]" />
-                            <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-purple-600/10 rounded-full blur-[120px]" />
-
-                            <div className="relative max-w-[1200px] mx-auto px-4 md:px-10 py-12">
-                                {/* Results Header */}
-                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12">
-                                    <div>
-                                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary text-sm font-medium mb-4">
-                                            <span className="material-symbols-outlined text-base">person</span>
-                                            {fullName}
-                                        </div>
-                                        <h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                            {t.numerology.results.title}
-                                        </h1>
-                                    </div>
-                                    <button
-                                        onClick={resetCalculation}
-                                        className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 rounded-xl text-white font-medium transition-all flex items-center gap-2"
-                                    >
-                                        <span className="material-symbols-outlined">refresh</span>
-                                        {t.numerology.newCalculation}
-                                    </button>
-                                </div>
-
-                                {/* Os Pilares Centrais (Core Pillars) */}
-                                <div className="mb-14">
-                                    <div className="flex items-center gap-3 mb-8">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/30 to-purple-600/30 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-primary">award_star</span>
-                                        </div>
-                                        <div>
-                                            <h2 className="text-xl font-bold text-white">
-                                                {isPortuguese ? 'Os Pilares Centrais' : 'The Core Pillars'}
-                                            </h2>
-                                            <p className="text-gray-500 text-sm">
-                                                {isPortuguese ? 'Os tres numeros que definem sua essencia' : 'The three numbers that define your essence'}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid md:grid-cols-3 gap-6">
-                                        <PillarCard
-                                            num={profile.lifePath}
-                                            title={t.numerology.numbers.lifePath}
-                                            description={t.numerology.numbers.lifePathDesc}
-                                            icon="route"
-                                            gradient="bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500"
-                                        />
-                                        <PillarCard
-                                            num={profile.expression}
-                                            title={t.numerology.numbers.expression}
-                                            description={t.numerology.numbers.expressionDesc}
-                                            icon="brush"
-                                            gradient="bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500"
-                                        />
-                                        <PillarCard
-                                            num={profile.soul}
-                                            title={t.numerology.numbers.soul}
-                                            description={t.numerology.numbers.soulDesc}
-                                            icon="favorite"
-                                            gradient="bg-gradient-to-br from-rose-500 via-pink-500 to-orange-500"
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Numeros Complementares (Additional Numbers) */}
-                                <div className="mb-14">
-                                    <div className="flex items-center gap-3 mb-8">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/30 to-orange-500/30 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-amber-400">stars</span>
-                                        </div>
-                                        <div>
-                                            <h2 className="text-xl font-bold text-white">
-                                                {isPortuguese ? 'Numeros Complementares' : 'Additional Numbers'}
-                                            </h2>
-                                            <p className="text-gray-500 text-sm">
-                                                {isPortuguese ? 'Aspectos adicionais da sua personalidade' : 'Additional aspects of your personality'}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid md:grid-cols-2 gap-4">
-                                        <CycleCard
-                                            num={profile.personality}
-                                            title={t.numerology.numbers.personality}
-                                            description={t.numerology.numbers.personalityDesc}
-                                            icon="person"
-                                        />
-                                        <CycleCard
-                                            num={profile.birthday}
-                                            title={t.numerology.numbers.birthday}
-                                            description={t.numerology.numbers.birthdayDesc}
-                                            icon="cake"
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Ciclos Temporais (Time Cycles) */}
-                                <div>
-                                    <div className="flex items-center gap-3 mb-8">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/30 to-blue-500/30 flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-cyan-400">schedule</span>
-                                        </div>
-                                        <div>
-                                            <h2 className="text-xl font-bold text-white">
-                                                {isPortuguese ? 'Ciclos Temporais' : 'Time Cycles'}
-                                            </h2>
-                                            <p className="text-gray-500 text-sm">
-                                                {isPortuguese ? 'As energias que influenciam voce agora' : 'The energies influencing you now'}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid md:grid-cols-3 gap-4">
-                                        <CycleCard
-                                            num={profile.personalYear}
-                                            title={t.numerology.numbers.personalYear}
-                                            description={t.numerology.numbers.personalYearDesc}
-                                            icon="calendar_today"
-                                        />
-                                        <CycleCard
-                                            num={profile.personalMonth}
-                                            title={t.numerology.numbers.personalMonth}
-                                            description={t.numerology.numbers.personalMonthDesc}
-                                            icon="date_range"
-                                        />
-                                        <CycleCard
-                                            num={profile.personalDay}
-                                            title={t.numerology.numbers.personalDay}
-                                            description={t.numerology.numbers.personalDayDesc}
-                                            icon="today"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
-            </main>
-            <Footer />
-        </div>
-    );
-};
-
 // Cosmic Calendar Page
 const CosmicCalendar = () => {
     const { t, isPortuguese } = useLanguage();
@@ -5048,7 +4674,7 @@ const Session = () => {
                             const totalCards = deck.length;
 
                             // Distribute cards in a 180-degree arc with tight overlap (78 cards total)
-                            const angle = (index / (totalCards - 1)) * 200 - 100; // -100 to +100 degrees (200° arc)
+                            const angle = (index / (totalCards - 1)) * 200 - 100; // -100 to +100 degrees (200� arc)
                             const radius = 300; // Reduced radius for less curvature
                             const centerX = 50; // Center percentage
                             const centerY = 80; // Higher center to start cards higher up
@@ -5257,7 +4883,7 @@ const Result = () => {
                 ? await getStructuredSynthesis(session, isPortuguese)
                 : null;
 
-            console.log("ðŸŽ¯ Raw Synthesis recebida:", rawSynthesis);
+            console.log("🎯 Raw Synthesis recebida:", rawSynthesis);
 
             // USAR DIRETAMENTE A NOVA ESTRUTURA (CanonicalSynthesis com 7 modulos)
             setAnalysis(null);
@@ -6668,17 +6294,17 @@ const App = () => {
                                 <Route path="/" element={<Home />} />
 
                                 {/* Spreads - acessivel a todos, paywall inline no click */}
-                                <Route path="/spreads" element={<AuthGuard><SEO title="Tarot Spreads" description="Explore different tarot spreads: Three Card, Celtic Cross, Love Check, Yes/No and more. Choose your spread and get your reading." path="/spreads" /><Spreads /></AuthGuard>} />
-                                <Route path="/jogos-de-tarot" element={<AuthGuard><SEO title="Jogos de Tarot" description="Explore diferentes jogos de tarot: Tres Cartas, Cruz Celta, Tarot do Amor, Sim/Nao e mais. Escolha seu jogo e receba sua leitura." path="/jogos-de-tarot" /><Spreads /></AuthGuard>} />
+                                <Route path="/spreads" element={<AuthGuard><SEO title="Tarot Spreads" description="Explore tarot spreads like Three Card, Celtic Cross, Love Check and Yes or No, with clear interpretation and practical guidance for your day." path="/spreads" /><Spreads /></AuthGuard>} />
+                                <Route path="/jogos-de-tarot" element={<AuthGuard><SEO title="Jogos de Tarot" description="Explore jogos de tarot como Tres Cartas, Cruz Celta, Tarot do Amor e Sim ou Nao, com interpretacao clara e orientacao pratica para seu dia." path="/jogos-de-tarot" /><Spreads /></AuthGuard>} />
 
                                 {/* Interpretacao fisica - acessivel a todos, botao "gerar" e premium */}
-                                <Route path="/interpretacao" element={<AuthGuard><SEO title="Interpretacao de Tarot" description="Guia completo de interpretacao de tarot. Aprenda a ler e interpretar as cartas de tarot com orientacoes detalhadas." path="/interpretacao" /><Interpretacao /></AuthGuard>} />
-                                <Route path="/interpretation" element={<AuthGuard><SEO title="Tarot Interpretation" description="Complete tarot interpretation guide. Learn how to read and interpret tarot cards with detailed guidance." path="/interpretation" /><Interpretacao /></AuthGuard>} />
+                                <Route path="/interpretacao" element={<AuthGuard><SEO title="Interpretacao de Tarot" description="Guia de interpretacao de tarot com significados das cartas, exemplos praticos e orientacoes para aplicar a leitura em amor, trabalho e espiritualidade." path="/interpretacao" /><Interpretacao /></AuthGuard>} />
+                                <Route path="/interpretation" element={<AuthGuard><SEO title="Tarot Interpretation" description="Tarot interpretation guide with card meanings, practical examples and guidance to apply readings in love, career and spirituality." path="/interpretation" /><Interpretacao /></AuthGuard>} />
 
                                 {/* Arquivo Arcano - acessivel a todos, cards limitados por tier */}
-                                <Route path="/arquivo-arcano" element={<AuthGuard><SEO title="Arquivo Arcano - Todas as Cartas de Tarot" description="Explore todas as 78 cartas do tarot. Significado, simbolismo e interpretacao de cada arcano maior e menor." path="/arquivo-arcano" /><Explore /></AuthGuard>} />
+                                <Route path="/arquivo-arcano" element={<AuthGuard><SEO title="Arquivo Arcano - Todas as Cartas de Tarot" description="Explore as 78 cartas do tarot com significado, simbolismo e interpretacao pratica de cada arcano maior e menor para amor, carreira e vida espiritual." path="/arquivo-arcano" /><Explore /></AuthGuard>} />
                                 <Route path="/arquivo-arcano/:cardSlug" element={<AuthGuard><CardDetails /></AuthGuard>} />
-                                <Route path="/arcane-archive" element={<AuthGuard><SEO title="Arcane Archive - All Tarot Cards" description="Explore all 78 tarot cards. Meaning, symbolism and interpretation of each major and minor arcana." path="/arcane-archive" /><Explore /></AuthGuard>} />
+                                <Route path="/arcane-archive" element={<AuthGuard><SEO title="Arcane Archive - All Tarot Cards" description="Explore all 78 tarot cards with meaning, symbolism and practical interpretation of each major and minor arcana for daily guidance." path="/arcane-archive" /><Explore /></AuthGuard>} />
                                 <Route path="/arcane-archive/:cardSlug" element={<AuthGuard><CardDetails /></AuthGuard>} />
 
                                 {/* Rotas antigas (manter compatibilidade) */}
@@ -6692,13 +6318,11 @@ const App = () => {
                                 {/* History - acessivel a todos, paywall inline para guest */}
                                 <Route path="/history" element={<AuthGuard><History /></AuthGuard>} />
 
-                                {/* Conteudo publico com paywall inline diferenciado */}
-                                <Route path="/numerology" element={<AuthGuard><SEO title="Numerologia" description="Descubra seu perfil numerologico completo. Calcule seu numero do destino, alma e personalidade." path="/numerology" /><Numerology /></AuthGuard>} />
-                                <Route path="/cosmic" element={<AuthGuard><SEO title="Calendario Cosmico" description="Acompanhe as fases da lua, energia cosmica do dia e alinhamento planetario." path="/cosmic" /><CosmicCalendar /></AuthGuard>} />
+                                {/* Conteudo publico com paywall inline diferenciado */}<Route path="/cosmic" element={<AuthGuard><SEO title="Calendario Cosmico" description="Acompanhe as fases da lua, energia cosmica do dia e alinhamento planetario." path="/cosmic" /><CosmicCalendar /></AuthGuard>} />
                                 <Route path="/carta-do-dia" element={<AuthGuard><SEO title="Carta do Dia Tarot no WhatsApp" description="Receba sua carta do dia do Tarot no WhatsApp com interpretacao completa, mensagem coletiva, mantra diario e conselho espiritual." path="/carta-do-dia" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
                                 <Route path="/daily-card" element={<AuthGuard><SEO title="Daily Tarot Card on WhatsApp" description="Get your daily tarot card on WhatsApp with a complete interpretation, collective message, daily mantra and spiritual guidance." path="/daily-card" /><Suspense fallback={<RouteFallback />}><DailyCard /></Suspense></AuthGuard>} />
-                                <Route path="/tarot-por-signo" element={<AuthGuard><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodiaco. Descubra o que as cartas revelam para o seu signo hoje." path="/tarot-por-signo" /><TarotPorSignoIndex /></AuthGuard>} />
-                                <Route path="/tarot-by-sign" element={<AuthGuard><SEO title="Tarot by Zodiac Sign" description="Personalized tarot reading for each zodiac sign. Discover what the cards reveal for your sign today." path="/tarot-by-sign" /><TarotPorSignoIndex /></AuthGuard>} />
+                                <Route path="/tarot-por-signo" element={<AuthGuard><SEO title="Tarot por Signo" description="Leitura de tarot personalizada para cada signo do zodiaco, com previsoes e orientacoes para amor, trabalho e energia do dia de forma pratica." path="/tarot-por-signo" /><TarotPorSignoIndex /></AuthGuard>} />
+                                <Route path="/tarot-by-sign" element={<AuthGuard><SEO title="Tarot by Zodiac Sign" description="Personalized tarot reading for each zodiac sign, with practical guidance for love, career and daily energy." path="/tarot-by-sign" /><TarotPorSignoIndex /></AuthGuard>} />
                                 <Route path="/tarot-por-signo/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
                                 <Route path="/tarot-by-sign/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
                                 <Route path="/tarot-by-sign/:signo" element={<AuthGuard><Suspense fallback={<RouteFallback />}><TarotPorSigno /></Suspense></AuthGuard>} />
@@ -6730,6 +6354,9 @@ const App = () => {
 };
 
 export default App;
+
+
+
 
 
 
