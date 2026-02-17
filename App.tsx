@@ -350,7 +350,7 @@ const Footer = () => {
                 </div>
 
                 <div className="border-t border-border-dark pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-600 text-xs">� 2025 Zaya Tarot. {t.footer.copyright}</p>
+                    <p className="text-gray-600 text-xs">� 2025 Zaya Tarot. {t.footer.copyright}</p>
                     <div className="flex items-center gap-4">
                         <span className="text-gray-600 text-xs">Secure payments via</span>
                         <span className="text-green-500 font-bold text-sm">Mercado Pago</span>
@@ -739,32 +739,32 @@ const Home = () => {
                             {/* Subtle feature badges */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 pt-4 justify-center lg:hidden">
                                 <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">chat</span>
                                     <span>{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
                                 </div>
                                 <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">all_inclusive</span>
                                     <span>{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
                                 </div>
                                 <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">history</span>
                                     <span>{isPortuguese ? 'Historico da sua jornada' : 'Your journey history'}</span>
                                 </div>
                                 <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">auto_awesome</span>
                                     <span>{isPortuguese ? 'Interpretacao completa' : 'Complete interpretation'}</span>
                                 </div>
                                 <div className="sm:col-span-2 justify-self-center relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">menu_book</span>
                                     <span>{isPortuguese ? 'E-book Arquivo Arcano' : 'Arcane Archive e-book'}</span>
                                 </div>
@@ -900,32 +900,32 @@ const Home = () => {
 
                                 <div className="hidden lg:flex flex-col gap-2.5 xl:gap-3 pt-[3.5rem] xl:pt-[4.35rem] ml-2 xl:ml-5 w-[240px] xl:w-[300px] 2xl:w-[320px]">
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
+                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">chat</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'Carta do dia no WhatsApp' : 'Daily card on WhatsApp'}</span>
                                     </div>
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
+                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">all_inclusive</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited readings'}</span>
                                     </div>
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
+                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">history</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'Historico da sua jornada' : 'Your journey history'}</span>
                                     </div>
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
+                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">auto_awesome</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'Interpretacao completa' : 'Complete interpretation'}</span>
                                     </div>
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">?</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
+                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">menu_book</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'E-book Arquivo Arcano' : 'Arcane Archive e-book'}</span>
                                     </div>
@@ -944,8 +944,8 @@ const Home = () => {
                 <div className="absolute right-[8%] top-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-purple-600/10 blur-3xl pointer-events-none"></div>
                 <div className="max-w-[1200px] mx-auto relative z-10">
                     <div className="relative rounded-2xl border border-[#d4af37]/35 bg-gradient-to-r from-[#2b1c3f]/85 via-[#1e1330]/90 to-[#2b1c3f]/85 px-3 py-3 md:px-6 md:py-4 shadow-[0_14px_34px_rgba(8,4,18,0.35)]">
-                        <div className="absolute left-2 top-1.5 text-[10px] text-[#d4af37]/70">?</div>
-                        <div className="absolute right-2 bottom-1.5 text-[10px] text-[#d4af37]/55">?</div>
+                        <span className="absolute left-2 top-1.5 text-[10px] text-[#d4af37]/70">✦</span>
+                        <span className="absolute right-2 bottom-1.5 text-[10px] text-[#d4af37]/55">✦</span>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
                             <div className="text-center group rounded-lg border border-[#d4af37]/20 bg-black/15 px-2 py-2">
                                 <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -1386,10 +1386,10 @@ const Home = () => {
                                 <div className="relative rounded-2xl overflow-hidden border border-[#d4af37]/35 bg-gradient-to-br from-[#2b1c3f]/90 via-[#1f1331]/90 to-[#2b1c3f]/90 shadow-[0_20px_42px_rgba(8,4,18,0.42)]">
                                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent" />
                                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/35 to-transparent" />
-                                    <div className="absolute left-3 top-2 text-[11px] text-[#d4af37]/75">?</div>
-                                    <div className="absolute right-3 top-2 text-[11px] text-[#d4af37]/55">?</div>
-                                    <div className="absolute left-3 bottom-2 text-[11px] text-[#d4af37]/55">?</div>
-                                    <div className="absolute right-3 bottom-2 text-[11px] text-[#d4af37]/75">?</div>
+                                    <span className="absolute left-3 top-2 text-[11px] text-[#d4af37]/75">✦</span>
+                                    <span className="absolute right-3 top-2 text-[11px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute left-3 bottom-2 text-[11px] text-[#d4af37]/55">✦</span>
+                                    <span className="absolute right-3 bottom-2 text-[11px] text-[#d4af37]/75">✦</span>
 
                                     <div className="relative z-10 px-6 md:px-8 py-12 md:py-16 space-y-8 md:space-y-10">
                                         <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
@@ -1488,11 +1488,11 @@ const Home = () => {
                 <div className="max-w-7xl mx-auto relative z-10">
                     <div className="text-center mb-8 md:mb-12">
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5 bg-gradient-to-r from-[#2b1c3f]/95 via-[#1e1330]/95 to-[#2b1c3f]/95 border border-[#d4af37]/35 shadow-[0_10px_28px_rgba(8,4,18,0.4)]">
-                            <span className="text-[#d4af37]/80 text-xs">?</span>
+                            <span className="text-[#d4af37]/80 text-xs">✦</span>
                             <span className="text-[#f3e6c3] text-[11px] uppercase tracking-[0.18em] font-semibold">
                                 {isPortuguese ? 'Vozes da Comunidade' : 'Community Voices'}
                             </span>
-                            <span className="text-[#d4af37]/80 text-xs">?</span>
+                            <span className="text-[#d4af37]/80 text-xs">✦</span>
                         </div>
                         <h3 className="text-3xl md:text-4xl lg:text-5xl text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Avaliacao da nossa comunidade' : 'Community rating'}
@@ -1500,36 +1500,36 @@ const Home = () => {
                     </div>
                     <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-8 md:mb-10">
                         <div className="relative px-4 py-2 rounded-full bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 text-[#f3e6c3] text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">?</span>
-                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">?</span>
+                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">✦</span>
+                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">✦</span>
                             {isPortuguese ? '4.9 media real dos usuarios' : '4.9 real average from users'}
                         </div>
                         <div className="relative px-4 py-2 rounded-full bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 text-[#f3e6c3] text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">?</span>
-                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">?</span>
+                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">✦</span>
+                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">✦</span>
                             {isPortuguese ? '+12 mil leituras ja realizadas' : '+12k readings completed'}
                         </div>
                         <div className="relative px-4 py-2 rounded-full bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 text-[#f3e6c3] text-sm shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">?</span>
-                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">?</span>
+                            <span className="absolute left-2 top-1 text-[9px] text-[#d4af37]/70">✦</span>
+                            <span className="absolute right-2 bottom-1 text-[9px] text-[#d4af37]/55">✦</span>
                             {isPortuguese ? 'Feedback diario da comunidade' : 'Daily community feedback'}
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
                         {[
-                            { name: 'Marina, SP', handle: '@marina.tarot', rating: '4.9', stars: '?????', text: isPortuguese ? 'A Carta do Dia no WhatsApp me ajuda a comecar o dia com foco real.' : 'Daily Card on WhatsApp helps me start the day with real focus.' },
-                            { name: 'Lucas, RJ', handle: '@lucas.arcano', rating: '4.8', stars: '?????', text: isPortuguese ? 'O eBook do Arquivo Arcano e objetivo e muito util na pratica.' : 'The Arcane Archive ebook is objective and very practical.' },
-                            { name: 'Ana, BH', handle: '@ana.intuicao', rating: '5.0', stars: '?????', text: isPortuguese ? 'Assinei pela combinacao de carta diaria com eBook.' : 'I subscribed for the daily-card + ebook combo.' },
-                            { name: 'Pedro, POA', handle: '@pedro.signos', rating: '4.7', stars: '?????', text: isPortuguese ? 'Tarot por Signo e Carta do Dia viraram minha rotina da manha.' : 'Tarot by Sign and Daily Card became my morning routine.' },
-                            { name: 'Julia, SSA', handle: '@julia.tarologa', rating: '4.9', stars: '?????', text: isPortuguese ? 'Receber no WhatsApp e rapido e me poupa tempo.' : 'Receiving it on WhatsApp is quick and saves me time.' },
-                            { name: 'Renata, REC', handle: '@renata.arcana', rating: '4.8', stars: '?????', text: isPortuguese ? 'A combinacao da carta diaria com o eBook trouxe mais clareza.' : 'The daily card plus ebook combo brought more clarity.' },
+                            { name: 'Marina, SP', handle: '@marina.tarot', rating: '4.9', stars: '★★★★★', text: isPortuguese ? 'A Carta do Dia no WhatsApp me ajuda a comecar o dia com foco real.' : 'Daily Card on WhatsApp helps me start the day with real focus.' },
+                            { name: 'Lucas, RJ', handle: '@lucas.arcano', rating: '4.8', stars: '★★★★☆', text: isPortuguese ? 'O eBook do Arquivo Arcano e objetivo e muito util na pratica.' : 'The Arcane Archive ebook is objective and very practical.' },
+                            { name: 'Ana, BH', handle: '@ana.intuicao', rating: '5.0', stars: '★★★★★', text: isPortuguese ? 'Assinei pela combinacao de carta diaria com eBook.' : 'I subscribed for the daily-card + ebook combo.' },
+                            { name: 'Pedro, POA', handle: '@pedro.signos', rating: '4.7', stars: '★★★★☆', text: isPortuguese ? 'Tarot por Signo e Carta do Dia viraram minha rotina da manha.' : 'Tarot by Sign and Daily Card became my morning routine.' },
+                            { name: 'Julia, SSA', handle: '@julia.tarologa', rating: '4.9', stars: '★★★★★', text: isPortuguese ? 'Receber no WhatsApp e rapido e me poupa tempo.' : 'Receiving it on WhatsApp is quick and saves me time.' },
+                            { name: 'Renata, REC', handle: '@renata.arcana', rating: '4.8', stars: '★★★★☆', text: isPortuguese ? 'A combinacao da carta diaria com o eBook trouxe mais clareza.' : 'The daily card plus ebook combo brought more clarity.' },
                         ].map((review, idx) => (
                             <article
                                 key={`social-${idx}`}
                                 className={`${idx >= 3 && !showAllSocialReviews ? 'hidden xl:block' : 'block'} relative rounded-2xl border border-[#d4af37]/25 bg-gradient-to-b from-[#2a1a3d]/82 via-[#1f1430]/88 to-[#170f26]/92 p-5 md:p-5 xl:p-4 shadow-[0_18px_38px_rgba(6,3,14,0.45)]`}
                             >
-                                <span className="absolute left-3 top-2 text-[10px] text-[#d4af37]/70">?</span>
-                                <span className="absolute right-3 bottom-2 text-[10px] text-[#d4af37]/50">?</span>
+                                <span className="absolute left-3 top-2 text-[10px] text-[#d4af37]/70">✦</span>
+                                <span className="absolute right-3 bottom-2 text-[10px] text-[#d4af37]/50">✦</span>
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 xl:w-9 xl:h-9 rounded-full bg-gradient-to-br from-[#d4af37]/20 to-[#875faf]/25 border border-[#d4af37]/35 flex items-center justify-center text-[#f3e6c3] font-bold text-sm xl:text-xs">
@@ -1626,8 +1626,8 @@ const Home = () => {
                             {/* Features Grid - 2 columns */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">all_inclusive</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1642,8 +1642,8 @@ const Home = () => {
                                 </div>
 
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">psychology</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1658,8 +1658,8 @@ const Home = () => {
                                 </div>
 
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">collections_bookmark</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1674,8 +1674,8 @@ const Home = () => {
                                 </div>
 
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">chat</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1690,8 +1690,8 @@ const Home = () => {
                                 </div>
 
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">history</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -1706,8 +1706,8 @@ const Home = () => {
                                 </div>
 
                                 <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">?</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">?</span>
+                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
+                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                     <div className="flex items-start gap-3 mb-3">
                                         <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">diamond</span>
                                         <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
@@ -4674,7 +4674,7 @@ const Session = () => {
                             const totalCards = deck.length;
 
                             // Distribute cards in a 180-degree arc with tight overlap (78 cards total)
-                            const angle = (index / (totalCards - 1)) * 200 - 100; // -100 to +100 degrees (200� arc)
+                            const angle = (index / (totalCards - 1)) * 200 - 100; // -100 to +100 degrees (200� arc)
                             const radius = 300; // Reduced radius for less curvature
                             const centerX = 50; // Center percentage
                             const centerY = 80; // Higher center to start cards higher up
@@ -6354,6 +6354,14 @@ const App = () => {
 };
 
 export default App;
+
+
+
+
+
+
+
+
 
 
 
