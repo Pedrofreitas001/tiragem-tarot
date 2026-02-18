@@ -852,6 +852,10 @@ const Home = () => {
                                                 ref={(el) => {
                                                     if (el) {
                                                         el.playbackRate = 0.75;
+                                                        // Tenta iniciar o vídeo programaticamente no mobile
+                                                        if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                                                            el.play().catch(() => { });
+                                                        }
                                                     }
                                                 }}
                                             />
