@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePaywall } from '../components/PaywallModal';
 import { getEbookInfo } from '../services/ebookPdfService';
 import { generateEbookPdfDev1 } from '../services/ebookPdfServiceDev1';
+import { TAROT_CARDS } from '../tarotData';
 
 const IMG = (name: string) =>
   `https://images.weserv.nl/?url=sacred-texts.com/tarot/pkt/img/${name}`;
@@ -557,6 +558,29 @@ export function EbookLandingPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Leque dos 22 Arcanos Maiores */}
+          <div className="relative w-full max-w-4xl lg:max-w-5xl h-[220px] sm:h-[280px] md:h-[340px] lg:h-[420px] mx-auto flex items-end justify-center select-none overflow-visible mt-14 md:mt-20">
+            {TAROT_CARDS.filter(c => c.arcana === 'major').sort((a, b) => a.number - b.number).map((card, idx, arr) => {
+              const total = arr.length;
+              const fanSpread = 80;
+              const left = 10 + (fanSpread * idx) / (total - 1);
+              const arcHeight = 64;
+              const t = idx / (total - 1);
+              const bottom = 44 + arcHeight * Math.sin(Math.PI * t);
+              const angle = -28 + (56 * idx) / (total - 1);
+              return (
+                <img
+                  key={`ebook-fan-${card.id}`}
+                  src={card.imageUrl}
+                  alt={(card as any).name_pt || card.name}
+                  className="absolute w-[42px] sm:w-[52px] md:w-[68px] lg:w-[84px] xl:w-[92px] h-[84px] sm:h-[104px] md:h-[136px] lg:h-[168px] xl:h-[184px] rounded-lg shadow-2xl border border-white/15 object-cover transition-transform duration-300 hover:scale-[1.04]"
+                  style={{ left: `${left}%`, bottom: `${bottom}px`, transform: `translateX(-50%) rotate(${angle}deg)` }}
+                  draggable={false}
+                />
+              );
+            })}
           </div>
         </div>
       </section>

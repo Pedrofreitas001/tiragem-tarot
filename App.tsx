@@ -591,7 +591,7 @@ const Home = () => {
 
     const dailyCard = getDailyCard();
     const cardName = getCardName(dailyCard.id, isPortuguese);
-    const majorArcanaCards = TAROT_CARDS.filter(card => card.arcana === 'major').sort((a, b) => a.number - b.number);
+
 
     const handleSelectSpread = async (spread: Spread) => {
         // Navigate directly to session, paywall check moved to first card click
@@ -898,7 +898,7 @@ const Home = () => {
 
 
             {/* Interactive Stats Banner */}
-            <section className="mt-0 py-4 md:py-6 px-4 md:px-6 relative overflow-hidden">
+            <section className="mt-20 md:mt-0 py-4 md:py-6 px-4 md:px-6 relative overflow-hidden">
                 <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#2b1c3f]/75 via-[#1e1330]/80 to-[#2b1c3f]/75 border-y border-[#d4af37]/25"></div>
                 <div className="absolute left-[8%] top-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-purple-500/10 blur-3xl pointer-events-none"></div>
                 <div className="absolute right-[8%] top-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-purple-600/10 blur-3xl pointer-events-none"></div>
@@ -906,7 +906,7 @@ const Home = () => {
                     <div className="relative rounded-2xl border border-[#d4af37]/35 bg-gradient-to-r from-[#2b1c3f]/85 via-[#1e1330]/90 to-[#2b1c3f]/85 px-3 py-3 md:px-6 md:py-4 shadow-[0_14px_34px_rgba(8,4,18,0.35)]">
                         <span className="absolute left-2 top-1.5 text-[10px] text-[#d4af37]/70">✦</span>
                         <span className="absolute right-2 bottom-1.5 text-[10px] text-[#d4af37]/55">✦</span>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
+                        <div className="grid grid-cols-4 gap-2 md:gap-6">
                             <div className="text-center group rounded-lg border border-[#d4af37]/20 bg-black/15 px-2 py-2">
                                 <div className="text-2xl md:text-3xl font-bold text-gradient-gold mb-0.5 transition-transform duration-300 group-hover:scale-110" style={{ fontFamily: "'Crimson Text', serif" }}>
                                     8.247
@@ -1086,52 +1086,6 @@ const Home = () => {
                                 </p>
                             </div>
 
-                            <div className="relative w-full max-w-4xl lg:max-w-5xl h-[220px] sm:h-[280px] md:h-[340px] lg:h-[420px] mx-auto flex items-end justify-center select-none overflow-visible">
-                                {majorArcanaCards.map((card, idx) => {
-                                    const total = majorArcanaCards.length;
-                                    const fanSpread = 80;
-                                    const left = 10 + (fanSpread * idx) / (total - 1);
-                                    const arcHeight = 64;
-                                    const t = idx / (total - 1);
-                                    const bottom = 44 + arcHeight * Math.sin(Math.PI * t);
-                                    const angle = -28 + (56 * idx) / (total - 1);
-
-                                    return (
-                                        <img
-                                            key={`home-major-arcana-${card.id}`}
-                                            src={card.imageUrl}
-                                            alt={isPortuguese ? card.name_pt : card.name}
-                                            className="absolute w-[42px] sm:w-[52px] md:w-[68px] lg:w-[84px] xl:w-[92px] h-[84px] sm:h-[104px] md:h-[136px] lg:h-[168px] xl:h-[184px] rounded-lg shadow-2xl border border-white/15 object-cover transition-transform duration-300 hover:scale-[1.04]"
-                                            style={{
-                                                left: `${left}%`,
-                                                bottom: `${bottom}px`,
-                                                transform: `translateX(-50%) rotate(${angle}deg)`,
-                                            }}
-                                            draggable={false}
-                                        />
-                                    );
-                                })}
-                            </div>
-
-                            {/* Header acima dos vídeos */}
-                            <div className="w-full flex flex-col items-center justify-center mt-16 md:mt-24 mb-6 px-2 -mt-24">
-                                <div
-                                    className="text-gradient-gold text-center font-semibold"
-                                    style={{
-                                        fontFamily: "'Crimson Text', serif",
-                                        letterSpacing: '0.01em',
-                                        fontSize: 'clamp(1.1rem, 4vw, 2.2rem)',
-                                        lineHeight: 1.22,
-                                        maxWidth: '700px',
-                                        marginLeft: 'auto',
-                                        marginRight: 'auto',
-                                    }}
-                                >
-                                    <div>{isPortuguese ? 'Você não chegou aqui por acaso' : 'You did not arrive here by chance'}</div>
-                                    <div>{isPortuguese ? 'Uma mensagem do Tarot te espera' : 'A message from the Tarot awaits you'}</div>
-                                </div>
-                            </div>
-
                             {/* Responsive Tarot Video Carousel/Slider */}
                             {(() => {
                                 const videos = [
@@ -1210,8 +1164,27 @@ const Home = () => {
                                 );
                             })()}
 
+                            {/* Texto entre galeria e botão */}
+                            <div className="w-full flex flex-col items-center justify-center mt-16 mb-4 px-2">
+                                <div
+                                    className="text-gradient-gold text-center font-semibold"
+                                    style={{
+                                        fontFamily: "'Crimson Text', serif",
+                                        letterSpacing: '0.01em',
+                                        fontSize: 'clamp(1.1rem, 4vw, 2.2rem)',
+                                        lineHeight: 1.22,
+                                        maxWidth: '700px',
+                                        marginLeft: 'auto',
+                                        marginRight: 'auto',
+                                    }}
+                                >
+                                    <div>{isPortuguese ? 'Você não chegou aqui por acaso' : 'You did not arrive here by chance'}</div>
+                                    <div>{isPortuguese ? 'Uma mensagem do Tarot te espera' : 'A message from the Tarot awaits you'}</div>
+                                </div>
+                            </div>
+
                             {/* Botão abaixo dos vídeos */}
-                            <div className="w-full flex justify-center mt-2 mb-8" style={{ position: 'relative', zIndex: 50 }}>
+                            <div className="w-full flex justify-center mt-8 mb-8" style={{ position: 'relative', zIndex: 50 }}>
                                 <button
                                     type="button"
                                     onClick={() => {
@@ -1334,13 +1307,6 @@ const Home = () => {
                 <div className="max-w-7xl mx-auto relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 lg:gap-12 items-center">
                         <div className="space-y-8 text-center lg:text-left">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-yellow-500/50 bg-yellow-500/10 backdrop-blur-md">
-                                <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
-                                <span className="text-xs uppercase tracking-[0.2em] text-yellow-300 font-bold">
-                                    {isPortuguese ? 'Arquivo Arcano' : 'Arcane Archive'}
-                                </span>
-                            </div>
-
                             <h2 className="text-5xl sm:text-6xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-gradient-gold w-full" style={{ fontFamily: "'Crimson Text', serif" }}>
                                 {isPortuguese ? 'Decifre os 22 Arquetipos da Sua Alma' : 'Decode the 22 Archetypes of Your Soul'}
                             </h2>
@@ -1540,6 +1506,7 @@ const Home = () => {
                             </div>
                         </div>
                     </div>
+
                 </div>
             </section>
             {/* WhatsApp Daily Card Subscription Section */}
@@ -1644,7 +1611,7 @@ const Home = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-                        <div className="group relative rounded-xl border border-[#d4af37]/15 bg-gradient-to-b from-[#d4af37]/[0.03] to-transparent p-6 transition-all duration-300 hover:border-[#d4af37]/30 cursor-pointer flex flex-col">
+                        <div className="group relative rounded-xl border border-[#d4af37]/20 bg-gradient-to-b from-[#2a1d3d]/70 to-[#1a1525]/60 p-6 transition-all duration-300 hover:border-[#d4af37]/40 cursor-pointer flex flex-col">
                             <div className="mb-4">
                                 <h3 className="text-white text-lg font-medium tracking-tight" style={{fontFamily:"'Crimson Text', serif"}}>
                                     {isPortuguese ? 'Plano Free' : 'Free Plan'}
@@ -1683,7 +1650,7 @@ const Home = () => {
                             </button>
                         </div>
 
-                        <div className="group relative rounded-xl border border-[#d4af37]/15 bg-gradient-to-b from-[#d4af37]/[0.03] to-transparent p-6 transition-all duration-300 hover:border-[#d4af37]/30 cursor-pointer flex flex-col">
+                        <div className="group relative rounded-xl border border-[#d4af37]/20 bg-gradient-to-b from-[#2a1d3d]/70 to-[#1a1525]/60 p-6 transition-all duration-300 hover:border-[#d4af37]/40 cursor-pointer flex flex-col">
                             <div className="absolute -top-3 left-6 px-3 py-0.5 bg-[#d4af37] rounded-full">
                                 <span className="text-[#0f0c18] text-[9px] font-bold uppercase tracking-[0.15em]">
                                     {isPortuguese ? 'Recomendado' : 'Recommended'}
