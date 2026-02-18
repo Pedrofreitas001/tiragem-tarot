@@ -38,6 +38,7 @@ function VideoCardOptimized({ video, poster }: { video: string, poster: string }
             muted
             playsInline
             loop
+            autoPlay
             tabIndex={0}
         />
     );
