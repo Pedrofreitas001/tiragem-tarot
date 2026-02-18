@@ -32,8 +32,8 @@ function VideoCardOptimized({ video, poster }: { video: string, poster: string }
             ref={ref}
             src={"/videos/" + video}
             poster={poster}
-            className="rounded-2xl shadow-2xl border-2 border-[#d4af37]/40 bg-black/60 w-full h-full object-cover"
-            style={{ objectFit: 'cover', marginBottom: 0, width: '100%', height: '100%' }}
+            className="shadow-2xl bg-black/60 w-full h-full object-cover"
+            style={{ objectFit: 'cover', marginBottom: 0, width: '100%', height: '100%', border: '1.5px solid rgba(212, 175, 55, 0.6)' }}
             preload="none"
             muted
             playsInline
@@ -897,149 +897,6 @@ const Home = () => {
             </section>
 
 
-            {/* Linha de 6 vídeos de cartas animadas - abaixo do hero, agora maiores e com blur cobrindo */}
-
-            {/* Header acima dos vídeos */}
-            <div className="w-full flex flex-col items-center justify-center mt-10 md:mt-20 mb-6 px-2">
-                <div
-                    className="text-gradient-gold text-center font-semibold"
-                    style={{
-                        fontFamily: "'Crimson Text', serif",
-                        letterSpacing: '0.01em',
-                        fontSize: 'clamp(1.1rem, 4vw, 2.2rem)', // menor no mobile
-                        lineHeight: 1.22,
-                        maxWidth: '700px',
-                        marginLeft: 'auto',
-                        marginRight: 'auto',
-                    }}
-                >
-                    <div>{isPortuguese ? 'Você não chegou aqui por acaso' : 'You did not arrive here by chance'}</div>
-                    <div> {isPortuguese ? 'Uma mensagem do Tarot te espera' : 'A message from the Tarot awaits you'}</div>
-                </div>
-            </div>
-
-
-            {/* Responsive Tarot Video Carousel/Slider */}
-            {(() => {
-                const videos = [
-                    { file: 'o_mago_vd.mp4', poster: '/images/cards/o_mago.jpg', name: { pt: 'O Mago', en: 'The Magician' } },
-                    { file: 'dois_espadas_vd.mp4', poster: '/images/cards/dois_espadas.jpg', name: { pt: 'Dois de Espadas', en: 'Two of Swords' } },
-                    { file: 'cavaleiro_paus_vd.mp4', poster: '/images/cards/cavaleiro_paus.jpg', name: { pt: 'Cavaleiro de Paus', en: 'Knight of Wands' } },
-                    { file: 'a_sarcedotisa_vd.mp4', poster: '/images/cards/a_sacerdotisa.jpg', name: { pt: 'A Sacerdotisa', en: 'The High Priestess' } },
-                    { file: 'o_enforcado_vd.mp4', poster: '/images/cards/o_enforcado.jpg', name: { pt: 'O Enforcado', en: 'The Hanged Man' } },
-                    { file: 'o_carruagem_vd.mp4', poster: '/images/cards/o_carruagem.jpg', name: { pt: 'O Carro', en: 'The Chariot' } },
-                ];
-                // Começa com a carta do Mago (índice 0)
-                const [activeIndex, setActiveIndex] = React.useState(0);
-                const [isMobile, setIsMobile] = React.useState(() => typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
-                const [hydrated, setHydrated] = React.useState(false);
-                const [videoLoading, setVideoLoading] = React.useState(true);
-                React.useEffect(() => {
-                    setHydrated(true);
-                    const handleResize = () => {
-                        setIsMobile(window.innerWidth < 1024);
-                    };
-                    window.addEventListener('resize', handleResize);
-                    return () => window.removeEventListener('resize', handleResize);
-                }, []);
-
-                // Carousel for mobile/tablet
-                if (!hydrated) return null;
-                if (isMobile) {
-                    // Exibe apenas o card central, grande, sem cartas de fundo
-                    const CARD_WIDTH = window.innerWidth < 640 ? Math.min(window.innerWidth - 48, 200) : 260; // mobile: menor, tablet: menor
-                    const CARD_HEIGHT = Math.round(CARD_WIDTH * 1.5); // proporção 2:3
-                    const video = videos[activeIndex];
-                    return (
-                        <div className="relative w-full flex items-center justify-center mb-8 mt-0 z-20 px-0 overflow-visible" style={{ minHeight: CARD_HEIGHT, maxWidth: '100vw', marginLeft: 'auto', marginRight: 'auto' }}>
-                            {/* Left arrow - sempre visível para scroll infinito */}
-                            <button
-                                className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-black/80 hover:bg-black rounded-full p-2 shadow-lg border-2 border-[#222] transition-all"
-                                onClick={() => { setActiveIndex(i => (i - 1 + videos.length) % videos.length); setVideoLoading(true); }}
-                                aria-label="Anterior"
-                            >
-                                <span className="material-symbols-outlined text-2xl" style={{ color: '#d4af37', textShadow: '0 0 4px #fffebb, 0 0 1px #d4af37', opacity: 0.85 }}>chevron_left</span>
-                            </button>
-                            {/* Card central grande, centralizado */}
-                            <div className="flex flex-col items-center justify-center w-full" style={{ maxWidth: CARD_WIDTH, margin: '0 auto' }}>
-                                <div style={{ width: CARD_WIDTH, height: CARD_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                                    <VideoCardOptimized
-                                        key={video.file + '-' + activeIndex}
-                                        video={video.file}
-                                        poster={video.poster}
-                                    />
-                                    {/* Barra de loading discreta */}
-                                    {videoLoading && (
-                                        <div className="absolute left-1/2 -translate-x-1/2 bottom-2 w-2/3 h-1.5 bg-gradient-to-r from-[#d4af37]/60 via-[#fffebb]/80 to-[#b88a44]/60 rounded-full animate-pulse shadow-lg opacity-80 z-20"></div>
-                                    )}
-                                </div>
-                                <span className="text-gradient-gold text-base font-semibold mt-4 text-center w-full block" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.01em', opacity: 0.9 }}>{isPortuguese ? video.name.pt : video.name.en}</span>
-                            </div>
-                            {/* Right arrow - sempre visível para scroll infinito */}
-                            <button
-                                className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-black/80 hover:bg-black rounded-full p-2 shadow-lg border-2 border-[#222] transition-all"
-                                onClick={() => { setActiveIndex(i => (i + 1) % videos.length); setVideoLoading(true); }}
-                                aria-label="Próximo"
-                            >
-                                <span className="material-symbols-outlined text-2xl" style={{ color: '#d4af37', textShadow: '0 0 4px #fffebb, 0 0 1px #d4af37', opacity: 0.85 }}>chevron_right</span>
-                            </button>
-                        </div>
-                    );
-                }
-                // Desktop: grid with more spacing
-                return (
-                    <div
-                        className="relative w-full grid grid-cols-6 items-end justify-center gap-8 mb-8 mt-0 z-20 px-0 overflow-visible"
-                        style={{ minHeight: 230, maxWidth: 900, marginLeft: 'auto', marginRight: 'auto' }}
-                    >
-                        {videos.map((video, idx) => (
-                            <div key={video.file} className="flex flex-col items-center mb-6 lg:mb-0" style={{ height: 220 }}>
-                                <div className="w-full h-full">
-                                    <div
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            overflow: 'hidden',
-                                            borderRadius: '1rem',
-                                            position: 'relative',
-                                            ...(typeof window !== 'undefined' && window.innerWidth >= 1024
-                                                ? { aspectRatio: '2/1' }
-                                                : {}),
-                                        }}
-                                    >
-                                        <div style={{ transform: 'scale(1.1)', transformOrigin: 'center top', width: '100%', height: '100%' }}>
-                                            <VideoCardOptimized
-                                                video={video.file}
-                                                poster={video.poster}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <span className="text-gradient-gold text-xs font-semibold mt-2" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.01em', opacity: 0.85 }}>{isPortuguese ? video.name.pt : video.name.en}</span>
-                            </div>
-                        ))}
-                    </div>
-                );
-            })()}
-
-            {/* Botão abaixo dos vídeos */}
-            <div className="w-full flex justify-center mb-16" style={{ position: 'relative', zIndex: 50 }}>
-                <button
-                    type="button"
-                    onClick={() => {
-                        const el = document.getElementById('spreads');
-                        if (el) {
-                            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                    }}
-                    className="group px-7 py-2 bg-purple-700 hover:bg-purple-800 rounded-lg shadow-md transition-all text-white text-sm font-semibold tracking-wide flex items-center justify-center gap-2"
-                    style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em', minWidth: 0, zIndex: 100, pointerEvents: 'auto' }}
-                >
-                    {isPortuguese ? 'Revelar mensagem' : 'Reveal message'}
-                </button>
-            </div>
-
-
 
             {/* Interactive Stats Banner */}
             <section className="mt-0 py-4 md:py-6 px-4 md:px-6 relative overflow-hidden">
@@ -1256,6 +1113,119 @@ const Home = () => {
                                     );
                                 })}
                             </div>
+
+                            {/* Header acima dos vídeos */}
+                            <div className="w-full flex flex-col items-center justify-center mt-16 md:mt-24 mb-6 px-2 -mt-24">
+                                <div
+                                    className="text-gradient-gold text-center font-semibold"
+                                    style={{
+                                        fontFamily: "'Crimson Text', serif",
+                                        letterSpacing: '0.01em',
+                                        fontSize: 'clamp(1.1rem, 4vw, 2.2rem)',
+                                        lineHeight: 1.22,
+                                        maxWidth: '700px',
+                                        marginLeft: 'auto',
+                                        marginRight: 'auto',
+                                    }}
+                                >
+                                    <div>{isPortuguese ? 'Você não chegou aqui por acaso' : 'You did not arrive here by chance'}</div>
+                                    <div>{isPortuguese ? 'Uma mensagem do Tarot te espera' : 'A message from the Tarot awaits you'}</div>
+                                </div>
+                            </div>
+
+                            {/* Responsive Tarot Video Carousel/Slider */}
+                            {(() => {
+                                const videos = [
+                                    { file: 'o_mago_vd.mp4', poster: '/images/cards/o_mago.jpg', name: { pt: 'O Mago', en: 'The Magician' } },
+                                    { file: 'dois_espadas_vd.mp4', poster: '/images/cards/dois_espadas.jpg', name: { pt: 'Dois de Espadas', en: 'Two of Swords' } },
+                                    { file: 'cavaleiro_paus_vd.mp4', poster: '/images/cards/cavaleiro_paus.jpg', name: { pt: 'Cavaleiro de Paus', en: 'Knight of Wands' } },
+                                    { file: 'a_sarcedotisa_vd.mp4', poster: '/images/cards/a_sacerdotisa.jpg', name: { pt: 'A Sacerdotisa', en: 'The High Priestess' } },
+                                    { file: 'o_enforcado_vd.mp4', poster: '/images/cards/o_enforcado.jpg', name: { pt: 'O Enforcado', en: 'The Hanged Man' } },
+                                    { file: 'o_carruagem_vd.mp4', poster: '/images/cards/o_carruagem.jpg', name: { pt: 'O Carro', en: 'The Chariot' } },
+                                ];
+                                const [activeIndex, setActiveIndex] = React.useState(0);
+                                const [isMobile, setIsMobile] = React.useState(() => typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+                                const [hydrated, setHydrated] = React.useState(false);
+                                const [videoLoading, setVideoLoading] = React.useState(true);
+                                React.useEffect(() => {
+                                    setHydrated(true);
+                                    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+                                    window.addEventListener('resize', handleResize);
+                                    return () => window.removeEventListener('resize', handleResize);
+                                }, []);
+
+                                if (!hydrated) return null;
+                                if (isMobile) {
+                                    const CARD_WIDTH = window.innerWidth < 640 ? Math.min(window.innerWidth - 48, 200) : 260;
+                                    const CARD_HEIGHT = Math.round(CARD_WIDTH * 1.5);
+                                    const video = videos[activeIndex];
+                                    return (
+                                        <div className="relative w-full flex items-center justify-center mb-8 mt-0 z-20 px-0 overflow-visible" style={{ minHeight: CARD_HEIGHT, maxWidth: '100vw', marginLeft: 'auto', marginRight: 'auto' }}>
+                                            <button
+                                                className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-black/80 hover:bg-black rounded-full p-2 shadow-lg border-2 border-[#222] transition-all"
+                                                onClick={() => { setActiveIndex(i => (i - 1 + videos.length) % videos.length); setVideoLoading(true); }}
+                                                aria-label="Anterior"
+                                            >
+                                                <span className="material-symbols-outlined text-2xl" style={{ color: '#d4af37', textShadow: '0 0 4px #fffebb, 0 0 1px #d4af37', opacity: 0.85 }}>chevron_left</span>
+                                            </button>
+                                            <div key={video.file + '-' + activeIndex} className="flex flex-col items-center justify-center w-full" style={{ maxWidth: CARD_WIDTH, margin: '0 auto' }}>
+                                                <div style={{ width: CARD_WIDTH, height: CARD_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                                                    <VideoCardOptimized
+                                                        video={video.file}
+                                                        poster={video.poster}
+                                                    />
+                                                    {videoLoading && (
+                                                        <div className="absolute left-1/2 -translate-x-1/2 bottom-2 w-2/3 h-1.5 bg-gradient-to-r from-[#d4af37]/60 via-[#fffebb]/80 to-[#b88a44]/60 rounded-full animate-pulse shadow-lg opacity-80 z-20"></div>
+                                                    )}
+                                                </div>
+                                                <span className="text-gradient-gold text-base font-semibold mt-4 text-center w-full block" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.01em', opacity: 0.9 }}>{isPortuguese ? video.name.pt : video.name.en}</span>
+                                            </div>
+                                            <button
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-black/80 hover:bg-black rounded-full p-2 shadow-lg border-2 border-[#222] transition-all"
+                                                onClick={() => { setActiveIndex(i => (i + 1) % videos.length); setVideoLoading(true); }}
+                                                aria-label="Próximo"
+                                            >
+                                                <span className="material-symbols-outlined text-2xl" style={{ color: '#d4af37', textShadow: '0 0 4px #fffebb, 0 0 1px #d4af37', opacity: 0.85 }}>chevron_right</span>
+                                            </button>
+                                        </div>
+                                    );
+                                }
+                                return (
+                                    <div
+                                        className="relative w-full grid grid-cols-6 items-end justify-center gap-8 mb-8 mt-0 z-20 px-0 overflow-visible"
+                                        style={{ minHeight: 230, maxWidth: 900, marginLeft: 'auto', marginRight: 'auto' }}
+                                    >
+                                        {videos.map((video, idx) => (
+                                            <div key={video.file} className="flex flex-col items-center mb-6 lg:mb-0" style={{ height: 220 }}>
+                                                <div className="w-full h-full">
+                                                    <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative', ...(typeof window !== 'undefined' && window.innerWidth >= 1024 ? { aspectRatio: '2/1' } : {}) }}>
+                                                        <div style={{ transform: 'scale(1.1)', transformOrigin: 'center top', width: '100%', height: '100%' }}>
+                                                            <VideoCardOptimized video={video.file} poster={video.poster} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <span className="text-gradient-gold text-xs font-semibold mt-2" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.01em', opacity: 0.85 }}>{isPortuguese ? video.name.pt : video.name.en}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })()}
+
+                            {/* Botão abaixo dos vídeos */}
+                            <div className="w-full flex justify-center mt-2 mb-8" style={{ position: 'relative', zIndex: 50 }}>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const el = document.getElementById('spreads');
+                                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    }}
+                                    className="group px-7 py-2 bg-purple-700 hover:bg-purple-800 rounded-lg shadow-md transition-all text-white text-sm font-semibold tracking-wide flex items-center justify-center gap-2"
+                                    style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.01em', zIndex: 100, pointerEvents: 'auto' }}
+                                >
+                                    {isPortuguese ? 'Revelar mensagem' : 'Reveal message'}
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 </div>
