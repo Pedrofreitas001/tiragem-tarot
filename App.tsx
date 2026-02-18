@@ -426,7 +426,6 @@ const Home = () => {
     const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
     const { user, incrementReadingCount, tier, isGuest } = useAuth();
     const { isPortuguese: langIsPortuguese } = useLanguage();
-    const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium'>('premium');
     const [whatsappSubscribed, setWhatsappSubscribed] = useState(false);
     const [pendingGuestReading, setPendingGuestReading] = useState<any>(null);
     const [regeneratingReading, setRegeneratingReading] = useState(false);
@@ -1635,97 +1634,101 @@ const Home = () => {
                     )}
                 </div>
             </section>
-            {/* Plan Comparison Section - Checkout Style */}
-            <section className="relative z-10 py-20 md:py-24 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
-                <div className="absolute -left-28 top-10 w-[440px] h-[440px] rounded-full bg-gradient-to-br from-purple-500/14 to-transparent blur-3xl pointer-events-none"></div>
-                <div className="absolute -right-20 bottom-8 w-[420px] h-[420px] rounded-full bg-gradient-to-bl from-yellow-500/10 to-transparent blur-3xl pointer-events-none"></div>
-
-                <div className="max-w-6xl mx-auto relative z-10">
-                    <div className="text-center mb-10 md:mb-12">
+            {/* Plan Comparison Section - E-book Style */}
+            <section className="relative z-10 py-16 md:py-24 px-4 md:px-6 bg-[#0f0c18] overflow-hidden">
+                <div className="max-w-4xl mx-auto relative z-10">
+                    <div className="text-center mb-10 md:mb-14">
                         <h3 className="text-3xl md:text-4xl lg:text-5xl font-normal text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
                             {isPortuguese ? 'Escolha seu plano' : 'Choose your plan'}
                         </h3>
-                        <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto mt-4">
-                            {isPortuguese
-                                ? 'Compare os recursos e avance para o checkout quando quiser liberar toda a experiencia.'
-                                : 'Compare features and proceed to checkout when you want to unlock the full experience.'}
-                        </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-                        <article
-                            onClick={() => setSelectedPlan('free')}
-                            className={`rounded-2xl border p-6 md:p-7 transition-all cursor-pointer ${selectedPlan === 'free'
-                                ? 'border-[#875faf] bg-gradient-to-b from-[#221637] to-[#170f26] shadow-[0_0_30px_rgba(135,95,175,0.22)]'
-                                : 'border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.02] hover:border-white/20'
-                                }`}
-                        >
-                            <div className="flex items-center justify-between mb-5">
-                                <h4 className="text-white text-2xl font-bold" style={{ fontFamily: "'Crimson Text', serif" }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                        <div className="group relative rounded-xl border border-[#d4af37]/15 bg-gradient-to-b from-[#d4af37]/[0.03] to-transparent p-6 transition-all duration-300 hover:border-[#d4af37]/30 cursor-pointer flex flex-col">
+                            <div className="mb-4">
+                                <h3 className="text-white text-lg font-medium tracking-tight" style={{fontFamily:"'Crimson Text', serif"}}>
                                     {isPortuguese ? 'Plano Free' : 'Free Plan'}
-                                </h4>
-                                <span className="px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-gray-200 text-xs uppercase tracking-wide">
-                                    {isPortuguese ? 'Gratuito' : 'Free'}
-                                </span>
+                                </h3>
+                                <p className="text-gray-500 text-xs mt-0.5">
+                                    {isPortuguese ? 'Acesso básico às tiragens' : 'Basic access to spreads'}
+                                </p>
+                                <div className="mt-3">
+                                    <span className="text-white text-2xl font-light" style={{fontFamily:"'Crimson Text', serif"}}>
+                                        {isPortuguese ? 'Grátis' : 'Free'}
+                                    </span>
+                                </div>
                             </div>
-                            <ul className="space-y-3 text-sm">
-                                {[
-                                    isPortuguese ? 'Tiragens basicas ilimitadas' : 'Unlimited basic spreads',
-                                    isPortuguese ? 'Historico de leituras' : 'Reading history',
-                                    isPortuguese ? 'Acesso a biblioteca de cartas' : 'Card library access',
-                                    isPortuguese ? 'Sem Carta do Dia no WhatsApp' : 'No Daily Card on WhatsApp',
-                                ].map((item, idx) => (
-                                    <li key={`free-feature-${idx}`} className="flex items-start gap-2.5 text-gray-300">
-                                        <span className={`material-symbols-outlined text-base mt-0.5 ${idx < 3 ? 'text-yellow-400' : 'text-gray-500'}`}>
-                                            {idx < 3 ? 'check_circle' : 'remove_circle'}
-                                        </span>
-                                        <span>{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </article>
 
-                        <article
-                            onClick={() => setSelectedPlan('premium')}
-                            className={`rounded-2xl border p-6 md:p-7 transition-all cursor-pointer ${selectedPlan === 'premium'
-                                ? 'border-yellow-500/60 bg-gradient-to-b from-[#2c1f0f] via-[#1f1630] to-[#140f1f] shadow-[0_0_34px_rgba(212,175,55,0.24)]'
-                                : 'border-yellow-500/25 bg-gradient-to-b from-[#221637] to-[#170f26] hover:border-yellow-500/45'
-                                }`}
-                        >
-                            <div className="flex items-center justify-between mb-5">
-                                <h4 className="text-white text-2xl font-bold" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                    {isPortuguese ? 'Plano Premium' : 'Premium Plan'}
-                                </h4>
-                                <span className="px-2.5 py-1 rounded-full bg-yellow-500/15 border border-yellow-500/35 text-yellow-300 text-xs uppercase tracking-wide">
-                                    Premium
+                            <div className="h-px bg-white/[0.05] my-3" />
+
+                            <div className="space-y-2 mb-5 flex-1">
+                                {[
+                                    isPortuguese ? 'Tiragens ilimitadas' : 'Unlimited spreads',
+                                    isPortuguese ? 'Histórico de leituras' : 'Reading history',
+                                    isPortuguese ? 'Acesso à biblioteca de cartas' : 'Card library access',
+                                ].map((item, idx) => (
+                                    <div key={idx} className="flex items-center gap-1.5">
+                                        <div className="w-1 h-1 rounded-full bg-[#d4af37]/40 flex-shrink-0" />
+                                        <span className="text-gray-400 text-[11px]">{item}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => navigate('/')}
+                                className="w-full py-2.5 border border-[#d4af37]/25 rounded-lg text-[#d4af37] text-xs font-medium tracking-wide transition-all hover:bg-[#d4af37]/10 hover:border-[#d4af37]/40 flex items-center justify-center gap-2"
+                            >
+                                <span className="material-symbols-outlined text-sm">check</span>
+                                {isPortuguese ? 'Começar' : 'Get Started'}
+                            </button>
+                        </div>
+
+                        <div className="group relative rounded-xl border border-[#d4af37]/15 bg-gradient-to-b from-[#d4af37]/[0.03] to-transparent p-6 transition-all duration-300 hover:border-[#d4af37]/30 cursor-pointer flex flex-col">
+                            <div className="absolute -top-3 left-6 px-3 py-0.5 bg-[#d4af37] rounded-full">
+                                <span className="text-[#0f0c18] text-[9px] font-bold uppercase tracking-[0.15em]">
+                                    {isPortuguese ? 'Recomendado' : 'Recommended'}
                                 </span>
                             </div>
-                            <ul className="space-y-3 text-sm">
+
+                            <div className="mb-4 mt-1">
+                                <h3 className="text-white text-lg font-medium tracking-tight" style={{fontFamily:"'Crimson Text', serif"}}>
+                                    {isPortuguese ? 'Plano Premium' : 'Premium Plan'}
+                                </h3>
+                                <p className="text-gray-500 text-xs mt-0.5">
+                                    {isPortuguese ? 'Acesso completo com IA' : 'Full access with AI'}
+                                </p>
+                                <div className="mt-3">
+                                    <span className="text-white text-2xl font-light" style={{fontFamily:"'Crimson Text', serif"}}>R$ 19,90</span>
+                                    <span className="text-gray-600 text-[10px] ml-1.5">
+                                        {isPortuguese ? '/mês · cancele quando quiser' : '/mo · cancel anytime'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="h-px bg-white/[0.05] my-3" />
+
+                            <div className="space-y-2 mb-5 flex-1">
                                 {[
                                     isPortuguese ? 'Tudo do plano Free' : 'Everything in Free plan',
+                                    isPortuguese ? 'Síntese com IA' : 'AI synthesis',
                                     isPortuguese ? 'Carta do Dia no WhatsApp' : 'Daily Card on WhatsApp',
-                                    isPortuguese ? 'Interpretacao premium completa' : 'Full premium interpretation',
-                                    isPortuguese ? 'Acesso ao eBook exclusivo' : 'Exclusive ebook access',
+                                    isPortuguese ? 'E-book Arquivo Arcano' : 'Arcane Archive e-book',
                                 ].map((item, idx) => (
-                                    <li key={`premium-feature-${idx}`} className="flex items-start gap-2.5 text-gray-200">
-                                        <span className="material-symbols-outlined text-yellow-400 text-base mt-0.5">check_circle</span>
-                                        <span>{item}</span>
-                                    </li>
+                                    <div key={idx} className="flex items-center gap-1.5">
+                                        <div className="w-1 h-1 rounded-full bg-[#d4af37]/60 flex-shrink-0" />
+                                        <span className="text-gray-300 text-[11px]">{item}</span>
+                                    </div>
                                 ))}
-                            </ul>
-                        </article>
-                    </div>
+                            </div>
 
-                    <div className="mt-8 md:mt-10 flex justify-center">
-                        <button
-                            onClick={() => navigate('/checkout')}
-                            className="group relative w-full md:w-auto md:min-w-[320px] px-8 py-3.5 bg-[#D4AF37] hover:bg-[#B3922D] text-[#12091a] rounded-lg shadow-[0_0_25px_rgba(212,175,55,0.35)] hover:shadow-[0_0_35px_rgba(212,175,55,0.55)] transition-all hover:-translate-y-1"
-                        >
-                            <span className="font-bold tracking-wide flex items-center justify-center gap-2 text-sm uppercase">
-                                {isPortuguese ? 'Ir para Checkout' : 'Go to Checkout'}
-                                <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </span>
-                        </button>
+                            <button
+                                onClick={() => navigate('/checkout')}
+                                className="w-full py-2.5 bg-[#d4af37] rounded-lg text-[#0f0c18] text-xs font-bold tracking-wide transition-all hover:bg-[#e0bf4a] hover:shadow-[0_0_20px_rgba(212,175,55,0.2)] flex items-center justify-center gap-2"
+                            >
+                                {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
+                                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
