@@ -235,6 +235,7 @@ const Header = () => {
         { icon: 'menu_book', label: isPortuguese ? 'Interpretacao' : 'Interpretation', path: isPortuguese ? '/interpretacao' : '/interpretation', active: isActive('/interpretacao') || isActive('/interpretation') },
         { icon: 'auto_stories', label: t.nav.cardMeanings, path: exploreRoute, active: isActive('/explore') || isActive(exploreRoute) },
         { icon: 'history', label: t.nav.history, path: '/history', active: isActive('/history') },
+        { icon: 'menu_book', label: 'E-book', path: '/ebook', active: isActive('/ebook') },
     ];
 
     return (
@@ -246,30 +247,33 @@ const Header = () => {
                             <h2 className="text-white text-base sm:text-lg font-bold leading-tight tracking-tight">Zaya Tarot</h2>
                         </div>
 
-                        <nav className="hidden md:flex items-center gap-8">
-                            <button onClick={() => navigate('/')} className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                        <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
+                            <button onClick={() => navigate('/')} className={`text-xs xl:text-sm font-medium transition-colors whitespace-nowrap ${isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.home}
                             </button>
-                            <button onClick={() => navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads')} className="text-sm font-medium transition-colors text-gray-400 hover:text-white">
+                            <button onClick={() => navigate(isPortuguese ? '/jogos-de-tarot' : '/spreads')} className="text-xs xl:text-sm font-medium transition-colors whitespace-nowrap text-gray-400 hover:text-white">
                                 {t.nav.tarot}
                             </button>
-                            <button onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')} className={`text-sm font-medium transition-colors ${(isActive('/carta-do-dia') || isActive('/daily-card')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                            <button onClick={() => navigate(isPortuguese ? '/carta-do-dia' : '/daily-card')} className={`text-xs xl:text-sm font-medium transition-colors whitespace-nowrap ${(isActive('/carta-do-dia') || isActive('/daily-card')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
                             </button>
-                            <button onClick={() => navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign')} className={`text-sm font-medium transition-colors ${(isActive('/tarot-por-signo') || isActive('/tarot-by-sign')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                            <button onClick={() => navigate(isPortuguese ? '/tarot-por-signo' : '/tarot-by-sign')} className={`text-xs xl:text-sm font-medium transition-colors whitespace-nowrap ${(isActive('/tarot-por-signo') || isActive('/tarot-by-sign')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {isPortuguese ? 'Tarot por Signo' : 'Tarot by Sign'}
                             </button>
-                            <button onClick={() => navigate(isPortuguese ? '/interpretacao' : '/interpretation')} className={`text-sm font-medium transition-colors ${(isActive('/interpretacao') || isActive('/interpretation')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                            <button onClick={() => navigate(isPortuguese ? '/interpretacao' : '/interpretation')} className={`text-xs xl:text-sm font-medium transition-colors whitespace-nowrap ${(isActive('/interpretacao') || isActive('/interpretation')) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {isPortuguese ? 'Interpretacao' : 'Interpretation'}
                             </button>
-                            <button onClick={() => navigate(exploreRoute)} className={`text-sm font-medium transition-colors ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                            <button onClick={() => navigate(exploreRoute)} className={`text-xs xl:text-sm font-medium transition-colors whitespace-nowrap ${(isActive('/explore') || isActive(exploreRoute)) ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.cardMeanings}
                             </button>
-                            <button onClick={() => navigate('/history')} className={`text-sm font-medium transition-colors ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                            <button onClick={() => navigate('/history')} className={`text-xs xl:text-sm font-medium transition-colors whitespace-nowrap ${isActive('/history') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
                                 {t.nav.history}
                             </button>
+                            <button onClick={() => navigate('/ebook')} className={`text-xs xl:text-sm font-medium transition-colors whitespace-nowrap ${isActive('/ebook') ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                                E-book
+                            </button>
                             {isAdmin && (
-                                <button onClick={() => navigate('/admin')} className={`text-sm font-medium transition-colors ${isActive('/admin') ? 'text-yellow-400' : 'text-yellow-500/70 hover:text-yellow-400'}`}>
+                                <button onClick={() => navigate('/admin')} className={`text-xs xl:text-sm font-medium transition-colors whitespace-nowrap ${isActive('/admin') ? 'text-yellow-400' : 'text-yellow-500/70 hover:text-yellow-400'}`}>
                                     Admin
                                 </button>
                             )}
@@ -282,7 +286,7 @@ const Header = () => {
 
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="md:hidden p-1.5 rounded-lg hover:bg-white/5"
+                                className="lg:hidden p-1.5 rounded-lg hover:bg-white/5"
                             >
                                 <span className="material-symbols-outlined text-white text-xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
                             </button>
@@ -310,7 +314,7 @@ const Header = () => {
 
             {/* Mobile Drawer Menu */}
             {mobileMenuOpen && (
-                <div className="fixed inset-0 z-50 md:hidden">
+                <div className="fixed inset-0 z-50 lg:hidden">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
                     <nav className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-background-dark/98 backdrop-blur-xl border-l border-border-dark flex flex-col animate-slide-in-right">
                         <div className="flex items-center justify-between px-5 py-4 border-b border-border-dark">
@@ -833,133 +837,34 @@ const Home = () => {
                         </div>
 
                         {/* Right Column - Floating Carta do Dia Mockup */}
-                        <div className="flex flex-col items-center justify-center md:justify-center lg:justify-end order-1 lg:order-2 pr-0 lg:pr-2 gap-2 lg:pt-4 xl:pt-6">
-                            <div className="w-full flex items-start justify-center lg:justify-end gap-3 lg:gap-4 xl:gap-6 lg:translate-x-0 xl:translate-x-16 2xl:translate-x-28">
-                                <div className="flex flex-col items-center gap-4 lg:gap-1">
-                                    <div className="hero-daily-card relative w-[250px] sm:w-[265px] md:w-[320px] lg:w-[300px] xl:w-[360px] 2xl:w-[380px] aspect-[3/4]">
-
-                                        {/* Removed stars behind the card mockup */}
-
-                                        {/* Main Card Container */}
+                        <div className="flex flex-col items-center justify-center md:justify-center lg:justify-start order-1 lg:order-2 pr-0 lg:pr-2 gap-2 -mt-6 lg:-mt-10">
+                            <div className="w-full flex items-center justify-center lg:justify-end gap-3 lg:gap-4 xl:gap-6 lg:-translate-x-10 xl:translate-x-6 2xl:translate-x-16">
+                                <div className="flex flex-col items-center">
+                                    <div className="hero-daily-card relative w-[250px] sm:w-[265px] md:w-[320px] lg:w-[300px] xl:w-[360px] 2xl:w-[380px]">
                                         <div className="relative rounded-2xl overflow-hidden" style={{
+                                            boxShadow: '0 30px 60px -15px rgba(0,0,0,0.6), 0 0 40px rgba(100, 60, 160, 0.2)',
+                                            border: '1.5px solid rgba(212, 175, 55, 0.3)',
                                             background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
-                                            boxShadow: '0 30px 60px -15px rgba(0,0,0,0.6), 0 0 40px rgba(100, 60, 160, 0.2), inset 0 1px 0 0 rgba(255,255,255,0.08)',
-                                            border: '1.5px solid rgba(212, 175, 55, 0.3)'
                                         }}>
-                                            {/* Dense white star dots inside the card mockup */}
-                                            <div className="absolute inset-0 pointer-events-none">
-                                                <div className="absolute top-6 left-8 w-[3px] h-[3px] rounded-full bg-white/70"></div>
-                                                <div className="absolute top-16 right-12 w-[2px] h-[2px] rounded-full bg-white/60"></div>
-                                                <div className="absolute bottom-10 left-16 w-[3px] h-[3px] rounded-full bg-white/50"></div>
-                                                <div className="absolute bottom-16 right-8 w-[2px] h-[2px] rounded-full bg-white/40"></div>
-                                                <div className="absolute top-1/2 left-6 w-[1.5px] h-[1.5px] rounded-full bg-white/60"></div>
-                                                <div className="absolute top-1/3 right-10 w-[3px] h-[3px] rounded-full bg-white/30"></div>
-                                                <div className="absolute bottom-1/3 left-10 w-[2px] h-[2px] rounded-full bg-white/35"></div>
-                                                <div className="absolute top-12 right-6 w-[3px] h-[3px] rounded-full bg-white/20"></div>
-                                                <div className="absolute top-8 left-20 w-[2px] h-[2px] rounded-full bg-white/55"></div>
-                                                <div className="absolute top-20 left-12 w-[3px] h-[3px] rounded-full bg-white/40"></div>
-                                                <div className="absolute top-24 left-24 w-[1.5px] h-[1.5px] rounded-full bg-white/60"></div>
-                                                <div className="absolute top-32 left-10 w-[3px] h-[3px] rounded-full bg-white/30"></div>
-                                                <div className="absolute top-36 left-18 w-[2px] h-[2px] rounded-full bg-white/35"></div>
-                                                <div className="absolute top-40 left-28 w-[3px] h-[3px] rounded-full bg-white/20"></div>
-                                                <div className="absolute bottom-8 right-20 w-[2px] h-[2px] rounded-full bg-white/55"></div>
-                                                <div className="absolute bottom-20 right-12 w-[3px] h-[3px] rounded-full bg-white/40"></div>
-                                                <div className="absolute bottom-24 right-24 w-[1.5px] h-[1.5px] rounded-full bg-white/60"></div>
-                                                <div className="absolute bottom-32 right-10 w-[3px] h-[3px] rounded-full bg-white/30"></div>
-                                                <div className="absolute bottom-36 right-18 w-[2px] h-[2px] rounded-full bg-white/35"></div>
-                                                <div className="absolute bottom-40 right-28 w-[3px] h-[3px] rounded-full bg-white/20"></div>
-                                                <div className="absolute top-10 left-1/2 w-[3px] h-[3px] rounded-full bg-white/50"></div>
-                                                <div className="absolute bottom-10 left-1/2 w-[2px] h-[2px] rounded-full bg-white/40"></div>
-                                                <div className="absolute top-1/2 left-1/3 w-[1.5px] h-[1.5px] rounded-full bg-white/60"></div>
-                                                <div className="absolute top-1/2 right-1/3 w-[3px] h-[3px] rounded-full bg-white/30"></div>
-                                                <div className="absolute top-1/4 left-1/4 w-[2px] h-[2px] rounded-full bg-white/35"></div>
-                                                <div className="absolute bottom-1/4 right-1/4 w-[3px] h-[3px] rounded-full bg-white/20"></div>
-                                            </div>
-
-                                            {/* Header */}
-                                            <div className="flex items-center justify-between px-5 pt-4 pb-3">
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-yellow-400/80 text-xs">*</span>
-                                                    <span className="text-gray-100/90 text-[11px] font-medium tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Zaya Tarot</span>
-                                                </div>
-                                                <div className="text-right">
-                                                    <div className="text-gray-300/80 text-[9px] tracking-widest uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Carta do Dia</div>
-                                                    <div className="text-gray-300/50 text-[9px]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                        {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Divider */}
-                                            <div className="mx-5 h-[0.5px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.2), transparent)' }}></div>
-
-                                            {/* Cards Area */}
-                                            <div className="relative px-5 py-6 md:py-10 flex items-center justify-center" style={{ minHeight: '200px' }}>
-                                                {/* Background constellation dots */}
-                                                <div className="absolute inset-0 overflow-hidden">
-                                                    <div className="hero-star-1 absolute top-6 left-8 w-[2px] h-[2px] rounded-full bg-white/10"></div>
-                                                    <div className="hero-star-3 absolute top-16 right-12 w-[1.5px] h-[1.5px] rounded-full bg-purple-300/15"></div>
-                                                    <div className="hero-star-5 absolute bottom-10 left-16 w-[2px] h-[2px] rounded-full bg-white/8"></div>
-                                                    <div className="hero-star-2 absolute bottom-16 right-8 w-[1.5px] h-[1.5px] rounded-full bg-yellow-300/10"></div>
-                                                    <div className="hero-star-4 absolute top-1/2 left-6 w-[1px] h-[1px] rounded-full bg-white/10"></div>
-                                                </div>
-
-                                                {/* 3 Tarot Cards in fan layout */}
-                                                <div className="relative flex items-center justify-center" style={{ height: '220px', width: '220px' }}>
-                                                    {heroCardIndices.map((cardIdx, i) => {
-                                                        const card = TAROT_CARDS[cardIdx];
-                                                        const rotations = [-12, 0, 12];
-                                                        const offsets = [-40, 0, 40];
-                                                        const zIndexes = [1, 3, 1];
-                                                        const scales = [0.9, 1, 0.9];
-                                                        return (
-                                                            <div
-                                                                key={`hero-card-${i}`}
-                                                                className="absolute transition-all duration-700 ease-in-out"
-                                                                style={{
-                                                                    transform: `translateX(${offsets[i]}px) rotate(${rotations[i]}deg) scale(${scales[i]})`,
-                                                                    zIndex: zIndexes[i],
-                                                                }}
-                                                            >
-                                                                <div className="w-[80px] h-[130px] sm:w-[90px] sm:h-[146px] md:w-[100px] md:h-[162px] rounded-lg overflow-hidden shadow-lg" style={{
-                                                                    border: '1.5px solid rgba(212, 175, 55, 0.25)',
-                                                                    boxShadow: i === 1
-                                                                        ? '0 12px 30px rgba(0,0,0,0.5), 0 0 20px rgba(135, 95, 175, 0.15)'
-                                                                        : '0 8px 20px rgba(0,0,0,0.4)',
-                                                                }}>
-                                                                    <img
-                                                                        src={card.imageUrl}
-                                                                        alt={card.name_pt}
-                                                                        width={300}
-                                                                        height={520}
-                                                                        className="w-full h-full object-cover"
-                                                                        loading="lazy"
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-
-                                            {/* Divider */}
-                                            <div className="mx-5 h-[0.5px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(135, 95, 175, 0.2), transparent)' }}></div>
-
-                                            {/* Footer */}
-                                            <div className="px-5 pt-3 pb-4 text-center">
-                                                <div className="text-gradient-gold text-sm font-semibold tracking-wide" style={{ fontFamily: "'Crimson Text', serif" }}>
-                                                    Zaya Tarot
-                                                </div>
-                                                <div className="text-gray-300/60 text-[10px] tracking-widest uppercase mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                    A Carta do Dia
-                                                </div>
-                                            </div>
-
+                                            <video
+                                                src="/hero_vd.mp4"
+                                                autoPlay
+                                                loop
+                                                muted
+                                                playsInline
+                                                preload="auto"
+                                                className="w-full h-auto object-cover rounded-2xl"
+                                                ref={(el) => {
+                                                    if (el) {
+                                                        el.playbackRate = 0.75;
+                                                    }
+                                                }}
+                                            />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="hidden lg:flex flex-col gap-2.5 xl:gap-3 pt-[3.5rem] xl:pt-[4.35rem] ml-2 xl:ml-5 w-[240px] xl:w-[300px] 2xl:w-[320px]">
+                                <div className="hidden lg:flex flex-col gap-2.5 xl:gap-3 ml-2 xl:ml-5 w-[240px] xl:w-[300px] 2xl:w-[320px]">
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)] max-w-[220px] w-full sm:max-w-full">
                                         <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
                                         <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
@@ -1049,7 +954,7 @@ const Home = () => {
                 if (!hydrated) return null;
                 if (isMobile) {
                     // Exibe apenas o card central, grande, sem cartas de fundo
-                    const CARD_WIDTH = window.innerWidth < 640 ? Math.min(window.innerWidth - 32, 240) : 300; // mobile: ainda menor, tablet: menor
+                    const CARD_WIDTH = window.innerWidth < 640 ? Math.min(window.innerWidth - 48, 200) : 260; // mobile: menor, tablet: menor
                     const CARD_HEIGHT = Math.round(CARD_WIDTH * 1.5); // proporção 2:3
                     const video = videos[activeIndex];
                     return (
@@ -1102,17 +1007,19 @@ const Home = () => {
                                             width: '100%',
                                             height: '100%',
                                             overflow: 'hidden',
-                                            borderRadius: 'inherit',
+                                            borderRadius: '1rem',
                                             position: 'relative',
                                             ...(typeof window !== 'undefined' && window.innerWidth >= 1024
-                                                ? { aspectRatio: '2/1' } // levemente mais quadrado, ainda corta bastante
+                                                ? { aspectRatio: '2/1' }
                                                 : {}),
                                         }}
                                     >
-                                        <VideoCardOptimized
-                                            video={video.file}
-                                            poster={video.poster}
-                                        />
+                                        <div style={{ transform: 'scale(1.1)', transformOrigin: 'center top', width: '100%', height: '100%' }}>
+                                            <VideoCardOptimized
+                                                video={video.file}
+                                                poster={video.poster}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                                 <span className="text-gradient-gold text-xs font-semibold mt-2" style={{ fontFamily: "'Crimson Text', serif", letterSpacing: '0.01em', opacity: 0.85 }}>{isPortuguese ? video.name.pt : video.name.en}</span>
@@ -1682,7 +1589,7 @@ const Home = () => {
                 className="bg-[#110e1a]"
             />
             {/* Social Proof - Medieval Mystical Style */}
-            <section className="relative z-10 mt-0 px-4 md:px-6 py-24 md:py-32 bg-[#110e1a] overflow-hidden">
+            <section className="relative z-10 mt-0 px-4 md:px-6 py-24 md:py-32 bg-[#1a1628] overflow-hidden">
                 <div className="absolute top-[10%] left-[7%] w-[2px] h-[2px] rounded-full bg-white/28 pointer-events-none"></div>
                 <div className="absolute top-[18%] right-[10%] w-[1.5px] h-[1.5px] rounded-full bg-white/22 pointer-events-none"></div>
                 <div className="absolute bottom-[18%] left-[14%] w-[2px] h-[2px] rounded-full bg-white/20 pointer-events-none"></div>
@@ -6534,7 +6441,7 @@ const App = () => {
                                 <Route path="/charts-demo" element={<Suspense fallback={<RouteFallback />}><SideBySideExample /></Suspense>} />
                                 <Route path="/checkout" element={<Checkout />} />
                                 <Route path="/checkout/success" element={<CheckoutSuccess />} />
-                                <Route path="/ebook" element={<EbookLandingPage />} />
+                                <Route path="/ebook" element={<><Header /><EbookLandingPage /><Footer /></>} />
 
                                 {/* Settings - requer login */}
                                 <Route path="/settings" element={<ProtectedRoute requiredTier="authenticated"><Settings /></ProtectedRoute>} />

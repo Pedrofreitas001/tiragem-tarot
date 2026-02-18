@@ -1,4 +1,8 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePaywall } from '../components/PaywallModal';
+import { getEbookInfo } from '../services/ebookPdfService';
+import { generateEbookPdfDev1 } from '../services/ebookPdfServiceDev1';
 
 const IMG = (name: string) =>
   `https://images.weserv.nl/?url=sacred-texts.com/tarot/pkt/img/${name}`;
@@ -202,8 +206,38 @@ function StarDots() {
 // ─────────────────────────────────────────────
 export function EbookLandingPage() {
   const navigate = useNavigate();
+  const { isPremium } = usePaywall();
   const toPremium = () => navigate('/checkout');
   const toEbook   = () => navigate('/checkout');
+  const [zoomedImg, setZoomedImg] = React.useState<string | null>(null);
+  const [downloadingEbook, setDownloadingEbook] = React.useState(false);
+
+  const handleDownloadEbook = async () => {
+    try {
+      setDownloadingEbook(true);
+      const blob = await generateEbookPdfDev1(() => {});
+      const info = getEbookInfo();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = info.fileName;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading ebook:', err);
+    } finally {
+      setDownloadingEbook(false);
+    }
+  };
+
+  React.useEffect(() => {
+    if (zoomedImg) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [zoomedImg]);
 
   return (
     <div className="min-h-screen text-white overflow-x-hidden" style={{ fontFamily: "'Inter', sans-serif", background: '#1a1628' }}>
@@ -330,7 +364,7 @@ export function EbookLandingPage() {
             </div>
 
             {/* ── Right: 3D mockup (same as home) ── */}
-            <div className="relative flex justify-center mt-3 sm:mt-0 lg:justify-end lg:-translate-x-14 translate-y-16 sm:translate-y-12 md:translate-y-8 lg:translate-y-16 order-1 lg:order-2">
+            <div className="relative flex justify-center mt-0 mb-8 sm:mb-6 md:mb-4 lg:mb-0 lg:justify-end lg:-translate-x-14 translate-y-0 lg:translate-y-8 order-1 lg:order-2">
               <div className="ebook-lp-mockup w-[228px] sm:w-64 md:w-80 lg:w-96 relative ebook-lp-float overflow-hidden sm:overflow-visible pb-2 sm:pb-0">
                 <div className="absolute top-3 right-3 z-30 bg-red-600 text-white text-[10px] tracking-wide px-2.5 py-1 rounded-md shadow-lg">Ebook Exclusivo</div>
                 <div className="ebook-lp-cover aspect-[2/3] rounded-r-md border-l-2 sm:border-l-4 border-gray-900 relative overflow-hidden bg-gradient-to-b from-[#120724] via-[#1b0833] to-[#230b3f] mx-auto">
@@ -402,104 +436,124 @@ export function EbookLandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+          {/* Estrelas estáticas na seção */}
+          <div className="absolute top-[8%] left-[12%] w-[3px] h-[3px] rounded-full bg-white/60 pointer-events-none" />
+          <div className="absolute top-[15%] right-[18%] w-[2.5px] h-[2.5px] rounded-full bg-white/50 pointer-events-none" />
+          <div className="absolute top-[30%] left-[3%] w-[2px] h-[2px] rounded-full bg-white/55 pointer-events-none" />
+          <div className="absolute top-[45%] right-[5%] w-[3px] h-[3px] rounded-full bg-white/45 pointer-events-none" />
+          <div className="absolute top-[60%] left-[20%] w-[2.5px] h-[2.5px] rounded-full bg-white/50 pointer-events-none" />
+          <div className="absolute top-[75%] right-[12%] w-[2px] h-[2px] rounded-full bg-white/55 pointer-events-none" />
+          <div className="absolute top-[85%] left-[8%] w-[3px] h-[3px] rounded-full bg-white/40 pointer-events-none" />
+          <div className="absolute top-[22%] left-[50%] w-[2.5px] h-[2.5px] rounded-full bg-white/50 pointer-events-none" />
+          <div className="absolute top-[50%] right-[30%] w-[2px] h-[2px] rounded-full bg-white/55 pointer-events-none" />
+          <div className="absolute top-[68%] left-[40%] w-[3px] h-[3px] rounded-full bg-white/45 pointer-events-none" />
 
-            {/* ── Left: Features (same card style as home "Por que o Tarot?") ── */}
-            <div className="relative rounded-2xl overflow-hidden border border-[#d4af37]/35 bg-gradient-to-br from-[#2b1c3f]/90 via-[#1f1331]/90 to-[#2b1c3f]/90 shadow-[0_20px_42px_rgba(8,4,18,0.42)]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">
+
+            {/* ── Left: Features with subtle aesthetic icons ── */}
+            <div className="relative rounded-2xl overflow-hidden border border-[#d4af37]/35 bg-gradient-to-br from-[#1a1035] via-[#1f1331] to-[#2b1c3f] shadow-[0_20px_42px_rgba(8,4,18,0.5)]">
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/35 to-transparent" />
-              <span className="absolute left-3 top-2 text-[11px] text-[#d4af37]/75 pointer-events-none select-none">✦</span>
-              <span className="absolute right-3 top-2 text-[11px] text-[#d4af37]/55 pointer-events-none select-none">✦</span>
-              <span className="absolute left-3 bottom-2 text-[11px] text-[#d4af37]/55 pointer-events-none select-none">✦</span>
-              <span className="absolute right-3 bottom-2 text-[11px] text-[#d4af37]/75 pointer-events-none select-none">✦</span>
-              <div className="relative z-10 px-6 md:px-8 py-10 space-y-0">
+              <div className="absolute top-[10%] left-[5%] w-[2px] h-[2px] rounded-full bg-white/20 pointer-events-none" />
+              <div className="absolute top-[25%] right-[8%] w-[1.5px] h-[1.5px] rounded-full bg-white/15 pointer-events-none" />
+              <div className="absolute top-[50%] left-[3%] w-[1px] h-[1px] rounded-full bg-white/20 pointer-events-none" />
+              <div className="absolute top-[75%] right-[5%] w-[2px] h-[2px] rounded-full bg-white/12 pointer-events-none" />
+              <div className="absolute bottom-[15%] left-[8%] w-[1.5px] h-[1.5px] rounded-full bg-white/18 pointer-events-none" />
+              <div className="relative z-10 px-5 md:px-7 py-8 space-y-0 h-full flex flex-col justify-center">
                 {[
-                  { icon: 'psychology',  title: 'Os 22 Arquetipos em Profundidade',    desc: 'Teoria, simbolismo RWS, dimensão psicológica e integração na jornada — para cada um dos 22 Arcanos Maiores.' },
-                  { icon: 'edit_note',   title: 'Exercícios de Reflexão e Integração', desc: 'Perguntas profundas, afirmações arquetípicas e caminhos de incorporação. Sem rituais, sem esoterismo pesado.' },
-                  { icon: 'explore',     title: 'A Tiragem da Jornada do Herói',       desc: '7 posições que mapeiam a jornada presente: chamado, obstáculo, recurso, caminho, sombra, dom e horizonte.' },
-                  { icon: 'location_on', title: 'Localizando-se na Jornada',           desc: 'Método reflexivo para identificar em qual arquétipo você está vivendo agora — sem fórmulas, sem numerologia.' },
+                  { icon: '☽',  title: 'Os 22 Arquetipos em Profundidade',    desc: 'Teoria, simbolismo RWS, dimensão psicológica e integração na jornada — para cada um dos 22 Arcanos Maiores.' },
+                  { icon: '✧',  title: 'Exercícios de Reflexão e Integração', desc: 'Perguntas profundas, afirmações arquetípicas e caminhos de incorporação. Sem rituais, sem esoterismo pesado.' },
+                  { icon: '◈',  title: 'A Tiragem da Jornada do Herói',       desc: '7 posições que mapeiam a jornada presente: chamado, obstáculo, recurso, caminho, sombra, dom e horizonte.' },
+                  { icon: '⟡',  title: 'Localizando-se na Jornada',           desc: 'Método reflexivo para identificar em qual arquétipo você está vivendo agora — sem fórmulas, sem numerologia.' },
                 ].map((f, i, arr) => (
                   <div key={f.title}>
-                    <div className="flex gap-4 items-start py-6">
-                      <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/35 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-[#d4af37] text-sm">{f.icon}</span>
+                    <div className="flex gap-4 items-start py-5">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border border-[#d4af37]/25" style={{
+                        background: 'radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)',
+                      }}>
+                        <span className="text-[#d4af37]/70 text-lg leading-none">{f.icon}</span>
                       </div>
-                      <div>
-                        <h3 className="text-[#f3e6c3] font-semibold mb-1 leading-snug" style={{fontFamily:"'Crimson Text', serif", fontSize:'1.05rem'}}>{f.title}</h3>
-                        <p className="text-[#e6d8ba]/80 text-sm leading-relaxed font-light">{f.desc}</p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-[#f3e6c3] font-bold mb-1.5 leading-snug" style={{fontFamily:"'Crimson Text', serif", fontSize:'1.08rem'}}>{f.title}</h3>
+                        <p className="text-[#e6d8ba]/70 text-sm leading-relaxed font-light">{f.desc}</p>
                       </div>
                     </div>
                     {i < arr.length - 1 && (
-                      <div className="h-px mx-4" style={{background:'linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)'}} />
+                      <div className="h-px mx-2" style={{background:'linear-gradient(90deg, transparent, rgba(212,175,55,0.12), transparent)'}} />
                     )}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* ── Right: Condensed TOC ── */}
-            <div className="relative rounded-2xl overflow-hidden border border-[#d4af37]/25 bg-gradient-to-b from-[#2b1c3f]/80 via-[#1f1331]/80 to-[#2b1c3f]/80 shadow-[0_20px_42px_rgba(8,4,18,0.38)]">
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
-              <span className="absolute left-3 top-2 text-[11px] text-[#d4af37]/55 pointer-events-none select-none">✦</span>
-              <span className="absolute right-3 bottom-2 text-[11px] text-[#d4af37]/55 pointer-events-none select-none">✦</span>
+            {/* ── Right: Aged tarot-card style TOC ── */}
+            <div className="relative rounded-2xl overflow-hidden shadow-[0_20px_42px_rgba(8,4,18,0.5)]">
+              {/* Aged parchment background */}
+              <div className="absolute inset-0" style={{
+                background: 'linear-gradient(170deg, #d4bc8b 0%, #c4a870 15%, #b89a60 30%, #c9ad78 50%, #bfa068 70%, #d0b880 90%, #c8a86e 100%)',
+              }} />
+              {/* Noise / grain texture overlay */}
+              <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+                backgroundSize: '128px 128px',
+              }} />
+              {/* Deep vignette for aged look */}
+              <div className="absolute inset-0 pointer-events-none" style={{
+                boxShadow: 'inset 0 0 80px rgba(60, 30, 5, 0.4), inset 0 0 30px rgba(80, 50, 10, 0.2)',
+              }} />
+              {/* Burn marks / stain spots */}
+              <div className="absolute top-[8%] right-[10%] w-16 h-16 rounded-full bg-[#8a6830]/15 blur-xl pointer-events-none" />
+              <div className="absolute bottom-[12%] left-[8%] w-20 h-14 rounded-full bg-[#6b4f20]/12 blur-xl pointer-events-none" />
+              {/* Ornamental double border */}
+              <div className="absolute inset-3 border border-[#8a6830]/30 rounded-xl pointer-events-none" />
+              <div className="absolute inset-5 border border-[#8a6830]/15 rounded-lg pointer-events-none" />
+              {/* Corner ornaments */}
+              <span className="absolute left-6 top-4 text-[#7a5a28]/50 text-sm pointer-events-none select-none" style={{fontFamily:"serif"}}>❧</span>
+              <span className="absolute right-6 top-4 text-[#7a5a28]/50 text-sm pointer-events-none select-none rotate-180 inline-block" style={{fontFamily:"serif", transform:'scaleX(-1)'}}>❧</span>
+              <span className="absolute left-6 bottom-4 text-[#7a5a28]/50 text-sm pointer-events-none select-none" style={{fontFamily:"serif", transform:'scaleY(-1)'}}>❧</span>
+              <span className="absolute right-6 bottom-4 text-[#7a5a28]/50 text-sm pointer-events-none select-none" style={{fontFamily:"serif", transform:'scale(-1)'}}>❧</span>
 
-              <div className="relative z-10 px-6 py-8">
-                <h3 className="text-[#f3e6c3] font-semibold mb-1 tracking-wide" style={{fontFamily:"'Crimson Text', serif", fontSize:'1.1rem'}}>Índice do conteúdo</h3>
-                <p className="text-[#d8c8a0]/45 text-xs mb-6">53 páginas · PDF de alta qualidade</p>
+              <div className="relative z-10 px-8 md:px-10 py-8 h-full flex flex-col justify-center">
+                {/* Header with old-world style */}
+                <div className="text-center mb-5 pb-3" style={{ borderBottom: '1px solid rgba(100,70,25,0.3)' }}>
+                  <div className="text-[#6b4f2a]/40 text-[10px] tracking-[0.3em] uppercase mb-1">✦ ✦ ✦</div>
+                  <h3 className="font-bold tracking-wider text-[#3d2510]" style={{fontFamily:"'Crimson Text', serif", fontSize:'1.25rem', letterSpacing:'0.04em'}}>
+                    Índice do conteúdo
+                  </h3>
+                  <p className="text-[#6b4f2a]/60 text-[11px] mt-1 italic" style={{fontFamily:"'Crimson Text', serif"}}>— 53 páginas · PDF de alta qualidade —</p>
+                </div>
 
                 <div className="space-y-0">
                   {[
-                    { label: 'Capa',                                           pg: '1',      dim: false },
-                    { label: 'Este Livro Chegou até Você por uma Razão',       pg: '2',      dim: false },
-                    { label: 'Quatro Formas de Habitar Este Livro',            pg: '3',      dim: false },
-                    { label: 'Sumário',                                        pg: '4',      dim: false },
-                    { label: 'Os 22 Arcanos Maiores',                         pg: '5 – 48', dim: false, heading: true },
-                    { label: '  O Louco — O Chamado à Aventura',              pg: '5–6',    dim: true  },
-                    { label: '  O Mago — O Poder Pessoal',                    pg: '7–8',    dim: true  },
-                    { label: '  A Sacerdotisa — O Mistério Interior',         pg: '9–10',   dim: true  },
-                    { label: '  A Imperatriz — A Mãe Criadora',               pg: '11–12',  dim: true  },
-                    { label: '  O Imperador — A Estrutura do Poder',          pg: '13–14',  dim: true  },
-                    { label: '  O Hierofante — A Tradição Sagrada',           pg: '15–16',  dim: true  },
-                    { label: '  Os Amantes — A Escolha do Coração',           pg: '17–18',  dim: true  },
-                    { label: '  O Carro — A Vitória pela Vontade',            pg: '19–20',  dim: true  },
-                    { label: '  A Força — O Poder do Interior',               pg: '21–22',  dim: true  },
-                    { label: '  O Eremita — A Sabedoria Solitária',           pg: '23–24',  dim: true  },
-                    { label: '  A Roda da Fortuna — O Ciclo da Mudança',      pg: '25–26',  dim: true  },
-                    { label: '  A Justiça — O Equilíbrio das Ações',          pg: '27–28',  dim: true  },
-                    { label: '  O Enforcado — A Pausa Transformadora',        pg: '29–30',  dim: true  },
-                    { label: '  A Morte — A Grande Transformação',            pg: '31–32',  dim: true  },
-                    { label: '  A Temperança — A Arte do Equilíbrio',         pg: '33–34',  dim: true  },
-                    { label: '  O Diabo — As Correntes da Ilusão',            pg: '35–36',  dim: true  },
-                    { label: '  A Torre — A Ruptura Necessária',              pg: '37–38',  dim: true  },
-                    { label: '  A Estrela — A Esperança Renovada',            pg: '39–40',  dim: true  },
-                    { label: '  A Lua — As Profundezas do Inconsciente',      pg: '41–42',  dim: true  },
-                    { label: '  O Sol — A Alegria da Consciência',            pg: '43–44',  dim: true  },
-                    { label: '  O Julgamento — O Chamado ao Renascimento',    pg: '45–46',  dim: true  },
-                    { label: '  O Mundo — A Plenitude Integrada',             pg: '47–48',  dim: true  },
-                    { label: 'A Tiragem da Jornada do Herói',                 pg: '49',     dim: false },
-                    { label: 'Localizando-se na Jornada',                     pg: '50',     dim: false },
-                    { label: 'Tarot como Ferramenta de Consciência',          pg: '51',     dim: false },
-                    { label: 'Quando o Livro se Fecha',                       pg: '52',     dim: false },
-                    { label: 'O Mundo — E Além  (Conclusão)',                 pg: '53',     dim: false },
-                  ].map((item, i, arr) => (
+                    { label: 'Capa',                                           pg: '1' },
+                    { label: 'Este Livro Chegou até Você por uma Razão',       pg: '2' },
+                    { label: 'Quatro Formas de Habitar Este Livro',            pg: '3' },
+                    { label: 'Sumário',                                        pg: '4' },
+                    { label: 'Os 22 Arcanos Maiores',                         pg: '5 – 48' },
+                    { label: 'A Tiragem da Jornada do Herói',                 pg: '49' },
+                    { label: 'Localizando-se na Jornada',                     pg: '50' },
+                    { label: 'Tarot como Ferramenta de Consciência',          pg: '51' },
+                    { label: 'Quando o Livro se Fecha',                       pg: '52' },
+                    { label: 'O Mundo — E Além  (Conclusão)',                 pg: '53' },
+                  ].map((item, i) => (
                     <div
                       key={i}
-                      className={[
-                        'flex items-start justify-between py-1.5 gap-2',
-                        i < arr.length - 1 ? 'border-b border-[#d4af37]/8' : '',
-                        (item as any).heading ? 'pt-3' : '',
-                      ].join(' ')}
+                      className="flex items-baseline gap-1 py-[6px]"
                     >
-                      <span className={[
-                        'text-xs leading-snug flex-1 min-w-0',
-                        (item as any).heading ? 'text-[#f3e6c3] font-semibold' : item.dim ? 'text-[#d8c8a0]/40 text-[11px]' : 'text-[#d8c8a0]/75',
-                      ].join(' ')}>
+                      <span className="text-[#3d2510] text-[13px] leading-snug flex-shrink-0" style={{fontFamily:"'Crimson Text', serif"}}>
                         {item.label}
                       </span>
-                      <span className="text-[#d4af37]/35 text-[10px] flex-shrink-0 font-mono tabular-nums">{item.pg}</span>
+                      <span className="flex-1 min-w-[16px] translate-y-[-3px]" style={{
+                        borderBottom: '1px dotted rgba(100,70,25,0.35)',
+                      }} />
+                      <span className="text-[#5a3d18] text-[13px] flex-shrink-0 font-bold tabular-nums" style={{fontFamily:"'Crimson Text', serif"}}>{item.pg}</span>
                     </div>
                   ))}
+                </div>
+
+                {/* Bottom ornament */}
+                <div className="text-center mt-5 pt-3" style={{ borderTop: '1px solid rgba(100,70,25,0.2)' }}>
+                  <span className="text-[#7a5a28]/35 text-xs tracking-[0.4em]">⟡ ⟡ ⟡</span>
                 </div>
               </div>
             </div>
@@ -508,154 +562,268 @@ export function EbookLandingPage() {
       </section>
 
       {/* ══════════════════════════════════════
-          DENTRO DO E-BOOK (page previews)
+          DENTRO DO E-BOOK (carousel gallery)
       ══════════════════════════════════════ */}
-      <section className="relative z-10 py-20 px-4 md:px-6 bg-[#1a1628] overflow-hidden">
-        <div className="absolute -right-40 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-bl from-purple-600/10 to-transparent blur-3xl pointer-events-none" />
-        <div className="absolute -left-20 bottom-0 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-purple-700/8 to-transparent blur-3xl pointer-events-none" />
-        {/* stars */}
-        <div className="absolute top-[15%] left-[10%]  w-[2px] h-[2px] rounded-full bg-white/25 pointer-events-none" />
-        <div className="absolute top-[25%] right-[8%]  w-[1.5px] h-[1.5px] rounded-full bg-white/20 pointer-events-none" />
-        <div className="absolute top-[65%] left-[6%]   w-[1px]  h-[1px]  rounded-full bg-white/28 pointer-events-none" />
-        <div className="absolute top-[75%] right-[20%] w-[2px] h-[2px] rounded-full bg-white/18 pointer-events-none" />
+      {(() => {
+        const ebookPages = [
+          { src: '/images/pdfs/pdf_3.jpg', label: 'Teoria do Arcano' },
+          { src: '/images/pdfs/pdf_1.jpg', label: 'Reflexão e Integração' },
+          { src: '/images/pdfs/pdf_2.jpg', label: 'Tiragem da Jornada' },
+          { src: '/images/pdfs/pdf_4.jpg', label: 'Conclusão' },
+        ];
+        const [pageIndex, setPageIndex] = React.useState(0);
+        const getPos = (idx: number) => {
+          const total = ebookPages.length;
+          let diff = idx - pageIndex;
+          if (diff > total / 2) diff -= total;
+          if (diff < -total / 2) diff += total;
+          return diff;
+        };
+        return (
+          <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-[#211d34] overflow-hidden">
+            <div className="absolute -right-40 top-0 w-[600px] h-[600px] rounded-full bg-gradient-to-bl from-purple-600/12 to-transparent blur-3xl pointer-events-none" />
+            <div className="absolute -left-20 bottom-0 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-purple-700/10 to-transparent blur-3xl pointer-events-none" />
+            {/* Dense stars */}
+            <div className="absolute inset-0 opacity-50 z-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.3) 0.8px, transparent 0.8px)', backgroundSize: '90px 90px' }} />
+            <div className="absolute top-[10%] left-[8%] w-[3px] h-[3px] rounded-full bg-white/50 pointer-events-none" />
+            <div className="absolute top-[20%] right-[12%] w-[2px] h-[2px] rounded-full bg-white/40 pointer-events-none" />
+            <div className="absolute top-[45%] left-[5%] w-[2.5px] h-[2.5px] rounded-full bg-white/45 pointer-events-none" />
+            <div className="absolute top-[65%] right-[8%] w-[2px] h-[2px] rounded-full bg-white/35 pointer-events-none" />
+            <div className="absolute top-[80%] left-[15%] w-[3px] h-[3px] rounded-full bg-white/40 pointer-events-none" />
+            <div className="absolute top-[35%] right-[25%] w-[2px] h-[2px] rounded-full bg-white/30 pointer-events-none" />
 
-        <div className="max-w-5xl mx-auto relative z-10">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal text-gradient-gold tracking-tight leading-tight mb-4" style={{fontFamily:"'Crimson Text', serif"}}>
-              Dentro do e-book
-            </h2>
-            <p className="text-gray-400 text-base max-w-md mx-auto font-light leading-relaxed">
-              Um design pensado para imersão — cada página como um convite à reflexão silenciosa.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {[
-              { component: <PagePreviewTheory />,     label: 'Teoria do Arcano' },
-              { component: <PagePreviewReflection />, label: 'Reflexão e Integração' },
-              { component: <PagePreviewSpread />,     label: 'Tiragem da Jornada' },
-              { component: <PagePreviewConclusion />, label: 'Conclusão' },
-            ].map(({ component, label }) => (
-              <div key={label}>
-                {component}
-                <p className="text-center text-gray-500 text-xs mt-2.5 tracking-wide">{label}</p>
+            <div className="max-w-5xl mx-auto relative z-10">
+              <div className="text-center mb-14 md:mb-20">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal text-gradient-gold tracking-tight leading-tight mb-4" style={{fontFamily:"'Crimson Text', serif"}}>
+                  Dentro do e-book
+                </h2>
+                <p className="text-gray-400 text-base max-w-md mx-auto font-light leading-relaxed">
+                  Um design pensado para imersão — cada página como um convite à reflexão silenciosa.
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
+              <div className="relative">
+                <div className="absolute -left-32 top-0 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-purple-500/15 to-transparent blur-3xl pointer-events-none" />
+                <div className="absolute -right-24 top-16 w-[400px] h-[400px] rounded-full bg-gradient-to-bl from-pink-500/10 to-transparent blur-3xl pointer-events-none" />
+
+                <div className="relative z-10 max-w-[920px] mx-auto">
+                  {/* Navigation arrows */}
+                  <div className="flex items-center justify-between mb-4 px-1">
+                    <button
+                      type="button"
+                      onClick={() => setPageIndex(p => (p - 1 + ebookPages.length) % ebookPages.length)}
+                      className="w-10 h-10 rounded-full border border-yellow-500/40 bg-[#120a20]/80 text-yellow-300 inline-flex items-center justify-center hover:bg-[#1a102e] transition-colors"
+                      aria-label="Página anterior"
+                    >
+                      <span className="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <p className="text-xs text-gray-300/90">
+                      Navegue pelas páginas
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setPageIndex(p => (p + 1) % ebookPages.length)}
+                      className="w-10 h-10 rounded-full border border-yellow-500/40 bg-[#120a20]/80 text-yellow-300 inline-flex items-center justify-center hover:bg-[#1a102e] transition-colors"
+                      aria-label="Próxima página"
+                    >
+                      <span className="material-symbols-outlined">chevron_right</span>
+                    </button>
+                  </div>
+
+                  {/* Carousel */}
+                  <div className="relative h-[380px] sm:h-[440px] md:h-[520px] overflow-hidden">
+                    {ebookPages.map((page, idx) => {
+                      const pos = getPos(idx);
+                      const isCenter = pos === 0;
+                      const isSide = Math.abs(pos) === 1;
+                      const translatePct = pos * 44;
+                      const scale = isCenter ? 1 : isSide ? 0.78 : 0.6;
+                      const opacity = isCenter ? 1 : isSide ? 0.5 : 0;
+                      const z = isCenter ? 30 : isSide ? 20 : 10;
+
+                      return (
+                        <div
+                          key={`ebook-page-${idx}`}
+                          className="absolute left-1/2 top-1/2 w-[240px] sm:w-[280px] md:w-[340px] transition-all duration-500 ease-out"
+                          style={{
+                            transform: `translate(-50%, -50%) translateX(${translatePct}%) scale(${scale})`,
+                            opacity,
+                            zIndex: z,
+                            filter: isCenter ? 'none' : 'saturate(0.7) brightness(0.7)',
+                          }}
+                        >
+                          <div
+                            className={isCenter ? 'cursor-zoom-in' : 'cursor-pointer'}
+                            onClick={() => {
+                              if (isCenter) {
+                                setZoomedImg(page.src);
+                              } else {
+                                setPageIndex(idx);
+                              }
+                            }}
+                          >
+                            <div className="relative rounded-xl overflow-hidden border border-[#d4af37]/30 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                              <img
+                                src={page.src}
+                                alt={page.label}
+                                className="w-full h-auto object-cover"
+                                loading="lazy"
+                              />
+                            </div>
+                            {isCenter && (
+                              <p className="text-center text-gray-300 text-sm mt-4 tracking-wide font-medium" style={{fontFamily:"'Crimson Text', serif"}}>
+                                {page.label}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Dot indicators */}
+                  <div className="flex items-center justify-center gap-2 mt-4">
+                    {ebookPages.map((_, idx) => (
+                      <button
+                        key={`dot-${idx}`}
+                        onClick={() => setPageIndex(idx)}
+                        className={`rounded-full transition-all duration-300 ${idx === pageIndex ? 'w-6 h-2 bg-[#d4af37]' : 'w-2 h-2 bg-white/20 hover:bg-white/40'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Lightbox zoom */}
+            {zoomedImg && (
+              <div
+                className="fixed inset-0 z-[9999] bg-black/85 flex items-center justify-center cursor-zoom-out p-4"
+                onClick={() => setZoomedImg(null)}
+              >
+                <img
+                  src={zoomedImg}
+                  alt="Preview ampliado"
+                  className="max-w-full max-h-[90vh] rounded-2xl shadow-2xl border border-[#d4af37]/30"
+                />
+              </div>
+            )}
+          </section>
+        );
+      })()}
 
       {/* ══════════════════════════════════════
-          PRICING — exact same style as home "Escolha seu plano"
+          PRICING — Clean & Sophisticated
       ══════════════════════════════════════ */}
-      <section className="relative z-10 py-20 md:py-24 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
-        <div className="absolute -left-28 top-10 w-[440px] h-[440px] rounded-full bg-gradient-to-br from-purple-500/14 to-transparent blur-3xl pointer-events-none" />
-        <div className="absolute -right-20 bottom-8 w-[420px] h-[420px] rounded-full bg-gradient-to-bl from-yellow-500/10 to-transparent blur-3xl pointer-events-none" />
-        {/* stars */}
-        <div className="absolute top-[10%] left-[7%]   w-[2px] h-[2px] rounded-full bg-white/28 pointer-events-none" />
-        <div className="absolute top-[18%] right-[10%] w-[1.5px] h-[1.5px] rounded-full bg-white/22 pointer-events-none" />
-        <div className="absolute top-[50%] left-[3%]   w-[2px] h-[2px] rounded-full bg-white/20 pointer-events-none" />
-        <div className="absolute top-[60%] right-[5%]  w-[1px]  h-[1px]  rounded-full bg-white/26 pointer-events-none" />
-        <div className="absolute bottom-[18%] left-[14%] w-[2px] h-[2px] rounded-full bg-white/20 pointer-events-none" />
-        <div className="absolute bottom-[24%] right-[16%] w-[1px] h-[1px] rounded-full bg-white/26 pointer-events-none" />
+      <section className="relative z-10 py-24 md:py-32 px-4 md:px-6 bg-[#0f0c18] overflow-hidden">
+        {/* Minimal ambient glow */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-purple-900/8 blur-[100px] pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="text-center mb-10 md:mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal text-gradient-gold tracking-tight leading-tight" style={{fontFamily:"'Crimson Text', serif"}}>
+        <div className="max-w-3xl mx-auto relative z-10">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <p className="text-[#d4af37]/60 text-[11px] uppercase tracking-[0.25em] mb-4">Acesso</p>
+            <h2 className="text-3xl md:text-4xl font-normal text-white tracking-tight leading-tight mb-3" style={{fontFamily:"'Crimson Text', serif"}}>
               Duas formas de acessar
             </h2>
-            <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto mt-4 font-light">
-              Escolha o que faz mais sentido para sua jornada agora e avance para o checkout quando estiver pronto.
-            </p>
+            <div className="w-12 h-px bg-[#d4af37]/30 mx-auto" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+          {/* Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
+
             {/* ── Ebook avulso ── */}
-            <article
-              className="rounded-2xl border border-yellow-500/25 bg-gradient-to-b from-[#221637] to-[#170f26] hover:border-yellow-500/45 p-6 md:p-7 transition-all cursor-pointer"
+            <div
+              className="group relative rounded-xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-6 transition-all duration-300 hover:border-[#d4af37]/20 hover:bg-white/[0.04] cursor-pointer flex flex-col"
               onClick={toEbook}
             >
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-white text-2xl font-bold" style={{fontFamily:"'Crimson Text', serif"}}>E-book</h3>
-                <span className="px-2.5 py-1 rounded-full bg-yellow-500/12 border border-yellow-500/28 text-yellow-300 text-xs uppercase tracking-wide">
-                  R$ 24,90
-                </span>
+              <div className="mb-4">
+                <h3 className="text-white text-lg font-medium tracking-tight" style={{fontFamily:"'Crimson Text', serif"}}>E-book Avulso</h3>
+                <p className="text-gray-500 text-xs mt-0.5">Acesso vitalício · Download imediato</p>
+                <div className="mt-3">
+                  <span className="text-white text-2xl font-light" style={{fontFamily:"'Crimson Text', serif"}}>R$ 24,90</span>
+                  <span className="text-gray-600 text-[10px] ml-1.5">pagamento único</span>
+                </div>
               </div>
-              <p className="text-gray-400 text-sm mb-5 font-light leading-relaxed">
-                Jornada do Herói · acesso vitalício · download imediato
-              </p>
-              <ul className="space-y-3 text-sm mb-8">
+
+              <div className="h-px bg-white/[0.05] my-3" />
+
+              <div className="space-y-2 mb-5 flex-1">
                 {[
-                  '53 páginas em PDF de alta qualidade',
-                  '22 arquetipos com teoria profunda',
-                  '22 páginas de reflexão e exercícios',
-                  'A Tiragem da Jornada do Herói',
+                  '53 páginas em PDF',
+                  '22 arquetipos',
+                  '22 exercícios de reflexão',
+                  'Tiragem da Jornada do Herói',
                   'Localizando-se na Jornada',
-                  'Tarot como ferramenta de consciência',
+                  'Tarot como consciência',
                 ].map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-gray-300">
-                    <span className="material-symbols-outlined text-yellow-400 text-base mt-0.5">check_circle</span>
-                    <span>{item}</span>
-                  </li>
+                  <div key={idx} className="flex items-center gap-1.5">
+                    <div className="w-1 h-1 rounded-full bg-[#d4af37]/40 flex-shrink-0" />
+                    <span className="text-gray-400 text-[11px]">{item}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
+
               <button
-                onClick={toEbook}
-                className="w-full py-3.5 bg-gradient-to-r from-[#ffe066] to-[#ffd700] text-black rounded-xl font-bold hover:shadow-lg hover:shadow-[#ffe066]/30 transition-all text-sm flex items-center justify-center gap-2"
+                onClick={(e) => { e.stopPropagation(); toEbook(); }}
+                className="w-full py-2.5 border border-[#d4af37]/25 rounded-lg text-[#d4af37] text-xs font-medium tracking-wide transition-all hover:bg-[#d4af37]/10 hover:border-[#d4af37]/40 flex items-center justify-center gap-2"
               >
-                <span className="material-symbols-outlined text-base">download</span>
-                Comprar E-book · R$ 24,90
+                <span className="material-symbols-outlined text-sm">download</span>
+                Comprar E-book
               </button>
-            </article>
+            </div>
 
             {/* ── Premium ── */}
-            <article
-              className="rounded-2xl border border-yellow-500/60 bg-gradient-to-b from-[#2c1f0f] via-[#1f1630] to-[#140f1f] shadow-[0_0_34px_rgba(212,175,55,0.24)] p-6 md:p-7 transition-all cursor-pointer"
+            <div
+              className="group relative rounded-xl border border-[#d4af37]/15 bg-gradient-to-b from-[#d4af37]/[0.03] to-transparent p-6 transition-all duration-300 hover:border-[#d4af37]/30 cursor-pointer flex flex-col"
               onClick={toPremium}
             >
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-white text-2xl font-bold" style={{fontFamily:"'Crimson Text', serif"}}>Plano Premium</h3>
-                <span className="px-2.5 py-1 rounded-full bg-yellow-500/15 border border-yellow-500/35 text-yellow-300 text-xs uppercase tracking-wide">
-                  Premium
-                </span>
+              {/* Recommended tag */}
+              <div className="absolute -top-3 left-6 px-3 py-0.5 bg-[#d4af37] rounded-full">
+                <span className="text-[#0f0c18] text-[9px] font-bold uppercase tracking-[0.15em]">Recomendado</span>
               </div>
-              <p className="text-gray-400 text-sm mb-5 font-light leading-relaxed">
-                R$ 19,90/mês · cancele quando quiser
-              </p>
-              <ul className="space-y-3 text-sm mb-8">
+
+              <div className="mb-4 mt-1">
+                <h3 className="text-white text-lg font-medium tracking-tight" style={{fontFamily:"'Crimson Text', serif"}}>Plano Premium</h3>
+                <p className="text-gray-500 text-xs mt-0.5">Tudo do e-book + plataforma completa</p>
+                <div className="mt-3">
+                  <span className="text-white text-2xl font-light" style={{fontFamily:"'Crimson Text', serif"}}>R$ 19,90</span>
+                  <span className="text-gray-600 text-[10px] ml-1.5">/mês · cancele quando quiser</span>
+                </div>
+              </div>
+
+              <div className="h-px bg-white/[0.05] my-3" />
+
+              <div className="space-y-2 mb-5 flex-1">
                 {[
-                  'Ebook Jornada do Herói incluso',
-                  'Tiragens personalizadas com IA',
+                  'E-book incluso',
+                  'Tiragens com IA',
                   'Carta do Dia no WhatsApp',
-                  'Arquivo Arcano — todas as 78 cartas',
-                  'Histórico da sua jornada',
+                  'Arquivo Arcano · 78 cartas',
+                  'Histórico da jornada',
                   'Novos conteúdos mensais',
                 ].map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-gray-200">
-                    <span className="material-symbols-outlined text-yellow-400 text-base mt-0.5">check_circle</span>
-                    <span>{item}</span>
-                  </li>
+                  <div key={idx} className="flex items-center gap-1.5">
+                    <div className="w-1 h-1 rounded-full bg-[#d4af37]/60 flex-shrink-0" />
+                    <span className="text-gray-300 text-[11px]">{item}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
+
               <button
-                onClick={toPremium}
-                className="w-full py-3.5 bg-gradient-to-r from-[#ffe066] to-[#ffd700] text-black rounded-xl font-bold hover:shadow-lg hover:shadow-[#ffe066]/40 transition-all text-sm flex items-center justify-center gap-2"
+                onClick={(e) => { e.stopPropagation(); isPremium ? handleDownloadEbook() : toPremium(); }}
+                disabled={downloadingEbook}
+                className="w-full py-2.5 bg-[#d4af37] rounded-lg text-[#0f0c18] text-xs font-bold tracking-wide transition-all hover:bg-[#e0bf4a] hover:shadow-[0_0_20px_rgba(212,175,55,0.2)] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-wait"
               >
-                <span className="material-symbols-outlined text-base">arrow_forward</span>
-                Assinar Premium · R$ 19,90/mês
+                {isPremium ? (downloadingEbook ? 'Gerando download...' : 'Baixar E-book') : 'Assinar Premium'}
+                <span className="material-symbols-outlined text-sm">{isPremium ? 'download' : 'arrow_forward'}</span>
               </button>
-            </article>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── footer mini ── */}
-      <div className="py-8 px-4 text-center border-t border-white/5 bg-[#0e0b18]">
-        <p className="text-gray-600 text-xs">
-          <span className="text-gradient-gold font-medium" style={{fontFamily:"'Crimson Text', serif"}}>Zaya Tarot</span>
-          {' '}· Sabedoria ancestral para o caminho moderno
-        </p>
-      </div>
     </div>
   );
 }
