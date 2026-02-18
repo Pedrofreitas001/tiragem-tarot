@@ -2975,7 +2975,7 @@ const ReadingModal = ({
                                                 />
                                             </div>
                                             <p className="text-center text-[10px] text-primary font-bold uppercase mt-2 truncate max-w-[100px]">
-                                                {reading.positions?.[idx] || `${isPortuguese ? 'Posicao' : 'Position'} ${idx + 1}`}
+                                                {isPortuguese ? (reading.positionsPt?.[idx] || reading.positions?.[idx] || `Posição ${idx + 1}`) : (reading.positions?.[idx] || `Position ${idx + 1}`)}
                                             </p>
                                             <p className="text-center text-xs text-white font-medium truncate max-w-[100px]">
                                                 {card ? getCardName(card.id, isPortuguese) : (reading.cardNames?.[idx] || `${isPortuguese ? 'Carta' : 'Card'} ${idx + 1}`)}
@@ -4807,6 +4807,7 @@ const Result = () => {
                     previewCards: state.cards.map((c: TarotCard) => c.imageUrl),
                     cardNames: state.cards.map((c: TarotCard) => c.name),
                     positions: state.spread.positions.map((p: any) => p.name),
+                    positionsPt: state.spread.positions.map((p: any) => (p as any).name_pt || p.name),
                     notes: rawSynthesis ? JSON.stringify(rawSynthesis) : '',
                     comment: '',
                     rating: 0
