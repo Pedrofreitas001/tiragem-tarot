@@ -821,12 +821,6 @@ const Home = () => {
                                     <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">history</span>
                                     <span>{isPortuguese ? 'Historico da sua jornada' : 'Your journey history'}</span>
                                 </div>
-                                <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
-                                    <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">auto_awesome</span>
-                                    <span>{isPortuguese ? 'Interpretacao completa' : 'Complete interpretation'}</span>
-                                </div>
                                 <div className="sm:col-span-2 justify-self-center relative flex items-center gap-2.5 text-[#f3e6c3] text-sm w-full sm:w-auto sm:min-w-[220px] justify-center px-3 py-2 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
                                     <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
                                     <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
@@ -840,8 +834,8 @@ const Home = () => {
                         <div className="flex flex-col items-center justify-center md:justify-center lg:justify-start order-1 lg:order-2 pr-0 lg:pr-2 gap-2 -mt-6 lg:-mt-10">
                             <div className="w-full flex items-center justify-center lg:justify-end gap-3 lg:gap-4 xl:gap-6 lg:-translate-x-10 xl:translate-x-6 2xl:translate-x-16">
                                 <div className="flex flex-col items-center">
-                                    <div className="hero-daily-card relative w-[250px] sm:w-[265px] md:w-[320px] lg:w-[300px] xl:w-[360px] 2xl:w-[380px]">
-                                        <div className="relative rounded-2xl overflow-hidden" style={{
+                                    <div className="hero-daily-card relative w-[250px] sm:w-[265px] md:w-[320px] lg:w-[300px] xl:w-[360px] 2xl:w-[380px] aspect-square">
+                                        <div className="relative rounded-full overflow-hidden w-full h-full" style={{
                                             boxShadow: '0 30px 60px -15px rgba(0,0,0,0.6), 0 0 40px rgba(100, 60, 160, 0.2)',
                                             border: '1.5px solid rgba(212, 175, 55, 0.3)',
                                             background: 'linear-gradient(180deg, #2a1240 0%, #3d2563 40%, #251d3a 100%)',
@@ -853,7 +847,7 @@ const Home = () => {
                                                 muted
                                                 playsInline
                                                 preload="auto"
-                                                className="w-full h-auto object-cover rounded-2xl"
+                                                className="w-full h-full object-cover"
                                                 ref={(el) => {
                                                     if (el) {
                                                         el.playbackRate = 0.75;
@@ -882,12 +876,6 @@ const Home = () => {
                                         <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
                                         <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">history</span>
                                         <span className="whitespace-nowrap">{isPortuguese ? 'Historico da sua jornada' : 'Your journey history'}</span>
-                                    </div>
-                                    <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)] max-w-xs w-full sm:max-w-full">
-                                        <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
-                                        <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
-                                        <span className="material-symbols-outlined text-[#d4af37] text-base flex-shrink-0">auto_awesome</span>
-                                        <span className="whitespace-nowrap">{isPortuguese ? 'Interpretacao completa' : 'Complete interpretation'}</span>
                                     </div>
                                     <div className="relative flex items-center gap-2.5 text-[#f3e6c3] text-sm justify-start px-4 py-2.5 rounded-md bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 shadow-[0_8px_24px_rgba(8,4,18,0.35)] max-w-xs w-full sm:max-w-full">
                                         <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/75">✦</span>
@@ -1672,218 +1660,6 @@ const Home = () => {
                     )}
                 </div>
             </section>
-            {/* Features Presentation Section */}
-            <section className="relative z-10 pt-20 md:pt-32 pb-28 md:pb-40 px-4 md:px-6 bg-[#1a1628] overflow-hidden">
-                {/* Decorative Stars */}
-                <div className="absolute inset-0 pointer-events-none">
-                    {/* Around Image - Top */}
-                    <div className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-50" style={{ top: '24%', left: '25%' }}></div>
-                    <div className="absolute w-1.5 h-1.5 bg-yellow-300 rounded-full opacity-45" style={{ top: '26%', left: '30%' }}></div>
-                    <div className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-60" style={{ top: '22%', left: '35%' }}></div>
-
-                    {/* Around Image - Bottom */}
-                    <div className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-55" style={{ top: '62%', left: '26%' }}></div>
-                    <div className="absolute w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-40" style={{ top: '65%', left: '32%' }}></div>
-                    <div className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-50" style={{ top: '60%', left: '38%' }}></div>
-                    <div className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-60" style={{ top: '68%', left: '25%' }}></div>
-                    <div className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-50" style={{ top: '70%', left: '31%' }}></div>
-                    <div className="absolute w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-45" style={{ top: '72%', left: '36%' }}></div>
-                    <div className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-55" style={{ top: '76%', left: '28%' }}></div>
-                    <div className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-50" style={{ top: '78%', left: '33%' }}></div>
-                    <div className="absolute w-1.5 h-1.5 bg-yellow-300 rounded-full opacity-40" style={{ top: '80%', left: '27%' }}></div>
-                    <div className="absolute w-1 h-1 bg-yellow-400 rounded-full opacity-60" style={{ top: '84%', left: '30%' }}></div>
-                    <div className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-50" style={{ top: '86%', left: '35%' }}></div>
-                    <div className="absolute w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-45" style={{ top: '88%', left: '26%' }}></div>
-                </div>
-                <div className="max-w-[1400px] mx-auto relative z-10">
-                    {/* Header - Above Grid */}
-                    <header className="space-y-4 mb-6 lg:mb-8 md:text-left px-2">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gradient-gold tracking-tight leading-tight" style={{ fontFamily: "'Crimson Text', serif" }}>
-                            {isPortuguese ? 'Descubra o Poder do Tarot' : 'Discover the Power of Tarot'}
-                        </h2>
-                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
-                            {isPortuguese
-                                ? 'Uma experiencia completa de autoconhecimento com tecnologia e sabedoria ancestral'
-                                : 'A complete self-discovery experience with technology and ancestral wisdom'}
-                        </p>
-                    </header>
-
-                    {/* Main Grid Layout */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-16 items-start">
-
-                        {/* LEFT COLUMN - Banner Image */}
-                        <div className="flex justify-center items-center order-1 lg:order-1 min-h-[450px] lg:min-h-[520px] mt-6 md:mt-8 lg:mt-16 -translate-y-4 md:-translate-y-6 lg:-translate-y-10 relative overflow-visible mb-10 md:mb-16 lg:mb-0">
-                            {/* Cosmic Flame Background - Golden */}
-                            <div className="absolute inset-0 flex justify-center items-center pointer-events-none -inset-20">
-                                <div className="absolute w-[300px] lg:w-[480px] h-[300px] lg:h-[480px] bg-gradient-to-r from-yellow-600/30 via-amber-500/25 to-yellow-400/15 rounded-full blur-3xl" style={{ marginTop: '80px' }}></div>
-                                <div className="absolute w-[200px] lg:w-[320px] h-[200px] lg:h-[320px] bg-gradient-to-t from-amber-500/25 via-yellow-500/15 to-transparent rounded-full blur-2xl" style={{ marginTop: '100px' }}></div>
-                            </div>
-                            <div className="w-full max-w-2xl relative z-10">
-                                <div className="border-2 border-yellow-500 rounded-lg overflow-hidden">
-                                    <img
-                                        src="/banner_1.png"
-                                        alt="Tarot Banner"
-                                        width={1600}
-                                        height={900}
-                                        className="w-full h-auto object-contain"
-                                        loading="lazy"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* RIGHT COLUMN - Content */}
-                        <div className="flex flex-col space-y-8 order-2 lg:order-2 mt-16 md:mt-8 lg:mt-16 -translate-y-24 md:-translate-y-4 lg:translate-y-0">
-                            {/* Features Grid - 2 columns */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
-                                    <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">all_inclusive</span>
-                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Tiragens Ilimitadas' : 'Unlimited Readings'}
-                                        </h3>
-                                    </div>
-                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? 'Realize quantas tiragens desejar, sem restricoes'
-                                            : 'Perform as many readings as you wish'}
-                                    </p>
-                                </div>
-
-                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
-                                    <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">psychology</span>
-                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Sintese com IA' : 'AI Synthesis'}
-                                        </h3>
-                                    </div>
-                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? 'Interpretacoes profundas com IA avancada'
-                                            : 'Deep interpretations with advanced AI'}
-                                    </p>
-                                </div>
-
-                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
-                                    <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">collections_bookmark</span>
-                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Biblioteca Completa' : 'Complete Library'}
-                                        </h3>
-                                    </div>
-                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? '78 cartas com ilustracoes originais'
-                                            : '78 cards with original illustrations'}
-                                    </p>
-                                </div>
-
-                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
-                                    <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">chat</span>
-                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Carta do Dia' : 'Daily Card'}
-                                        </h3>
-                                    </div>
-                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? 'Mensagens no WhatsApp diariamente'
-                                            : 'Daily WhatsApp messages'}
-                                    </p>
-                                </div>
-
-                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
-                                    <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">history</span>
-                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Historico' : 'History'}
-                                        </h3>
-                                    </div>
-                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? 'Acompanhe sua jornada espiritual'
-                                            : 'Track your spiritual journey'}
-                                    </p>
-                                </div>
-
-                                <div className="relative bg-gradient-to-r from-[#2b1c3f]/90 via-[#1e1330]/90 to-[#2b1c3f]/90 border border-[#d4af37]/35 rounded-xl p-5 flex flex-col shadow-[0_8px_24px_rgba(8,4,18,0.35)]">
-                                    <span className="absolute left-2 top-1 text-[10px] text-[#d4af37]/70">✦</span>
-                                    <span className="absolute right-2 bottom-1 text-[10px] text-[#d4af37]/55">✦</span>
-                                    <div className="flex items-start gap-3 mb-3">
-                                        <span className="material-symbols-outlined text-[#d4af37] text-lg flex-shrink-0">diamond</span>
-                                        <h3 className="text-[#f3e6c3] text-sm font-bold tracking-wider uppercase" style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.1em' }}>
-                                            {isPortuguese ? 'Premium' : 'Premium'}
-                                        </h3>
-                                    </div>
-                                    <p className="text-[#e4d7be]/90 text-sm leading-relaxed font-light">
-                                        {isPortuguese
-                                            ? 'Recursos exclusivos e premium'
-                                            : 'Exclusive premium features'}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* CTA Buttons */}
-                            <div className="flex flex-col gap-6 pt-4 w-full">
-                                <button
-                                    onClick={() => { navigate('/spreads'); window.scrollTo(0, 0); }}
-                                    className="group relative w-full px-8 py-3.5 bg-purple-600 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(123,82,171,0.3)] transition-all hover:shadow-[0_0_30px_rgba(123,82,171,0.6)] hover:-translate-y-1"
-                                >
-                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
-                                    <span className="relative z-10 text-white font-bold tracking-wide flex items-center justify-center gap-2 text-sm">
-                                        {isPortuguese ? 'Acessar o Tarot' : 'Access Tarot'}
-                                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                                    </span>
-                                </button>
-                                {isGuest && (
-                                    <button
-                                        onClick={() => { setAuthModalMode('register'); setShowAuthModal(true); }}
-                                        className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
-                                    >
-                                        <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
-                                            {isPortuguese ? 'Criar Conta' : 'Create Account'}
-                                            <span className="material-symbols-outlined text-sm">person_add</span>
-                                        </span>
-                                    </button>
-                                )}
-                                {!isGuest && tier === 'free' && (
-                                    <button
-                                        onClick={() => navigate('/checkout')}
-                                        className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
-                                    >
-                                        <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
-                                            {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
-                                            <span className="material-symbols-outlined text-sm">star</span>
-                                        </span>
-                                    </button>
-                                )}
-                                {!isGuest && tier !== 'free' && (
-                                    <button
-                                        onClick={() => { navigate('/'); window.scrollTo(0, 0); }}
-                                        className="group w-full px-8 py-3.5 bg-transparent border border-yellow-500/40 rounded-lg transition-all hover:bg-yellow-500/5 hover:border-yellow-500 hover:-translate-y-1"
-                                    >
-                                        <span className="text-yellow-300 font-medium tracking-wide flex items-center justify-center gap-2 group-hover:text-yellow-400 text-sm">
-                                            {isPortuguese ? 'Assinar Premium' : 'Subscribe Premium'}
-                                            <span className="material-symbols-outlined text-sm">star</span>
-                                        </span>
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             {/* Plan Comparison Section - Checkout Style */}
             <section className="relative z-10 py-20 md:py-24 px-4 md:px-6 bg-[#110e1a] overflow-hidden">
                 <div className="absolute -left-28 top-10 w-[440px] h-[440px] rounded-full bg-gradient-to-br from-purple-500/14 to-transparent blur-3xl pointer-events-none"></div>
